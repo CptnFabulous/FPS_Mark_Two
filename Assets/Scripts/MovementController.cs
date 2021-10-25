@@ -54,8 +54,8 @@ public class MovementController : MonoBehaviour
     public float crouchTransitionTime = 0.5f;
     public UnityEvent onCrouch;
     public UnityEvent onStand;
+    [SerializeField] bool crouched;
     float crouchTimer;
-    bool crouched;
     /*
     [Header("Cosmetics")]
     public float walkCycleLength = 0.5f;
@@ -72,7 +72,7 @@ public class MovementController : MonoBehaviour
     }
     void Start()
     {
-        IsCrouching = false;
+        IsCrouching = IsCrouching;
     }
     void Update()
     {
