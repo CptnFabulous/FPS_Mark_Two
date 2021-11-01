@@ -15,11 +15,21 @@ public class AmmunitionInventory : MonoBehaviour
 {
     public Resource[] ammunitionTypes;
     //public 
+    
+    
+    
+    public float CurrentStock(AmmunitionType type)
+    {
+        return ammunitionTypes[AmmunitionType.GetIndex(type)].current;
+    }
+    public int MaxCapacity(AmmunitionType type)
+    {
+        return ammunitionTypes[AmmunitionType.GetIndex(type)].max;
+    }
     public void Collect(AmmunitionType type, int amount)
     {
         ammunitionTypes[AmmunitionType.GetIndex(type)].Change(amount);
     }
-
     public void Spend(AmmunitionType type, int amount)
     {
         ammunitionTypes[AmmunitionType.GetIndex(type)].Change(-amount);
