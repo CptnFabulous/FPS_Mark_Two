@@ -11,6 +11,10 @@ public class Hitbox : MonoBehaviour
 
     public void Damage(int amount, Entity attacker)
     {
+        if (sourceHealth == null)
+        {
+            return;
+        }
         sourceHealth.Damage(amount, attacker);
     }
 
@@ -20,6 +24,6 @@ public class Hitbox : MonoBehaviour
         {
             amount = Mathf.RoundToInt(amount * criticalMultiplier);
         }
-        sourceHealth.Damage(amount, attacker);
+        Damage(amount, attacker);
     }
 }
