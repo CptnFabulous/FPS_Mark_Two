@@ -10,11 +10,10 @@ public class Projectile : MonoBehaviour
     public float diameter = 0.05f;
     public float startingVelocity = 100;
     public LayerMask detection = ~0;
-    // public UnityEvent<RaycastHit, Vector3> onHit;
     public UnityEvent<RaycastHit> onHit;
 
+    public RaycastHit surfaceHit;
     Vector3 velocity;
-    RaycastHit surfaceHit;
     
     
     
@@ -35,7 +34,7 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(transform.position, velocity, Color.red);
+        //Debug.DrawRay(transform.position, velocity, Color.red);
         transform.LookAt(transform.position + velocity);
         if (Physics.SphereCast(transform.position, diameter, velocity, out surfaceHit, DetectionLength, detection))
         {
@@ -46,7 +45,7 @@ public class Projectile : MonoBehaviour
             transform.Translate(velocity.normalized * DetectionLength, Space.World);
             velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
         }
-        Debug.DrawRay(transform.position, velocity, Color.green);
+        //Debug.DrawRay(transform.position, velocity, Color.green);
     }
 
     
