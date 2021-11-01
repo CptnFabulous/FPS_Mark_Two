@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class PlayerStateHandler : MonoBehaviour
 {
+    public Player controlling;
     public Canvas headsUpDisplay;
     public UnityEvent onResume;
     public Canvas pauseMenu;
@@ -61,18 +62,23 @@ public class PlayerStateHandler : MonoBehaviour
     {
         if (Input.GetButtonDown("Pause")) // Toggle between paused and unpaused
         {
-            switch(CurrentState)
-            {
-                case PlayerState.Active: // pause game
-                    CurrentState = PlayerState.Paused;
-                    break;
-                case PlayerState.Paused: // resume game
-                    CurrentState = PlayerState.Active;
-                    break;
-                case PlayerState.InMenus: // exit out of menu
-                    CurrentState = PlayerState.Active;
-                    break;
-            }
+            TogglePause();
+        }
+    }
+
+    public void TogglePause()
+    {
+        switch (CurrentState)
+        {
+            case PlayerState.Active: // pause game
+                CurrentState = PlayerState.Paused;
+                break;
+            case PlayerState.Paused: // resume game
+                CurrentState = PlayerState.Active;
+                break;
+            case PlayerState.InMenus: // exit out of menu
+                CurrentState = PlayerState.Active;
+                break;
         }
     }
 
@@ -86,17 +92,24 @@ public class PlayerStateHandler : MonoBehaviour
 
         currentMenu.gameObject.SetActive(true);
     }
-
     void EnterMenu()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
-
     void ReturnToGameplay()
     {
+        Debug.Log("Returning to gameplay");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Time.timeScale = 1;
     }
+
+
+    /*
+    public void Die()
+    {
+        
+    }
+    */
 }

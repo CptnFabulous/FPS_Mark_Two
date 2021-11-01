@@ -6,6 +6,7 @@ public class WeaponHandler : MonoBehaviour
 {
     public Player controller;
     public Transform aimOrigin;
+    public AmmunitionInventory ammo;
 
     public Weapon[] equippedWeapons;
     int equippedWeaponIndex;

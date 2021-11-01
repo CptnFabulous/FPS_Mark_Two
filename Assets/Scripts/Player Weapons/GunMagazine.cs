@@ -3,13 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum AmmunitionType
-{
-    Pistol,
-    Buckshot,
-    Rifle,
-    Grenade
-}
+
 
 public class GunMagazine : MonoBehaviour
 {

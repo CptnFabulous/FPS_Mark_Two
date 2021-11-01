@@ -37,7 +37,7 @@ public class RangedAttack : WeaponMode
     public override void UpdateLoop(WeaponHandler user)
     {
 
-        
+        Debug.DrawRay(stats.muzzle.position, user.AimDirection(stats.sway) * 5, Color.red);
 
 
 
@@ -61,11 +61,12 @@ public class RangedAttack : WeaponMode
         // If firing sequence has finished
         // If there is ammunition available to reload with
 
-
+        
         if (Input.GetButtonDown("Reload"))
         {
             Debug.Log("Initiating reload on frame " + Time.frameCount);
         }
+        
     }
 
     
