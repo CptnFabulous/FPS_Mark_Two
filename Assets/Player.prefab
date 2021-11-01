@@ -206,9 +206,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   aimOrigin: {fileID: 0}
+  ammo: {fileID: 0}
   equippedWeapons: []
   isSwitching: 0
-  standingAccuracy: 1
+  standingAccuracy: 2
   swaySpeed: 0.5
 --- !u!114 &572269630365294441
 MonoBehaviour:
@@ -223,22 +224,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammunitionTypes:
-  - name: Pistol
-    max: 100
-    current: 100
-    criticalLevel: 20
-  - name: Buckshot
-    max: 100
-    current: 100
-    criticalLevel: 20
-  - name: Rifle
-    max: 100
-    current: 100
-    criticalLevel: 20
-  - name: Grenade
-    max: 100
-    current: 100
-    criticalLevel: 20
+  - name: 12GA Buckshot
+    max: 18
+    current: 18
+    criticalLevel: 6
+  - name: 40mm HEDP grenade
+    max: 3
+    current: 3
+    criticalLevel: 1
+  - name: 5.56x45mm
+    max: 90
+    current: 90
+    criticalLevel: 30
+  - name: 9x19mm
+    max: 90
+    current: 90
+    criticalLevel: 15
 --- !u!114 &745592948619609687
 MonoBehaviour:
   m_ObjectHideFlags: 0
