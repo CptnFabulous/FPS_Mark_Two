@@ -32,33 +32,36 @@ public class WeaponHandler : MonoBehaviour
     /// </summary>
     public Vector3 AimDirection(float additionalSway = 0)
     {
-        /*
         float totalSway = standingAccuracy + additionalSway;
-        // Generates changing values from noise
-        float angleNoise = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
-        float rotationNoise = Mathf.PerlinNoise(0, Time.time * swaySpeed);
-        Quaternion angles = Quaternion.Euler(angleNoise * totalSway, 0, rotationNoise * 360);
-        Debug.Log(angleNoise + ", " + rotationNoise + ", " + angleNoise * totalSway + ", " + rotationNoise * 360);
-        return aimOrigin.transform.rotation * angles * Vector3.forward;
-        */
-
-        
         // Generates changing values from noise
         float noiseX = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
         float noiseY = Mathf.PerlinNoise(0, Time.time * swaySpeed);
+
+        /*
+        Quaternion angles = Quaternion.Euler(noiseX * totalSway, 0, noiseY * 360f);
+        Debug.Log(angleNoise + ", " + rotationNoise + ", " + angleNoise * totalSway + ", " + rotationNoise * 360f);
+        return aimOrigin.transform.rotation * angles * Vector3.forward;
+        */
+
         // Converts values from 0 - 1 to -1 - 1
         Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
         if (angles.magnitude > 1)
         {
             angles.Normalize();
         }
-        angles *= standingAccuracy + additionalSway; //  Multiplies by accuracy value
+        angles *= totalSway; //  Multiplies by accuracy value
         // Creates euler angles and combines with current aim direction
         return aimOrigin.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
         
     }
 
-
+    private void Awake()
+    {
+        if (ammo == null)
+        {
+            ammo = GetComponent<AmmunitionInventory>();
+        }
+    }
     private void Start()
     {
         UpdateAvailableWeapons();
