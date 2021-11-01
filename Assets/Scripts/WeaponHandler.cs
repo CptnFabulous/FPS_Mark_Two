@@ -4,102 +4,98 @@ using UnityEngine;
 
 public class WeaponHandler : MonoBehaviour
 {
-    public Character characterUsing;
-
+    public Player controller;
     public Transform aimOrigin;
 
     public Weapon[] equippedWeapons;
     int equippedWeaponIndex;
-    IEnumerator currentAction;
-    //int currentActionPriority;
-
-
-
-    private void Awake()
-    {
-        UpdateAvailableWeapons();
-    }
-
-    void UpdateAvailableWeapons()
-    {
-        equippedWeapons = GetComponentsInChildren<Weapon>();
-    }
-
-
-    private void Update()
-    {
-        //StartCoroutine(currentAction);
-
-        /*
-        if (AttackButtonPressed && currentAction == null)
-        {
-            PerformAction(CurrentMode.Attack(this));
-        }
-        */
-
-
-    }
-
-    public bool AttackButtonPressed
-    {
-        get
-        {
-            return Input.GetButtonDown("Attack");
-        }
-    }
-    public bool AttackButtonHeld
-    {
-        get
-        {
-            return Input.GetButton("Attack");
-        }
-    }
-
-
     public Weapon HeldWeapon
     {
         get
         {
+            if (equippedWeapons.Length <= 0)
+            {
+                return null;
+            }
             return equippedWeapons[equippedWeaponIndex];
         }
     }
+    [HideInInspector] public bool isSwitching;
 
+    [Header("Stats")]
+    public float standingAccuracy = 1;
+    public float swaySpeed = 0.5f;
 
-    public void PerformAction(IEnumerator action/*, int priority*/)
+    /// <summary>
+    /// The direction the player is currently aiming in, accounting for accuracy sway.
+    /// </summary>
+    public Vector3 AimDirection(float additionalSway = 0)
     {
-        //if (currentAction.)
-        
         /*
-        if (currentAction != null && priority >= currentActionPriority)
-        {
-            StopCoroutine(currentAction);
-        }
+        float totalSway = standingAccuracy + additionalSway;
+        // Generates changing values from noise
+        float angleNoise = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
+        float rotationNoise = Mathf.PerlinNoise(0, Time.time * swaySpeed);
+        Quaternion angles = Quaternion.Euler(angleNoise * totalSway, 0, rotationNoise * 360);
+        Debug.Log(angleNoise + ", " + rotationNoise + ", " + angleNoise * totalSway + ", " + rotationNoise * 360);
+        return aimOrigin.transform.rotation * angles * Vector3.forward;
         */
-        StopCoroutine(currentAction);
 
-        currentAction = action;
-        //currentActionPriority = priority;
-        StartCoroutine(currentAction);
+        
+        // Generates changing values from noise
+        float noiseX = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
+        float noiseY = Mathf.PerlinNoise(0, Time.time * swaySpeed);
+        // Converts values from 0 - 1 to -1 - 1
+        Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
+        if (angles.magnitude > 1)
+        {
+            angles.Normalize();
+        }
+        angles *= standingAccuracy + additionalSway; //  Multiplies by accuracy value
+        // Creates euler angles and combines with current aim direction
+        return aimOrigin.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
+        
+    }
+
+
+    private void Start()
+    {
+        UpdateAvailableWeapons();
+    }
+    private void Update()
+    {
+        // If player is not in the middle of switching weapons
+        // If player has a weapon equipped
+        // If player is not in the middle of switching firing modes
+        if (isSwitching == false && HeldWeapon != null && HeldWeapon.isSwitchingMode == false)
+        {
+            HeldWeapon.CurrentMode.UpdateLoop(this);
+        }
+        
+        
+
+
     }
 
 
     
-}
-
-/*
-public abstract class PlayerAction
-{
-    public IEnumerator reference;
-    public abstract IEnumerator Action();
-    public abstract void Cancel();
     
+    
+
+
+    void UpdateAvailableWeapons()
+    {
+        equippedWeapons = GetComponentsInChildren<Weapon>();
+        for (int i = 0; i < equippedWeapons.Length; i++)
+        {
+            equippedWeapons[i].gameObject.SetActive(false);
+        }
+
+        if (HeldWeapon != null)
+        {
+            Debug.Log("Drawing first weapon");
+            StartCoroutine(HeldWeapon.Draw(this));
+        }
+    }
+
 }
-*/
-
-/*
-public virtual IEnumerator<WeaponHandler> PlayerAction()
-{
-
-}
-*/
-
