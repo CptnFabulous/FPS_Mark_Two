@@ -8,11 +8,6 @@ public class AmmunitionType : ScriptableObject
     public string description;
     public Sprite icon;
 
-
-
-
-
-
     public static AmmunitionType[] All
     {
         get
