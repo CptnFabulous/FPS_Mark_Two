@@ -7,7 +7,10 @@ using UnityEngine.Events;
 public class MovementController : MonoBehaviour
 {
     public Player controlling;
-    public Transform head;
+    public Transform aimAxis;
+    public Transform upperBody;
+    public Camera worldViewCamera;
+    public Camera headsUpDisplayCamera;
     CapsuleCollider collider;
     Rigidbody rb;
 
@@ -190,7 +193,7 @@ public class MovementController : MonoBehaviour
         verticalAngle -= rotationV;
         verticalAngle = Mathf.Clamp(verticalAngle, minAngle, maxAngle);
         transform.Rotate(0, rotationH, 0);
-        head.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
+        aimAxis.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
     }
     void SetGroundingData()
     {
@@ -308,6 +311,6 @@ public class MovementController : MonoBehaviour
     {
         collider.height = Mathf.Lerp(standHeight, crouchHeight, t);
         collider.center = Vector3.up * (collider.height / 2);
-        head.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
+        aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
     }
 }
