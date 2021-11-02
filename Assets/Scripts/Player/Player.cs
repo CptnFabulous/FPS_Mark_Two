@@ -20,6 +20,7 @@ public class Player : Character
     public MovementController movement;
     public PlayerStateHandler stateHandler;
     public WeaponHandler weapons;
+    public HeadsUpDisplay headsUpDisplay;
 
     private void Awake()
     {
@@ -27,13 +28,10 @@ public class Player : Character
         //inputManager.actions.FindAction("Move").
 
 
-        movement = GetComponent<MovementController>();
         movement.controlling = this;
-        stateHandler = GetComponent<PlayerStateHandler>();
         stateHandler.controlling = this;
-        weapons = GetComponent<WeaponHandler>();
         weapons.controller = this;
-        weapons.aimOrigin = movement.head;
+        headsUpDisplay.controller = this;
     }
 
 
