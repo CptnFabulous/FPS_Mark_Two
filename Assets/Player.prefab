@@ -10,10 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5952785220977947004}
   - component: {fileID: 5952785220977947003}
-  - component: {fileID: 5952785220977947007}
   - component: {fileID: 5952785220977947005}
-  - component: {fileID: 5952785220977947002}
-  - component: {fileID: 572269630365294441}
+  - component: {fileID: 5952785220977947007}
   - component: {fileID: 745592948619609687}
   - component: {fileID: 317139347150765821}
   - component: {fileID: 5952785220977946993}
@@ -54,12 +52,83 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13a3bcf5f18b6849ba44c6e126ec575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  properName: New Entity
-  description: A new entity with no information assigned to it.
-  isUnique: 0
-  movement: {fileID: 0}
-  stateHandler: {fileID: 0}
-  weapons: {fileID: 0}
+  properName: Player
+  description: It's you!
+  isUnique: 1
+  movement: {fileID: 5952785220977947007}
+  stateHandler: {fileID: 5952785220977947005}
+  weapons: {fileID: 4649618836464737167}
+  headsUpDisplay: {fileID: 8098729900447558270}
+--- !u!114 &5952785220977947005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785220977946995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f2e760930bf0654694439312e347031, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlling: {fileID: 0}
+  headsUpDisplay: {fileID: 5952785221938061819}
+  onResume:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5952785220977947007}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 4649618836464737167}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  pauseMenu: {fileID: 5952785221607329950}
+  onPause:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5952785220977947007}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 4649618836464737167}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  state: 0
 --- !u!114 &5952785220977947007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,7 +142,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlling: {fileID: 0}
-  head: {fileID: 5952785221988775342}
+  aimAxis: {fileID: 5952785221988775342}
+  upperBody: {fileID: 1184233747240851141}
+  worldViewCamera: {fileID: 5952785222629829733}
+  headsUpDisplayCamera: {fileID: 0}
   defaultSpeed: 5
   onStep:
     m_PersistentCalls:
@@ -146,100 +218,6 @@ MonoBehaviour:
   crouched: 0
   walkCycleLength: 0.75
   stepsPerCycle: 2
---- !u!114 &5952785220977947005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5952785220977946995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f2e760930bf0654694439312e347031, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlling: {fileID: 0}
-  headsUpDisplay: {fileID: 5952785221938061819}
-  onResume:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5952785220977947007}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  pauseMenu: {fileID: 5952785221607329950}
-  onPause:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5952785220977947007}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  state: 0
---- !u!114 &5952785220977947002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5952785220977946995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c97aaa9a9b821494bbefb993a6528884, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 0}
-  aimOrigin: {fileID: 0}
-  ammo: {fileID: 0}
-  equippedWeapons: []
-  isSwitching: 0
-  standingAccuracy: 2
-  swaySpeed: 0.5
---- !u!114 &572269630365294441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5952785220977946995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4ccfd7667936ce48b28aa3df0903343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ammunitionTypes:
-  - name: 12GA Buckshot
-    max: 18
-    current: 18
-    criticalLevel: 6
-  - name: 40mm HEDP grenade
-    max: 3
-    current: 3
-    criticalLevel: 1
-  - name: 5.56x45mm
-    max: 90
-    current: 90
-    criticalLevel: 30
-  - name: 9x19mm
-    max: 90
-    current: 90
-    criticalLevel: 15
 --- !u!114 &745592948619609687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,13 +237,49 @@ MonoBehaviour:
     criticalLevel: 20
   onDamage:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthMeter
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 745592948619609687}
+          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onHeal:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthMeter
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 745592948619609687}
+          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onDeath:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthMeter
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 745592948619609687}
+          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &317139347150765821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -497,8 +511,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5952785221988775342}
+  - component: {fileID: 4649618836464737167}
+  - component: {fileID: 7479822334647491782}
   m_Layer: 0
-  m_Name: Head
+  m_Name: AimAxis
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -515,11 +531,119 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 5952785222629829730}
-  - {fileID: 5952785222623807978}
+  - {fileID: 1184233747240851141}
   m_Father: {fileID: 5952785220977947004}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4649618836464737167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785221988775329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97aaa9a9b821494bbefb993a6528884, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
+  equippedWeapons: []
+  isSwitching: 0
+  holdingPosition: {fileID: 5952785222623807978}
+  ammo: {fileID: 7479822334647491782}
+  aimAxis: {fileID: 5952785221988775342}
+  standingAccuracy: 2
+  swaySpeed: 0.5
+  onDraw:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: ShowWeaponHUD
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onHolster:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: HideWeaponHUD
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onModeSwitch:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: SetWeaponModeFeatures
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onAttack:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8098729900447558270}
+        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
+        m_MethodName: RefreshModeValues
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7479822334647491782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785221988775329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4ccfd7667936ce48b28aa3df0903343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammunitionTypes:
+  - name: 12GA Buckshot
+    max: 18
+    current: 18
+    criticalLevel: 6
+  - name: 40mm HEDP grenade
+    max: 3
+    current: 3
+    criticalLevel: 1
+  - name: 5.56x45mm
+    max: 90
+    current: 90
+    criticalLevel: 30
+  - name: 9x19mm
+    max: 90
+    current: 90
+    criticalLevel: 15
 --- !u!1 &5952785222623807981
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,11 +667,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5952785222623807981}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5952785221988775342}
+  m_Father: {fileID: 1184233747240851141}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5952785222629829735
@@ -581,7 +705,7 @@ Transform:
   m_Children:
   - {fileID: 5952785221938061820}
   - {fileID: 5952785221607329949}
-  m_Father: {fileID: 5952785221988775342}
+  m_Father: {fileID: 1184233747240851141}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &5952785222629829733
@@ -635,6 +759,38 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5952785222629829735}
   m_Enabled: 1
+--- !u!1 &6813285803237147653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184233747240851141}
+  m_Layer: 0
+  m_Name: UpperBody
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1184233747240851141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6813285803237147653}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 5952785222629829730}
+  - {fileID: 5952785222623807978}
+  m_Father: {fileID: 5952785221988775342}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5098780434607827016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -726,6 +882,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1467622987709249750, guid: 2741c95ffd147b246b52684b035b4f40, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 5952785222629829733}
     - target: {fileID: 1467622987709249753, guid: 2741c95ffd147b246b52684b035b4f40, type: 3}
       propertyPath: m_Name
       value: Pause Menu
@@ -749,6 +909,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5952785222629829730}
     m_Modifications:
+    - target: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 5952785222629829733}
     - target: {fileID: 4122616872743097397, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_Name
       value: Heads-up display
@@ -839,13 +1003,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
---- !u!224 &5952785221938061820 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
 --- !u!223 &5952785221938061819 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8098729900447558270 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06375990f6058fb418571800f9400e70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!224 &5952785221938061820 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}

@@ -76,4 +76,16 @@ public class GunOptics : MonoBehaviour
     {
 
     }
+
+
+
+    void CameraSway(WeaponHandler user, MovementController userMovement)
+    {
+        
+        
+        
+        
+        Vector3 cameraDirection = Vector3.Slerp(userMovement.aimAxis.forward, user.AimDirection(), timer);
+        userMovement.upperBody.LookAt(userMovement.upperBody.position + cameraDirection);
+    }
 }
