@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WeaponHandler : MonoBehaviour
 {
-    public Player controller;
-    public Transform aimOrigin;
-    public AmmunitionInventory ammo;
-
+    [HideInInspector] public Player controller;
+    
+    [Header("Weapons")]
     public Weapon[] equippedWeapons;
     int equippedWeaponIndex;
     public Weapon HeldWeapon
@@ -22,27 +22,34 @@ public class WeaponHandler : MonoBehaviour
         }
     }
     [HideInInspector] public bool isSwitching;
+    public Transform holdingPosition;
+    public AmmunitionInventory ammo;
 
     [Header("Stats")]
+    public Transform aimAxis;
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
+    
+    [Header("Other")]
+    public UnityEvent<Weapon> onDraw;
+    public UnityEvent<Weapon> onHolster;
+    public UnityEvent<WeaponMode> onModeSwitch;
+    public UnityEvent<WeaponMode> onAttack;
+    
 
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
-    public Vector3 AimDirection(float additionalSway = 0)
+    public Vector3 AimDirection()
     {
-        float totalSway = standingAccuracy + additionalSway;
+        float totalSway = standingAccuracy;
+        if (HeldWeapon.CurrentMode as RangedAttack != null)
+        {
+            totalSway += (HeldWeapon.CurrentMode as RangedAttack).stats.sway;
+        }
         // Generates changing values from noise
         float noiseX = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
         float noiseY = Mathf.PerlinNoise(0, Time.time * swaySpeed);
-
-        /*
-        Quaternion angles = Quaternion.Euler(noiseX * totalSway, 0, noiseY * 360f);
-        Debug.Log(angleNoise + ", " + rotationNoise + ", " + angleNoise * totalSway + ", " + rotationNoise * 360f);
-        return aimOrigin.transform.rotation * angles * Vector3.forward;
-        */
-
         // Converts values from 0 - 1 to -1 - 1
         Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
         if (angles.magnitude > 1)
@@ -51,8 +58,11 @@ public class WeaponHandler : MonoBehaviour
         }
         angles *= totalSway; //  Multiplies by accuracy value
         // Creates euler angles and combines with current aim direction
-        return aimOrigin.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
-        
+        return aimAxis.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
+        /*
+        Quaternion angles = Quaternion.Euler(noiseX * totalSway, 0, noiseY * 360f);
+        return aimOrigin.transform.rotation * angles * Vector3.forward;
+        */
     }
 
     private void Awake()
