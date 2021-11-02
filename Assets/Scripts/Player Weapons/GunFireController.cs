@@ -18,15 +18,12 @@ public class GunFireController : MonoBehaviour
         
         while ((shotsInBurst < maxBurst || maxBurst <= 0) && mode.FireHeld && mode.CanShoot(user))
         {
-            Debug.Log(shotsInBurst);
-            
             mode.SingleShot(user);
-
             shotsInBurst++;
             yield return new WaitForSeconds(60 / roundsPerMinute);
         }
 
-        Debug.Log("Player is not shooting anymore");
+        //Debug.Log("Player is not shooting anymore");
         InBurst = false;
     }
     

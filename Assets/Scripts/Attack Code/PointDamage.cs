@@ -23,13 +23,13 @@ public class PointDamage : MonoBehaviour
         Hitbox damageable = rh.collider.GetComponent<Hitbox>();
         if (damageable != null && notAlly) // If a hitbox is present
         {
-            Debug.Log("Damaging " + damageable.name + " on frame " + Time.frameCount);
+            //Debug.Log("Damaging " + damageable.name + " on frame " + Time.frameCount);
             damageable.Damage(damage, criticalMultiplier, attacker);
             onDamaged.Invoke(rh);
         }
         else
         {
-            Debug.Log("Did not damage " + rh.collider.name + " on frame " + Time.frameCount);
+            //Debug.Log("Did not damage " + rh.collider.name + " on frame " + Time.frameCount);
             onUndamaged.Invoke(rh);
         }
 

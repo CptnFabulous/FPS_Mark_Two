@@ -38,7 +38,7 @@ public class Projectile : MonoBehaviour
         transform.LookAt(transform.position + velocity);
         if (Physics.SphereCast(transform.position, diameter, velocity, out surfaceHit, DetectionLength, detection))
         {
-            Debug.Log(surfaceHit.collider);
+            //Debug.Log(surfaceHit.collider);
             OnHit(surfaceHit);
         }
         else // Move bullet
