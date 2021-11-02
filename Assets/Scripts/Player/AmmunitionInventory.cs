@@ -17,14 +17,17 @@ public class AmmunitionInventory : MonoBehaviour
     //public 
     
     
-    
-    public float CurrentStock(AmmunitionType type)
+    public Resource GetValues(AmmunitionType type)
     {
-        return ammunitionTypes[AmmunitionType.GetIndex(type)].current;
+        return ammunitionTypes[AmmunitionType.GetIndex(type)];
     }
-    public int MaxCapacity(AmmunitionType type)
+    public float GetStock(AmmunitionType type)
     {
-        return ammunitionTypes[AmmunitionType.GetIndex(type)].max;
+        return GetValues(type).current;
+    }
+    public int GetMax(AmmunitionType type)
+    {
+        return GetValues(type).max;
     }
     public void Collect(AmmunitionType type, int amount)
     {
