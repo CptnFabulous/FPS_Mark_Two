@@ -27,4 +27,24 @@ public readonly struct MiscFunctions
         Vector3 up = PerpendicularUp(forward, upward);
         return Quaternion.AngleAxis(axes.x, right) * Quaternion.AngleAxis(axes.y, up) * Quaternion.AngleAxis(axes.z, forward) * forward;
     }
+
+    public ButtonState GetStateFromInput(string input)
+    {
+        if (Input.GetButtonDown(input))
+        {
+            return ButtonState.Pressed;
+        }
+        else if (Input.GetButtonUp(input))
+        {
+            return ButtonState.Released;
+        }
+        else if (Input.GetButton(input))
+        {
+            return ButtonState.Held;
+        }
+        return ButtonState.Inactive;
+    }
+
+
+
 }
