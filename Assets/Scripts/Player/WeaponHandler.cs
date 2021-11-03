@@ -5,12 +5,12 @@ using UnityEngine.Events;
 
 public class WeaponHandler : MonoBehaviour
 {
-    [HideInInspector] public Player controller;
+    public Player controller;
     
     [Header("Weapons")]
     public Weapon[] equippedWeapons;
     int equippedWeaponIndex;
-    public Weapon HeldWeapon
+    public Weapon CurrentWeapon
     {
         get
         {
@@ -29,13 +29,17 @@ public class WeaponHandler : MonoBehaviour
     public Transform aimAxis;
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
-    
+    /*
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
     public UnityEvent<WeaponMode> onModeSwitch;
     public UnityEvent<WeaponMode> onAttack;
-    
+    */
+
+    public ButtonInput primary = new ButtonInput("Fire");
+    public ButtonInput secondary = new ButtonInput("Aim");
+    public ButtonInput tertiary = new ButtonInput("Reload");
 
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
@@ -43,9 +47,9 @@ public class WeaponHandler : MonoBehaviour
     public Vector3 AimDirection()
     {
         float totalSway = standingAccuracy;
-        if (HeldWeapon.CurrentMode as RangedAttack != null)
+        if (CurrentWeapon.CurrentMode as RangedAttack != null)
         {
-            totalSway += (HeldWeapon.CurrentMode as RangedAttack).stats.sway;
+            totalSway += (CurrentWeapon.CurrentMode as RangedAttack).stats.sway;
         }
         // Generates changing values from noise
         float noiseX = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
@@ -78,12 +82,38 @@ public class WeaponHandler : MonoBehaviour
     }
     private void Update()
     {
+        /*
+        // If player is not currently 
+        if (isSwitching == false && CurrentWeapon.InAction == false)
+        {
+            float scrollAxis = Input.GetAxis("Mouse ScrollWheel");
+            if (scrollAxis != 0)
+            {
+                int newIndex = equippedWeaponIndex;
+                if (scrollAxis > 0)
+                {
+                    newIndex -= 1;
+                }
+                else if (scrollAxis < 0)
+                {
+                    newIndex += 1;
+                }
+                StartCoroutine(SwitchWeapon(newIndex));
+            }
+        }
+        */
+        
+        if (MiscFunctions.NumKeyPressed(out int index, true))
+        {
+            StartCoroutine(SwitchWeapon(index));
+        }
+        
         // If player is not in the middle of switching weapons
         // If player has a weapon equipped
         // If player is not in the middle of switching firing modes
-        if (isSwitching == false && HeldWeapon != null && HeldWeapon.isSwitchingMode == false)
+        if (isSwitching == false && CurrentWeapon != null && CurrentWeapon.isSwitching == false)
         {
-            HeldWeapon.CurrentMode.UpdateLoop(this);
+            CurrentWeapon.CurrentMode.UpdateLoop(this);
         }
         
         
@@ -99,17 +129,84 @@ public class WeaponHandler : MonoBehaviour
 
     void UpdateAvailableWeapons()
     {
-        equippedWeapons = GetComponentsInChildren<Weapon>();
+        //Weapon current = CurrentWeapon;
+        equippedWeapons = GetComponentsInChildren<Weapon>(true);
         for (int i = 0; i < equippedWeapons.Length; i++)
         {
+            Debug.Log("Weapon present: " + equippedWeapons[i].name);
             equippedWeapons[i].gameObject.SetActive(false);
         }
 
-        if (HeldWeapon != null)
+        if (CurrentWeapon != null)
         {
-            Debug.Log("Drawing first weapon");
-            StartCoroutine(HeldWeapon.Draw(this));
+            Debug.Log("Drawing first weapon, " + CurrentWeapon.name);
+            StartCoroutine(SwitchWeapon(equippedWeaponIndex));
         }
     }
 
+
+
+
+    IEnumerator SwitchWeapon(int newIndex)
+    {
+        if (equippedWeapons.Length <= 0)
+        {
+            yield break;
+        }
+
+        newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Length - 1);
+        if (equippedWeapons[newIndex] == CurrentWeapon && equippedWeapons[newIndex].gameObject.activeSelf == true)
+        {
+            // If selected weapon is already active, no need to run any other code
+            yield break;
+        }
+        
+        isSwitching = true;
+
+        // If another weapon is already enabled, holster it
+        if (CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true)
+        {
+            StartCoroutine(CurrentWeapon.Holster());
+            yield return new WaitUntil(() => CurrentWeapon.isSwitching == false);
+        }
+
+        // Once previous weapon is holstered, switch index to the new weapon and draw it
+        equippedWeaponIndex = newIndex;
+        StartCoroutine(CurrentWeapon.Draw());
+        yield return new WaitUntil(() => CurrentWeapon.isSwitching == false);
+
+        isSwitching = false;
+    }
+}
+
+public struct ButtonInput
+{
+    string inputName;
+
+    public bool Pressed
+    {
+        get
+        {
+            return Input.GetButtonDown(inputName);
+        }
+    }
+    public bool Held
+    {
+        get
+        {
+            return Input.GetButton(inputName);
+        }
+    }
+    public bool Released
+    {
+        get
+        {
+            return Input.GetButtonUp(inputName);
+        }
+    }
+
+    public ButtonInput(string name)
+    {
+        inputName = name;
+    }
 }

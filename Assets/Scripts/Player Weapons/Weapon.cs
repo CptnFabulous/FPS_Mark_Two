@@ -24,66 +24,69 @@ public class Weapon : MonoBehaviour
     public float switchSpeed;
     public UnityEvent onDraw;
     public UnityEvent onHolster;
-
-    [HideInInspector] public bool isSwitchingMode;
-    WaitForSeconds switchYield;
+    public bool isSwitching { get; private set; }
 
     [Header("Cosmetics")]
     public Renderer model;
     public Transform modelTransform;
 
 
-
-
-    public IEnumerator Draw(WeaponHandler handler)
+    public bool InAction
     {
-        if (handler.isSwitching == true)
+        get
         {
-            yield break;
+            if (isSwitching)
+            {
+                return true;
+            }
+            if (CurrentMode.InAction)
+            {
+                return true;
+            }
+            return false;
         }
+    }
 
-        handler.isSwitching = true;
+    public IEnumerator Draw()
+    {
+        //yield return new WaitUntil(() => isSwitching == false);
+        isSwitching = true;
         gameObject.SetActive(true);
         onDraw.Invoke();
-        handler.onDraw.Invoke(this);
-        yield return switchYield;
-        handler.isSwitching = false;
-    }
-    public IEnumerator Holster(WeaponHandler handler)
-    {
-        if (handler.isSwitching == true)
-        {
-            yield break;
-        }
 
-        handler.isSwitching = true;
+        yield return new WaitForSeconds(switchSpeed);
+
+        isSwitching = false;
+    }
+    public IEnumerator Holster()
+    {
+        yield return new WaitUntil(() => isSwitching == false);
+
+        isSwitching = true;
         onHolster.Invoke();
-        handler.onHolster.Invoke(this);
-        yield return switchYield;
+
+        yield return new WaitForSeconds(switchSpeed);
+
         gameObject.SetActive(false);
-        handler.isSwitching = false;
+        isSwitching = false;
     }
-    public IEnumerator SwitchMode(int newModeIndex, WeaponHandler handler)
+    public IEnumerator SwitchMode(int newModeIndex)
     {
-        if (isSwitchingMode == true)
+        if (isSwitching == true)
         {
             yield break;
         }
 
-        isSwitchingMode = true;
+        isSwitching = true;
         modes[newModeIndex].onSwitch.Invoke();
+
         yield return new WaitForSeconds(modes[newModeIndex].switchSpeed);
+
         currentModeIndex = newModeIndex;
-        handler.onModeSwitch.Invoke(CurrentMode);
-        isSwitchingMode = false;
+        isSwitching = false;
     }
 
 
-
-    private void Awake()
-    {
-        switchYield = new WaitForSeconds(switchSpeed);
-    }
 
 
 
@@ -101,9 +104,6 @@ public class Weapon : MonoBehaviour
     }
     public void ApplyModelAnimation(SimpleWeaponAnimation animation)
     {
-
-
-
         oldModelOrientation = animation.older;
         newModelOrientation = animation.newer;
         animationTime = animation.time;
@@ -115,36 +115,5 @@ public class Weapon : MonoBehaviour
     Transform newModelOrientation;
     float animationTime;
     AnimationCurve animationCurve;
-    
-    //SimpleWeaponAnimation currentAnimation;
     float animationTimer;
-
-    /*
-    private void LateUpdate()
-    {
-        if (modelOrientation != null)
-        {
-            modelTransform.position = Vector3.MoveTowards(transform.position, modelOrientation.position, animateMoveSpeed * Time.deltaTime);
-            modelTransform.rotation = Quaternion.RotateTowards(transform.rotation, modelOrientation.rotation, animateRotateSpeed * Time.deltaTime);
-        }
-        
-    }
-    public void AnimateModelOrientation(SimpleWeaponAnimation animation)
-    {
-        // Assign new position so model moves to it
-        // If old position is assigned, teleport to old position first
-
-        if (animation.oldOrientation != null)
-        {
-            modelTransform.position = animation.oldOrientation.position;
-            modelTransform.rotation = animation.oldOrientation.rotation;
-        }
-        modelOrientation = animation.newOrientation;
-        animateMoveSpeed = Vector3.Distance(modelTransform.position, modelOrientation.position) / animation.time;
-        animateRotateSpeed = Quaternion.Angle(modelTransform.rotation, modelOrientation.rotation) / animation.time;
-    }
-    Transform modelOrientation;
-    float animateMoveSpeed;
-    float animateRotateSpeed;
-    */
 }
