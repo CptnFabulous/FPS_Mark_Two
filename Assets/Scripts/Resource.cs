@@ -17,7 +17,7 @@ public struct Resource
     public int max;
     public float current;
     public float criticalLevel;
-    bool isCritical
+    public bool isCritical
     {
         get
         {
