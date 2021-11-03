@@ -268,7 +268,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 9999999999999999999
+  m_Text: Current Firing Mode
 --- !u!1 &1571602460729482490
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +396,7 @@ Canvas:
   m_GameObject: {fileID: 4122616872743097397}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 0.35
   m_PixelPerfect: 0
@@ -553,6 +553,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ammo Meter
       objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.b
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.g
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.r
+      value: 0.5019608
+      objectReference: {fileID: 0}
     - target: {fileID: 5508160063960499646, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_FillAmount
       value: 1
@@ -644,6 +664,10 @@ PrefabInstance:
     - target: {fileID: 7781206720960659444, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7947125905050630916, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: m_Text
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 7947125905050630916, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_FontData.m_Alignment
@@ -698,6 +722,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magazine Meter
       objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.b
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.g
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.r
+      value: 0.5019608
+      objectReference: {fileID: 0}
     - target: {fileID: 5508160063960499646, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_FillAmount
       value: 1
@@ -791,6 +835,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7947125905050630916, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: m_Text
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7947125905050630916, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_FontData.m_Alignment
       value: 5
       objectReference: {fileID: 0}
@@ -842,6 +890,38 @@ PrefabInstance:
     - target: {fileID: 2384290461276826921, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_Name
       value: Health Meter
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: safeColour.r
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4541651803434671174, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
+      propertyPath: criticalColour.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7781206720960659444, guid: 7aacc491fa979854d8f0c949dcc3cde8, type: 3}
       propertyPath: m_Pivot.x
