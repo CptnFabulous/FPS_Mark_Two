@@ -61,9 +61,10 @@ public class HeadsUpDisplay : MonoBehaviour
             ammoReserve.gameObject.SetActive(true);
             Resource remainingAmmo = controller.weapons.ammo.GetValues(currentMode.stats.ammoType);
 
-            if (currentMode.magazine != null)
+            if (currentMode.magazine != null) // If magazine is present, change ammo bar to show reserve excluding magazine amount
             {
                 remainingAmmo.current -= currentMode.magazine.ammo.current;
+                remainingAmmo.max -= (int)currentMode.magazine.ammo.max;
             }
 
             ammoReserve.Refresh(remainingAmmo);
@@ -75,5 +76,17 @@ public class HeadsUpDisplay : MonoBehaviour
         {
             magazineMeter.Refresh(currentMode.magazine.ammo);
         }
+    }
+
+
+    private void Awake()
+    {
+        controller.health.onDamage.AddListener((_)=> UpdateHealthMeter(controller.health));
+        controller.health.onHeal.AddListener((_) => UpdateHealthMeter(controller.health));
+    }
+
+    private void LateUpdate()
+    {
+        ShowWeaponHUD(controller.weapons.CurrentWeapon);
     }
 }

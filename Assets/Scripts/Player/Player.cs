@@ -19,9 +19,10 @@ public class Player : Character
     //public PlayerInput inputManager;
     public MovementController movement;
     public PlayerStateHandler stateHandler;
+    public Health health;
     public WeaponHandler weapons;
     public HeadsUpDisplay headsUpDisplay;
-
+    /*
     private void Awake()
     {
         //inputManager = GetComponent<PlayerInput>();
@@ -33,7 +34,7 @@ public class Player : Character
         weapons.controller = this;
         headsUpDisplay.controller = this;
     }
-
+    */
 
 
 
