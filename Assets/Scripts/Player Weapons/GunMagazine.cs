@@ -20,35 +20,79 @@ public class GunMagazine : MonoBehaviour
     public UnityEvent onReloadEnd;
     public float endTransitionDelay;
 
+    public bool ReloadActive { get; private set; }
     IEnumerator currentSequence;
-    public bool CurrentlyReloading { get; private set; }
 
-    public void StartReload()
+    public void InputLoop(RangedAttack mode, WeaponHandler user)
     {
-        currentSequence = ReloadSequence();
-        StartCoroutine(currentSequence);
+        // If player wants to reload their weapon, and if reloading is possible
+        if (WantsToReload(mode, user) && CanReload(mode.stats.ammoType, user.ammo))
+        {
+            currentSequence = ReloadSequence(mode, user.ammo);
+            StartCoroutine(currentSequence);
+        }
+        else if (ReloadActive && user.primary.Pressed)
+        {
+            CancelReload();
+        }
     }
-    IEnumerator ReloadSequence()
+
+    /// <summary>
+    /// Checks if this magazine needs to be reloaded (either because it's empty or because the player deliberately pressed the reload button)
+    /// </summary>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    public bool WantsToReload(RangedAttack mode, WeaponHandler user)
     {
-        CurrentlyReloading = true;
+        // EITHER
+        // If magazine does not have enough ammo to shoot
+        // If player deliberately wants to reload a half empty weapon
+        // AND
+        // If player is not in the middle of a reload cycle
+        bool manual = user.tertiary.Pressed;
+        bool automatic = ammo.current < mode.stats.ammoPerShot;
+        return (manual || automatic) && ReloadActive == false;
+    }
+    /// <summary>
+    /// Is the player able to reload their weapon (if not, magazine is full or there is no more ammo to reload with)
+    /// </summary>
+    public bool CanReload(AmmunitionType type, AmmunitionInventory inventory)
+    {
+        // If player's magazine is not empty
+        // AND
+        // If enough ammunition is remaining to reload weapon with
+        return ammo.current < ammo.max && ReservedAmmo(type, inventory) > 0;
+    }
+    public int ReservedAmmo(AmmunitionType type, AmmunitionInventory inventory)
+    {
+        return (int)(inventory.GetStock(type) - ammo.current);
+    }
+    
+
+    IEnumerator ReloadSequence(RangedAttack mode, AmmunitionInventory userAmmo)
+    {
+        ReloadActive = true;
         onReloadStart.Invoke();
         yield return new WaitForSeconds(startTransitionDelay);
 
-        while (ammo.current < ammo.max && CurrentlyReloading == true)
+        // If reload sequence has not been cancelled, magazine is not full and there is still ammo to reload with
+        while (CanReload(mode.stats.ammoType, userAmmo) && ReloadActive == true)
         {
             yield return new WaitForSeconds(delayBetweenLoads);
-            ammo.Change(roundsReloadedAtOnce, out float leftover);
+            // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
+            int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(mode.stats.ammoType, userAmmo));
+            ammo.Change(amountToAdd, out float leftover);
             onRoundsReloaded.Invoke();
         }
-
-        CurrentlyReloading = false;
+        // Once all rounds are reloaded, ammo is depleted or player deliberately cancels reload
+        ReloadActive = false;
         onReloadEnd.Invoke();
         yield return new WaitForSeconds(endTransitionDelay);
         EndSequence();
     }
     public void CancelReload()
     {
-        CurrentlyReloading = false;
+        ReloadActive = false;
     }
     void EndSequence()
     {
@@ -57,31 +101,35 @@ public class GunMagazine : MonoBehaviour
     }
 
 
-    public bool WantsToReload(RangedAttack mode)
-    {
-        // EITHER
-        // If magazine does not have enough ammo to shoot
-        // If player deliberately wants to reload a half empty weapon
-        bool manual = Input.GetButtonDown("Reload");
-        bool automatic = ammo.current < mode.stats.ammoPerShot;
-        return manual || automatic;
-    }
-    public bool CanReload(RangedAttack mode, WeaponHandler user)
-    {
-        // If player's magazine is not empty
-        // AND
-        // If enough ammunition is remaining to reload weapon with
-        // AND
-        // If player is not in the middle of a reload cycle
-        bool magazineNotFull = ammo.current < ammo.max;
-        bool moreAmmunitionAvailable = (user.ammo.GetStock(mode.stats.ammoType) - ammo.current) > 0;
-        return magazineNotFull && moreAmmunitionAvailable && CurrentlyReloading == false;
-    }
+    
+    
 
+    
+    
+    
+}
+
+/*
+[System.Serializable]
+public struct ButtonPromptSequence
+{
     [System.Serializable]
-    public struct SequencePrompt
+    public struct Prompt
     {
         public KeyCode keyToPress;
         public float time;
     }
+
+    public Prompt[] prompts;
+    int index;
+
+    IEnumerator Sequence(Prompt[] prompts)
+    {
+        for (index = 0; index < prompts.Length; index++)
+        {
+            yield return new WaitUntil(() => Input.GetKeyDown(prompts[index].keyToPress));
+            yield return new WaitForSeconds(prompts[index].time);
+        }
+    }
 }
+*/

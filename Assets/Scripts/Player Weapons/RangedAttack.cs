@@ -8,73 +8,6 @@ public class RangedAttack : WeaponMode
     public GunFireController controls;
     public GunMagazine magazine;
     public GunOptics optics;
-
-
-
-    
-    public bool FirePressed
-    {
-        get
-        {
-            return Input.GetButtonDown("Fire");
-        }
-    }
-    public bool FireHeld
-    {
-        get
-        {
-            return Input.GetButton("Fire");
-        }
-    }
-    public bool FireReleased
-    {
-        get
-        {
-            return Input.GetButtonUp("Fire");
-        }
-    }
-
-    
-
-    public override void UpdateLoop(WeaponHandler user)
-    {
-
-        
-        // If fire button is pressed - bool
-        // If number of shots in burst has not exceeded max burst - int
-        // If enough ammunition remains in the magazine to perform the shot - int
-        // If player is not currently reloading - bool in Magazine
-        if (FirePressed && controls.InBurst == false)
-        {
-            StartCoroutine(controls.Fire(this, user));
-        }
-
-
-
-        if (magazine != null)
-        {
-            if (magazine.WantsToReload(this) && magazine.CanReload(this, user))
-            {
-                Debug.Log("Initiating reload on frame " + Time.frameCount);
-                magazine.StartReload();
-            }
-            else if (magazine.CurrentlyReloading && FirePressed)
-            {
-                Debug.Log("Cancelling reload");
-                magazine.CancelReload();
-            }
-            
-        }
-        
-    }
-
-    
-
-    
-
-
-
-
     public override bool InAction
     {
         get
@@ -83,8 +16,8 @@ public class RangedAttack : WeaponMode
             {
                 return true;
             }
-            
-            if (magazine != null && magazine.CurrentlyReloading)
+
+            if (magazine != null && magazine.ReloadActive)
             {
                 return true;
             }
@@ -92,14 +25,13 @@ public class RangedAttack : WeaponMode
             return false;
         }
     }
-
     public bool CanShoot(WeaponHandler user)
     {
         // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
         if (magazine != null)
         {
             // If not enough ammunition is in magazine to shoot, or the player is currently reloading
-            if (magazine.ammo.current < stats.ammoPerShot || magazine.CurrentlyReloading)
+            if (magazine.ammo.current < stats.ammoPerShot || magazine.ReloadActive)
             {
                 return false;
             }
@@ -112,6 +44,21 @@ public class RangedAttack : WeaponMode
         }
 
         return true;
+    }
+
+
+    public override void UpdateLoop(WeaponHandler user)
+    {
+        if (user.primary.Pressed && controls.InBurst == false)
+        {
+            Debug.Log(name + " is firing on frame " + Time.frameCount);
+            StartCoroutine(controls.Fire(this, user));
+        }
+
+        if (magazine != null)
+        {
+            magazine.InputLoop(this, user);
+        }
     }
 
     public void SingleShot(WeaponHandler user)
@@ -128,7 +75,7 @@ public class RangedAttack : WeaponMode
 
         //Debug.Log("Shooting on frame " + Time.frameCount);
         stats.Shoot(user.controller, user.aimAxis.position, user.AimDirection(), user.aimAxis.up);
-        user.onAttack.Invoke(this);
+        //user.onAttack.Invoke(this);
     }
 
 }
