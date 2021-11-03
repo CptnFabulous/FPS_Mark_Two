@@ -27,4 +27,11 @@ public class KillBounds : MonoBehaviour
             lastTimeSweeped = Time.time;
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(levelBounds.center, levelBounds.size);
+        //UnityEditor.Handles.Label(levelBounds.center, "Kill Bounds");
+    }
 }
