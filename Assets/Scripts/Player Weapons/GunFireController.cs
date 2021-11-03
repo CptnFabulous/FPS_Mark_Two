@@ -16,7 +16,7 @@ public class GunFireController : MonoBehaviour
         Debug.Log("Player is starting to shoot");
         int shotsInBurst = 0;
         
-        while ((shotsInBurst < maxBurst || maxBurst <= 0) && mode.FireHeld && mode.CanShoot(user))
+        while ((shotsInBurst < maxBurst || maxBurst <= 0) && user.primary.Held && mode.CanShoot(user))
         {
             mode.SingleShot(user);
             shotsInBurst++;
