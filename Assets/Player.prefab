@@ -57,6 +57,7 @@ MonoBehaviour:
   isUnique: 1
   movement: {fileID: 5952785220977947007}
   stateHandler: {fileID: 5952785220977947005}
+  health: {fileID: 745592948619609687}
   weapons: {fileID: 4649618836464737167}
   headsUpDisplay: {fileID: 8098729900447558270}
 --- !u!114 &5952785220977947005
@@ -71,7 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f2e760930bf0654694439312e347031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlling: {fileID: 0}
+  controlling: {fileID: 5952785220977947003}
   headsUpDisplay: {fileID: 5952785221938061819}
   onResume:
     m_PersistentCalls:
@@ -141,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3147d6f6bb52ad45a24b8dc1070b0d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlling: {fileID: 0}
+  controlling: {fileID: 5952785220977947003}
   aimAxis: {fileID: 5952785221988775342}
   upperBody: {fileID: 1184233747240851141}
   worldViewCamera: {fileID: 5952785222629829733}
@@ -237,49 +238,14 @@ MonoBehaviour:
     criticalLevel: 20
   onDamage:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthMeter
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 745592948619609687}
-          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onHeal:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthMeter
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 745592948619609687}
-          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onDeath:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthMeter
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 745592948619609687}
-          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  allowPosthumousDamage: 0
 --- !u!114 &317139347150765821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,7 +513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c97aaa9a9b821494bbefb993a6528884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
+  controller: {fileID: 5952785220977947003}
   equippedWeapons: []
   isSwitching: 0
   holdingPosition: {fileID: 5952785222623807978}
@@ -557,64 +523,16 @@ MonoBehaviour:
   swaySpeed: 0.5
   onDraw:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: ShowWeaponHUD
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onHolster:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: HideWeaponHUD
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onModeSwitch:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: SetWeaponModeFeatures
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onAttack:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: RefreshModeValues
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &7479822334647491782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -909,6 +827,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5952785222629829730}
     m_Modifications:
+    - target: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 5952785220977947003}
     - target: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_Camera
       value: 
