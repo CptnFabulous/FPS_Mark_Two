@@ -54,7 +54,8 @@ public class Projectile : MonoBehaviour
     public void OnHit(RaycastHit thingHit)
     {
         //Debug.Log(thingHit.collider.name);
-        onHit.Invoke(thingHit);
+        surfaceHit = thingHit;
+        onHit.Invoke(surfaceHit);
     }
 
 
@@ -67,7 +68,6 @@ public class Projectile : MonoBehaviour
         velocity = newDirection * velocity.magnitude * velocityDecayMultiplier;
         velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
     }
-
     public void CheckIfStopped(float velocityThreshold)
     {
         if (velocity.magnitude < velocityThreshold)
@@ -76,10 +76,47 @@ public class Projectile : MonoBehaviour
         }
     }
 
-
-    public void StickObjectToSurface(RaycastHit surface, GameObject objectToStick, Vector3 rotationAxis)
+    public void SpawnObjectAtImpactPoint(GameObject prefab)
     {
-
+        Instantiate(prefab, surfaceHit.point, Quaternion.identity);
     }
+    public void SpawnObjectForwardOffSurface(GameObject prefab)
+    {
+        GameObject newObject = Instantiate(prefab);
+        StickObjectToSurface(newObject.transform, surfaceHit, Vector3.forward);
+    }
+    public void EmbedProjectileInSurface(bool rotateToStick)
+    {
+        if (rotateToStick)
+        {
+            StickObjectToSurface(transform, surfaceHit, Vector3.forward);
+        }
+        else
+        {
+            transform.parent = surfaceHit.transform;
+        }
+    }
+    public static void StickObjectToSurface(Transform objectToStick, RaycastHit surface, Vector3 rotationAxis, float distanceOffSurface = 0)
+    {
+        objectToStick.position = surface.point + (surface.normal * distanceOffSurface);
+        objectToStick.rotation = Quaternion.FromToRotation(rotationAxis, surface.normal);
+        objectToStick.parent = surface.transform;
+    }
+
+
+    
+    /*
+    public void SpawnObjectUpOffSurface(GameObject prefab)
+    {
+        GameObject newObject = Instantiate(prefab);
+        AttachObjectToHitSurface(newObject.transform, hit, Vector3.up, 0);
+    }
+
+    public void SpawnObjectIntoSurface(GameObject prefab)
+    {
+        GameObject newObject = Instantiate(prefab);
+        AttachObjectToHitSurface(newObject.transform, hit, Vector3.up, 0);
+    }
+    */
 
 }
