@@ -57,22 +57,6 @@ public readonly struct MiscFunctions
         return Quaternion.AngleAxis(axes.x, right) * Quaternion.AngleAxis(axes.y, up) * Quaternion.AngleAxis(axes.z, forward) * forward;
     }
 
-    public static ButtonState GetStateFromInput(string input)
-    {
-        if (Input.GetButtonDown(input))
-        {
-            return ButtonState.Pressed;
-        }
-        else if (Input.GetButtonUp(input))
-        {
-            return ButtonState.Released;
-        }
-        else if (Input.GetButton(input))
-        {
-            return ButtonState.Held;
-        }
-        return ButtonState.Inactive;
-    }
 
     /// <summary>
     /// Checks if a number key is pressed and produces an array index. If startWithOne is true, values are shifted down to represent number positions on a num row, otherwise the int accurately represents the number pressed.

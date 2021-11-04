@@ -4,13 +4,6 @@ using UnityEngine;
 //using UnityEngine.InputSystem;
 
 
-public enum ButtonState
-{
-    Inactive,
-    Pressed,
-    Held,
-    Released
-}
 
 public class Player : Character
 {
