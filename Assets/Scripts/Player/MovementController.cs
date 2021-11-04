@@ -7,10 +7,7 @@ using UnityEngine.Events;
 public class MovementController : MonoBehaviour
 {
     public Player controlling;
-    public Transform aimAxis;
     public Transform upperBody;
-    public Camera worldViewCamera;
-    public Camera headsUpDisplayCamera;
     CapsuleCollider collider;
     Rigidbody rb;
 
@@ -35,12 +32,15 @@ public class MovementController : MonoBehaviour
         }
     }
     //List<float> speedModifiers = new List<float>();
-
     Vector3 distanceToMove;
 
     [Header("Aiming")]
+    public Transform aimAxis;
+    public Camera worldViewCamera;
+    public Camera headsUpDisplayCamera;
     public float aimSensitivityX = 75;
     public float aimSensitivityY = 75;
+    [Range(1, 179)] public float fieldOfView = 90;
     float minAngle = -90;
     float maxAngle = 90;
     float verticalAngle = 0;
