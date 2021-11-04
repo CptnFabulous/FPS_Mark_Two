@@ -22,6 +22,15 @@ public class RangedAttack : WeaponMode
                 return true;
             }
 
+            if (optics != null)
+            {
+                // If player is currently aiming down sights, or still transitioning back to hipfiring
+                if (optics.IsAiming == true || optics.IsTransitioning == true)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
     }
@@ -49,9 +58,13 @@ public class RangedAttack : WeaponMode
 
     public override void UpdateLoop(WeaponHandler user)
     {
+        if (optics != null)
+        {
+            optics.InputLoop(this, user);
+        }
+        
         if (user.primary.Pressed && controls.InBurst == false)
         {
-            Debug.Log(name + " is firing on frame " + Time.frameCount);
             StartCoroutine(controls.Fire(this, user));
         }
 

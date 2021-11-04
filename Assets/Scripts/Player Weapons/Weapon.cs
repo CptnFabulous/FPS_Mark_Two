@@ -60,7 +60,7 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator Holster()
     {
-        yield return new WaitUntil(() => isSwitching == false);
+        yield return new WaitUntil(() => InAction == false);
 
         isSwitching = true;
         onHolster.Invoke();
@@ -72,7 +72,7 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator SwitchMode(int newModeIndex)
     {
-        if (isSwitching == true)
+        if (InAction == true)
         {
             yield break;
         }

@@ -40,6 +40,7 @@ public class WeaponHandler : MonoBehaviour
     public ButtonInput primary = new ButtonInput("Fire");
     public ButtonInput secondary = new ButtonInput("Aim");
     public ButtonInput tertiary = new ButtonInput("Reload");
+    public bool toggleADS;
 
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
@@ -56,10 +57,12 @@ public class WeaponHandler : MonoBehaviour
         float noiseY = Mathf.PerlinNoise(0, Time.time * swaySpeed);
         // Converts values from 0 - 1 to -1 - 1
         Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
+        /*
         if (angles.magnitude > 1)
         {
             angles.Normalize();
         }
+        */
         angles *= totalSway; //  Multiplies by accuracy value
         // Creates euler angles and combines with current aim direction
         return aimAxis.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
@@ -161,15 +164,23 @@ public class WeaponHandler : MonoBehaviour
             yield break;
         }
         
-        isSwitching = true;
+        
 
-        // If another weapon is already enabled, holster it
+        // If another weapon is already enabled
         if (CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true)
         {
+            if (CurrentWeapon.InAction) // If weapon is currently doing something, end this function
+            {
+                Debug.Log("Switch failed due to being in action on frame " + Time.frameCount);
+                yield break;
+            }
+
+            isSwitching = true;
             StartCoroutine(CurrentWeapon.Holster());
-            yield return new WaitUntil(() => CurrentWeapon.isSwitching == false);
+            yield return new WaitUntil(() => CurrentWeapon.InAction == false);
         }
 
+        isSwitching = true;
         // Once previous weapon is holstered, switch index to the new weapon and draw it
         equippedWeaponIndex = newIndex;
         StartCoroutine(CurrentWeapon.Draw());

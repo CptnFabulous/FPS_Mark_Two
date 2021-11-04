@@ -7,15 +7,16 @@ public class GunOptics : MonoBehaviour
 {
     public float magnification;
     public float transitionTime;
+    public Transform relativeHeadOrientation;
+    public Transform weaponHipFireOrientation;
 
     public UnityEvent onSwitchToADS;
     public UnityEvent onSwitchToHipfire;
 
 
-    
+    bool currentlyAiming;
+    float timer;
 
-
-    
     /// <summary>
     /// Is the player currently using ADS? Change this value to trigger ADS changing code
     /// </summary>
@@ -32,60 +33,86 @@ public class GunOptics : MonoBehaviour
                 return;
             }
 
-            StopCoroutine(transitionSequence);
             if (value == true)
             {
-                transitionSequence = Enable();
+                onSwitchToADS.Invoke();
             }
             else
             {
-                transitionSequence = Disable();
+                onSwitchToHipfire.Invoke();
             }
-            StartCoroutine(transitionSequence);
             currentlyAiming = value;
         }
     }
-    bool currentlyAiming;
-    float timer;
-    IEnumerator transitionSequence;
-
-
-    public IEnumerator Enable()
+    public bool IsTransitioning
     {
-        onSwitchToADS.Invoke();
-        while (timer <= 1)
+        get
         {
-            // Do lerp stuff using the timer value
-            LerpADS(timer);
-            timer += Time.deltaTime / transitionTime;
-            yield return null;
+            return timer != TargetValue;
         }
     }
-    public IEnumerator Disable()
+    float TargetValue
     {
-        onSwitchToHipfire.Invoke();
-        while (timer >= 0)
+        get
         {
-            // Do lerp stuff using the timer value
-            LerpADS(timer);
-            timer -= Time.deltaTime / transitionTime;
-            yield return null;
+            if (IsAiming)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
-    public void LerpADS(float value)
-    {
 
+    public void InputLoop(RangedAttack mode, WeaponHandler user)
+    {
+        if (IsAiming == false && user.secondary.Pressed)
+        {
+            IsAiming = true;
+        }
+        else if ((user.secondary.Released && user.toggleADS == false) || (user.secondary.Pressed && user.toggleADS == true))
+        {
+            IsAiming = false;
+        }
+
+        MovementController movement = user.controller.movement;
+
+        // If timer is different from desired value, lerp and update it
+        if (IsTransitioning)
+        {
+            #region Calculate timer value
+            float amountToAdd = Time.deltaTime / transitionTime;
+            if (TargetValue < timer)
+            {
+                amountToAdd = -amountToAdd;
+            }
+            timer += amountToAdd;
+            timer = Mathf.Clamp01(timer);
+            #endregion
+
+            #region Lerp values
+            // Lerp FOV
+            float regularFOV = movement.fieldOfView;
+            float zoomedFOV = regularFOV / magnification;
+            movement.worldViewCamera.fieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
+
+            // Lerp position of weapon model
+            // Calculate position and rotation to lerp gun transform to so that relativeHeadOrientation is at the same orientation as the player's head
+            //Vector3 adsPosition = MiscFunctions.MoveASoChildBMatchesC(gun.modelTransform.position, relativeHeadOrientation.position, user.aimAxis.position);
+            //Quaternion adsRotation = MiscFunctions.RotateASoChildBMatchesC(gun.modelTransform.rotation, relativeHeadOrientation.rotation, user.aimAxis.rotation);
+
+
+            // Hide weapon model when the ADS value reaches a certain threshold
+            #endregion
+        }
+        
+        Vector3 cameraDirection = Vector3.Slerp(movement.aimAxis.forward, user.AimDirection(), timer);
+        movement.upperBody.LookAt(movement.upperBody.position + cameraDirection);
+        
     }
 
 
 
-    void CameraSway(WeaponHandler user, MovementController userMovement)
-    {
-        
-        
-        
-        
-        Vector3 cameraDirection = Vector3.Slerp(userMovement.aimAxis.forward, user.AimDirection(), timer);
-        userMovement.upperBody.LookAt(userMovement.upperBody.position + cameraDirection);
-    }
 }
