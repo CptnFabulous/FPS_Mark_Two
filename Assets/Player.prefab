@@ -143,10 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlling: {fileID: 5952785220977947003}
-  aimAxis: {fileID: 5952785221988775342}
   upperBody: {fileID: 1184233747240851141}
-  worldViewCamera: {fileID: 5952785222629829733}
-  headsUpDisplayCamera: {fileID: 0}
   defaultSpeed: 5
   onStep:
     m_PersistentCalls:
@@ -163,8 +160,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  aimAxis: {fileID: 5952785221988775342}
+  worldViewCamera: {fileID: 5952785222629829733}
+  headsUpDisplayCamera: {fileID: 0}
   aimSensitivityX: 75
   aimSensitivityY: 75
+  fieldOfView: 60
   jumpForce: 5
   jumpCooldown: 0.1
   groundingRayLength: 0.01
@@ -521,18 +522,7 @@ MonoBehaviour:
   aimAxis: {fileID: 5952785221988775342}
   standingAccuracy: 2
   swaySpeed: 0.5
-  onDraw:
-    m_PersistentCalls:
-      m_Calls: []
-  onHolster:
-    m_PersistentCalls:
-      m_Calls: []
-  onModeSwitch:
-    m_PersistentCalls:
-      m_Calls: []
-  onAttack:
-    m_PersistentCalls:
-      m_Calls: []
+  toggleADS: 0
 --- !u!114 &7479822334647491782
 MonoBehaviour:
   m_ObjectHideFlags: 0
