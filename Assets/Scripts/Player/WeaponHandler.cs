@@ -29,18 +29,20 @@ public class WeaponHandler : MonoBehaviour
     public Transform aimAxis;
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
-    /*
+    public bool toggleADS;
+    public ButtonInput primary = new ButtonInput("Fire");
+    public ButtonInput secondary = new ButtonInput("Aim");
+    public ButtonInput tertiary = new ButtonInput("Reload");
+
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
+    /*
     public UnityEvent<WeaponMode> onModeSwitch;
     public UnityEvent<WeaponMode> onAttack;
     */
 
-    public ButtonInput primary = new ButtonInput("Fire");
-    public ButtonInput secondary = new ButtonInput("Aim");
-    public ButtonInput tertiary = new ButtonInput("Reload");
-    public bool toggleADS;
+    
 
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
@@ -176,6 +178,7 @@ public class WeaponHandler : MonoBehaviour
             }
 
             isSwitching = true;
+            onHolster.Invoke(CurrentWeapon);
             StartCoroutine(CurrentWeapon.Holster());
             yield return new WaitUntil(() => CurrentWeapon.InAction == false);
         }
@@ -183,6 +186,7 @@ public class WeaponHandler : MonoBehaviour
         isSwitching = true;
         // Once previous weapon is holstered, switch index to the new weapon and draw it
         equippedWeaponIndex = newIndex;
+        onDraw.Invoke(CurrentWeapon);
         StartCoroutine(CurrentWeapon.Draw());
         yield return new WaitUntil(() => CurrentWeapon.isSwitching == false);
 
