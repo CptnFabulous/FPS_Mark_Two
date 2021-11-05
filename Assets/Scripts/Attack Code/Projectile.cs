@@ -104,19 +104,4 @@ public class Projectile : MonoBehaviour
     }
 
 
-    
-    /*
-    public void SpawnObjectUpOffSurface(GameObject prefab)
-    {
-        GameObject newObject = Instantiate(prefab);
-        AttachObjectToHitSurface(newObject.transform, hit, Vector3.up, 0);
-    }
-
-    public void SpawnObjectIntoSurface(GameObject prefab)
-    {
-        GameObject newObject = Instantiate(prefab);
-        AttachObjectToHitSurface(newObject.transform, hit, Vector3.up, 0);
-    }
-    */
-
 }
