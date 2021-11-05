@@ -9,7 +9,7 @@ public class WeaponHandler : MonoBehaviour
     
     [Header("Weapons")]
     public Weapon[] equippedWeapons;
-    int equippedWeaponIndex;
+    public int equippedWeaponIndex;
     public Weapon CurrentWeapon
     {
         get
@@ -22,7 +22,7 @@ public class WeaponHandler : MonoBehaviour
         }
     }
     [HideInInspector] public bool isSwitching;
-    public Transform holdingPosition;
+    public Transform holdingSocket;
     public AmmunitionInventory ammo;
 
     [Header("Stats")]
