@@ -1617,9 +1617,9 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6154177461571150366}
   projectileCount: 1
   muzzle: {fileID: 3321402550516367603}
-  sway: 0.2
+  sway: 0.1
   shotSpread: 0
-  range: 600
+  range: 400
   ammoType: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
   ammoPerShot: 1
   effectsOnFire:
@@ -1717,6 +1717,10 @@ PrefabInstance:
     - target: {fileID: 7059086101645604908, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
+      propertyPath: startingVelocity
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
       propertyPath: m_RootOrder
