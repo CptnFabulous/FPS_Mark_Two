@@ -43,6 +43,59 @@ public class AI : MonoBehaviour
 
     Quaternion lookDirectionQuaternion; // Represents the current direction the AI is looking in.
     public Vector3 LookOrigin // The point in space the AI looks and aims from.
+    /// <summary>
+    /// Calculates and runs a sweep of raycasts to check an area for sections of a particular collider. This is performance-intensive and should not be run regularly.
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="target"></param>
+    /// <param name="raycastSpacing"></param>
+    /// <param name="hit"></param>
+    /// <param name="viewDetection"></param>
+    /// <returns></returns>
+    public static bool ComplexLineOfSightCheck(Vector3 origin, Collider target, float raycastSpacing, out RaycastHit hit, LayerMask viewDetection)
+    {
+        Bounds b = target.bounds;
+        Vector3 centre = b.center;
+        float maxExtent = b.extents.magnitude;
+        Quaternion lookDirection = Quaternion.LookRotation(centre - origin);
+        Vector3 up = lookDirection * Vector3.up;
+        Vector3 right = lookDirection * Vector3.right;
+
+        float zoneWidth = Vector3.Distance(centre + (-right * maxExtent), centre + (right * maxExtent));
+        int gridWidth = Mathf.CeilToInt(zoneWidth / raycastSpacing);
+        float spacingX = zoneWidth / gridWidth;
+
+        float zoneHeight = Vector3.Distance(centre + (-up * maxExtent), centre + (up * maxExtent));
+        int gridHeight = Mathf.CeilToInt(zoneHeight / raycastSpacing);
+        float spacingY = zoneHeight / gridHeight;
+        
+        Vector3 gridStartCorner = centre + (-right * zoneWidth / 2) + (-up * zoneHeight / 2);
+        float range = Vector3.Distance(origin, centre) + maxExtent;
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                Vector3 raycastHitDestination = gridStartCorner + (right * spacingX * x) + (up * spacingY * y);
+                Vector3 direction = raycastHitDestination - origin;
+                if (Physics.Raycast(origin, direction, out hit, range, viewDetection))
+                {
+                    Debug.DrawRay(origin, direction.normalized * range, Color.green, 3);
+                    if (hit.collider == target)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    Debug.DrawRay(origin, direction.normalized * range, Color.yellow, 3);
+                }
+            }
+        }
+
+        hit = new RaycastHit();
+        return false;
+    }
     {
         get
         {
