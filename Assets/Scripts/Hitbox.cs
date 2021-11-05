@@ -9,21 +9,21 @@ public class Hitbox : MonoBehaviour
     public bool isCritical;
     public Health sourceHealth;
 
-    public void Damage(int amount, Entity attacker)
+    public void Damage(int amount, DamageType type, Entity attacker)
     {
         if (sourceHealth == null)
         {
             return;
         }
-        sourceHealth.Damage(amount, attacker);
+        sourceHealth.Damage(amount, type, attacker);
     }
 
-    public void Damage(int amount, float criticalMultiplier, Entity attacker)
+    public void Damage(int amount, float criticalMultiplier, DamageType type, Entity attacker)
     {
         if (isCritical)
         {
             amount = Mathf.RoundToInt(amount * criticalMultiplier);
         }
-        Damage(amount, attacker);
+        Damage(amount, type, attacker);
     }
 }

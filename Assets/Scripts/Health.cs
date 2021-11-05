@@ -3,6 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum DamageType
+{
+    Piercing, // e.g. gunshots and stabs
+    Slashing, // e.g. shallow sword cuts
+    //Severing, // e.g. body part removal
+    Bludgeoning, // e.g. blunt force attacks
+    Impact, // e.g. slamming into a wall or floor
+    Explosive,
+    Burning,
+    //Freezing,
+    //Electric,
+    //Corrosive,
+    //Poison,
+    Asphyxiation,
+    Healing, // used for healing processes, since healing and taking damage are both altering a health value
+    DeletionByGame // e.g. falling out of the level or similar non-diegetic game process
+}
+
 public class Health : MonoBehaviour
 {
     public Resource data = new Resource(100, 100, 20);
@@ -29,7 +47,7 @@ public class Health : MonoBehaviour
         onHeal.Invoke(0);
     }
 
-    public void Damage(int amount, Entity attacker)
+    public void Damage(int amount, DamageType type, Entity attacker)
     {
         if (IsAlive == false && allowPosthumousDamage == false)
         {

@@ -8,6 +8,7 @@ public class PointDamage : MonoBehaviour
     public int damage = 10;
     public float criticalMultiplier = 3;
     public float knockback = 15;
+    public DamageType type = DamageType.Piercing;
     public UnityEvent<RaycastHit> onDamaged;
     public UnityEvent<RaycastHit> onUndamaged;
 
@@ -24,7 +25,7 @@ public class PointDamage : MonoBehaviour
         if (damageable != null && notAlly) // If a hitbox is present
         {
             //Debug.Log("Damaging " + damageable.name + " on frame " + Time.frameCount);
-            damageable.Damage(damage, criticalMultiplier, attacker);
+            damageable.Damage(damage, criticalMultiplier, type, attacker);
             onDamaged.Invoke(rh);
         }
         else
