@@ -55,6 +55,7 @@ public class Health : MonoBehaviour
         }
         
         data.current -= amount;
+        EventHandler.Transmit(new DamageMessage(attacker, this, type, amount));
         if (data.current <= 0)
         {
             onDeath.Invoke(amount);
