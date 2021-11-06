@@ -81,8 +81,18 @@ public class HeadsUpDisplay : MonoBehaviour
 
     private void Awake()
     {
-        controller.health.onDamage.AddListener((_)=> UpdateHealthMeter(controller.health));
-        controller.health.onHeal.AddListener((_) => UpdateHealthMeter(controller.health));
+        //controller.health.onDamage.AddListener((_)=> UpdateHealthMeter(controller.health));
+        //controller.health.onHeal.AddListener((_) => UpdateHealthMeter(controller.health));
+
+        //controller.health.onDamage.AddListener(()=> UpdateHealthMeter(controller.health));
+        //controller.health.onHeal.AddListener(()=> UpdateHealthMeter(controller.health));
+        controller.health.onDamage.AddListener(delegate { UpdateHealthMeter(controller.health); });
+        controller.health.onHeal.AddListener(delegate { UpdateHealthMeter(controller.health); });
+
+        Debug.Log("Adding listeners");
+
+        UpdateHealthMeter(controller.health);
+
     }
 
     private void LateUpdate()
