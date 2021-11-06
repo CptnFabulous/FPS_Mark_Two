@@ -39,10 +39,7 @@ public class AI : MonoBehaviour
             return objects.ToArray();
         }
     }
-    
 
-    Quaternion lookDirectionQuaternion; // Represents the current direction the AI is looking in.
-    public Vector3 LookOrigin // The point in space the AI looks and aims from.
     /// <summary>
     /// Calculates and runs a sweep of raycasts to check an area for sections of a particular collider. This is performance-intensive and should not be run regularly.
     /// </summary>
@@ -96,28 +93,44 @@ public class AI : MonoBehaviour
         hit = new RaycastHit();
         return false;
     }
+
+    #region Looking and aiming
+    /// <summary>
+    /// Represents the current direction the AI is looking in.
+    /// </summary>
+    Quaternion lookRotation;
+    /// <summary>
+    /// The point in space the AI looks and aims from.
+    /// </summary>
+    public Vector3 LookOrigin
     {
         get
         {
             return viewAxis.position;
         }
     }
-    public Vector3 LookDirection // The direction the AI is looking in, converted into an easy Vector3 value.
+    /// <summary>
+    /// The direction the AI is looking in, converted into an easy Vector3 value.
+    /// </summary>
+    public Vector3 LookForward
     {
         get
         {
-            return lookDirectionQuaternion * Vector3.forward;
+            return lookRotation * Vector3.forward;
         }
     }
-    public Vector3 LookUp // A direction directly up perpendicular to the direction the AI is looking.
+    /// <summary>
+    /// A direction directly up perpendicular to the direction the AI is looking.
+    /// </summary>
+    public Vector3 LookUp
     {
         get
         {
-            return lookDirectionQuaternion * Vector3.up;
+            return lookRotation * Vector3.up;
         }
     }
 
-    #region Looking around
+    
     /// <summary>
     /// Continuously rotates AI aim over time to look at position value, at a speed of degreesPerSecond
     /// </summary>
@@ -126,7 +139,7 @@ public class AI : MonoBehaviour
     public void RotateLookTowards(Vector3 position, float degreesPerSecond)
     {
         Quaternion correctRotation = Quaternion.LookRotation(position - LookOrigin, transform.up);
-        lookDirectionQuaternion = Quaternion.RotateTowards(lookDirectionQuaternion, correctRotation, degreesPerSecond * Time.deltaTime);
+        lookRotation = Quaternion.RotateTowards(lookRotation, correctRotation, degreesPerSecond * Time.deltaTime);
     }
 
     /// <summary>
@@ -137,7 +150,7 @@ public class AI : MonoBehaviour
     /// <returns></returns>
     public bool IsLookingAt(Vector3 position, float threshold)
     {
-        return Vector3.Angle(position - LookOrigin, LookDirection) <= threshold;
+        return Vector3.Angle(position - LookOrigin, LookForward) <= threshold;
     }
 
     /// <summary>
@@ -172,9 +185,6 @@ public class AI : MonoBehaviour
     }
     */
     #endregion
-
-
-
 
 
     private void OnDrawGizmos()
