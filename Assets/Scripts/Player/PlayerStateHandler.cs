@@ -6,12 +6,6 @@ using UnityEngine.Events;
 
 public class PlayerStateHandler : MonoBehaviour
 {
-    public Player controlling;
-    public Canvas headsUpDisplay;
-    public UnityEvent onResume;
-    public Canvas pauseMenu;
-    public UnityEvent onPause;
-
     public enum PlayerState
     {
         Active,
@@ -20,8 +14,18 @@ public class PlayerStateHandler : MonoBehaviour
         Dead,
     }
 
-    [SerializeField]
-    PlayerState state = PlayerState.Active;
+    public Player controlling;
+    [SerializeField] PlayerState state = PlayerState.Active;
+
+    [Header("Menus")]
+    public Canvas headsUpDisplay;
+    public UnityEvent onResume;
+    public Canvas pauseMenu;
+    public UnityEvent onPause;
+    public Canvas gameOverMenu;
+    public UnityEvent onDeath;
+    
+
     public PlayerState CurrentState
     {
         get
@@ -35,14 +39,23 @@ public class PlayerStateHandler : MonoBehaviour
             {
                 case PlayerState.Paused:
 
+                    onPause.Invoke();
                     Time.timeScale = 0;
                     SwitchMenu(pauseMenu);
                     EnterMenu();
 
                     break;
+                case PlayerState.Dead:
 
+                    onDeath.Invoke();
+                    Time.timeScale = 1;
+                    SwitchMenu(gameOverMenu);
+                    EnterMenu();
+
+                    break;
                 default: // Resume game
 
+                    onResume.Invoke();
                     SwitchMenu(headsUpDisplay);
                     ReturnToGameplay();
 
@@ -89,6 +102,7 @@ public class PlayerStateHandler : MonoBehaviour
     {
         headsUpDisplay.gameObject.SetActive(false);
         pauseMenu.gameObject.SetActive(false);
+        gameOverMenu.gameObject.SetActive(false);
 
         currentMenu.gameObject.SetActive(true);
     }

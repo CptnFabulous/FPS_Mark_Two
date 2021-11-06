@@ -38,4 +38,13 @@ public class Player : Character
         action.Invoke(value);
     }
     */
+
+
+    public void Die()
+    {
+        movement.enabled = false;
+        weapons.enabled = false;
+        movement.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
+    }
 }
