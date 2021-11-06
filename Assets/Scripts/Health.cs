@@ -25,9 +25,9 @@ public class Health : MonoBehaviour
 {
     public Resource data = new Resource(100, 100, 20);
     Hitbox[] hitboxes;
-    public UnityEvent<int> onDamage;
-    public UnityEvent<int> onHeal;
-    public UnityEvent<int> onDeath;
+    public UnityEvent onDamage;
+    public UnityEvent onHeal;
+    public UnityEvent onDeath;
     public bool allowPosthumousDamage;
     public bool IsAlive
     {
@@ -44,7 +44,6 @@ public class Health : MonoBehaviour
         {
             hitboxes[i].sourceHealth = this;
         }
-        onHeal.Invoke(0);
     }
 
     public void Damage(int amount, DamageType type, Entity attacker)
@@ -55,18 +54,20 @@ public class Health : MonoBehaviour
         }
         
         data.current -= amount;
+
         EventHandler.Transmit(new DamageMessage(attacker, this, type, amount));
+
         if (data.current <= 0)
         {
-            onDeath.Invoke(amount);
+            onDeath.Invoke();
         }
         else if (amount < 0)
         {
-            onHeal.Invoke(amount);
+            onHeal.Invoke();
         }
         else
         {
-            onDamage.Invoke(amount);
+            onDamage.Invoke();
         }
     }
 }
