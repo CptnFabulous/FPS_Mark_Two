@@ -2,14 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class HeadsUpDisplay : MonoBehaviour
 {
     public Player controller;
 
+    //public UnityEventQueueSystem testThing;
+
     [Header("Health")]
     public ResourceMeter healthMeter;
+    public UnityEvent damageEffects;
+    public UnityEvent healEffects;
 
+    public void CheckToRunHealthEffects(DamageMessage message)
+    {
+        if (message.victim != controller.health)
+        {
+            return;
+        }
+
+        UpdateHealthMeter(controller.health);
+
+        if (message.amount < 0)
+        {
+            damageEffects.Invoke();
+        }
+        else
+        {
+            healEffects.Invoke();
+        }
+    }
     public void UpdateHealthMeter(Health healthInfo)
     {
         healthMeter.Refresh(healthInfo.data);
@@ -86,12 +109,15 @@ public class HeadsUpDisplay : MonoBehaviour
 
         //controller.health.onDamage.AddListener(()=> UpdateHealthMeter(controller.health));
         //controller.health.onHeal.AddListener(()=> UpdateHealthMeter(controller.health));
-        controller.health.onDamage.AddListener(delegate { UpdateHealthMeter(controller.health); });
-        controller.health.onHeal.AddListener(delegate { UpdateHealthMeter(controller.health); });
+
+        //controller.health.onDamage.AddListener(delegate { UpdateHealthMeter(controller.health); });
+        //controller.health.onHeal.AddListener(delegate { UpdateHealthMeter(controller.health); });
 
         Debug.Log("Adding listeners");
 
         UpdateHealthMeter(controller.health);
+
+        EventHandler.Subscribe(CheckToRunHealthEffects, true);
 
     }
 
