@@ -147,7 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlling: {fileID: 5952785220977947003}
-  upperBody: {fileID: 1184233747240851141}
   defaultSpeed: 5
   onStep:
     m_PersistentCalls:
@@ -165,6 +164,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   aimAxis: {fileID: 5952785221988775342}
+  upperBody: {fileID: 1184233747240851141}
   worldViewCamera: {fileID: 5952785222629829733}
   headsUpDisplayCamera: {fileID: 0}
   aimSensitivityX: 75
@@ -222,8 +222,17 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   crouched: 0
+  upperBodyAnimationTransform: {fileID: 5952785222623807978}
   walkCycleLength: 0.75
   stepsPerCycle: 2
+  upperBodyDragDistance: 0.2
+  speedForMaxDrag: 20
+  upperBodyTiltAngle: 10
+  speedForMaxTilt: 10
+  lookSwayDegrees: 5
+  speedForMaxSway: 10
+  torsoPositionUpdateTime: 0.1
+  torsoRotationUpdateTime: 0.1
 --- !u!114 &745592948619609687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,49 +252,13 @@ MonoBehaviour:
     criticalLevel: 20
   onDamage:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthMeter
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 745592948619609687}
-          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onHeal:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthMeter
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 745592948619609687}
-          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onDeath:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8098729900447558270}
-        m_TargetAssemblyTypeName: HeadsUpDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthMeter
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 745592948619609687}
-          m_ObjectArgumentAssemblyTypeName: Health, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 5952785220977947003}
         m_TargetAssemblyTypeName: Player, Assembly-CSharp
         m_MethodName: Die
@@ -314,8 +287,6 @@ MonoBehaviour:
   damageMultiplier: 1
   isCritical: 0
   sourceHealth: {fileID: 0}
-  minimumForceToDamage: 10
-  damagePerForceUnit: 10
 --- !u!136 &5952785220977946993
 CapsuleCollider:
   m_ObjectHideFlags: 0

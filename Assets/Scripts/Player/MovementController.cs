@@ -74,12 +74,48 @@ public class MovementController : MonoBehaviour
     [SerializeField] bool crouched;
     float crouchTimer;
     
+    #region Cosmetics
     [Header("Cosmetics")]
+    public Transform upperBodyAnimationTransform;
     public float walkCycleLength = 0.5f;
     public int stepsPerCycle = 2;
     float walkCycleTimer;
     float stepTimer;
+    [Header("Drag")] // Torso lingering/dragging when moving
+    public float upperBodyDragDistance = 0.2f;
+    public float speedForMaxDrag = 20;
+    [Header("Tilt")] // Torso leaning/tilting when moving
+    public float upperBodyTiltAngle = 10;
+    public float speedForMaxTilt = 20;
+    [Header("Sway")] // Torso swaying/dragging when looking around
+    public float lookSwayDegrees = 5;
+    public float speedForMaxSway = 10;
+    [Header("Return")] // Return to default position and rotation
+    public float torsoPositionUpdateTime = 0.1f;
+    public float torsoRotationUpdateTime = 0.1f;
 
+    Vector3 torsoPosition;
+    Vector3 torsoRotation;
+    Vector3 torsoMovementVelocity;
+    float torsoAngularVelocityTimer;
+    #endregion
+
+    Vector3 DeltaMovement
+    {
+        get
+        {
+            return transform.position - positionLastFrame;
+        }
+    }
+    Vector3 positionLastFrame;
+    Quaternion DeltaLookRotation
+    {
+        get
+        {
+            return lookRotationLastFrame * Quaternion.Inverse(upperBody.transform.rotation);
+        }
+    }
+    Quaternion lookRotationLastFrame;
 
 
     Vector2 MovementInput
@@ -144,20 +180,25 @@ public class MovementController : MonoBehaviour
     }
     private void LateUpdate()
     {
+        torsoPosition = Vector3.zero;
+        torsoRotation = Vector3.zero;
+
         WalkCycle();
-        
-        
 
 
-        
-    }
+        TorsoDrag();
+        TorsoTilt();
+        TorsoSway();
 
-    #region Basic functionality
-    public void Move(Vector2 input)
-    {
-        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
-        movement = transform.rotation * movement;
-        movementVelocity = movement;
+        #region Update position and rotation of torso to match drag and sway values
+        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.transform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
+        float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
+        upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, Quaternion.Euler(torsoRotation), timer);
+        #endregion
+
+
+        positionLastFrame = transform.position;
+        lookRotationLastFrame = upperBody.transform.rotation;
     }
     public void InputAim(Vector2 input)
     {
@@ -308,10 +349,11 @@ public class MovementController : MonoBehaviour
             stepTimer = 0;
         }
     }
-    /*
+    
     void TorsoDrag()
     {
-        Vector3 totalVelocity = rb.velocity + movementVelocity;
+        //Vector3 totalVelocity = rb.velocity + movementVelocity;
+        Vector3 totalVelocity = DeltaMovement / Time.deltaTime;
         float dragIntensity = Mathf.Clamp01(totalVelocity.magnitude / speedForMaxDrag);
         Vector3 direction = transform.InverseTransformDirection(totalVelocity);
         Vector3 dragMax = direction.normalized * -upperBodyDragDistance;
@@ -320,7 +362,8 @@ public class MovementController : MonoBehaviour
     }
     void TorsoTilt()
     {
-        Vector3 totalVelocity = rb.velocity + movementVelocity;
+        //Vector3 totalVelocity = rb.velocity + movementVelocity;
+        Vector3 totalVelocity = DeltaMovement / Time.deltaTime;
         float tiltIntensity = Mathf.Clamp01(totalVelocity.magnitude / speedForMaxTilt);
         float tiltAngle = Mathf.Lerp(0, upperBodyTiltAngle, tiltIntensity);
         Vector3 newTiltDirection = Vector3.RotateTowards(transform.up, totalVelocity, tiltAngle * Mathf.Deg2Rad, 0);
@@ -329,11 +372,11 @@ public class MovementController : MonoBehaviour
     }
     void TorsoSway()
     {
-        float intensity = Mathf.Clamp01(DeltaRotateDistance / speedForMaxSway);
-        Vector3 swayAxes = new Vector3(DeltaRotateDirection.y, -DeltaRotateDirection.x, 0);
+        float intensity = Mathf.Clamp01(DeltaLookRotation.eulerAngles.magnitude / speedForMaxSway);
+        Vector3 swayAxes = new Vector3(DeltaLookRotation.x, DeltaLookRotation.y, DeltaLookRotation.z);
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * lookSwayDegrees, intensity);
         torsoRotation += swayAxes;
     }
-    */
+    
 
 }
