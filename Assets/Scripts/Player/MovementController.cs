@@ -152,29 +152,45 @@ public class MovementController : MonoBehaviour
     }
     void Update()
     {
-        SetGroundingData();
-        
         if (Input.GetButtonDown("Crouch"))
         {
             IsCrouching = !IsCrouching;
         }
 
         InputAim(CameraInput);
-        Move(MovementInput);
-        
-        
+
         if (Input.GetButtonDown("Jump"))
         {
+            Debug.Log("Trying to jump");
             TryJump();
         }
-        
-        
     }
-
     private void FixedUpdate()
     {
-        rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
-        //distanceToMove = Vector3.zero; // Dispose of values once they have been applied
+        SetGroundingData();
+
+        Vector2 input = MovementInput;
+        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
+        movement = transform.rotation * movement;
+        rb.MovePosition(transform.position + (movement * Time.fixedDeltaTime));
+        /*
+        if (groundingData.collider != null)
+        {
+            movement += Physics.gravity;
+        }
+        */
+
+        /*
+        if (movement.magnitude > 0)
+        {
+            float accelerationSpeed = 40f;
+            Vector3 desiredHorizontalVelocity = 
+            rb.velocity = Vector3.MoveTowards(rb.velocity, movement, accelerationSpeed * Time.fixedDeltaTime);
+        }
+        */
+
+        
+
     }
     private void LateUpdate()
     {
