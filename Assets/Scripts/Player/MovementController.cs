@@ -7,10 +7,6 @@ using UnityEngine.Events;
 public class MovementController : MonoBehaviour
 {
     public Player controlling;
-    public Transform upperBody;
-    CapsuleCollider collider;
-    Rigidbody rb;
-
 
     [Header("Movement")]
     public float defaultSpeed = 5;
@@ -32,10 +28,12 @@ public class MovementController : MonoBehaviour
         }
     }
     //List<float> speedModifiers = new List<float>();
-    Vector3 movementVelocity;
+    CapsuleCollider collider;
+    Rigidbody rb;
 
     [Header("Aiming")]
     public Transform aimAxis;
+    public Transform upperBody;
     public Camera worldViewCamera;
     public Camera headsUpDisplayCamera;
     public float aimSensitivityX = 75;
@@ -73,7 +71,7 @@ public class MovementController : MonoBehaviour
     public UnityEvent onStand;
     [SerializeField] bool crouched;
     float crouchTimer;
-    
+
     #region Cosmetics
     [Header("Cosmetics")]
     public Transform upperBodyAnimationTransform;
