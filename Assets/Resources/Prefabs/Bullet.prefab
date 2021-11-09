@@ -83,6 +83,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 7059086101645604909}
+        m_TargetAssemblyTypeName: Projectile, Assembly-CSharp
+        m_MethodName: SpawnObjectForwardOffSurface
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8093613007427399304, guid: 141515667f45add4da5c7e12c7ce8c6c, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
+        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
+        m_MethodName: PlayWithoutSource
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7059086101645604910}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 7059086101645604881}
         m_TargetAssemblyTypeName: Entity, Assembly-CSharp
         m_MethodName: Delete
@@ -115,31 +139,7 @@ MonoBehaviour:
       m_Calls: []
   onUndamaged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7059086101645604909}
-        m_TargetAssemblyTypeName: Projectile, Assembly-CSharp
-        m_MethodName: SpawnObjectForwardOffSurface
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8093613007427399304, guid: 141515667f45add4da5c7e12c7ce8c6c, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: PlayWithoutSource
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 7059086101645604910}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!96 &7059086101645604911
 TrailRenderer:
   serializedVersion: 2
