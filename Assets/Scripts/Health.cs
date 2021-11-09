@@ -36,16 +36,18 @@ public class Health : MonoBehaviour
             return data.current > 0;
         }
     }
-
-    private void Awake()
+    public Bounds HitboxBounds
     {
-        hitboxes = GetComponentsInChildren<Hitbox>();
-        for (int i = 0; i < hitboxes.Length; i++)
+        get
         {
-            hitboxes[i].sourceHealth = this;
+            Bounds entityBounds = hitboxes[0].collider.bounds;
+            for (int i = 1; i < hitboxes.Length; i++)
+            {
+                entityBounds.Encapsulate(hitboxes[i].collider.bounds);
+            }
+            return entityBounds;
         }
     }
-
     public void Damage(int amount, DamageType type, Entity attacker)
     {
         if (IsAlive == false && allowPosthumousDamage == false)
@@ -71,16 +73,12 @@ public class Health : MonoBehaviour
         }
     }
 
-    public Bounds HitboxBounds
+    private void Awake()
     {
-        get
+        hitboxes = GetComponentsInChildren<Hitbox>();
+        for (int i = 0; i < hitboxes.Length; i++)
         {
-            Bounds entityBounds = hitboxes[0].collider.bounds;
-            for (int i = 1; i < hitboxes.Length; i++)
-            {
-                entityBounds.Encapsulate(hitboxes[i].collider.bounds);
-            }
-            return entityBounds;
+            hitboxes[i].sourceHealth = this;
         }
     }
 }
