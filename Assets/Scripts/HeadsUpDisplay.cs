@@ -11,13 +11,9 @@ public class HeadsUpDisplay : MonoBehaviour
     Canvas canvas;
     RectTransform rt;
 
-    //public UnityEventQueueSystem testThing;
-
-    [Header("Health")]
     [Header("Detection")]
     public float observationRange = 50;
     public LayerMask relevantThingDetection = ~0;
-    
     public bool RelevantThingObserved(float range, out RaycastHit observedObject)
     {
         return Physics.Raycast(camera.transform.position, camera.transform.forward, out observedObject, range, relevantThingDetection);
@@ -97,6 +93,19 @@ public class HeadsUpDisplay : MonoBehaviour
         enemyHealthMeter.Refresh(enemyHealth.data);
     }
 
+    [Header("Damage")]
+    public UnityEvent damageEffects;
+    public UnityEvent killEffects;
+    public void CheckToPlayDamageEffects(DamageMessage message)
+    {
+        if (message.attacker != controller)
+        {
+            return;
+        }
+
+        damageEffects.Invoke();
+    }
+
     [Header("Weapons")]
     public GameObject weaponInterface;
     public ResourceMeter magazineMeter;
@@ -165,6 +174,7 @@ public class HeadsUpDisplay : MonoBehaviour
         rt = GetComponent<RectTransform>();
 
         EventHandler.Subscribe(CheckToRunHealthEffects, true);
+        EventHandler.Subscribe(CheckToPlayDamageEffects, true);
 
         UpdateHealthMeter(controller.health);
 
