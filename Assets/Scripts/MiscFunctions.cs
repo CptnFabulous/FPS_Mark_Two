@@ -4,6 +4,19 @@ using UnityEngine;
 
 public readonly struct MiscFunctions
 {
+    public static Vector3 ScreenToAnchoredPosition(Vector3 screenSpace, RectTransform rt, RectTransform parent)
+    {
+        Vector3 canvasSpace = screenSpace;
+        // Multiplies screen space values to convert them to the canvas' dimensions.
+        canvasSpace.x = canvasSpace.x / Screen.width;
+        canvasSpace.y = canvasSpace.y / Screen.height;
+        canvasSpace *= parent.rect.size;
+        // Calculates the rectTransform's anchor reference point
+        Vector2 anchorDimensions = rt.anchorMin + ((rt.anchorMax - rt.anchorMin) / 2);
+        // Multiplies by canvas rect dimensions to get an offset
+        Vector3 anchorOffset = anchorDimensions * parent.rect.size;
+        return canvasSpace - anchorOffset; // Adds offset to canvas space to produce an anchored position
+    }
 
 
 

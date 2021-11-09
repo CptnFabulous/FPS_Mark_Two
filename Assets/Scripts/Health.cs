@@ -24,7 +24,7 @@ public enum DamageType
 public class Health : MonoBehaviour
 {
     public Resource data = new Resource(100, 100, 20);
-    Hitbox[] hitboxes;
+    public Hitbox[] hitboxes { get; private set; }
     public UnityEvent onDamage;
     public UnityEvent onHeal;
     public UnityEvent onDeath;
@@ -68,6 +68,19 @@ public class Health : MonoBehaviour
         else
         {
             onDamage.Invoke();
+        }
+    }
+
+    public Bounds HitboxBounds
+    {
+        get
+        {
+            Bounds entityBounds = hitboxes[0].collider.bounds;
+            for (int i = 1; i < hitboxes.Length; i++)
+            {
+                entityBounds.Encapsulate(hitboxes[i].collider.bounds);
+            }
+            return entityBounds;
         }
     }
 }
