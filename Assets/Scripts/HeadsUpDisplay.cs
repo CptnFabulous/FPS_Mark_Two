@@ -22,10 +22,11 @@ public class HeadsUpDisplay : MonoBehaviour
     {
         return Physics.Raycast(camera.transform.position, camera.transform.forward, out observedObject, range, relevantThingDetection);
     }
-    public ResourceMeter healthMeter;
-    public UnityEvent damageEffects;
-    public UnityEvent healEffects;
 
+    [Header("Player Health")]
+    public ResourceMeter healthMeter;
+    public UnityEvent hurtEffects;
+    public UnityEvent healEffects;
     public void CheckToRunHealthEffects(DamageMessage message)
     {
         if (message.victim != controller.health)
@@ -37,11 +38,11 @@ public class HeadsUpDisplay : MonoBehaviour
 
         if (message.amount < 0)
         {
-            damageEffects.Invoke();
+            healEffects.Invoke();
         }
         else
         {
-            healEffects.Invoke();
+            hurtEffects.Invoke();
         }
     }
     public void UpdateHealthMeter(Health healthInfo)
@@ -102,7 +103,6 @@ public class HeadsUpDisplay : MonoBehaviour
     public ResourceMeter ammoReserve;
     public Text weaponModeName;
     public Image weaponModeIcon;
-
     public void ShowWeaponHUD(Weapon currentWeapon)
     {
         weaponInterface.gameObject.SetActive(true);
@@ -161,27 +161,18 @@ public class HeadsUpDisplay : MonoBehaviour
 
     private void Awake()
     {
-        //controller.health.onDamage.AddListener((_)=> UpdateHealthMeter(controller.health));
-        //controller.health.onHeal.AddListener((_) => UpdateHealthMeter(controller.health));
-
-        //controller.health.onDamage.AddListener(()=> UpdateHealthMeter(controller.health));
-        //controller.health.onHeal.AddListener(()=> UpdateHealthMeter(controller.health));
         canvas = GetComponent<Canvas>();
         rt = GetComponent<RectTransform>();
 
-        //controller.health.onDamage.AddListener(delegate { UpdateHealthMeter(controller.health); });
-        //controller.health.onHeal.AddListener(delegate { UpdateHealthMeter(controller.health); });
-
-        Debug.Log("Adding listeners");
+        EventHandler.Subscribe(CheckToRunHealthEffects, true);
 
         UpdateHealthMeter(controller.health);
-
-        EventHandler.Subscribe(CheckToRunHealthEffects, true);
 
     }
 
     private void LateUpdate()
     {
         ShowWeaponHUD(controller.weapons.CurrentWeapon);
+        CheckIfLookingAtDamageableEntity();
     }
 }
