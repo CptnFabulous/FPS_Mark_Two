@@ -32,6 +32,5 @@ public class KillBounds : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(levelBounds.center, levelBounds.size);
-        //UnityEditor.Handles.Label(levelBounds.center, "Kill Bounds");
     }
 }

@@ -52,14 +52,14 @@ public class AIGridPoints : MonoBehaviour
                 float positionX = x * gridSpacing;
                 float positionZ = z * gridSpacing;
                 Vector3 origin = new Vector3(levelBounds.min.x + positionX, levelBounds.max.y, levelBounds.min.z + positionZ);
-                RaycastHit[] terrainHit = Physics.RaycastAll(origin, Vector3.down,levelBounds.size.y, terrainDetection);
+                RaycastHit[] terrainHit = Physics.RaycastAll(origin, Vector3.down, levelBounds.size.y, terrainDetection);
                 for (int i = 0; i < terrainHit.Length; i++)
                 {
                     // Uses hit point to account for height and generates a new Vector3 with said height but at the correct grid position.
                     Vector3 point = origin;
                     point.y = terrainHit[i].point.y;
                     newPoints.Add(point);
-                    //Debug.DrawRay(point, Vector3.up, Color.cyan, 30);
+                    Debug.DrawRay(point, Vector3.up, Color.cyan, 30);
                 }
             }
         }
@@ -106,7 +106,6 @@ public class AIGridPoints : MonoBehaviour
             desired.Add(points[index]);
             Debug.DrawRay(points[index], Vector3.up * 3, Color.red, 30);
         }
-
 
         return desired.ToArray();
     }
