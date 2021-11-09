@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(RectTransform))]
 public class ResourceMeter : MonoBehaviour
 {
     public Text amount;
@@ -11,7 +12,19 @@ public class ResourceMeter : MonoBehaviour
     public float barChangeSpeed = 0.1f;
     public Color safeColour = Color.green;
     public Color criticalColour = Color.red;
+
+    public RectTransform rectTransform { get; private set; }
     IEnumerator transition;
+
+    private void Awake()
+    {
+        rectTransform = GetComponent<RectTransform>();
+    }
+    private void OnEnable()
+    {
+        transition = Transition();
+        StartCoroutine(transition);
+    }
 
     public void Refresh(Resource values)
     {
@@ -32,7 +45,6 @@ public class ResourceMeter : MonoBehaviour
             StartCoroutine(transition);
         }
     }
-
     public IEnumerator Transition()
     {
         while (previousMeter.fillAmount != currentMeter.fillAmount)
