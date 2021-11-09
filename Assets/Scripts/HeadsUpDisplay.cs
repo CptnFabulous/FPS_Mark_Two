@@ -7,10 +7,19 @@ using UnityEngine.Events;
 public class HeadsUpDisplay : MonoBehaviour
 {
     public Player controller;
+    public Camera camera;
 
     //public UnityEventQueueSystem testThing;
 
     [Header("Health")]
+    [Header("Detection")]
+    public float observationRange = 50;
+    public LayerMask relevantThingDetection = ~0;
+    
+    public bool RelevantThingObserved(out RaycastHit observedObject)
+    {
+        return Physics.Raycast(camera.transform.position, camera.transform.forward, out observedObject, observationRange, relevantThingDetection);
+    }
     public ResourceMeter healthMeter;
     public UnityEvent damageEffects;
     public UnityEvent healEffects;
