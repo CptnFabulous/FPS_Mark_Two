@@ -133,7 +133,19 @@ MonoBehaviour:
   gameOverMenu: {fileID: 7795760844495692769}
   onDeath:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5952785220977947003}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: Die
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5952785220977947007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -923,13 +935,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5952785220977947003}
     - target: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-      propertyPath: observationRange
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-      propertyPath: relevantThingDetection.m_Bits
-      value: 4294967295
-      objectReference: {fileID: 0}
+      propertyPath: soundPlayer
+      value: 
+      objectReference: {fileID: 5952785220977947006}
     - target: {fileID: 2467618292383864045, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -1069,11 +1077,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
---- !u!223 &5952785221938061819 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8098729900447558270 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -1085,6 +1088,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06375990f6058fb418571800f9400e70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!223 &5952785221938061819 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8233808102799960725
 PrefabInstance:
   m_ObjectHideFlags: 0

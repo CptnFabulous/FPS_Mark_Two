@@ -6,10 +6,22 @@ using UnityEngine.Events;
 
 public class HeadsUpDisplay : MonoBehaviour
 {
+    [Header("General")]
     public Player controller;
     public Camera camera;
+    public AudioSource soundPlayer;
     Canvas canvas;
     RectTransform rt;
+    public void PlayAudioClip(AudioClip clip)
+    {
+        soundPlayer.PlayOneShot(clip);
+    }
+    public void PlayAudioClip(RandomSoundPlayer soundEffect)
+    {
+        soundEffect.Play(soundPlayer);
+    }
+
+
 
     [Header("Detection")]
     public float observationRange = 50;
@@ -179,10 +191,11 @@ public class HeadsUpDisplay : MonoBehaviour
         UpdateHealthMeter(controller.health);
 
     }
-
     private void LateUpdate()
     {
         ShowWeaponHUD(controller.weapons.CurrentWeapon);
         CheckIfLookingAtDamageableEntity();
     }
+
+    
 }
