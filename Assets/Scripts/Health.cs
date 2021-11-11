@@ -72,8 +72,13 @@ public class Health : MonoBehaviour
             onDamage.Invoke();
         }
     }
-    public void Resurrect()
+    public void Resurrect(float delay)
     {
+        StartCoroutine(ResurrectSequence(delay));
+    }
+    IEnumerator ResurrectSequence(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         data.current = data.max;
         onHeal.Invoke();
     }
