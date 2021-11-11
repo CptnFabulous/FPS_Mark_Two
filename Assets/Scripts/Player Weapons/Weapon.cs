@@ -25,12 +25,6 @@ public class Weapon : MonoBehaviour
     public UnityEvent onDraw;
     public UnityEvent onHolster;
     public bool isSwitching { get; private set; }
-
-    [Header("Cosmetics")]
-    public Renderer model;
-    public Transform modelTransform;
-
-
     public bool InAction
     {
         get
@@ -85,35 +79,4 @@ public class Weapon : MonoBehaviour
         currentModeIndex = newModeIndex;
         isSwitching = false;
     }
-
-
-
-
-
-
-
-    private void LateUpdate()
-    {
-        if (oldModelOrientation != null && newModelOrientation != null)
-        {
-            animationTimer += Time.deltaTime / animationTime;
-            float lerpValue = animationCurve.Evaluate(animationTimer);
-            modelTransform.position = Vector3.Lerp(oldModelOrientation.position, newModelOrientation.position, lerpValue);
-            modelTransform.rotation = Quaternion.Lerp(oldModelOrientation.rotation, newModelOrientation.rotation, lerpValue);
-        }
-    }
-    public void ApplyModelAnimation(SimpleWeaponAnimation animation)
-    {
-        oldModelOrientation = animation.older;
-        newModelOrientation = animation.newer;
-        animationTime = animation.time;
-        animationCurve = animation.curve;
-        animationTimer = 0;
-    }
-    
-    Transform oldModelOrientation;
-    Transform newModelOrientation;
-    float animationTime;
-    AnimationCurve animationCurve;
-    float animationTimer;
 }

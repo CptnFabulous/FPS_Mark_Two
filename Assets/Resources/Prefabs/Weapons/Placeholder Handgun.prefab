@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1473209013527064894}
-  - component: {fileID: 1786329004459315320}
   m_Layer: 0
   m_Name: Reload Position
   m_TagString: Untagged
@@ -31,45 +30,6 @@ Transform:
   m_Father: {fileID: 5737478536426011707}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 37.718, y: 0, z: 0}
---- !u!114 &1786329004459315320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 704470381946624569}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cea624ae23d55644bae8c6058c0898a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  older: {fileID: 8357975739753323550}
-  newer: {fileID: 1473209013527064894}
-  time: 0.25
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &2859588207801914094
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,7 +120,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8357975739753323550}
-  - component: {fileID: 6118579026991740102}
   m_Layer: 0
   m_Name: Hipfire Position
   m_TagString: Untagged
@@ -182,45 +141,6 @@ Transform:
   m_Father: {fileID: 5737478536426011707}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6118579026991740102
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4037988526042884270}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cea624ae23d55644bae8c6058c0898a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  older: {fileID: 5501921383911344255}
-  newer: {fileID: 8357975739753323550}
-  time: 0.5
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &5122354205456723836
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,14 +197,14 @@ MonoBehaviour:
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5737478536426012100}
-        m_TargetAssemblyTypeName: Weapon, Assembly-CSharp
-        m_MethodName: ApplyModelAnimation
-        m_Mode: 2
+      - m_Target: {fileID: 8124763985568978201}
+        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
+        m_MethodName: PlayAnimation
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 1054731991782959372}
-          m_ObjectArgumentAssemblyTypeName: SimpleWeaponAnimation, Assembly-CSharp
-          m_IntArgument: 0
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -321,14 +241,14 @@ MonoBehaviour:
   onReloadStart:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5737478536426012100}
-        m_TargetAssemblyTypeName: Weapon, Assembly-CSharp
-        m_MethodName: ApplyModelAnimation
-        m_Mode: 2
+      - m_Target: {fileID: 8124763985568978201}
+        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
+        m_MethodName: PlayAnimation
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 1786329004459315320}
-          m_ObjectArgumentAssemblyTypeName: SimpleWeaponAnimation, Assembly-CSharp
-          m_IntArgument: 0
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -338,18 +258,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   roundsReloadedAtOnce: 30
-  delayBetweenLoads: 0.1
+  delayBetweenLoads: 0.25
   onReloadEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5737478536426012100}
-        m_TargetAssemblyTypeName: Weapon, Assembly-CSharp
-        m_MethodName: ApplyModelAnimation
-        m_Mode: 2
+      - m_Target: {fileID: 8124763985568978201}
+        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
+        m_MethodName: PlayAnimation
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 6118579026991740102}
-          m_ObjectArgumentAssemblyTypeName: SimpleWeaponAnimation, Assembly-CSharp
-          m_IntArgument: 0
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -434,6 +354,7 @@ GameObject:
   - component: {fileID: 5737478536426011707}
   - component: {fileID: 5737478536426012100}
   - component: {fileID: 5737478536426012101}
+  - component: {fileID: 8124763985568978201}
   m_Layer: 0
   m_Name: Placeholder Handgun
   m_TagString: Untagged
@@ -482,13 +403,13 @@ MonoBehaviour:
   onDraw:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5737478536426012100}
-        m_TargetAssemblyTypeName: Weapon, Assembly-CSharp
-        m_MethodName: ApplyModelAnimation
-        m_Mode: 2
+      - m_Target: {fileID: 8124763985568978201}
+        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
+        m_MethodName: PlayAnimation
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 6118579026991740102}
-          m_ObjectArgumentAssemblyTypeName: SimpleWeaponAnimation, Assembly-CSharp
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -497,14 +418,14 @@ MonoBehaviour:
   onHolster:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5737478536426012100}
-        m_TargetAssemblyTypeName: Weapon, Assembly-CSharp
-        m_MethodName: ApplyModelAnimation
-        m_Mode: 2
+      - m_Target: {fileID: 8124763985568978201}
+        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
+        m_MethodName: PlayAnimation
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 4530369508627266499}
-          m_ObjectArgumentAssemblyTypeName: SimpleWeaponAnimation, Assembly-CSharp
-          m_IntArgument: 0
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -530,6 +451,169 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8124763985568978201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5737478536426011706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f9bf7f4eea39ae4da9c23e544029da9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transformToAnimate: {fileID: 5737478536575503394}
+  animations:
+  - name: Holster To Hipfire
+    older: {fileID: 5501921383911344255}
+    newer: {fileID: 8357975739753323550}
+    time: 0.2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - name: Holster
+    older: {fileID: 8357975739753323550}
+    newer: {fileID: 5501921383911344255}
+    time: 0.2
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - name: Recoil
+    older: {fileID: 8357975739753323550}
+    newer: {fileID: 3927382034641861063}
+    time: 0.1
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 2
+        outSlope: 2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.25
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - name: Hipfire to Reload
+    older: {fileID: 8357975739753323550}
+    newer: {fileID: 1473209013527064894}
+    time: 0.25
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - name: Reload to Hipfire
+    older: {fileID: 1473209013527064894}
+    newer: {fileID: 8357975739753323550}
+    time: 0.25
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
 --- !u!1 &5737478536575503393
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,7 +1028,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5501921383911344255}
-  - component: {fileID: 4530369508627266499}
   m_Layer: 0
   m_Name: Holster Position
   m_TagString: Untagged
@@ -966,45 +1049,6 @@ Transform:
   m_Father: {fileID: 5737478536426011707}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 81.67, y: 0, z: 0}
---- !u!114 &4530369508627266499
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7971802222669383379}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cea624ae23d55644bae8c6058c0898a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  older: {fileID: 8357975739753323550}
-  newer: {fileID: 5501921383911344255}
-  time: 0.5
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &9183329012722414291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,7 +1058,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3927382034641861063}
-  - component: {fileID: 1054731991782959372}
   m_Layer: 0
   m_Name: Recoil Position
   m_TagString: Untagged
@@ -1036,54 +1079,6 @@ Transform:
   m_Father: {fileID: 5737478536426011707}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -2.927, y: -0.406, z: 0.198}
---- !u!114 &1054731991782959372
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9183329012722414291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cea624ae23d55644bae8c6058c0898a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  older: {fileID: 8357975739753323550}
-  newer: {fileID: 3927382034641861063}
-  time: 0.1
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.25
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1001 &1024184326944906651
 PrefabInstance:
   m_ObjectHideFlags: 0
