@@ -54,8 +54,8 @@ public class Health : MonoBehaviour
         {
             return;
         }
-        
-        data.current -= amount;
+
+        data.Change(-amount);
 
         EventHandler.Transmit(new DamageMessage(attacker, this, type, amount));
 
@@ -71,6 +71,11 @@ public class Health : MonoBehaviour
         {
             onDamage.Invoke();
         }
+    }
+    public void Resurrect()
+    {
+        data.current = data.max;
+        onHeal.Invoke();
     }
 
     private void Awake()
