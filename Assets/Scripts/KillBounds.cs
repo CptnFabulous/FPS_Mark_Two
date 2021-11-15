@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KillBounds : MonoBehaviour
 {
-    public Bounds levelBounds;
+    public Bounds levelBounds = new Bounds(Vector3.zero, Vector3.one * 200);
     public float delayBetweenSweeps = 5;
     float lastTimeSweeped;
 
