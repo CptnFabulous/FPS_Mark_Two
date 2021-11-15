@@ -4,6 +4,11 @@ using UnityEngine;
 
 public readonly struct MiscFunctions
 {
+    public static Quaternion FromToRotation(Quaternion a, Quaternion b)
+    {
+        return a * Quaternion.Inverse(b);
+    }
+
     public static Vector3 ScreenToAnchoredPosition(Vector3 screenSpace, RectTransform rt, RectTransform parent)
     {
         Vector3 canvasSpace = screenSpace;

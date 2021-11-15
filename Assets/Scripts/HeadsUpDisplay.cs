@@ -124,6 +124,7 @@ public class HeadsUpDisplay : MonoBehaviour
     public ResourceMeter ammoReserve;
     public Text weaponModeName;
     public Image weaponModeIcon;
+    public GameObject reticle;
     public void ShowWeaponHUD(Weapon currentWeapon)
     {
         weaponInterface.gameObject.SetActive(true);
@@ -177,6 +178,11 @@ public class HeadsUpDisplay : MonoBehaviour
         {
             magazineMeter.Refresh(currentMode.magazine.ammo);
         }
+
+        // Disable reticle if player is aiming down weapon sights
+        // Show reticle If ADS is null, OR if ADS is present but player is not aiming and hideDefaultReticle is false
+        GunADS ads = currentMode.optics;
+        reticle.SetActive(ads == null || (!ads.IsAiming && !ads.hideMainReticle));
     }
 
 

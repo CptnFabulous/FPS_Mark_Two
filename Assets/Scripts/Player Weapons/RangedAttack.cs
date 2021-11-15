@@ -7,7 +7,7 @@ public class RangedAttack : WeaponMode
     public GunGeneralStats stats;
     public GunFireController controls;
     public GunMagazine magazine;
-    public GunOptics optics;
+    public GunADS optics;
     public override bool InAction
     {
         get
@@ -60,7 +60,7 @@ public class RangedAttack : WeaponMode
     {
         if (optics != null)
         {
-            optics.InputLoop(this, user);
+            optics.InputLoop(user);
         }
         
         if (user.primary.Pressed && controls.InBurst == false)
