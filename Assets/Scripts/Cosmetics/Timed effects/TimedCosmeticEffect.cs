@@ -11,19 +11,11 @@ public class TimedCosmeticEffect : MonoBehaviour
     public UnityEvent<float> effects;
 
     float timer;
-    public float CurrentValue
-    {
-        get
-        {
-            return timer;
-        }
-        set
-        {
-            timer = Mathf.Clamp01(value);
-            effects.Invoke(timer);
-        }
-    }
 
+    private void OnValidate()
+    {
+        effects.Invoke(timer);
+    }
     private void Start()
     {
         Stop();
@@ -65,5 +57,10 @@ public class TimedCosmeticEffect : MonoBehaviour
     {
         timer = 0;
         enabled = false;
+    }
+    public void SetTimeManually(float value)
+    {
+        timer = Mathf.Clamp01(value);
+        effects.Invoke(timer);
     }
 }
