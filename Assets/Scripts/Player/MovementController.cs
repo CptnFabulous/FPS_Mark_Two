@@ -145,6 +145,7 @@ public class MovementController : MonoBehaviour
     {
         collider = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
+        worldViewCamera.fieldOfView = fieldOfView;
     }
     void Start()
     {
