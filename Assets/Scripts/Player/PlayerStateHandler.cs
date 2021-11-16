@@ -21,6 +21,7 @@ public class PlayerStateHandler : MonoBehaviour
     public Canvas headsUpDisplay;
     public UnityEvent onResume;
     public Canvas pauseMenu;
+    public Button resumeButton;
     public UnityEvent onPause;
     public Canvas gameOverMenu;
     public UnityEvent onDeath;
@@ -67,31 +68,16 @@ public class PlayerStateHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        resumeButton.onClick.AddListener(() => CurrentState = PlayerState.Active);
         CurrentState = CurrentState; // Assigns value to itself to trigger the appropriate code
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Pause")) // Toggle between paused and unpaused
+        if (Input.GetButtonDown("Pause") && CurrentState == PlayerState.Active) // Toggle between paused and unpaused
         {
-            TogglePause();
-        }
-    }
-
-    public void TogglePause()
-    {
-        switch (CurrentState)
-        {
-            case PlayerState.Active: // pause game
-                CurrentState = PlayerState.Paused;
-                break;
-            case PlayerState.Paused: // resume game
-                CurrentState = PlayerState.Active;
-                break;
-            case PlayerState.InMenus: // exit out of menu
-                CurrentState = PlayerState.Active;
-                break;
+            CurrentState = PlayerState.Paused;
         }
     }
 
