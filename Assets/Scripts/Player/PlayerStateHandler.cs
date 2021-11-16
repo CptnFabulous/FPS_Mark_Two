@@ -66,7 +66,7 @@ public class PlayerStateHandler : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         resumeButton.onClick.AddListener(() => CurrentState = PlayerState.Active);
         CurrentState = CurrentState; // Assigns value to itself to trigger the appropriate code
