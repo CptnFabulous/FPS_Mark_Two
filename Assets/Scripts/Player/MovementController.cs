@@ -342,7 +342,8 @@ public class MovementController : MonoBehaviour
 
     void WalkCycle()
     {
-        if (groundingData.collider != null && MovementInput.magnitude > 0)
+        // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
+        if (groundingData.collider != null && (MovementInput.magnitude > 0 || walkCycleTimer != 0))
         {
             float walkCycleLength = strideLength * stepsPerCycle / CurrentMoveSpeed;
             walkCycleTimer += Time.deltaTime / walkCycleLength;
