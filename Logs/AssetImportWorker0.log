@@ -1435,3 +1435,837 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.006744 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 0.41 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.054 seconds
+Domain Reload Profiling:
+	ReloadAssembly (1054ms)
+		BeginReloadAssembly (118ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (5ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (32ms)
+		EndReloadAssembly (861ms)
+			LoadAssemblies (105ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (295ms)
+			ReleaseScriptCaches (1ms)
+			RebuildScriptCaches (42ms)
+			SetupLoadedEditorAssemblies (319ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (9ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (0ms)
+				BeforeProcessingInitializeOnLoad (84ms)
+				ProcessInitializeOnLoadAttributes (200ms)
+				ProcessInitializeOnLoadMethodAttributes (15ms)
+				AfterProcessingInitializeOnLoad (11ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (7ms)
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.43 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1679 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 78.4 MB.
+System memory in use after: 78.5 MB.
+
+Unloading 14 unused Assets to reduce memory usage. Loaded Objects now: 2144.
+Total: 3.221300 ms (FindLiveObjects: 0.236800 ms CreateObjectMapping: 0.042200 ms MarkObjects: 2.920200 ms  DeleteObjects: 0.020800 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 229.910772 seconds.
+  path: Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab
+  artifactKey: Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab using Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5b4544e3f6a3441a24947926c63d05d1') in 0.054775 seconds 
+  Import took 0.057819 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 3.337601 seconds.
+  path: Assets/Resources/Prefabs/HUD elements/Game Over Menu.prefab
+  artifactKey: Guid(43a93015454fffd46ab0c04de0ce53b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/HUD elements/Game Over Menu.prefab using Guid(43a93015454fffd46ab0c04de0ce53b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dbfb9c48b524a7731b716a3bf6711d3c') in 0.025808 seconds 
+  Import took 0.028954 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000267 seconds.
+  path: Assets/Resources/Prefabs/HUD elements/Pause Menu.prefab
+  artifactKey: Guid(0ae97e7412dd0d842be68d8601f68f23) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/HUD elements/Pause Menu.prefab using Guid(0ae97e7412dd0d842be68d8601f68f23) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '48f9df97a8730abc540b7c24c3f7bc5c') in 0.022670 seconds 
+  Import took 0.025792 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 10.275551 seconds.
+  path: Assets/Resources/Prefabs/HUD elements/Game Over Menu.prefab
+  artifactKey: Guid(43a93015454fffd46ab0c04de0ce53b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/HUD elements/Game Over Menu.prefab using Guid(43a93015454fffd46ab0c04de0ce53b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ff722406a34980c934f6ee3417769349') in 0.006395 seconds 
+  Import took 0.009452 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 13.077539 seconds.
+  path: Assets/Resources/Prefabs/HUD elements/Game Over Menu.prefab
+  artifactKey: Guid(43a93015454fffd46ab0c04de0ce53b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/HUD elements/Game Over Menu.prefab using Guid(43a93015454fffd46ab0c04de0ce53b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e0fd4fc8a6ebe101205f451e4571dc69') in 0.006275 seconds 
+  Import took 0.009292 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 32.134433 seconds.
+  path: Assets/Resources/Prefabs/Player.prefab
+  artifactKey: Guid(11d7a355631bdb54db4d99f6d1df073f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Player.prefab using Guid(11d7a355631bdb54db4d99f6d1df073f) Importer(815301076,1909f56bfc062723c751e8b465ee728b) SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+SendMessage cannot be called during Awake, CheckConsistency, or OnValidate
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.ResourcesAPI:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll (string,System.Type)
+UnityEngine.Resources:LoadAll<AmmunitionType> (string)
+AmmunitionType:get_All () (at Assets/Scripts/Attack Code/AmmunitionType.cs:17)
+AmmunitionInventory:OnValidate () (at Assets/Scripts/Player/AmmunitionInventory.cs:45)
+
+[Assets/Scripts/Attack Code/AmmunitionType.cs line 17]
+
+ -> (artifact id: '60c9033b96eed4a31af64b8cac83f425') in 0.140076 seconds 
+  Import took 0.145943 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.006538 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 0.41 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.050 seconds
+Domain Reload Profiling:
+	ReloadAssembly (1051ms)
+		BeginReloadAssembly (126ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (4ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (33ms)
+		EndReloadAssembly (852ms)
+			LoadAssemblies (104ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (299ms)
+			ReleaseScriptCaches (1ms)
+			RebuildScriptCaches (39ms)
+			SetupLoadedEditorAssemblies (315ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (8ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (0ms)
+				BeforeProcessingInitializeOnLoad (85ms)
+				ProcessInitializeOnLoadAttributes (197ms)
+				ProcessInitializeOnLoadMethodAttributes (13ms)
+				AfterProcessingInitializeOnLoad (11ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (7ms)
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.42 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1679 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 78.5 MB.
+System memory in use after: 78.6 MB.
+
+Unloading 20 unused Assets to reduce memory usage. Loaded Objects now: 2147.
+Total: 3.112100 ms (FindLiveObjects: 0.164800 ms CreateObjectMapping: 0.039400 ms MarkObjects: 2.833700 ms  DeleteObjects: 0.073200 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 7.820247 seconds.
+  path: Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab
+  artifactKey: Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab using Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '783505b0a897787fd3b9a5559d128a67') in 0.053677 seconds 
+  Import took 0.056489 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.007222 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 0.45 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.047 seconds
+Domain Reload Profiling:
+	ReloadAssembly (1048ms)
+		BeginReloadAssembly (118ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (5ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (32ms)
+		EndReloadAssembly (854ms)
+			LoadAssemblies (106ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (295ms)
+			ReleaseScriptCaches (1ms)
+			RebuildScriptCaches (39ms)
+			SetupLoadedEditorAssemblies (316ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (9ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (1ms)
+				BeforeProcessingInitializeOnLoad (87ms)
+				ProcessInitializeOnLoadAttributes (196ms)
+				ProcessInitializeOnLoadMethodAttributes (13ms)
+				AfterProcessingInitializeOnLoad (10ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (7ms)
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.42 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1679 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 78.4 MB.
+System memory in use after: 78.5 MB.
+
+Unloading 14 unused Assets to reduce memory usage. Loaded Objects now: 2150.
+Total: 3.248800 ms (FindLiveObjects: 0.216700 ms CreateObjectMapping: 0.042600 ms MarkObjects: 2.959700 ms  DeleteObjects: 0.028600 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 26.911945 seconds.
+  path: Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab
+  artifactKey: Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab using Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4a0d7a9b4630d3491d729817edeb5c8d') in 0.060251 seconds 
+  Import took 0.063201 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 12.592294 seconds.
+  path: Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab
+  artifactKey: Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Placeholder Ceiling Light.prefab using Guid(178e189c22a7e2a47aba6c3af9bf108d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3fdf6213182b6486675e5537453d2231') in 0.010762 seconds 
+  Import took 0.013730 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.006708 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 0.43 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  1.035 seconds
+Domain Reload Profiling:
+	ReloadAssembly (1036ms)
+		BeginReloadAssembly (124ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (4ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (32ms)
+		EndReloadAssembly (839ms)
+			LoadAssemblies (102ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (288ms)
+			ReleaseScriptCaches (1ms)
+			RebuildScriptCaches (38ms)
+			SetupLoadedEditorAssemblies (315ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (9ms)
+				SetLoadedEditorAssemblies (0ms)
+				RefreshPlugins (1ms)
+				BeforeProcessingInitializeOnLoad (86ms)
+				ProcessInitializeOnLoadAttributes (197ms)
+				ProcessInitializeOnLoadMethodAttributes (12ms)
+				AfterProcessingInitializeOnLoad (11ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (7ms)
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.41 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1679 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 78.4 MB.
+System memory in use after: 78.5 MB.
+
+Unloading 14 unused Assets to reduce memory usage. Loaded Objects now: 2153.
+Total: 3.039200 ms (FindLiveObjects: 0.166600 ms CreateObjectMapping: 0.039600 ms MarkObjects: 2.815300 ms  DeleteObjects: 0.016000 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 35.436937 seconds.
+  path: Assets/Resources/Prefabs/Menu Elements
+  artifactKey: Guid(eab566072528a3840946f5616e3074b8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Menu Elements using Guid(eab566072528a3840946f5616e3074b8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '48755fbdce51d12f9556bbbf28f844f3') in 0.006954 seconds 
+  Import took 0.010273 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 8.900828 seconds.
+  path: Assets/Resources/Prefabs/Menus and Windows
+  artifactKey: Guid(3a4fa438f80f83e478853ba2a00d1bce) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Prefabs/Menus and Windows using Guid(3a4fa438f80f83e478853ba2a00d1bce) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd69b721531952d40919f5258bd9bd76c') in 0.003308 seconds 
+  Import took 0.006105 seconds .
+
