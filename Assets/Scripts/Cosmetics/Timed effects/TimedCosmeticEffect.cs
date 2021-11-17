@@ -8,6 +8,7 @@ public class TimedCosmeticEffect : MonoBehaviour
     public float duration = 1;
     
     public bool looping;
+    public bool playOnAwake;
     public UnityEvent<float> effects;
 
     float timer;
@@ -18,11 +19,22 @@ public class TimedCosmeticEffect : MonoBehaviour
     }
     private void Start()
     {
-        Stop();
-        effects.Invoke(timer);
+        if (playOnAwake)
+        {
+            Play();
+        }
+        else
+        {
+            Stop();
+        }
     }
     void LateUpdate()
     {
+        if (enabled == false) // This seems unnecessary but is needed because even if Stop or Pause is run on the same frame, LateUpdate will still run for said frame.
+        {
+            return;
+        }
+
         timer += Time.deltaTime / duration;
         timer = Mathf.Clamp01(timer);
         effects.Invoke(timer);
@@ -41,22 +53,25 @@ public class TimedCosmeticEffect : MonoBehaviour
 
     public void Play()
     {
-        Debug.Log("Playing");
         timer = 0;
+        effects.Invoke(timer);
         enabled = true;
     }
     public void Pause()
     {
+        effects.Invoke(timer);
         enabled = false;
     }
     public void Resume()
     {
+        effects.Invoke(timer);
         enabled = true;
     }
     public void Stop()
     {
-        timer = 0;
         enabled = false;
+        timer = 0;
+        effects.Invoke(timer);
     }
     public void SetTimeManually(float value)
     {
