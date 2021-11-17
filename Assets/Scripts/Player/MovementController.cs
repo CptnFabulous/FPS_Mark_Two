@@ -10,7 +10,6 @@ public class MovementController : MonoBehaviour
 
     [Header("Movement")]
     public float defaultSpeed = 5;
-    public UnityEvent<RaycastHit> onStep;
     float CurrentMoveSpeed
     {
         get
@@ -75,8 +74,13 @@ public class MovementController : MonoBehaviour
     #region Cosmetics
     [Header("Cosmetics")]
     public Transform upperBodyAnimationTransform;
-    public float walkCycleLength = 0.5f;
+    [Header("Walk Cycle")]
+    public float strideLength = 1;
     public int stepsPerCycle = 2;
+    public UnityEvent<RaycastHit> onStep;
+    public Vector2 bobExtents = new Vector2(0.2f, 0.1f);
+    public AnimationCurve walkBobX;
+    public AnimationCurve walkBobY;
     float walkCycleTimer;
     float stepTimer;
     [Header("Drag")] // Torso lingering/dragging when moving
@@ -98,6 +102,8 @@ public class MovementController : MonoBehaviour
     float torsoAngularVelocityTimer;
     #endregion
 
+    Vector3 positionLastFrame;
+    Quaternion lookRotationLastFrame;
     Vector3 DeltaMovement
     {
         get
@@ -105,7 +111,6 @@ public class MovementController : MonoBehaviour
             return transform.position - positionLastFrame;
         }
     }
-    Vector3 positionLastFrame;
     Quaternion DeltaLookRotation
     {
         get
@@ -113,8 +118,6 @@ public class MovementController : MonoBehaviour
             return lookRotationLastFrame * Quaternion.Inverse(upperBody.transform.rotation);
         }
     }
-    Quaternion lookRotationLastFrame;
-
 
     Vector2 MovementInput
     {
@@ -189,7 +192,7 @@ public class MovementController : MonoBehaviour
         }
         */
 
-        
+
 
     }
     private void LateUpdate()
@@ -198,8 +201,6 @@ public class MovementController : MonoBehaviour
         torsoRotation = Quaternion.identity;
 
         WalkCycle();
-
-
         TorsoDrag();
         TorsoTilt();
         TorsoSway();
@@ -343,9 +344,9 @@ public class MovementController : MonoBehaviour
     {
         if (groundingData.collider != null && MovementInput.magnitude > 0)
         {
+            float walkCycleLength = strideLength * stepsPerCycle / CurrentMoveSpeed;
             walkCycleTimer += Time.deltaTime / walkCycleLength;
             stepTimer += Time.deltaTime / walkCycleLength * stepsPerCycle;
-            //Debug.Log("Cycle: " + walkCycleTimer + ", step: " + stepTimer);
             if (walkCycleTimer > 1)
             {
                 walkCycleTimer = 0;
@@ -355,11 +356,14 @@ public class MovementController : MonoBehaviour
                 onStep.Invoke(groundingData);
                 stepTimer = 0;
             }
+
             //Debug.DrawRay(Vector3.zero, Vector3.up * walkCycleTimer, Color.blue);
             //Debug.DrawRay(Vector3.forward, Vector3.up * stepTimer, Color.red);
 
             // Add bobbing animations
-
+            float bobX = walkBobX.Evaluate(walkCycleTimer) * bobExtents.x;
+            float bobY = walkBobY.Evaluate(walkCycleTimer) * bobExtents.y;
+            torsoPosition += new Vector3(bobY, bobX, 0);
         }
         else
         {
