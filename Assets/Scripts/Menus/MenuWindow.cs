@@ -11,7 +11,6 @@ public class MenuWindow : MonoBehaviour
     public string description = "A menu.";
     
     [Header("Additional menu elements")]
-    public Text title;
     public Button back;
     public Image selectedGraphic;
     public Text selectionDescription;
@@ -27,14 +26,7 @@ public class MenuWindow : MonoBehaviour
     MenuWindow root;
     MenuWindow[] children;
 
-    private void OnValidate()
-    {
-        // Finds the first text object and designates it as its child.
-        // Auto-updates the title text object to match the object's name, for easy editing.
-        title = GetComponentInChildren<Text>();
-        title.text = name;
-    }
-    /*
+    
     private void Awake()
     {
         canvas = GetComponent<Canvas>();
