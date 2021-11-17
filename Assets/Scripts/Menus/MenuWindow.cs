@@ -120,7 +120,11 @@ public class MenuWindow : MonoBehaviour
         }
     }
 
-
+    public void ReloadCurrentScene()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        LoadScene(currentSceneName);
+    }
 
     public void ReturnToMainMenu()
     {
