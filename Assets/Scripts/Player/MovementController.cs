@@ -204,11 +204,9 @@ public class MovementController : MonoBehaviour
         TorsoTilt();
         TorsoSway();
 
-        #region Update position and rotation of torso to match drag and sway values
-        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.transform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);                                                                                                                                                                                                                                                                                 
+        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime); ;
         float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
-        #endregion
 
 
         positionLastFrame = transform.position;
@@ -369,9 +367,15 @@ public class MovementController : MonoBehaviour
             stepTimer = 0;
         }
     }
-    
+    /// <summary>
+    /// Adds a cosmetic momentum drag to the player's hands when they are moving.
+    /// </summary>
     void TorsoDrag()
     {
+        if (Time.deltaTime <= 0)
+        {
+            return;
+        }
         Vector3 totalVelocity = DeltaMovement / Time.deltaTime;
         float dragIntensity = Mathf.Clamp01(totalVelocity.magnitude / speedForMaxDrag);
         Vector3 direction = transform.InverseTransformDirection(totalVelocity);
@@ -379,8 +383,15 @@ public class MovementController : MonoBehaviour
         Vector3 dragValue = Vector3.Lerp(Vector3.zero, dragMax, dragIntensity);
         torsoPosition += dragValue;
     }
+    /// <summary>
+    /// Adds cosmetic tilt to the player's hands when they move around.
+    /// </summary>
     void TorsoTilt()
     {
+        if (Time.deltaTime <= 0)
+        {
+            return;
+        }
         Vector3 totalVelocity = DeltaMovement / Time.deltaTime;
         float tiltIntensity = Mathf.Clamp01(totalVelocity.magnitude / speedForMaxTilt);
         float tiltAngle = Mathf.Lerp(0, upperBodyTiltAngle, tiltIntensity);
@@ -388,6 +399,9 @@ public class MovementController : MonoBehaviour
         newTiltDirection = transform.InverseTransformDirection(newTiltDirection);
         torsoRotation *= Quaternion.FromToRotation(Vector3.up, newTiltDirection);
     }
+    /// <summary>
+    /// Adds cosmetic sway to the player's hands and held items when they turn and shift their aim.
+    /// </summary>
     void TorsoSway()
     {
         float intensity = Mathf.Clamp01(DeltaLookRotation.eulerAngles.magnitude / speedForMaxSway);
