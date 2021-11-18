@@ -48,6 +48,13 @@ public class Health : MonoBehaviour
             return entityBounds;
         }
     }
+
+    /// <summary>
+    /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.
+    /// </summary>
+    /// <param name="amount"></param>
+    /// <param name="type"></param>
+    /// <param name="attacker"></param>
     public void Damage(int amount, DamageType type, Entity attacker)
     {
         if (IsAlive == false && allowPosthumousDamage == false)
