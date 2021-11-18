@@ -39,6 +39,10 @@ public class Player : Character
     }
     */
 
+    public override void Delete()
+    {
+        health.Damage(health.data.max * 99, DamageType.DeletionByGame, null);
+    }
 
     public void Die()
     {
