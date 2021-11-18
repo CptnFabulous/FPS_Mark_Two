@@ -26,6 +26,18 @@ public class MovementController : MonoBehaviour
             return speed;
         }
     }
+    Vector2 MovementInput
+    {
+        get
+        {
+            Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            if (input.magnitude > 0) // Check before normalising, to allow proportional control while ensuring value does not exceed 1
+            {
+                input.Normalize();
+            }
+            return input;
+        }
+    }
     //List<float> speedModifiers = new List<float>();
     CapsuleCollider collider;
     Rigidbody rb;
@@ -41,6 +53,15 @@ public class MovementController : MonoBehaviour
     float minAngle = -90;
     float maxAngle = 90;
     float verticalAngle = 0;
+    Vector2 CameraInput
+    {
+        get
+        {
+            return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+            //return controlling.inputManager.actions.FindAction("Look").ReadValue<Vector2>();
+            //return controlling.inputManager.actions["Look"].ReadValue<Vector2>();
+        }
+    }
 
     [Header("Jumping")]
     public float jumpForce = 5;
@@ -104,44 +125,39 @@ public class MovementController : MonoBehaviour
 
     Vector3 positionLastFrame;
     Quaternion lookRotationLastFrame;
-    Vector3 DeltaMovement
+    public Vector3 DeltaMovement
     {
         get
         {
             return transform.position - positionLastFrame;
         }
     }
-    Quaternion DeltaLookRotation
+    public Quaternion DeltaLookRotation
     {
         get
         {
             return lookRotationLastFrame * Quaternion.Inverse(upperBody.transform.rotation);
         }
     }
-
-    Vector2 MovementInput
+    IEnumerator UpdateDeltaValues()
     {
-        get
+        WaitForEndOfFrame waitForAfterLateUpdate = new WaitForEndOfFrame();
+        while (enabled)
         {
-            Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            if (input.magnitude > 0) // Check before normalising, to allow proportional control while ensuring value does not exceed 1
-            {
-                input.Normalize();
-            }
-            return input;
-        }
-    }
-    Vector2 CameraInput
-    {
-        get
-        {
-            return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-            //return controlling.inputManager.actions.FindAction("Look").ReadValue<Vector2>();
-            //return controlling.inputManager.actions["Look"].ReadValue<Vector2>();
+            yield return waitForAfterLateUpdate;
+            positionLastFrame = transform.position;
+            lookRotationLastFrame = upperBody.rotation;
         }
     }
 
 
+
+
+
+    public void OnEnable()
+    {
+        StartCoroutine(UpdateDeltaValues());
+    }
     private void Awake()
     {
         collider = GetComponent<CapsuleCollider>();
@@ -210,8 +226,8 @@ public class MovementController : MonoBehaviour
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
 
 
-        positionLastFrame = transform.position;
-        lookRotationLastFrame = upperBody.transform.rotation;
+        //positionLastFrame = transform.position;
+        //lookRotationLastFrame = upperBody.rotation;
     }
 
     #region Aiming camera

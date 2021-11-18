@@ -398,8 +398,12 @@ MonoBehaviour:
   sightTextureDimensions: {x: 512, y: 512}
   sightTextureDepthBuffer: 1
   modelTransform: {fileID: 0}
-  relativeHeadOrientation: {fileID: 3473356450064248746}
-  weaponHipFireOrientation: {fileID: 0}
+  hipFireOrientation: {fileID: 0}
+  reticleAxis: {fileID: 552091725076056258}
+  distanceBetweenReticleAxisAndHead: 0.05
+  lookSwayDegrees: 0
+  speedForMaxSway: 0
+  swayUpdateTime: 0
   onSwitchToADS:
     m_PersistentCalls:
       m_Calls: []

@@ -198,7 +198,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1887395489807164615}
   m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 0, z: 0.3751}
+  m_LocalPosition: {x: 0, y: 0, z: 0.375}
   m_LocalScale: {x: -0.009, y: -0.009, z: -0.009}
   m_Children: []
   m_Father: {fileID: 392362585554265504}
@@ -1577,6 +1577,7 @@ Transform:
   - {fileID: 1613128460159970304}
   - {fileID: 7667628373581957696}
   - {fileID: 8760250201130071637}
+  - {fileID: 2599253447387078362}
   m_Father: {fileID: 3275955952633922248}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1600,8 +1601,12 @@ MonoBehaviour:
   sightTextureDimensions: {x: 512, y: 512}
   sightTextureDepthBuffer: 1
   modelTransform: {fileID: 3275955952633922248}
-  relativeHeadOrientation: {fileID: 1613128460159970304}
-  weaponHipFireOrientation: {fileID: 1230723388541293300}
+  hipFireOrientation: {fileID: 1230723388541293300}
+  reticleAxis: {fileID: 2599253447387078362}
+  distanceBetweenReticleAxisAndHead: 0.75
+  lookSwayDegrees: 2
+  speedForMaxSway: 120
+  swayUpdateTime: 0.1
   onSwitchToADS:
     m_PersistentCalls:
       m_Calls: []
@@ -1719,6 +1724,36 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &9146217939463275323
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2599253447387078362}
+  m_Layer: 0
+  m_Name: Reticle Axis
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2599253447387078362
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9146217939463275323}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.006, z: 0.38}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 392362585554265504}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4091468788737504035
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1776,6 +1811,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
+--- !u!4 &1268736257893073968 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2980439332347442963, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
+  m_PrefabInstance: {fileID: 4091468788737504035}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3503756879629736466 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 601240991049099569, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
@@ -1787,11 +1827,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 675447204ed2baf458314f045aa2f83e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &1268736257893073968 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2980439332347442963, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
-  m_PrefabInstance: {fileID: 4091468788737504035}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7845188059716014961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1861,11 +1896,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
---- !u!4 &948392074443090783 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
-  m_PrefabInstance: {fileID: 7845188059716014961}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &948392074443090780 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
@@ -1877,3 +1907,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6746fa0245d2f304095e956384af5d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &948392074443090783 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
+  m_PrefabInstance: {fileID: 7845188059716014961}
+  m_PrefabAsset: {fileID: 0}
