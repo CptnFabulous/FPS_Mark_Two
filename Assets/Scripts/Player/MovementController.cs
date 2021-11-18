@@ -356,6 +356,9 @@ public class MovementController : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// Implements bobbing animations for player walk cycle, and cosmetic effects whenever they take a step.
+    /// </summary>
     void WalkCycle()
     {
         // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
