@@ -22,6 +22,7 @@ public class ResourceMeter : MonoBehaviour
     }
     private void OnEnable()
     {
+        //previousMeter.fillAmount = currentMeter.fillAmount;
         transition = Transition();
         StartCoroutine(transition);
     }

@@ -107,6 +107,7 @@ public class HeadsUpDisplay : MonoBehaviour
 
     [Header("Damage")]
     public UnityEvent damageEffects;
+    //public UnityEvent criticalEffects;
     public UnityEvent killEffects;
     public void CheckToPlayDamageEffects(DamageMessage message)
     {
