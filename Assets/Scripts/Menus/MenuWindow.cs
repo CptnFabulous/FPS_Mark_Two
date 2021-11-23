@@ -9,8 +9,9 @@ using UnityEngine.SceneManagement;
 public class MenuWindow : MonoBehaviour
 {
     public string description = "A menu.";
-    
+
     [Header("Additional menu elements")]
+    public Selectable firstSelection;
     public Button back;
     public Image selectedGraphic;
     public Text selectionDescription;
@@ -18,30 +19,38 @@ public class MenuWindow : MonoBehaviour
     Canvas canvas;
     CanvasGroup visualElements;
     RectTransform rt;
-    EventSystem eventSystem;
-
     
     MenuWindow[] parents;
     MenuWindow immediateParent;
     MenuWindow root;
     MenuWindow[] children;
 
-    
+    private void OnValidate()
+    {
+        if (firstSelection == null)
+        {
+            Debug.LogError("No default selection is present for " + name + " and the Event System won't know what to select first! Assign something to 'firstSelection'!");
+        }
+        if (back == null)
+        {
+            Debug.LogWarning("Button 'back' is null, so " + name + " cannot assign a listener for returning to the previous menu. Have you added one manually, or ensured the player does not need to return to its parent menu?");
+        }
+    }
+
     private void Awake()
     {
         canvas = GetComponent<Canvas>();
         visualElements = GetComponent<CanvasGroup>();
         visualElements.ignoreParentGroups = true;
         rt = GetComponent<RectTransform>();
-        eventSystem = GetComponent<EventSystem>();
         Debug.Log(back + ", " + name);
+
 
         if (back != null)
         {
             back.onClick.AddListener(ReturnToParentMenu);
         }
     }
-
     private void Start()
     {
         // Assign children
@@ -78,21 +87,20 @@ public class MenuWindow : MonoBehaviour
 
         ReturnToRoot();
     }
-
-
+    
     public void SwitchWindow(MenuWindow newWindow)
     {
-        Debug.Log(newWindow + ", " + name);
+        //Debug.Log(newWindow + ", " + name);
         // Disable all windows except for the current one and its parents
         // The root is not part of this specific for loop but that doesn't matter, it needs to be active in order for itself or any of its children to be active
-        Debug.Log(root.children);
+        //Debug.Log(root.children);
         for (int i = 0; i < root.children.Length; i++)
         {
             root.children[i].gameObject.SetActive(false);
         }
 
         // Enable new window and parents, using canvas group to hide parents
-        Debug.Log(newWindow.parents);
+        //Debug.Log(newWindow.parents);
         newWindow.gameObject.SetActive(true);
         newWindow.visualElements.alpha = 1;
         for (int i = 0; i < newWindow.parents.Length; i++)
@@ -100,6 +108,11 @@ public class MenuWindow : MonoBehaviour
             newWindow.parents[i].gameObject.SetActive(true);
             newWindow.parents[i].visualElements.alpha = 0;
         }
+
+        //Debug.Log(EventSystem.current != null);
+        //Debug.Log(firstSelection.gameObject);
+        // Switch EventSystem so player automatically selects the first selectable
+        EventSystem.current.SetSelectedGameObject(firstSelection.gameObject);
     }
     public void ReturnToParentMenu()
     {
@@ -110,28 +123,17 @@ public class MenuWindow : MonoBehaviour
         SwitchWindow(root);
     }
 
-    void RefreshSelectionInfo()
-    {
-        MenuInteractable current = eventSystem.currentSelectedGameObject.GetComponent<MenuInteractable>();
-        if (current != null)
-        {
-            selectedGraphic.sprite = current.graphic;
-            selectionDescription.text = current.description;
-        }
-    }
 
     public void ReloadCurrentScene()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
         LoadScene(currentSceneName);
     }
-
     public void ReturnToMainMenu()
     {
         LoadScene(mainMenu);
     }
     public static readonly string mainMenu = "Main Menu";
-
     public void QuitGame()
     {
         Application.Quit();
@@ -139,8 +141,6 @@ public class MenuWindow : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
     }
-
-
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
