@@ -17,8 +17,9 @@ public class GunADS : MonoBehaviour
     public int sightTextureDepthBuffer = 1;
 
     [Header("Animations")]
-    public Transform modelTransform;
     public Transform hipFireOrientation;
+    public Transform modelOrientationTransform;
+    public Transform modelPivot;
     public Transform reticleAxis;
     public float distanceBetweenReticleAxisAndHead = 1f;
     public float lookSwayDegrees = 2;
@@ -153,9 +154,9 @@ public class GunADS : MonoBehaviour
         if (IsAiming || IsTransitioning)
         {
             // Rotate gun so the reticle axis transform is parallel with the player's aim direction
-            Quaternion relativeRotation = MiscFunctions.FromToRotation(modelTransform.rotation, reticleAxis.rotation);
+            Quaternion relativeRotation = MiscFunctions.FromToRotation(modelPivot.rotation, reticleAxis.rotation);
             Quaternion rotation = player.movement.upperBody.rotation * Quaternion.Inverse(relativeRotation);
-            modelTransform.rotation = Quaternion.Lerp(hipFireOrientation.rotation, rotation, timer);
+            modelOrientationTransform.rotation = Quaternion.Lerp(hipFireOrientation.rotation, rotation, timer);
 
             // If look sway values are greater than zero, run sway cosmetics
             // This check exists to prevent unnecessary processing, and also to prevent division by zero causing weird errors
@@ -163,23 +164,23 @@ public class GunADS : MonoBehaviour
             {
                 // Modify gun rotation by sway value
                 // Vector3.SmoothDamp is used on the euler angles for clean transitions.
-                // If the smoothdamp is applied directly to the gun rotation, it causes lagging problems.
+                // If the smoothdamp is applied directly to the gun rotation, it drags too far behind.
                 // Applying the base gun rotation straight then using smoothdamp on just the sway value is better at keeping the rotation within specified boundaries.
                 Quaternion deltaLookRotation = player.movement.DeltaLookRotation;
                 float intensity = Mathf.Clamp01(deltaLookRotation.eulerAngles.magnitude / speedForMaxSway);
                 Vector3 swayAxes = new Vector3(deltaLookRotation.x, deltaLookRotation.y, 0); // Only record X and Y values to prevent awkward shifting
                 swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);
                 cosmeticSwayAxes = Vector3.SmoothDamp(cosmeticSwayAxes, swayAxes, ref cosmeticSwayAngularVelocity, swayUpdateTime);
-                modelTransform.rotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation
+                modelOrientationTransform.localRotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation
             }
             
 
             // Calculate position of weapon model so reticle lines up with aim direction, outwards by distanceBetweenReticleAxisAndHead
             // This must be done after rotation, because rotating will change the relative position of the reticle axis
-            Vector3 reticleRelativeToModelTransform = reticleAxis.position - modelTransform.position;
+            Vector3 reticleRelativeToModelTransform = reticleAxis.position - modelPivot.position;
             Vector3 reticleRelativeToHead = player.movement.upperBody.forward * distanceBetweenReticleAxisAndHead;
             Vector3 position = player.movement.upperBody.position - reticleRelativeToModelTransform + reticleRelativeToHead;
-            modelTransform.position = Vector3.Lerp(hipFireOrientation.position, position, timer);
+            modelOrientationTransform.position = Vector3.Lerp(hipFireOrientation.position, position, timer);
         }
     }
 
