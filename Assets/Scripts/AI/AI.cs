@@ -22,17 +22,25 @@ public class AI : MonoBehaviour
             {
                 #region Angle check
                 float distance = Vector3.Distance(LookOrigin, objects[i].bounds.center);
-                Vector3 roughlyAdjacentPosition = LookOrigin + (LookDirection * distance);
-                Vector3 closestPointDirection = objects[i].ClosestPoint(roughlyAdjacentPosition) - LookOrigin;
-                if (Vector3.Angle(LookDirection, closestPointDirection) > viewingAngles.magnitude)
+                Vector3 roughlyAdjacentPosition = LookOrigin + (LookForward * distance);
+                Vector3 closestPoint = objects[i].ClosestPoint(roughlyAdjacentPosition);
+                // Produces a quaternion pointing from the look origin towards the closest point
+                Quaternion closestPointDirectionRotation = Quaternion.LookRotation(closestPoint - LookOrigin, LookUp);
+                // Makes that quaternion relative to the direction the AI is looking in
+                Quaternion differenceRotation = lookRotation * Quaternion.Inverse(closestPointDirectionRotation);
+                // If the angles are within the viewing angles
+                if (!(differenceRotation.eulerAngles.x < viewingAngles.y && differenceRotation.eulerAngles.y < viewingAngles.x))
                 {
-                    // if the closest part of the collider is outside the angle, no part of the collider is inside
+                    // if the closest part of the collider is outside the angles, no part of the collider is inside
                     objects[i] = null;
                     continue;
                 }
                 #endregion
 
-                // Line of sight check
+
+                #region Line of sight check
+
+                #endregion
 
             }
             objects.RemoveAll(o => o == null); // Prune list of null entries so only relevant results remain
