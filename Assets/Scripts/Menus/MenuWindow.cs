@@ -106,10 +106,9 @@ public class MenuWindow : MonoBehaviour
             newWindow.parents[i].visualElements.alpha = 0;
         }
 
-        //Debug.Log(EventSystem.current != null);
-        //Debug.Log(firstSelection.gameObject);
         // Switch EventSystem so player automatically selects the first selectable
-        EventSystem.current.SetSelectedGameObject(firstSelection.gameObject);
+        Debug.Log("Assigning " + newWindow.firstSelection + " to event system");
+        EventSystem.current.SetSelectedGameObject(newWindow.firstSelection.gameObject);
     }
     public void ReturnToParentMenu()
     {
