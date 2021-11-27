@@ -170,7 +170,7 @@ public class GunADS : MonoBehaviour
 
             // If look sway values are greater than zero, run sway cosmetics
             // This check exists to prevent unnecessary processing, and also to prevent division by zero causing weird errors
-            if (lookSwayDegrees > 0 && speedForMaxSway > 0)
+            if (lookSwayDegrees != 0 && speedForMaxSway > 0)
             {
                 // Modify gun rotation by sway value
                 // Vector3.SmoothDamp is used on the euler angles for clean transitions.
