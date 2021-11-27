@@ -40,7 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 981221064436313749}
   - component: {fileID: 132752674950433329}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ironsights
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 4663555051894439575}
   - component: {fileID: 6046642838397245848}
   - component: {fileID: 8971565236538972612}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 274285743099843648}
   - component: {fileID: 768046776783486075}
   - component: {fileID: 1550734375707746262}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear Right Post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301,7 +301,7 @@ GameObject:
   - component: {fileID: 7985647819427532008}
   - component: {fileID: 8549565974352657526}
   - component: {fileID: 4495934960709820590}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Front sight post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -926,7 +926,7 @@ GameObject:
   - component: {fileID: 5737478536575503395}
   - component: {fileID: 8203597276536461556}
   - component: {fileID: 8732699685867553203}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1211,7 +1211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5737478537211503178}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1245,7 +1245,7 @@ GameObject:
   - component: {fileID: 5737478537505268266}
   - component: {fileID: 5737478537505268276}
   - component: {fileID: 5737478537505268267}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1326,7 +1326,7 @@ GameObject:
   - component: {fileID: 5737478537761476607}
   - component: {fileID: 5737478537761476601}
   - component: {fileID: 5737478537761476600}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1406,7 +1406,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5344423781692316799}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sight Axis - Reticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1468,7 +1468,7 @@ GameObject:
   - component: {fileID: 6050463070485336539}
   - component: {fileID: 2870069257090198510}
   - component: {fileID: 1889640516285770652}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear Left Post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1700,9 +1700,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4959440931887485959, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9107673828613777602, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
       propertyPath: m_Name
       value: Placeholder Muzzle Flash Effect
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107673828613777602, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9107673828613777602, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
       propertyPath: m_IsActive
@@ -1780,6 +1788,10 @@ PrefabInstance:
     - target: {fileID: 4860239883940646102, guid: 65e1e9d75f2a2354b8f3be5e509a66a3, type: 3}
       propertyPath: m_Name
       value: Muzzle Flash Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 4860239883940646102, guid: 65e1e9d75f2a2354b8f3be5e509a66a3, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4860239883940646102, guid: 65e1e9d75f2a2354b8f3be5e509a66a3, type: 3}
       propertyPath: m_IsActive

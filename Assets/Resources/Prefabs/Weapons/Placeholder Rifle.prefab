@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 3721784888353254164}
   - component: {fileID: 2572480171184368831}
   - component: {fileID: 861736803536774575}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Grenade launcher barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 543369925273294996}
   - component: {fileID: 891170464732971014}
   - component: {fileID: 4351726251174928344}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Magazine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +287,7 @@ GameObject:
   - component: {fileID: 4943034313775085413}
   - component: {fileID: 7909728406831661464}
   - component: {fileID: 1940042035924610964}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,7 +368,7 @@ GameObject:
   - component: {fileID: 5136465650217594103}
   - component: {fileID: 5683621991069649550}
   - component: {fileID: 8331749540251797511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Extra bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,7 +597,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3321402550516367603}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -630,7 +630,7 @@ GameObject:
   - component: {fileID: 5702439190417082475}
   - component: {fileID: 4730845700439824673}
   - component: {fileID: 2558782758559423383}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -712,7 +712,7 @@ GameObject:
   - component: {fileID: 4480377919307099540}
   - component: {fileID: 6675720230684338595}
   - component: {fileID: 8994622818794398415}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Stock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -794,7 +794,7 @@ GameObject:
   - component: {fileID: 147305126432116429}
   - component: {fileID: 3185818820490487785}
   - component: {fileID: 5939360729593075579}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -945,7 +945,7 @@ GameObject:
   - component: {fileID: 8446451415370582923}
   - component: {fileID: 5436201924323041116}
   - component: {fileID: 726502978176043748}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1705,9 +1705,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4959440931887485959, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9107673828613777602, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
       propertyPath: m_Name
       value: Placeholder Muzzle Flash Effect
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107673828613777602, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6efcc29679dbc2a4392a80ac6fde06e3, type: 3}
@@ -1734,6 +1742,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8446451415370582922}
     m_Modifications:
+    - target: {fileID: 678849721116227664, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 678849721471860007, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 678849721807329693, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 678849722135880162, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 678849722673205654, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 678849723057892419, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 678849723201517633, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1654327570976664971, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1795,8 +1831,24 @@ PrefabInstance:
       value: Rifle Scope
       objectReference: {fileID: 0}
     - target: {fileID: 2143302779471574833, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2143302779471574833, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2270154748337954897, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5126730623935777288, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5951487616320556286, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c68e7cb89d61ea48b01a8761e452942, type: 3}
@@ -1941,28 +1993,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Placeholder Scope
       objectReference: {fileID: 0}
-    - target: {fileID: 7472228900950897297, guid: f34a06afda8ce90488044a685c269140, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7730623915316413883, guid: f34a06afda8ce90488044a685c269140, type: 3}
       propertyPath: modelPivot
       value: 
       objectReference: {fileID: 8446451415370582922}
     - target: {fileID: 7730623915316413883, guid: f34a06afda8ce90488044a685c269140, type: 3}
-      propertyPath: modelTransform
-      value: 
-      objectReference: {fileID: 8446451415370582922}
-    - target: {fileID: 7730623915316413883, guid: f34a06afda8ce90488044a685c269140, type: 3}
-      propertyPath: hideDefaultReticle
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7730623915316413883, guid: f34a06afda8ce90488044a685c269140, type: 3}
       propertyPath: hipFireOrientation
-      value: 
-      objectReference: {fileID: 5284184971598420918}
-    - target: {fileID: 7730623915316413883, guid: f34a06afda8ce90488044a685c269140, type: 3}
-      propertyPath: weaponHipFireOrientation
       value: 
       objectReference: {fileID: 5284184971598420918}
     - target: {fileID: 7730623915316413883, guid: f34a06afda8ce90488044a685c269140, type: 3}
