@@ -423,7 +423,7 @@ public class MovementController : MonoBehaviour
     void TorsoSway()
     {
         float intensity = Mathf.Clamp01(DeltaLookRotation.eulerAngles.magnitude / speedForMaxSway);
-        Vector3 swayAxes = new Vector3(DeltaLookRotation.x, DeltaLookRotation.y, DeltaLookRotation.z);
+        Vector3 swayAxes = new Vector3(DeltaLookRotation.x, DeltaLookRotation.y, 0);
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * lookSwayDegrees, intensity);
         torsoRotation *= Quaternion.Euler(swayAxes);
     }
