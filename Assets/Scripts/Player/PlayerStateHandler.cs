@@ -99,7 +99,7 @@ public class PlayerStateHandler : MonoBehaviour
     }
     void ReturnToGameplay()
     {
-        Debug.Log("Returning to gameplay");
+        //Debug.Log("Returning to gameplay");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Time.timeScale = 1;

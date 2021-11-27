@@ -37,12 +37,6 @@ public class WeaponHandler : MonoBehaviour
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
-    /*
-    public UnityEvent<WeaponMode> onModeSwitch;
-    public UnityEvent<WeaponMode> onAttack;
-    */
-
-    
 
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
@@ -138,13 +132,13 @@ public class WeaponHandler : MonoBehaviour
         equippedWeapons = GetComponentsInChildren<Weapon>(true);
         for (int i = 0; i < equippedWeapons.Length; i++)
         {
-            Debug.Log("Weapon present: " + equippedWeapons[i].name);
+            //Debug.Log("Weapon present: " + equippedWeapons[i].name);
             equippedWeapons[i].gameObject.SetActive(false);
         }
 
         if (CurrentWeapon != null)
         {
-            Debug.Log("Drawing first weapon, " + CurrentWeapon.name);
+            //Debug.Log("Drawing first weapon, " + CurrentWeapon.name);
             StartCoroutine(SwitchWeapon(equippedWeaponIndex));
         }
     }
@@ -165,8 +159,6 @@ public class WeaponHandler : MonoBehaviour
             // If selected weapon is already active, no need to run any other code
             yield break;
         }
-        
-        
 
         // If another weapon is already enabled
         if (CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true)

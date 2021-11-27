@@ -87,17 +87,14 @@ public class MenuWindow : MonoBehaviour
     
     public void SwitchWindow(MenuWindow newWindow)
     {
-        //Debug.Log(newWindow + ", " + name);
         // Disable all windows except for the current one and its parents
         // The root is not part of this specific for loop but that doesn't matter, it needs to be active in order for itself or any of its children to be active
-        //Debug.Log(root.children);
         for (int i = 0; i < root.children.Length; i++)
         {
             root.children[i].gameObject.SetActive(false);
         }
 
         // Enable new window and parents, using canvas group to hide parents
-        //Debug.Log(newWindow.parents);
         newWindow.gameObject.SetActive(true);
         newWindow.visualElements.alpha = 1;
         for (int i = 0; i < newWindow.parents.Length; i++)
