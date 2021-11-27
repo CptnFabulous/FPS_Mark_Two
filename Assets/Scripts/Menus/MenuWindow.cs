@@ -36,28 +36,22 @@ public class MenuWindow : MonoBehaviour
             Debug.LogWarning("Button 'back' is null, so " + name + " cannot assign a listener for returning to the previous menu. Have you added one manually, or ensured the player does not need to return to its parent menu?");
         }
     }
-
     private void Awake()
     {
         canvas = GetComponent<Canvas>();
         visualElements = GetComponent<CanvasGroup>();
         visualElements.ignoreParentGroups = true;
         rt = GetComponent<RectTransform>();
-        Debug.Log(back + ", " + name);
-
 
         if (back != null)
         {
             back.onClick.AddListener(ReturnToParentMenu);
         }
-    }
-    private void Start()
-    {
+
         // Assign children
         List<MenuWindow> childMenus = new List<MenuWindow>(GetComponentsInChildren<MenuWindow>(true));
         childMenus.Remove(this);
         children = childMenus.ToArray();
-
 
         // Assign parents
         List<MenuWindow> parentMenus = new List<MenuWindow>(GetComponentsInParent<MenuWindow>(true));
@@ -73,7 +67,7 @@ public class MenuWindow : MonoBehaviour
         if (immediateParent == null)
         {
             root = this;
-            for(int i = 0; i < children.Length; i++)
+            for (int i = 0; i < children.Length; i++)
             {
                 children[i].root = this;
             }
@@ -82,10 +76,13 @@ public class MenuWindow : MonoBehaviour
             {
                 back.gameObject.SetActive(false); // Disable the back button if there's no parent to return to
             }
-            
         }
+    }
 
-        ReturnToRoot();
+    
+    private void Start()
+    {
+        SwitchWindow(this);
     }
     
     public void SwitchWindow(MenuWindow newWindow)
