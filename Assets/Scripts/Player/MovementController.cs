@@ -72,6 +72,7 @@ public class MovementController : MonoBehaviour
 
     public RaycastHit groundingData;
     float lastTimeJumped;
+    CustomInput.Button jump = new CustomInput.Button("Jump");
 
     [Header("Dodging")]
     public float dodgeSpeed = 10;
@@ -91,6 +92,7 @@ public class MovementController : MonoBehaviour
     public UnityEvent onStand;
     [SerializeField] bool crouched;
     float crouchTimer;
+    CustomInput.Button crouch = new CustomInput.Button("Crouch");
 
     #region Cosmetics
     [Header("Cosmetics")]
@@ -116,7 +118,7 @@ public class MovementController : MonoBehaviour
     [Header("Return")] // Return to default position and rotation
     public float torsoPositionUpdateTime = 0.1f;
     public float torsoRotationUpdateTime = 0.1f;
-
+    
     Vector3 torsoPosition;
     Quaternion torsoRotation;
     Vector3 torsoMovementVelocity;
@@ -171,16 +173,12 @@ public class MovementController : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetButtonDown("Crouch"))
-        {
-            IsCrouching = !IsCrouching;
-        }
+        IsCrouching = CustomInput.SetPlayerAbilityState(IsCrouching, crouch, toggleCrouch);
 
         InputAim(CameraInput);
 
-        if (Input.GetButtonDown("Jump"))
+        if (jump.Pressed)
         {
-            Debug.Log("Trying to jump");
             TryJump();
         }
     }
@@ -224,10 +222,6 @@ public class MovementController : MonoBehaviour
         upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime); ;
         float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
-
-
-        //positionLastFrame = transform.position;
-        //lookRotationLastFrame = upperBody.rotation;
     }
 
     #region Aiming camera
@@ -270,7 +264,7 @@ public class MovementController : MonoBehaviour
         {
             return;
         }
-        Debug.Log("Jumping");
+        
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         onJump.Invoke();
         lastTimeJumped = Time.time;
@@ -434,5 +428,4 @@ public class MovementController : MonoBehaviour
         torsoRotation *= Quaternion.Euler(swayAxes);
     }
     
-
 }

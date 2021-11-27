@@ -198,31 +198,4 @@ public class GunADS : MonoBehaviour
         Gizmos.DrawRay(reticleAxis.position, -reticleAxis.forward * distanceBetweenReticleAxisAndHead);
     }
 
-
-    /*
-    public static bool ChangeMechanicActiveState(bool current, out bool updated, bool inputPressed, bool inputReleased, bool toggle)
-    {
-        if (inputPressed && toggle)
-        {
-            updated = !current;
-            return true;
-        }
-        else
-        {
-            if (inputPressed)
-            {
-                updated = true;
-                return true;
-            }
-            else if (inputReleased)
-            {
-                updated = false;
-                return true;
-            }
-        }
-
-        updated = current;
-        return false;
-    }
-    */
 }

@@ -4,26 +4,55 @@ using UnityEngine;
 
 public static class CustomInput
 {
-    
-
     public struct Button
     {
+        string inputName;
+
+        public bool Pressed
+        {
+            get
+            {
+                return Input.GetButtonDown(inputName);
+            }
+        }
+        public bool Held
+        {
+            get
+            {
+                return Input.GetButton(inputName);
+            }
+        }
+        public bool Released
+        {
+            get
+            {
+                return Input.GetButtonUp(inputName);
+            }
+        }
+
+        public Button(string name)
+        {
+            inputName = name;
+        }
+    }
+    public struct Key
+    {
         public KeyCode mapping;
-        public bool pressed
+        public bool Pressed
         {
             get
             {
                 return Input.GetKeyDown(mapping);
             }
         }
-        public bool held
+        public bool Held
         {
             get
             {
                 return Input.GetKey(mapping);
             }
         }
-        public bool released
+        public bool Released
         {
             get
             {
@@ -82,5 +111,32 @@ public static class CustomInput
                 return value;
             }
         }
+    }
+
+    public static bool SetPlayerAbilityState(bool currentState, Button button, bool toggle)
+    {
+        if (toggle == false)
+        {
+            currentState = button.Held;
+        }
+        else if (button.Pressed)
+        {
+            currentState = !currentState;
+        }
+
+        return currentState;
+    }
+    public static bool SetPlayerAbilityState(bool currentState, Key button, bool toggle)
+    {
+        if (toggle == false)
+        {
+            currentState = button.Held;
+        }
+        else if (button.Pressed)
+        {
+            currentState = !currentState;
+        }
+
+        return currentState;
     }
 }

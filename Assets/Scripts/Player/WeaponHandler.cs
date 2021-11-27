@@ -30,9 +30,9 @@ public class WeaponHandler : MonoBehaviour
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
     public bool toggleADS;
-    public ButtonInput primary = new ButtonInput("Fire");
-    public ButtonInput secondary = new ButtonInput("Aim");
-    public ButtonInput tertiary = new ButtonInput("Reload");
+    public CustomInput.Button primary = new CustomInput.Button("Fire");
+    public CustomInput.Button secondary = new CustomInput.Button("Aim");
+    public CustomInput.Button tertiary = new CustomInput.Button("Reload");
 
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;
@@ -194,34 +194,3 @@ public class WeaponHandler : MonoBehaviour
     }
 }
 
-public struct ButtonInput
-{
-    string inputName;
-
-    public bool Pressed
-    {
-        get
-        {
-            return Input.GetButtonDown(inputName);
-        }
-    }
-    public bool Held
-    {
-        get
-        {
-            return Input.GetButton(inputName);
-        }
-    }
-    public bool Released
-    {
-        get
-        {
-            return Input.GetButtonUp(inputName);
-        }
-    }
-
-    public ButtonInput(string name)
-    {
-        inputName = name;
-    }
-}
