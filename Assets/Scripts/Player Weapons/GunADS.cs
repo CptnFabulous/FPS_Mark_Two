@@ -96,9 +96,13 @@ public class GunADS : MonoBehaviour
     {
         if (IsScope)
         {
+            // Generates a new render texture, and sets the scope camera to output to it rather than the main screen
             RenderTexture sight = new RenderTexture(sightTextureDimensions.x, sightTextureDimensions.y, sightTextureDepthBuffer);
             viewingCamera.targetTexture = sight;
-            sightPicture.material.mainTexture = sight;
+            // Generates a unique material for this scope and assigns it to display the render texture
+            Material scopeMaterial = new Material(sightPicture.material);
+            scopeMaterial.mainTexture = sight;
+            sightPicture.material = scopeMaterial;
         }
     }
 
