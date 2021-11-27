@@ -118,7 +118,7 @@ public class GunADS : MonoBehaviour
         }
 
         #region Controls
-        IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS);// && mode.NotReloading;
+        IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS) && mode.NotReloading;
         /*
         if (IsAiming == false && user.secondary.Pressed)
         {

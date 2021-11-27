@@ -82,6 +82,16 @@ public class GunMagazine : MonoBehaviour
     IEnumerator ReloadSequence()
     {
         ReloadActive = true;
+
+        // If user is currently aiming down sights, cancel it
+        GunADS ads = mode.optics;
+        if (ads != null && ads.IsAiming)
+        {
+            ads.IsAiming = false;
+            yield return new WaitUntil(() => !ads.IsAiming && !ads.IsTransitioning);
+        }
+        
+
         onReloadStart.Invoke();
         yield return new WaitForSeconds(startTransitionDelay);
 
