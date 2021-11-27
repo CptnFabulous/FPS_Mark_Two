@@ -32,7 +32,9 @@ public class GunADS : MonoBehaviour
     Vector3 cosmeticSwayAngularVelocity;
 
 
+    WeaponHandler user;
     Player player;
+
     bool currentlyAiming;
     float timer;
 
@@ -106,8 +108,9 @@ public class GunADS : MonoBehaviour
         }
     }
 
-    public void InputLoop(WeaponHandler user)
+    public void InputLoop(RangedAttack mode)
     {
+        user = mode.User;
         player = user.controller;
         if (IsScope)
         {
@@ -115,6 +118,8 @@ public class GunADS : MonoBehaviour
         }
 
         #region Controls
+        IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS);// && mode.NotReloading;
+        /*
         if (IsAiming == false && user.secondary.Pressed)
         {
             IsAiming = true;
@@ -123,6 +128,7 @@ public class GunADS : MonoBehaviour
         {
             IsAiming = false;
         }
+        */
         #endregion
 
         // If timer is different from desired value, lerp and update it
@@ -177,7 +183,6 @@ public class GunADS : MonoBehaviour
                 cosmeticSwayAxes = Vector3.SmoothDamp(cosmeticSwayAxes, swayAxes, ref cosmeticSwayAngularVelocity, swayUpdateTime);
                 modelOrientationTransform.localRotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation
             }
-            
 
             // Calculate position of weapon model so reticle lines up with aim direction, outwards by distanceBetweenReticleAxisAndHead
             // This must be done after rotation, because rotating will change the relative position of the reticle axis

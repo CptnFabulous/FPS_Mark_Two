@@ -23,15 +23,19 @@ public class GunMagazine : MonoBehaviour
     public bool ReloadActive { get; private set; }
     IEnumerator currentSequence;
 
-    public void InputLoop(RangedAttack mode, WeaponHandler user)
+    RangedAttack mode;
+    
+
+    public void InputLoop(RangedAttack currentMode)
     {
+        mode = currentMode;
         // If player wants to reload their weapon, and if reloading is possible
-        if (WantsToReload(mode, user) && CanReload(mode.stats.ammoType, user.ammo))
+        if (WantsToReload && CanReload)
         {
-            currentSequence = ReloadSequence(mode, user.ammo);
+            currentSequence = ReloadSequence();
             StartCoroutine(currentSequence);
         }
-        else if (ReloadActive && user.primary.Pressed)
+        else if (ReloadActive && mode.User.primary.Pressed)
         {
             CancelReload();
         }
@@ -42,45 +46,51 @@ public class GunMagazine : MonoBehaviour
     /// </summary>
     /// <param name="mode"></param>
     /// <returns></returns>
-    public bool WantsToReload(RangedAttack mode, WeaponHandler user)
+    public bool WantsToReload
     {
-        // EITHER
-        // If magazine does not have enough ammo to shoot
-        // If player deliberately wants to reload a half empty weapon
-        // AND
-        // If player is not in the middle of a reload cycle
-        bool manual = user.tertiary.Pressed;
-        bool automatic = ammo.current < mode.stats.ammoPerShot;
-        return (manual || automatic) && ReloadActive == false;
+        get
+        {
+            // EITHER
+            // If magazine does not have enough ammo to shoot
+            // If player deliberately wants to reload a half empty weapon
+            // AND
+            // If player is not in the middle of a reload cycle
+            bool manual = mode.User.tertiary.Pressed;
+            bool automatic = ammo.current < mode.stats.ammoPerShot;
+            return (manual || automatic) && ReloadActive == false;
+        }
     }
     /// <summary>
     /// Is the player able to reload their weapon (if not, magazine is full or there is no more ammo to reload with)
     /// </summary>
-    public bool CanReload(AmmunitionType type, AmmunitionInventory inventory)
+    public bool CanReload
     {
-        // If player's magazine is not empty
-        // AND
-        // If enough ammunition is remaining to reload weapon with
-        return ammo.current < ammo.max && ReservedAmmo(type, inventory) > 0;
+        get
+        {
+            // If player's magazine is not empty
+            // AND
+            // If enough ammunition is remaining to reload weapon with
+            return ammo.current < ammo.max && ReservedAmmo(mode.stats.ammoType) > 0;
+        }
     }
-    public int ReservedAmmo(AmmunitionType type, AmmunitionInventory inventory)
+    public int ReservedAmmo(AmmunitionType type)
     {
-        return (int)(inventory.GetStock(type) - ammo.current);
+        return (int)(mode.User.ammo.GetStock(type) - ammo.current);
     }
     
 
-    IEnumerator ReloadSequence(RangedAttack mode, AmmunitionInventory userAmmo)
+    IEnumerator ReloadSequence()
     {
         ReloadActive = true;
         onReloadStart.Invoke();
         yield return new WaitForSeconds(startTransitionDelay);
 
         // If reload sequence has not been cancelled, magazine is not full and there is still ammo to reload with
-        while (CanReload(mode.stats.ammoType, userAmmo) && ReloadActive == true)
+        while (CanReload && ReloadActive == true)
         {
             yield return new WaitForSeconds(delayBetweenLoads);
             // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
-            int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(mode.stats.ammoType, userAmmo));
+            int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(mode.stats.ammoType));
             ammo.Change(amountToAdd, out float leftover);
             onRoundsReloaded.Invoke();
         }
@@ -96,7 +106,10 @@ public class GunMagazine : MonoBehaviour
     }
     void EndSequence()
     {
-        StopCoroutine(currentSequence);
+        if (currentSequence != null)
+        {
+            StopCoroutine(currentSequence);
+        }
         currentSequence = null;
     }
 

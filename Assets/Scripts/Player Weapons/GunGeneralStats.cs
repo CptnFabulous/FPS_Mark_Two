@@ -14,7 +14,13 @@ public class GunGeneralStats : MonoBehaviour
     public AmmunitionType ammoType;
     public int ammoPerShot = 1;
     public UnityEvent effectsOnFire;
-
+    public bool ConsumesAmmo
+    {
+        get
+        {
+            return ammoType != null && ammoPerShot > 0;
+        }
+    }
     public void Shoot(Entity user, Vector3 origin, Vector3 aimDirection, Vector3 worldUp)
     {
         effectsOnFire.Invoke();

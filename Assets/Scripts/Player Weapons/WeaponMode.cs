@@ -9,9 +9,22 @@ public abstract class WeaponMode : MonoBehaviour
     public Sprite icon;
     public float switchSpeed;
     public UnityEvent onSwitch;
-
-
-    public abstract void UpdateLoop(WeaponHandler user);
+    
+    [HideInInspector] public Weapon attachedTo;
+    public WeaponHandler User
+    {
+        get
+        {
+            return attachedTo.user;
+        }
+    }
+    
+    private void Awake()
+    {
+        attachedTo = GetComponentInParent<Weapon>();
+    }
+    
+    public abstract void UpdateLoop();
 
     public abstract bool InAction { get; }
 }

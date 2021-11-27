@@ -41,6 +41,13 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    [HideInInspector] public WeaponHandler user;
+
+    private void OnEnable()
+    {
+        user = GetComponentInParent<WeaponHandler>();
+    }
+
     public IEnumerator Draw()
     {
         //yield return new WaitUntil(() => isSwitching == false);

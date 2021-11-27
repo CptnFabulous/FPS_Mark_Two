@@ -118,7 +118,7 @@ public class WeaponHandler : MonoBehaviour
         // If player is not in the middle of switching firing modes
         if (isSwitching == false && CurrentWeapon != null && CurrentWeapon.isSwitching == false)
         {
-            CurrentWeapon.CurrentMode.UpdateLoop(this);
+            CurrentWeapon.CurrentMode.UpdateLoop();
         }
         
         

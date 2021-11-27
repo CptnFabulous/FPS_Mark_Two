@@ -34,7 +34,15 @@ public class RangedAttack : WeaponMode
             return false;
         }
     }
-    public bool CanShoot(WeaponHandler user)
+    public bool NotReloading
+    {
+        get
+        {
+            return magazine == null || magazine.ReloadActive == false;
+        }
+    }
+
+    public bool CanShoot()
     {
         // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
         if (magazine != null)
@@ -47,7 +55,7 @@ public class RangedAttack : WeaponMode
         }
 
         // If the weapon consumes ammunition, but there isn't enough to fire
-        if (stats.ammoType != null && stats.ammoPerShot > 0 && user.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
+        if (stats.ConsumesAmmo && User.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
         {
             return false;
         }
@@ -56,39 +64,36 @@ public class RangedAttack : WeaponMode
     }
 
 
-    public override void UpdateLoop(WeaponHandler user)
+    public override void UpdateLoop()
     {
         if (optics != null)
         {
-            optics.InputLoop(user);
+            optics.InputLoop(this);
         }
-        
-        if (user.primary.Pressed && controls.InBurst == false)
+
+        if (User.primary.Pressed && controls.InBurst == false && NotReloading)
         {
-            StartCoroutine(controls.Fire(this, user));
+            StartCoroutine(controls.Fire(this));
         }
 
         if (magazine != null)
         {
-            magazine.InputLoop(this, user);
+            magazine.InputLoop(this);
         }
     }
 
-    public void SingleShot(WeaponHandler user)
+    public void SingleShot()
     {
         if (magazine != null)
         {
             magazine.ammo.current -= stats.ammoPerShot;
         }
-
-        if (stats.ammoType != null && stats.ammoPerShot > 0)
+        if (stats.ConsumesAmmo)
         {
-            user.ammo.Spend(stats.ammoType, stats.ammoPerShot);
+            User.ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
 
-        //Debug.Log("Shooting on frame " + Time.frameCount);
-        stats.Shoot(user.controller, user.aimAxis.position, user.AimDirection(), user.aimAxis.up);
-        //user.onAttack.Invoke(this);
+        stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection(), User.aimAxis.up);
     }
 
 }

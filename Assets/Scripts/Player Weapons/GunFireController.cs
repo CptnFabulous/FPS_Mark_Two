@@ -10,20 +10,18 @@ public class GunFireController : MonoBehaviour
     public bool InBurst { get; private set; }
     
 
-    public IEnumerator Fire(RangedAttack mode, WeaponHandler user)
+    public IEnumerator Fire(RangedAttack mode)
     {
         InBurst = true;
-        Debug.Log("Player is starting to shoot");
         int shotsInBurst = 0;
         
-        while ((shotsInBurst < maxBurst || maxBurst <= 0) && user.primary.Held && mode.CanShoot(user))
+        while ((shotsInBurst < maxBurst || maxBurst <= 0) && mode.User.primary.Held && mode.CanShoot())
         {
-            mode.SingleShot(user);
+            mode.SingleShot();
             shotsInBurst++;
             yield return new WaitForSeconds(60 / roundsPerMinute);
         }
 
-        //Debug.Log("Player is not shooting anymore");
         InBurst = false;
     }
     
