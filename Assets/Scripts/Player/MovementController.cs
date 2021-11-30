@@ -243,6 +243,18 @@ public class MovementController : MonoBehaviour
         transform.Rotate(0, degrees.x, 0);
         aimAxis.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
     }
+    public IEnumerator RotateAimOverTime(Vector2 degrees, float time)
+    {
+        float timer = 0;
+        while (timer != 1)
+        {
+            timer += Time.deltaTime / time;
+            timer = Mathf.Clamp01(timer);
+            RotateAim(degrees * Time.deltaTime / time);
+
+            yield return new WaitForEndOfFrame();
+        }
+    }
     #endregion
 
     #region Jumping and dodging

@@ -5,15 +5,19 @@ using UnityEngine.Events;
 
 public class GunGeneralStats : MonoBehaviour
 {
+    [Header("Projectile")]
     public Projectile projectilePrefab;
     public int projectileCount = 1;
     public Transform muzzle;
+
+    [Header("Accuracy")]
     public float sway = 0.2f;
     public float shotSpread = 0;
     public float range = 300;
+
+    [Header("Ammunition")]
     public AmmunitionType ammoType;
     public int ammoPerShot = 1;
-    public UnityEvent effectsOnFire;
     public bool ConsumesAmmo
     {
         get
@@ -21,6 +25,16 @@ public class GunGeneralStats : MonoBehaviour
             return ammoType != null && ammoPerShot > 0;
         }
     }
+
+    [Header("Recoil")]
+    public float recoilMagnitude = 2;
+    public float recoilDeviationAngle = 45;
+    //public AnimationCurve recoilCurve;
+    public float recoilTime = 0.5f;
+
+
+
+    public UnityEvent effectsOnFire;
     public void Shoot(Entity user, Vector3 origin, Vector3 aimDirection, Vector3 worldUp)
     {
         effectsOnFire.Invoke();
@@ -57,5 +71,19 @@ public class GunGeneralStats : MonoBehaviour
                 newProjectile.OnHit(surfaceHit);
             }
         }
+
+        if (user as Player != null && recoilMagnitude > 0)
+        {
+            ApplyRecoil((user as Player).movement);
+        }
+    }
+
+
+
+    void ApplyRecoil(MovementController player)
+    {
+        float recoilAngle = Random.Range(-recoilDeviationAngle, recoilDeviationAngle);
+        Vector2 recoilDirection = Quaternion.Euler(0, 0, recoilAngle) * Vector2.up * recoilMagnitude;
+        player.StartCoroutine(player.RotateAimOverTime(recoilDirection, recoilTime/*, recoilCurve*/));
     }
 }
