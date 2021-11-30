@@ -47,8 +47,9 @@ public class MovementController : MonoBehaviour
     public Transform upperBody;
     public Camera worldViewCamera;
     public Camera headsUpDisplayCamera;
-    public float aimSensitivityX = 75;
-    public float aimSensitivityY = 75;
+    public Vector2 aimSensitivity = new Vector2(75, 75);
+    public bool invertX;
+    public bool invertY;
     [Range(1, 179)] public float fieldOfView = 90;
     float minAngle = -90;
     float maxAngle = 90;
@@ -57,9 +58,22 @@ public class MovementController : MonoBehaviour
     {
         get
         {
-            return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-            //return controlling.inputManager.actions.FindAction("Look").ReadValue<Vector2>();
-            //return controlling.inputManager.actions["Look"].ReadValue<Vector2>();
+            //Vector2 value = controlling.inputManager.actions.FindAction("Look").ReadValue<Vector2>();
+            //Vector2 value = controlling.inputManager.actions["Look"].ReadValue<Vector2>();
+
+            Vector2 value = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+            value.x *= aimSensitivity.x;
+            value.y *= aimSensitivity.y;
+            value *= Time.deltaTime;
+            if (invertX)
+            {
+                value.x = -value.x;
+            }
+            if (invertY)
+            {
+                value.y = -value.y;
+            }
+            return value;
         }
     }
 
@@ -175,7 +189,7 @@ public class MovementController : MonoBehaviour
     {
         IsCrouching = CustomInput.SetPlayerAbilityState(IsCrouching, crouch, toggleCrouch);
 
-        InputAim(CameraInput);
+        RotateAim(CameraInput);
 
         if (jump.Pressed)
         {
@@ -225,17 +239,7 @@ public class MovementController : MonoBehaviour
     }
 
     #region Aiming camera
-    public void InputAim(Vector2 input)
-    {
-        float rotationH = input.x * aimSensitivityX * Time.deltaTime;
-        float rotationV = input.y * aimSensitivityY * Time.deltaTime;
-        Vector2 angles = new Vector2(rotationH, rotationV);
-        if (angles.magnitude <= 0)
-        {
-            return;
-        }
-        RotateAim(angles);
-    }
+    
     public void RotateAim(Vector2 degrees)
     {
         verticalAngle -= degrees.y;
@@ -243,6 +247,7 @@ public class MovementController : MonoBehaviour
         transform.Rotate(0, degrees.x, 0);
         aimAxis.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
     }
+
     public IEnumerator RotateAimOverTime(Vector2 degrees, float time)
     {
         float timer = 0;
@@ -439,5 +444,5 @@ public class MovementController : MonoBehaviour
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * lookSwayDegrees, intensity);
         torsoRotation *= Quaternion.Euler(swayAxes);
     }
-    
+
 }
