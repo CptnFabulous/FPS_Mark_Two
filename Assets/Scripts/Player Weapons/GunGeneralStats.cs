@@ -29,7 +29,7 @@ public class GunGeneralStats : MonoBehaviour
     [Header("Recoil")]
     public float recoilMagnitude = 2;
     public float recoilDeviationAngle = 45;
-    //public AnimationCurve recoilCurve;
+    public AnimationCurve recoilCurve;
     public float recoilTime = 0.5f;
 
 
@@ -84,6 +84,7 @@ public class GunGeneralStats : MonoBehaviour
     {
         float recoilAngle = Random.Range(-recoilDeviationAngle, recoilDeviationAngle);
         Vector2 recoilDirection = Quaternion.Euler(0, 0, recoilAngle) * Vector2.up * recoilMagnitude;
-        player.StartCoroutine(player.RotateAimOverTime(recoilDirection, recoilTime/*, recoilCurve*/));
+        //player.StartCoroutine(player.RotateAimOverTime(recoilDirection, recoilTime));
+        player.StartCoroutine(player.RotateAimOverTime(recoilDirection, recoilTime, recoilCurve));
     }
 }

@@ -239,7 +239,6 @@ public class MovementController : MonoBehaviour
     }
 
     #region Aiming camera
-    
     public void RotateAim(Vector2 degrees)
     {
         verticalAngle -= degrees.y;
@@ -247,7 +246,6 @@ public class MovementController : MonoBehaviour
         transform.Rotate(0, degrees.x, 0);
         aimAxis.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
     }
-
     public IEnumerator RotateAimOverTime(Vector2 degrees, float time)
     {
         float timer = 0;
@@ -258,6 +256,25 @@ public class MovementController : MonoBehaviour
             RotateAim(degrees * Time.deltaTime / time);
 
             yield return new WaitForEndOfFrame();
+        }
+    }
+    public IEnumerator RotateAimOverTime(Vector2 degrees, float time, AnimationCurve curve)
+    {
+        float timer = 0;
+        float curveLastFrame = 0;
+
+        while (timer != 1)
+        {
+            timer += Time.deltaTime / time;
+            timer = Mathf.Clamp01(timer);
+
+            float curveThisFrame = curve.Evaluate(timer);
+            float curveDeltaTime = curveThisFrame - curveLastFrame;
+
+            RotateAim(degrees * curveDeltaTime);
+
+            yield return new WaitForEndOfFrame();
+            curveLastFrame = curveThisFrame;
         }
     }
     #endregion
