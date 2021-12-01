@@ -389,24 +389,31 @@ public class MovementController : MonoBehaviour
     /// </summary>
     void WalkCycle()
     {
+        /*
+        Vector3 l = transform.position + (transform.forward * 2) + (-transform.right * 0.5f);
+        Vector3 r = transform.position + (transform.forward * 2) + (transform.right * 0.5f);
+        //Debug.DrawLine(transform.position, l);
+        Debug.DrawRay(l, transform.up * walkCycleTimer, Color.cyan);
+        Debug.DrawRay(r, transform.up * stepTimer, Color.red);
+        */
         // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
         if (groundingData.collider != null && (MovementInput.magnitude > 0 || walkCycleTimer != 0))
         {
             float walkCycleLength = strideLength * stepsPerCycle / CurrentMoveSpeed;
-            walkCycleTimer += Time.deltaTime / walkCycleLength;
-            stepTimer += Time.deltaTime / walkCycleLength * stepsPerCycle;
-            if (walkCycleTimer > 1)
+            float amountToIncrement = Time.deltaTime / walkCycleLength;
+            walkCycleTimer += amountToIncrement;
+            stepTimer += amountToIncrement;
+            if (walkCycleTimer >= 1)
             {
                 walkCycleTimer = 0;
             }
-            if (stepTimer > 1)
+            if (stepTimer >= walkCycleLength / stepsPerCycle)
             {
+                //Vector3 c = transform.position + (transform.forward * 2);
+                //Debug.DrawRay(c, transform.up * stepTimer, Color.green, walkCycleLength / stepsPerCycle / 2);
                 onStep.Invoke(groundingData);
                 stepTimer = 0;
             }
-
-            //Debug.DrawRay(Vector3.zero, Vector3.up * walkCycleTimer, Color.blue);
-            //Debug.DrawRay(Vector3.forward, Vector3.up * stepTimer, Color.red);
 
             // Add bobbing animations
             float bobX = walkBobX.Evaluate(walkCycleTimer) * bobExtents.x;
