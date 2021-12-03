@@ -149,15 +149,9 @@ public class MovementController : MonoBehaviour
     float torsoAngularVelocityTimer;
     #endregion
 
-    Vector3 positionLastFrame;
+    
     Quaternion lookRotationLastFrame;
-    public Vector3 DeltaMovement
-    {
-        get
-        {
-            return transform.position - positionLastFrame;
-        }
-    }
+    
     public Quaternion DeltaLookRotation
     {
         get
@@ -171,7 +165,6 @@ public class MovementController : MonoBehaviour
         while (enabled)
         {
             yield return waitForAfterLateUpdate;
-            positionLastFrame = transform.position;
             lookRotationLastFrame = upperBody.rotation;
         }
     }
