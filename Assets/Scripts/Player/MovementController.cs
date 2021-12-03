@@ -10,12 +10,9 @@ public class MovementController : MonoBehaviour
 
     [Header("Movement")]
     public float defaultSpeed = 5;
-    //List<float> speedModifiers = new List<float>();
     CapsuleCollider collider;
     Rigidbody rb;
     Vector3 movementVelocity;
-
-
     Vector2 MovementInput
     {
         get
@@ -63,18 +60,16 @@ public class MovementController : MonoBehaviour
     [Range(1, 179)] public float fieldOfView = 90;
     float minAngle = -90;
     float maxAngle = 90;
+
+
     float verticalAngle = 0;
-    Vector2 CameraInput
+    public Vector2 CameraInput
     {
         get
         {
-            //Vector2 value = controlling.inputManager.actions.FindAction("Look").ReadValue<Vector2>();
-            //Vector2 value = controlling.inputManager.actions["Look"].ReadValue<Vector2>();
-
             Vector2 value = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
             value.x *= aimSensitivity.x;
             value.y *= aimSensitivity.y;
-            value *= Time.deltaTime;
             if (invertX)
             {
                 value.x = -value.x;
@@ -84,6 +79,14 @@ public class MovementController : MonoBehaviour
                 value.y = -value.y;
             }
             return value;
+        }
+    }
+    public Quaternion RotationVelocity
+    {
+        get
+        {
+            Vector2 input = CameraInput;
+            return Quaternion.Euler(-input.y, input.x, 0) * transform.rotation;
         }
     }
 
@@ -149,34 +152,7 @@ public class MovementController : MonoBehaviour
     float torsoAngularVelocityTimer;
     #endregion
 
-    
-    Quaternion lookRotationLastFrame;
-    
-    public Quaternion DeltaLookRotation
-    {
-        get
-        {
-            return lookRotationLastFrame * Quaternion.Inverse(upperBody.transform.rotation);
-        }
-    }
-    IEnumerator UpdateDeltaValues()
-    {
-        WaitForEndOfFrame waitForAfterLateUpdate = new WaitForEndOfFrame();
-        while (enabled)
-        {
-            yield return waitForAfterLateUpdate;
-            lookRotationLastFrame = upperBody.rotation;
-        }
-    }
 
-
-
-
-
-    public void OnEnable()
-    {
-        StartCoroutine(UpdateDeltaValues());
-    }
     private void Awake()
     {
         collider = GetComponent<CapsuleCollider>();
@@ -195,7 +171,7 @@ public class MovementController : MonoBehaviour
     {
         IsCrouching = CustomInput.SetPlayerAbilityState(IsCrouching, crouch, toggleCrouch);
 
-        RotateAim(CameraInput);
+        RotateAim(CameraInput * Time.deltaTime);
 
         Vector2 input = MovementInput;
         Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
@@ -209,13 +185,6 @@ public class MovementController : MonoBehaviour
     private void FixedUpdate()
     {
         SetGroundingData();
-
-        /*
-        Vector2 input = MovementInput;
-        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
-        movement = transform.rotation * movement;
-        rb.MovePosition(transform.position + (movement * Time.fixedDeltaTime));
-        */
         rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
     }
     private void LateUpdate()
@@ -231,9 +200,6 @@ public class MovementController : MonoBehaviour
         upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
         float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
-
-        //torsoPosition = Vector3.zero;
-        //torsoRotation = Quaternion.identity;
     }
 
     #region Aiming camera
@@ -441,9 +407,10 @@ public class MovementController : MonoBehaviour
     /// </summary>
     void TorsoSway()
     {
-        float intensity = Mathf.Clamp01(DeltaLookRotation.eulerAngles.magnitude / speedForMaxSway);
-        Vector3 swayAxes = new Vector3(DeltaLookRotation.x, DeltaLookRotation.y, 0);
-        swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * lookSwayDegrees, intensity);
+        Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(RotationVelocity, transform);
+        float intensity = Mathf.Clamp01(localRotationVelocity.eulerAngles.magnitude / speedForMaxSway);
+        Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0);
+        swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);
         torsoRotation *= Quaternion.Euler(swayAxes);
     }
 

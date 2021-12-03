@@ -165,9 +165,9 @@ public class GunADS : MonoBehaviour
                 // Vector3.SmoothDamp is used on the euler angles for clean transitions.
                 // If the smoothdamp is applied directly to the gun rotation, it drags too far behind.
                 // Applying the base gun rotation straight then using smoothdamp on just the sway value is better at keeping the rotation within specified boundaries.
-                Quaternion deltaLookRotation = player.movement.DeltaLookRotation;
-                float intensity = Mathf.Clamp01(deltaLookRotation.eulerAngles.magnitude / speedForMaxSway);
-                Vector3 swayAxes = new Vector3(deltaLookRotation.x, deltaLookRotation.y, 0); // Only record X and Y values to prevent awkward shifting
+                Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(player.movement.RotationVelocity, player.movement.transform);
+                float intensity = Mathf.Clamp01(localRotationVelocity.eulerAngles.magnitude / speedForMaxSway);
+                Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0); // Only record X and Y values to prevent awkward shifting
                 swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);
                 cosmeticSwayAxes = Vector3.SmoothDamp(cosmeticSwayAxes, swayAxes, ref cosmeticSwayAngularVelocity, swayUpdateTime);
                 modelOrientationTransform.localRotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation

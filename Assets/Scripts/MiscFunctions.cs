@@ -8,6 +8,10 @@ public readonly struct MiscFunctions
     {
         return a * Quaternion.Inverse(b);
     }
+    public static Quaternion WorldToLocalRotation(Quaternion worldRotation, Transform target)
+    {
+        return Quaternion.Inverse(target.rotation) * worldRotation;
+    }
 
     public static Vector3 ScreenToAnchoredPosition(Vector3 screenSpace, RectTransform rt, RectTransform parent)
     {
