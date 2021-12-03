@@ -8,6 +8,7 @@ public class MovementController : MonoBehaviour
 {
     public Player controlling;
 
+    #region Movement
     [Header("Movement")]
     public float defaultSpeed = 5;
     CapsuleCollider collider;
@@ -48,7 +49,9 @@ public class MovementController : MonoBehaviour
             return rb.velocity + movementVelocity;
         }
     }
+    #endregion
 
+    #region Aiming
     [Header("Aiming")]
     public Transform aimAxis;
     public Transform upperBody;
@@ -60,7 +63,6 @@ public class MovementController : MonoBehaviour
     [Range(1, 179)] public float fieldOfView = 90;
     float minAngle = -90;
     float maxAngle = 90;
-
 
     float verticalAngle = 0;
     public Vector2 CameraInput
@@ -90,119 +92,6 @@ public class MovementController : MonoBehaviour
         }
     }
 
-    [Header("Jumping")]
-    public float jumpForce = 5;
-    public float jumpCooldown = 0.1f;
-    public float groundingRayLength = 0.01f;
-    public UnityEvent onJump;
-    public UnityEvent<RaycastHit> onLand;
-
-    public RaycastHit groundingData;
-    float lastTimeJumped;
-    CustomInput.Button jump = new CustomInput.Button("Jump");
-
-    [Header("Dodging")]
-    public float dodgeSpeed = 10;
-    public float dodgeDistance = 5;
-    public float dodgeCooldown = 1;
-    public UnityEvent onDodge;
-    float lastTimeDodged;
-
-    [Header("Crouching")]
-    public bool toggleCrouch;
-    public float standHeight = 2;
-    public float crouchHeight = 1;
-    public float headDistanceFromTop = 0.2f;
-    public float crouchSpeedMultiplier = 0.5f;
-    public float crouchTransitionTime = 0.5f;
-    public UnityEvent onCrouch;
-    public UnityEvent onStand;
-    [SerializeField] bool crouched;
-    float crouchTimer;
-    CustomInput.Button crouch = new CustomInput.Button("Crouch");
-
-    #region Cosmetics
-    [Header("Cosmetics")]
-    public Transform upperBodyAnimationTransform;
-    [Header("Walk Cycle")]
-    public float strideLength = 1;
-    public int stepsPerCycle = 2;
-    public UnityEvent<RaycastHit> onStep;
-    public Vector2 bobExtents = new Vector2(0.2f, 0.1f);
-    public AnimationCurve walkBobX;
-    public AnimationCurve walkBobY;
-    float walkCycleTimer;
-    float stepTimer;
-    [Header("Drag")] // Torso lingering/dragging when moving
-    public float upperBodyDragDistance = 0.2f;
-    public float speedForMaxDrag = 20;
-    [Header("Tilt")] // Torso leaning/tilting when moving
-    public float upperBodyTiltAngle = 10;
-    public float speedForMaxTilt = 20;
-    [Header("Sway")] // Torso swaying/dragging when looking around
-    public float lookSwayDegrees = 5;
-    public float speedForMaxSway = 10;
-    [Header("Return")] // Return to default position and rotation
-    public float torsoPositionUpdateTime = 0.1f;
-    public float torsoRotationUpdateTime = 0.1f;
-    
-    Vector3 torsoPosition;
-    Quaternion torsoRotation;
-    Vector3 torsoMovementVelocity;
-    float torsoAngularVelocityTimer;
-    #endregion
-
-
-    private void Awake()
-    {
-        collider = GetComponent<CapsuleCollider>();
-        rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
-        worldViewCamera.fieldOfView = fieldOfView;
-
-        //torsoPosition = Vector3.zero;
-        //torsoRotation = Quaternion.identity;
-    }
-    void Start()
-    {
-        IsCrouching = IsCrouching;
-    }
-    void Update()
-    {
-        IsCrouching = CustomInput.SetPlayerAbilityState(IsCrouching, crouch, toggleCrouch);
-
-        RotateAim(CameraInput * Time.deltaTime);
-
-        Vector2 input = MovementInput;
-        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
-        movementVelocity = transform.rotation * movement;
-
-        if (jump.Pressed)
-        {
-            TryJump();
-        }
-    }
-    private void FixedUpdate()
-    {
-        SetGroundingData();
-        rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
-    }
-    private void LateUpdate()
-    {
-        torsoPosition = Vector3.zero;
-        torsoRotation = Quaternion.identity;
-
-        WalkCycle();
-        TorsoDrag();
-        TorsoTilt();
-        TorsoSway();
-
-        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
-        float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
-        upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
-    }
-
-    #region Aiming camera
     public void RotateAim(Vector2 degrees)
     {
         verticalAngle -= degrees.y;
@@ -243,7 +132,18 @@ public class MovementController : MonoBehaviour
     }
     #endregion
 
-    #region Jumping and dodging
+    #region Jumping
+    [Header("Jumping")]
+    public float jumpForce = 5;
+    public float jumpCooldown = 0.1f;
+    public float groundingRayLength = 0.01f;
+    public UnityEvent onJump;
+    public UnityEvent<RaycastHit> onLand;
+
+    public RaycastHit groundingData;
+    float lastTimeJumped;
+    CustomInput.Button jump = new CustomInput.Button("Jump");
+
     void SetGroundingData()
     {
         Vector3 rayOrigin = transform.position + transform.up * (collider.height / 2);
@@ -262,11 +162,21 @@ public class MovementController : MonoBehaviour
         {
             return;
         }
-        
+
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         onJump.Invoke();
         lastTimeJumped = Time.time;
     }
+    #endregion
+
+    #region Dodging
+    [Header("Dodging")]
+    public float dodgeSpeed = 10;
+    public float dodgeDistance = 5;
+    public float dodgeCooldown = 1;
+    public UnityEvent onDodge;
+    float lastTimeDodged;
+
     public void TryDodge(Vector2 input)
     {
         // If player is standing on the ground
@@ -286,6 +196,19 @@ public class MovementController : MonoBehaviour
     #endregion
 
     #region Crouching
+    [Header("Crouching")]
+    public bool toggleCrouch;
+    public float standHeight = 2;
+    public float crouchHeight = 1;
+    public float headDistanceFromTop = 0.2f;
+    public float crouchSpeedMultiplier = 0.5f;
+    public float crouchTransitionTime = 0.5f;
+    public UnityEvent onCrouch;
+    public UnityEvent onStand;
+    [SerializeField] bool crouched;
+    float crouchTimer;
+    CustomInput.Button crouch = new CustomInput.Button("Crouch");
+
     public bool IsCrouching
     {
         get
@@ -347,6 +270,36 @@ public class MovementController : MonoBehaviour
         aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
     }
     #endregion
+
+    #region Cosmetics
+    [Header("Cosmetics")]
+    public Transform upperBodyAnimationTransform;
+    [Header("Walk Cycle")]
+    public float strideLength = 1;
+    public int stepsPerCycle = 2;
+    public UnityEvent<RaycastHit> onStep;
+    public Vector2 bobExtents = new Vector2(0.2f, 0.1f);
+    public AnimationCurve walkBobX;
+    public AnimationCurve walkBobY;
+    float walkCycleTimer;
+    float stepTimer;
+    [Header("Drag")] // Torso lingering/dragging when moving
+    public float upperBodyDragDistance = 0.2f;
+    public float speedForMaxDrag = 20;
+    [Header("Tilt")] // Torso leaning/tilting when moving
+    public float upperBodyTiltAngle = 10;
+    public float speedForMaxTilt = 20;
+    [Header("Sway")] // Torso swaying/dragging when looking around
+    public float lookSwayDegrees = 5;
+    public float speedForMaxSway = 10;
+    [Header("Return")] // Return to default position and rotation
+    public float torsoPositionUpdateTime = 0.1f;
+    public float torsoRotationUpdateTime = 0.1f;
+    
+    Vector3 torsoPosition;
+    Quaternion torsoRotation;
+    Vector3 torsoMovementVelocity;
+    float torsoAngularVelocityTimer;
 
     /// <summary>
     /// Implements bobbing animations for player walk cycle, and cosmetic effects whenever they take a step.
@@ -413,6 +366,54 @@ public class MovementController : MonoBehaviour
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);
         torsoRotation *= Quaternion.Euler(swayAxes);
     }
+    #endregion
 
+    private void Awake()
+    {
+        collider = GetComponent<CapsuleCollider>();
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        worldViewCamera.fieldOfView = fieldOfView;
 
+        //torsoPosition = Vector3.zero;
+        //torsoRotation = Quaternion.identity;
+    }
+    void Start()
+    {
+        IsCrouching = IsCrouching;
+    }
+    void Update()
+    {
+        IsCrouching = CustomInput.SetPlayerAbilityState(IsCrouching, crouch, toggleCrouch);
+
+        RotateAim(CameraInput * Time.deltaTime);
+
+        Vector2 input = MovementInput;
+        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
+        movementVelocity = transform.rotation * movement;
+
+        if (jump.Pressed)
+        {
+            TryJump();
+        }
+    }
+    private void FixedUpdate()
+    {
+        SetGroundingData();
+        rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
+    }
+    private void LateUpdate()
+    {
+        torsoPosition = Vector3.zero;
+        torsoRotation = Quaternion.identity;
+
+        WalkCycle();
+        TorsoDrag();
+        TorsoTilt();
+        TorsoSway();
+
+        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
+        float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
+        upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
+    }
 }
