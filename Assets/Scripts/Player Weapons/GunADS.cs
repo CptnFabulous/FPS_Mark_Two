@@ -28,15 +28,15 @@ public class GunADS : MonoBehaviour
     public UnityEvent onSwitchToADS;
     public UnityEvent onSwitchToHipfire;
 
-    Vector3 cosmeticSwayAxes;
-    Vector3 cosmeticSwayAngularVelocity;
+    
 
 
     WeaponHandler user;
     Player player;
-
     bool currentlyAiming;
     float timer;
+    Vector3 cosmeticSwayAxes;
+    Vector3 cosmeticSwayAngularVelocity;
 
     /// <summary>
     /// Is the player currently using ADS? Change this value to trigger ADS changing code
@@ -65,6 +65,9 @@ public class GunADS : MonoBehaviour
             currentlyAiming = value;
         }
     }
+    /// <summary>
+    /// Is the player in the process of switching between hip-firing or aiming down the sights?
+    /// </summary>
     public bool IsTransitioning
     {
         get
@@ -107,7 +110,6 @@ public class GunADS : MonoBehaviour
             sightPicture.material = scopeMaterial;
         }
     }
-
     public void InputLoop(RangedAttack mode)
     {
         user = mode.User;
@@ -117,19 +119,7 @@ public class GunADS : MonoBehaviour
             viewingCamera.fieldOfView = player.movement.fieldOfView / magnification;
         }
 
-        #region Controls
         IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS) && mode.NotReloading;
-        /*
-        if (IsAiming == false && user.secondary.Pressed)
-        {
-            IsAiming = true;
-        }
-        else if ((user.secondary.Released && user.toggleADS == false) || (user.secondary.Pressed && user.toggleADS == true))
-        {
-            IsAiming = false;
-        }
-        */
-        #endregion
 
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)
@@ -158,7 +148,6 @@ public class GunADS : MonoBehaviour
         Vector3 cameraDirection = Vector3.Slerp(player.movement.aimAxis.forward, user.AimDirection(), timer);
         player.movement.upperBody.LookAt(player.movement.upperBody.position + cameraDirection);
     }
-
     private void LateUpdate()
     {
         if (IsAiming || IsTransitioning)
