@@ -10,6 +10,24 @@ public class MovementController : MonoBehaviour
 
     [Header("Movement")]
     public float defaultSpeed = 5;
+    //List<float> speedModifiers = new List<float>();
+    CapsuleCollider collider;
+    Rigidbody rb;
+    Vector3 movementVelocity;
+
+
+    Vector2 MovementInput
+    {
+        get
+        {
+            Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            if (input.magnitude > 0) // Check before normalising, to allow proportional control while ensuring value does not exceed 1
+            {
+                input.Normalize();
+            }
+            return input;
+        }
+    }
     float CurrentMoveSpeed
     {
         get
@@ -26,21 +44,13 @@ public class MovementController : MonoBehaviour
             return speed;
         }
     }
-    Vector2 MovementInput
+    Vector3 TotalVelocity
     {
         get
         {
-            Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            if (input.magnitude > 0) // Check before normalising, to allow proportional control while ensuring value does not exceed 1
-            {
-                input.Normalize();
-            }
-            return input;
+            return rb.velocity + movementVelocity;
         }
     }
-    //List<float> speedModifiers = new List<float>();
-    CapsuleCollider collider;
-    Rigidbody rb;
 
     [Header("Aiming")]
     public Transform aimAxis;
@@ -180,6 +190,9 @@ public class MovementController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         worldViewCamera.fieldOfView = fieldOfView;
+
+        //torsoPosition = Vector3.zero;
+        //torsoRotation = Quaternion.identity;
     }
     void Start()
     {
@@ -191,6 +204,10 @@ public class MovementController : MonoBehaviour
 
         RotateAim(CameraInput);
 
+        Vector2 input = MovementInput;
+        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
+        movementVelocity = transform.rotation * movement;
+
         if (jump.Pressed)
         {
             TryJump();
@@ -200,28 +217,13 @@ public class MovementController : MonoBehaviour
     {
         SetGroundingData();
 
+        /*
         Vector2 input = MovementInput;
         Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
         movement = transform.rotation * movement;
         rb.MovePosition(transform.position + (movement * Time.fixedDeltaTime));
-        /*
-        if (groundingData.collider != null)
-        {
-            movement += Physics.gravity;
-        }
         */
-
-        /*
-        if (movement.magnitude > 0)
-        {
-            float accelerationSpeed = 40f;
-            Vector3 desiredHorizontalVelocity = 
-            rb.velocity = Vector3.MoveTowards(rb.velocity, movement, accelerationSpeed * Time.fixedDeltaTime);
-        }
-        */
-
-
-
+        rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
     }
     private void LateUpdate()
     {
@@ -233,9 +235,12 @@ public class MovementController : MonoBehaviour
         TorsoTilt();
         TorsoSway();
 
-        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime); ;
+        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
         float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
+
+        //torsoPosition = Vector3.zero;
+        //torsoRotation = Quaternion.identity;
     }
 
     #region Aiming camera
@@ -389,13 +394,6 @@ public class MovementController : MonoBehaviour
     /// </summary>
     void WalkCycle()
     {
-        /*
-        Vector3 l = transform.position + (transform.forward * 2) + (-transform.right * 0.5f);
-        Vector3 r = transform.position + (transform.forward * 2) + (transform.right * 0.5f);
-        //Debug.DrawLine(transform.position, l);
-        Debug.DrawRay(l, transform.up * walkCycleTimer, Color.cyan);
-        Debug.DrawRay(r, transform.up * stepTimer, Color.red);
-        */
         // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
         if (groundingData.collider != null && (MovementInput.magnitude > 0 || walkCycleTimer != 0))
         {
@@ -409,8 +407,6 @@ public class MovementController : MonoBehaviour
             }
             if (stepTimer >= walkCycleLength / stepsPerCycle)
             {
-                //Vector3 c = transform.position + (transform.forward * 2);
-                //Debug.DrawRay(c, transform.up * stepTimer, Color.green, walkCycleLength / stepsPerCycle / 2);
                 onStep.Invoke(groundingData);
                 stepTimer = 0;
             }
@@ -431,13 +427,8 @@ public class MovementController : MonoBehaviour
     /// </summary>
     void TorsoDrag()
     {
-        if (Time.deltaTime <= 0)
-        {
-            return;
-        }
-        Vector3 totalVelocity = DeltaMovement / Time.deltaTime;
-        float dragIntensity = Mathf.Clamp01(totalVelocity.magnitude / speedForMaxDrag);
-        Vector3 direction = transform.InverseTransformDirection(totalVelocity);
+        float dragIntensity = Mathf.Clamp01(TotalVelocity.magnitude / speedForMaxDrag);
+        Vector3 direction = transform.InverseTransformDirection(TotalVelocity);
         Vector3 dragMax = direction.normalized * -upperBodyDragDistance;
         Vector3 dragValue = Vector3.Lerp(Vector3.zero, dragMax, dragIntensity);
         torsoPosition += dragValue;
@@ -447,16 +438,10 @@ public class MovementController : MonoBehaviour
     /// </summary>
     void TorsoTilt()
     {
-        if (Time.deltaTime <= 0)
-        {
-            return;
-        }
-        Vector3 totalVelocity = DeltaMovement / Time.deltaTime;
-        float tiltIntensity = Mathf.Clamp01(totalVelocity.magnitude / speedForMaxTilt);
-        float tiltAngle = Mathf.Lerp(0, upperBodyTiltAngle, tiltIntensity);
-        Vector3 newTiltDirection = Vector3.RotateTowards(transform.up, totalVelocity, tiltAngle * Mathf.Deg2Rad, 0);
-        newTiltDirection = transform.InverseTransformDirection(newTiltDirection);
-        torsoRotation *= Quaternion.FromToRotation(Vector3.up, newTiltDirection);
+        Vector3 localDirection = transform.InverseTransformDirection(TotalVelocity).normalized;
+        Quaternion tilt = Quaternion.Euler(localDirection.z * upperBodyTiltAngle, 0, -localDirection.x * upperBodyTiltAngle);
+        float tiltIntensity = Mathf.Clamp01(TotalVelocity.magnitude / speedForMaxTilt);
+        torsoRotation = Quaternion.Lerp(torsoRotation, torsoRotation * tilt, tiltIntensity);
     }
     /// <summary>
     /// Adds cosmetic sway to the player's hands and held items when they turn and shift their aim.
@@ -468,5 +453,6 @@ public class MovementController : MonoBehaviour
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * lookSwayDegrees, intensity);
         torsoRotation *= Quaternion.Euler(swayAxes);
     }
+
 
 }
