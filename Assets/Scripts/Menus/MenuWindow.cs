@@ -127,10 +127,16 @@ public class MenuWindow : MonoBehaviour
         Debug.Log("Assigning " + newWindow.firstSelection + " to event system");
         EventSystem.current.SetSelectedGameObject(newWindow.firstSelection.gameObject);
     }
+    /// <summary>
+    /// Automatically switches to the menu's parent, without needing a reference.
+    /// </summary>
     public void ReturnToParentMenu()
     {
         SwitchWindow(immediateParent);
     }
+    /// <summary>
+    /// Automatically switches to the root of the menu hierarchy, without needing a reference.
+    /// </summary>
     public void ReturnToRoot()
     {
         SwitchWindow(root);
