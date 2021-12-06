@@ -78,11 +78,12 @@ public class MenuWindow : MonoBehaviour
             }
         }
     }
-
-    
     private void Start()
     {
-        SwitchWindow(this);
+        if (root == this)
+        {
+            SwitchWindow(this);
+        }
     }
     
     public void SwitchWindow(MenuWindow newWindow)
