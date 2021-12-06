@@ -49,4 +49,20 @@ public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHand
             menu.selectionDescription.text = description;
         }
     }
+
+
+
+
+    #region Miscellaneous menu functions
+
+    public void QuitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+
+    #endregion
 }
