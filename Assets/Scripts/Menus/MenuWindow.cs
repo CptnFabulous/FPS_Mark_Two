@@ -85,24 +85,43 @@ public class MenuWindow : MonoBehaviour
             SwitchWindow(this);
         }
     }
-    
+
+    /// <summary>
+    /// Enables or disables a menu window in a way that doesn't interfere with the functioning of any child menus.
+    /// </summary>
+    /// <param name="active"></param>
+    public void SetActiveState(bool active)
+    {
+        gameObject.SetActive(true);
+        visualElements.interactable = active; // Objects in hidden menus are disabled so they aren't picked up by the event system
+        visualElements.blocksRaycasts = active; // Objects in hidden menus are disabled so they don't block the player from clicking buttons in the current menu
+        visualElements.alpha = active ? 1 : 0; // Alpha is adjusted to show visibility. If I disable the gameobject or canvas component it will hide children as well
+    }
+    /// <summary>
+    /// Switches to a new window. Assign this as a button listener for menu transitions.
+    /// </summary>
+    /// <param name="newWindow"></param>
     public void SwitchWindow(MenuWindow newWindow)
     {
+        //Debug.Log(newWindow);
         // Disable all windows except for the current one and its parents
         // The root is not part of this specific for loop but that doesn't matter, it needs to be active in order for itself or any of its children to be active
         for (int i = 0; i < root.children.Length; i++)
         {
-            root.children[i].gameObject.SetActive(false);
+            root.children[i].SetActiveState(false);
+        }
+        /*
+        // Enable new window and parents, using canvas group to hide parents
+        newWindow.SetActiveState(true);
+        */
+        for (int i = 0; i < newWindow.parents.Length; i++)
+        {
+            newWindow.parents[i].SetActiveState(false);
         }
 
         // Enable new window and parents, using canvas group to hide parents
-        newWindow.gameObject.SetActive(true);
-        newWindow.visualElements.alpha = 1;
-        for (int i = 0; i < newWindow.parents.Length; i++)
-        {
-            newWindow.parents[i].gameObject.SetActive(true);
-            newWindow.parents[i].visualElements.alpha = 0;
-        }
+        newWindow.SetActiveState(true);
+
 
         // Switch EventSystem so player automatically selects the first selectable
         Debug.Log("Assigning " + newWindow.firstSelection + " to event system");
