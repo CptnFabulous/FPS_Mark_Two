@@ -12,7 +12,6 @@ public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHand
 
     MenuWindow menu;
 
-
     private void OnValidate()
     {
         // Finds the first text object and designates it as its child.
@@ -20,15 +19,6 @@ public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHand
         title = GetComponentInChildren<Text>();
         title.text = name;
     }
-
-
-
-    void Awake()
-    {
-        menu = GetComponentInParent<MenuWindow>();
-    }
-
-
     public void OnSelect(BaseEventData eventData)
     {
         RefreshSelectionInfo();
@@ -37,12 +27,23 @@ public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHand
     {
         RefreshSelectionInfo();
     }
-
     void RefreshSelectionInfo()
     {
+        if (menu == null)
+        {
+            menu = GetComponentInParent<MenuWindow>();
+            if (menu == null)
+            {
+                Debug.Log(name + ", menu not found for some reason");
+                return;
+            }
+        }
+        
+        
         if (menu.selectedGraphic != null)
         {
             menu.selectedGraphic.sprite = graphic;
+            menu.selectedGraphic.enabled = graphic != null;
         }
         if (menu.selectionDescription != null)
         {
