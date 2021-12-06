@@ -23,6 +23,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Accessibility
       objectReference: {fileID: 0}
+    - target: {fileID: 3972179343959839541, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: description
+      value: Additional settings to account for disabled players.
+      objectReference: {fileID: 0}
     - target: {fileID: 4107521529924185566, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_Text
       value: Gameplay
@@ -30,6 +34,10 @@ PrefabInstance:
     - target: {fileID: 4107521530825078919, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_Name
       value: Gameplay
+      objectReference: {fileID: 0}
+    - target: {fileID: 4324432352415759972, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: description
+      value: Adjust miscellaneous settings to improve the gameplay.
       objectReference: {fileID: 0}
     - target: {fileID: 4515139926633478369, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_IsActive
@@ -51,9 +59,18 @@ PrefabInstance:
       propertyPath: m_Text
       value: Controls
       objectReference: {fileID: 0}
+    - target: {fileID: 5665893171158470366, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: description
+      value: Adjust button mappings for the player's actions.
+      objectReference: {fileID: 0}
     - target: {fileID: 7201935092620497245, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8661906976231765800, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: description
+      value: Adjust graphical settings for an ideal balance of looking pretty and
+        not running like a slideshow.
       objectReference: {fileID: 0}
     - target: {fileID: 8699046454042511812, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_Text
@@ -89,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9022653720230518317, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9022653720834037118, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchorMax.x
@@ -98,6 +115,10 @@ PrefabInstance:
     - target: {fileID: 9022653720834037118, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022653720834037119, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: m_Size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9022653720941682033, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_Text
@@ -118,6 +139,10 @@ PrefabInstance:
     - target: {fileID: 9022653721195049419, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_Name
       value: Video
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022653721419514436, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: m_Size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246233, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -145,27 +170,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1920
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_LocalPosition.x
@@ -202,6 +227,10 @@ PrefabInstance:
     - target: {fileID: 9022653721571246239, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9059722825329777278, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
+      propertyPath: description
+      value: Tweak your soundscape.
       objectReference: {fileID: 0}
     - target: {fileID: 9143889456724719844, guid: 923beb9154d6ec643bf9dcfff3df7ada, type: 3}
       propertyPath: m_IsActive
