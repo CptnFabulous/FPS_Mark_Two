@@ -36,13 +36,13 @@ public class InteractGUIPrompt : MonoBehaviour
             return;
         }
 
-        if (current.active == false)
-        {
-            action.text = current.disabledMessage;
-        }
-        else if (current.Progress > 0 && current.Progress < 1)
+        if (current.Progress > 0 && current.Progress < 1)
         {
             action.text = current.inProgressMessage;
+        }
+        else if (current.active == false)
+        {
+            action.text = current.disabledMessage;
         }
         else
         {
