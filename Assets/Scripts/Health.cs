@@ -62,7 +62,7 @@ public class Health : MonoBehaviour
             return;
         }
 
-        data.Change(-amount);
+        data.Increment(-amount);
 
         EventHandler.Transmit(new DamageMessage(attacker, this, type, amount));
 
