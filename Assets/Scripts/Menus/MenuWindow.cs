@@ -162,7 +162,8 @@ public class MenuWindow : MonoBehaviour
     }
     public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        //SceneManager.LoadScene(sceneName);
+        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
         //StartCoroutine(LoadingScreen.LoadSequence(sceneName));
     }
 
