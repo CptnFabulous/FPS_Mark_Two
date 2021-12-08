@@ -9,11 +9,11 @@ public class AmmoRefill : MonoBehaviour
 
     public void RefillAmmo(Player player)
     {
-        player.weapons.ammo.Collect(type, amountToRestore, out int remainder);
-        amountToRestore = remainder;
-        if (amountToRestore <= 0)
+        int amount = amountToRestore;
+        if (amount <= 0)
         {
-
+            amount = int.MaxValue;
         }
+        player.weapons.ammo.Collect(type, amount, out amount);
     }
 }
