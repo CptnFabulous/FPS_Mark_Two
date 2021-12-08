@@ -30,9 +30,9 @@ public class WeaponHandler : MonoBehaviour
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
     public bool toggleADS;
-    public CustomInput.Button primary = new CustomInput.Button("Fire");
-    public CustomInput.Button secondary = new CustomInput.Button("Aim");
-    public CustomInput.Button tertiary = new CustomInput.Button("Reload");
+    public CustomInput.Button primary = new CustomInput.Button(KeyCode.Mouse0, CustomInput.ControllerButton.RightTrigger);
+    public CustomInput.Button secondary = new CustomInput.Button(KeyCode.Mouse1, CustomInput.ControllerButton.LeftTrigger);
+    public CustomInput.Button tertiary = new CustomInput.Button(KeyCode.R, CustomInput.ControllerButton.West);
 
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;

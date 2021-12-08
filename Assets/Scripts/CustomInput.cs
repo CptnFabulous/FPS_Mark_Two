@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class CustomInput
 {
+    /*
     public struct Button
     {
         string inputName;
@@ -35,29 +36,36 @@ public static class CustomInput
             inputName = name;
         }
     }
-    public struct Key
+    */
+    public struct Button
     {
-        public KeyCode mapping;
+        public KeyCode keyboardMapping;
+        public ControllerButton controllerMapping;
         public bool Pressed
         {
             get
             {
-                return Input.GetKeyDown(mapping);
+                return Input.GetKeyDown(keyboardMapping);
             }
         }
         public bool Held
         {
             get
             {
-                return Input.GetKey(mapping);
+                return Input.GetKey(keyboardMapping);
             }
         }
         public bool Released
         {
             get
             {
-                return Input.GetKeyUp(mapping);
+                return Input.GetKeyUp(keyboardMapping);
             }
+        }
+        public Button(KeyCode key, ControllerButton button)
+        {
+            keyboardMapping = key;
+            controllerMapping = button;
         }
     }
     public struct SingleAxis
@@ -127,6 +135,25 @@ public static class CustomInput
         return currentState;
     }
     public static bool SetPlayerAbilityState(bool currentState, Key button, bool toggle)
+    public enum ControllerButton
+    {
+        Start,
+        Select,
+        North,
+        South,
+        East,
+        West,
+        DpadUp,
+        DpadDown,
+        DpadLeft,
+        DpadRight,
+        LeftBumper,
+        LeftTrigger,
+        RightBumper,
+        RightTrigger,
+        LeftStickClick,
+        RightStickClick,
+    }
     {
         if (toggle == false)
         {

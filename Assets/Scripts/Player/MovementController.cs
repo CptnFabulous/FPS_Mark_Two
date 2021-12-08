@@ -142,7 +142,8 @@ public class MovementController : MonoBehaviour
 
     public RaycastHit groundingData;
     float lastTimeJumped;
-    CustomInput.Button jump = new CustomInput.Button("Jump");
+    CustomInput.Button jump = new CustomInput.Button(KeyCode.Space, CustomInput.ControllerButton.South);
+    CustomInput.Button dodge = new CustomInput.Button(KeyCode.LeftShift, CustomInput.ControllerButton.East);
 
     void SetGroundingData()
     {
@@ -207,7 +208,7 @@ public class MovementController : MonoBehaviour
     public UnityEvent onStand;
     [SerializeField] bool crouched;
     float crouchTimer;
-    CustomInput.Button crouch = new CustomInput.Button("Crouch");
+    CustomInput.Button crouch = new CustomInput.Button(KeyCode.LeftControl, CustomInput.ControllerButton.LeftStickClick);
 
     public bool IsCrouching
     {
