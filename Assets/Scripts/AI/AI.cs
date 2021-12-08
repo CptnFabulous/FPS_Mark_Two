@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AI : MonoBehaviour
 {
     public Character info;
     public Health healthData;
+    public NavMeshAgent agent;
 
     [Header("Viewing")]
     public Transform viewAxis;
@@ -13,6 +15,7 @@ public class AI : MonoBehaviour
     public Vector2 viewingAngles = new Vector2(60, 30);
     public LayerMask viewDetection = ~0;
     public float hearingRange = 50;
+    
     public Collider[] ObjectsInFieldOfView
     {
         get
