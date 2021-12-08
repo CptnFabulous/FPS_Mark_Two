@@ -27,13 +27,14 @@ public class AmmunitionInventory : MonoBehaviour
     {
         return GetValues(type).max;
     }
-    public void Collect(AmmunitionType type, int amount)
+    public void Collect(AmmunitionType type, int amount, out int remainder)
     {
-        ammunitionTypes[AmmunitionType.GetIndex(type)].Change(amount);
+        ammunitionTypes[AmmunitionType.GetIndex(type)].Increment(amount, out float extra);
+        remainder = Mathf.RoundToInt(extra);
     }
     public void Spend(AmmunitionType type, int amount)
     {
-        ammunitionTypes[AmmunitionType.GetIndex(type)].Change(-amount);
+        ammunitionTypes[AmmunitionType.GetIndex(type)].Increment(-amount);
     }
 
     void Reset()

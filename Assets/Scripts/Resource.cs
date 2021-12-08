@@ -27,12 +27,12 @@ public struct Resource
 
 
 
-    public void Change(int amount)
+    public void Increment(int amount)
     {
         current += amount;
         current = Mathf.Clamp(current, 0, max);
     }
-    public void Change(int amount, out float leftover)
+    public void Increment(int amount, out float leftover)
     {
         leftover = 0;
         current += amount;
