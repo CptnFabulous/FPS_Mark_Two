@@ -49,6 +49,9 @@ public class InteractGUIPrompt : MonoBehaviour
             action.text = current.promptMessage;
         }
 
+        prompt.gameObject.SetActive(current.active);
+        statusIcon.gameObject.SetActive(!current.active);
+
         progressBar.fillAmount = current.Progress;
     }
 }
