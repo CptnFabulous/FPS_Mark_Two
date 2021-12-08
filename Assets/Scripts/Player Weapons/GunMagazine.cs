@@ -101,7 +101,7 @@ public class GunMagazine : MonoBehaviour
             yield return new WaitForSeconds(delayBetweenLoads);
             // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
             int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(mode.stats.ammoType));
-            ammo.Change(amountToAdd, out float leftover);
+            ammo.Increment(amountToAdd, out float leftover);
             onRoundsReloaded.Invoke();
         }
         // Once all rounds are reloaded, ammo is depleted or player deliberately cancels reload
