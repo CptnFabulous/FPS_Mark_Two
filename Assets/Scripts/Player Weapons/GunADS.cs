@@ -173,6 +173,8 @@ public class GunADS : MonoBehaviour
                 modelOrientationTransform.localRotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation
             }
 
+            //viewingCamera.transform.rotation = Quaternion.LookRotation(player.movement.upperBody.transform.forward, player.movement.upperBody.transform.up);
+
             // Calculate position of weapon model so reticle lines up with aim direction, outwards by distanceBetweenReticleAxisAndHead
             // This must be done after rotation, because rotating will change the relative position of the reticle axis
             Vector3 reticleRelativeToModelTransform = reticleAxis.position - modelPivot.position;
@@ -180,6 +182,9 @@ public class GunADS : MonoBehaviour
             Vector3 position = player.movement.upperBody.position - reticleRelativeToModelTransform + reticleRelativeToHead;
             modelOrientationTransform.position = Vector3.Lerp(hipFireOrientation.position, position, timer);
         }
+
+        Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.forward, new Color(1, 0.5f, 0));
+        Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.up, new Color(1, 0.5f, 0));
     }
 
     private void OnDrawGizmos()

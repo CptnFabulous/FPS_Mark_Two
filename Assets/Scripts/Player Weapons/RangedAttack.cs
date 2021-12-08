@@ -96,4 +96,16 @@ public class RangedAttack : WeaponMode
         stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection(), User.aimAxis.up);
     }
 
+
+    /*
+    private void OnDrawGizmos()
+    {
+        if (attachedTo != null && User != null && gameObject.activeInHierarchy == true)
+        {
+            Gizmos.matrix = User.aimAxis.localToWorldMatrix;
+            Debug.Log(User.standingAccuracy + ", " + stats.sway + ", " + stats.shotSpread);
+            Gizmos.DrawFrustum(Vector3.zero, User.standingAccuracy + stats.sway + stats.shotSpread, stats.range, 0, 1);
+        }
+    }
+    */
 }
