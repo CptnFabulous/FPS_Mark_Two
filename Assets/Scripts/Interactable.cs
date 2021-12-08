@@ -10,6 +10,7 @@ public class Interactable : MonoBehaviour
     public string promptMessage = "Interact";
     public string inProgressMessage = "In progress";
     public string disabledMessage = "Cannot interact";
+    public bool activateOnCollision;
     public UnityEvent<Player> onInteract;
 
     IEnumerator cooldown;
@@ -21,6 +22,16 @@ public class Interactable : MonoBehaviour
             return cooldownTimer;
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Player p = collision.collider.GetComponentInParent<Player>();
+        if (activateOnCollision && p != null && active)
+        {
+            onInteract.Invoke(p);
+        }
+    }
+
 
     public void PrintDebugLog(Player user)
     {
