@@ -7,18 +7,14 @@ public class InteractFunction : MonoBehaviour
 {
     public Player player;
     public Transform aimTransform;
-
-    public CustomInput.Button interact = new CustomInput.Button(KeyCode.E, CustomInput.ControllerButton.North);
+    public InteractGUIPrompt window;
+    public CustomInput.Button input = new CustomInput.Button(KeyCode.E, CustomInput.ControllerButton.North);
     
     [Header("Stats")]
     public float interactRange = 3;
     public LayerMask interactionMask = ~0;
 
-    [Header("UI elements")]
-    public GameObject interactWindow;
-    public Text name;
-    public Text action;
-    public GUIButtonPrompt prompt;
+    
 
     public Interactable LookingAt
     {
@@ -35,13 +31,7 @@ public class InteractFunction : MonoBehaviour
 
             current = value;
 
-            interactWindow.SetActive(current != null);
-            if (current != null)
-            {
-                name.text = current.name;
-                action.text = current.prompt;
-                prompt.Refresh(interact);
-            }
+            window.Refresh(this);
         }
     }
     Interactable current;
@@ -57,7 +47,7 @@ public class InteractFunction : MonoBehaviour
             LookingAt = null;
         }
 
-        if (LookingAt != null && interact.Pressed)
+        if (input.Pressed && LookingAt != null && LookingAt.active)
         {
             LookingAt.onInteract.Invoke(player);
         }

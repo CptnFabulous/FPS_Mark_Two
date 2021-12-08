@@ -141,13 +141,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 449a4007d55b2664b88fcf02918e9f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  active: 1
   prompt: Press
   onInteract:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3353934327341135779}
         m_TargetAssemblyTypeName: Interactable, Assembly-CSharp
-        m_MethodName: SendTestMessage
+        m_MethodName: PrintDebugLog
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
