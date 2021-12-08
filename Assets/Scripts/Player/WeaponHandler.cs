@@ -53,19 +53,9 @@ public class WeaponHandler : MonoBehaviour
         float noiseY = Mathf.PerlinNoise(0, Time.time * swaySpeed);
         // Converts values from 0 - 1 to -1 - 1
         Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
-        /*
-        if (angles.magnitude > 1)
-        {
-            angles.Normalize();
-        }
-        */
         angles *= totalSway; //  Multiplies by accuracy value
         // Creates euler angles and combines with current aim direction
         return aimAxis.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
-        /*
-        Quaternion angles = Quaternion.Euler(noiseX * totalSway, 0, noiseY * 360f);
-        return aimOrigin.transform.rotation * angles * Vector3.forward;
-        */
     }
 
     private void Awake()
