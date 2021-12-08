@@ -72,11 +72,13 @@ public static class CustomInput
     {
         public KeyCode minus;
         public KeyCode plus;
+        public string analogAxis;
+
         public float value
         {
             get
             {
-                float v = 0;
+                float v = Input.GetAxis(analogAxis);
                 if (Input.GetKey(minus))
                 {
                     v -= 1;
@@ -88,18 +90,32 @@ public static class CustomInput
                 return v;
             }
         }
+        public SingleAxis(string name)
+        {
+            minus = KeyCode.None;
+            plus = KeyCode.None;
+            analogAxis = name;
+        }
+        public SingleAxis(KeyCode _minus, KeyCode _plus)
+        {
+            minus = _minus;
+            plus = _plus;
+            analogAxis = "";
+        }
     }
     public struct DualAxis
     {
         public KeyCode minusX;
         public KeyCode plusX;
+        public string analogAxisX;
         public KeyCode minusY;
         public KeyCode plusY;
+        public string analogAxisY;
         public Vector2 value
         {
             get
             {
-                Vector2 value = Vector2.zero;
+                Vector2 value = new Vector2(Input.GetAxis(analogAxisX), Input.GetAxis(analogAxisY));
                 if (Input.GetKey(minusX))
                 {
                     value.x -= 1;
@@ -119,22 +135,65 @@ public static class CustomInput
                 return value;
             }
         }
+
+        public DualAxis(string x, string y)
+        {
+            minusX = KeyCode.None;
+            plusX = KeyCode.None;
+            minusY = KeyCode.None;
+            plusY = KeyCode.None;
+            analogAxisX = x;
+            analogAxisY = y;
+        }
+        public DualAxis(KeyCode _minusX, KeyCode _plusX, KeyCode _minusY, KeyCode _plusY)
+        {
+            minusX = _minusX;
+            plusX = _plusX;
+            minusY = _minusY;
+            plusY = _plusY;
+            analogAxisX = "";
+            analogAxisY = "";
+        }
     }
 
-    public static bool SetPlayerAbilityState(bool currentState, Button button, bool toggle)
+    public enum AxisInput
     {
-        if (toggle == false)
-        {
-            currentState = button.Held;
-        }
-        else if (button.Pressed)
-        {
-            currentState = !currentState;
-        }
-
-        return currentState;
+        MouseX,
+        MouseY,
+        MouseScrollWheel,
+        LeftStickX,
+        LeftStickY,
+        RightStickX,
+        RightStickY,
+        LeftTrigger,
+        RightTrigger,
+        LeftAndRightTriggers,
+        GyroX,
+        GyroY,
+        GyroZ,
     }
-    public static bool SetPlayerAbilityState(bool currentState, Key button, bool toggle)
+    static readonly string[] axes = new string[]
+    {
+        "Mouse X",
+        "Mouse Y",
+        "Mouse ScrollWheel",
+        "Left Stick X",
+        "Left Stick Y",
+        "Right Stick X",
+        "Right Stick Y",
+        "Left Trigger",
+        "Right Trigger",
+        "Left And Right Triggers",
+        "Gyro X",
+        "Gyro Y",
+        "Gyro Z",
+    };
+    public static float GetInput(AxisInput input)
+    {
+        return Input.GetAxis(axes[(int)input]);
+    }
+
+
     public enum ControllerButton
     {
         Start,
@@ -154,6 +213,7 @@ public static class CustomInput
         LeftStickClick,
         RightStickClick,
     }
+    public static bool SetPlayerAbilityState(bool currentState, Button button, bool toggle)
     {
         if (toggle == false)
         {
@@ -163,7 +223,6 @@ public static class CustomInput
         {
             currentState = !currentState;
         }
-
         return currentState;
     }
 }
