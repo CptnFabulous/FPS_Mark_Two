@@ -201,7 +201,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3945994977756521452}
-  - component: {fileID: 1054581679645600645}
   m_Layer: 0
   m_Name: Model Orientation
   m_TagString: Untagged
@@ -226,57 +225,6 @@ Transform:
   m_Father: {fileID: 8446451415489526675}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1054581679645600645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1396550037583005783}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f9bf7f4eea39ae4da9c23e544029da9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  transformToAnimate: {fileID: 8446451415370582922}
-  animations:
-  - name: Recoil
-    older: {fileID: 3945994977756521452}
-    newer: {fileID: 592361394510447671}
-    time: 0.1
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.25
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
 --- !u!1 &1869753978934472451
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,7 +501,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5309663066037485790}
   m_LocalRotation: {x: -0.000000011175871, y: 0.000000029802322, z: -0.12501442, w: 0.99215496}
-  m_LocalPosition: {x: 0.24500129, y: -0.48800087, z: 0.25300136}
+  m_LocalPosition: {x: 0.164, y: -0.267, z: 0.398}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8446451415489526675}
@@ -6029,7 +5977,7 @@ GameObject:
   - component: {fileID: 8446451415489526675}
   - component: {fileID: 8446451415489526380}
   - component: {fileID: 8446451415489526381}
-  - component: {fileID: 2183630233495840740}
+  - component: {fileID: 2800941474281005653}
   m_Layer: 0
   m_Name: Placeholder Rifle
   m_TagString: Untagged
@@ -6078,34 +6026,10 @@ MonoBehaviour:
   switchSpeed: 0.75
   onDraw:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2183630233495840740}
-        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
-        m_MethodName: PlayAnimation
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onHolster:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2183630233495840740}
-        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
-        m_MethodName: PlayAnimation
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   user: {fileID: 0}
 --- !u!95 &8446451415489526381
 Animator:
@@ -6115,7 +6039,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8446451415489526674}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 85f27f8257a94684eab412878fdc5e3a, type: 2}
   m_CullingMode: 0
@@ -6126,7 +6050,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &2183630233495840740
+--- !u!114 &2800941474281005653
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6135,160 +6059,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 8446451415489526674}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f9bf7f4eea39ae4da9c23e544029da9, type: 3}
+  m_Script: {fileID: 11500000, guid: b1b3e298de6e02649aae56d07d00b37e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transformToAnimate: {fileID: 3945994977756521452}
-  animations:
-  - name: Holster To Hipfire
-    older: {fileID: 8571067806108995543}
-    newer: {fileID: 5284184971598420918}
-    time: 0.5
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  - name: Holster
-    older: {fileID: 5284184971598420918}
-    newer: {fileID: 8571067806108995543}
-    time: 0.5
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  - name: Recoil
-    older: {fileID: 5284184971598420918}
-    newer: {fileID: 876110365217570415}
-    time: 0.1
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.25
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  - name: Hipfire to Reload
-    older: {fileID: 5284184971598420918}
-    newer: {fileID: 3375922161975801494}
-    time: 0.5
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  - name: Reload to Hipfire
-    older: {fileID: 3375922161975801494}
-    newer: {fileID: 5284184971598420918}
-    time: 0.5
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
+  weaponToAnimate: {fileID: 8446451415489526380}
+  controller: {fileID: 8446451415489526381}
+  active: Weapon Active
+  mode: Firing Mode Index
+  modeSwitchTrigger: Mode Switch Triggered
+  attackTrigger: Firing
+  reloadActiveString: Reload Active
+  reloadIncrementTrigger: Next reload stage triggered
 --- !u!1 &8446451415843841720
 GameObject:
   m_ObjectHideFlags: 0
@@ -6453,18 +6234,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2183630233495840740}
-        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
-        m_MethodName: PlayAnimation
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1150557094146500447}
         m_TargetAssemblyTypeName: TimedCosmeticEffect, Assembly-CSharp
         m_MethodName: Play
@@ -6520,40 +6289,19 @@ MonoBehaviour:
     criticalLevel: 5
   onReloadStart:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2183630233495840740}
-        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
-        m_MethodName: PlayAnimation
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   startTransitionDelay: 0.5
-  onRoundsReloaded:
+  onIncrementStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onIncrementEnd:
     m_PersistentCalls:
       m_Calls: []
   roundsReloadedAtOnce: 30
   delayBetweenLoads: 1
   onReloadEnd:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2183630233495840740}
-        m_TargetAssemblyTypeName: SimpleLerpAnimator, Assembly-CSharp
-        m_MethodName: PlayAnimation
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   endTransitionDelay: 0.5
 --- !u!1001 &553820614516461166
 PrefabInstance:
@@ -6701,6 +6449,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
+--- !u!4 &6154177461571150365 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
+  m_PrefabInstance: {fileID: 3791730320925153843}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6154177461571150366 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
@@ -6712,11 +6465,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6746fa0245d2f304095e956384af5d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &6154177461571150365 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
-  m_PrefabInstance: {fileID: 3791730320925153843}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5957810042923284952
 PrefabInstance:
   m_ObjectHideFlags: 0

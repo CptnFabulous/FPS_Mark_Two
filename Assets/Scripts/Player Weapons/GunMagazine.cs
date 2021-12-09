@@ -13,7 +13,8 @@ public class GunMagazine : MonoBehaviour
     public UnityEvent onReloadStart;
     public float startTransitionDelay = 0.25f;
     [Header("Sequence")]
-    public UnityEvent onRoundsReloaded;
+    public UnityEvent onIncrementStart;
+    public UnityEvent onIncrementEnd;
     public int roundsReloadedAtOnce = 1;
     public float delayBetweenLoads = 0.1f;
     [Header("Sequence end")]
@@ -98,11 +99,12 @@ public class GunMagazine : MonoBehaviour
         // If reload sequence has not been cancelled, magazine is not full and there is still ammo to reload with
         while (CanReload && ReloadActive == true)
         {
+            onIncrementStart.Invoke();
             yield return new WaitForSeconds(delayBetweenLoads);
             // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
             int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(mode.stats.ammoType));
             ammo.Increment(amountToAdd, out float leftover);
-            onRoundsReloaded.Invoke();
+            onIncrementEnd.Invoke();
         }
         // Once all rounds are reloaded, ammo is depleted or player deliberately cancels reload
         ReloadActive = false;
