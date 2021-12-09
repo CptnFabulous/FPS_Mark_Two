@@ -17,6 +17,19 @@ public class WeaponAnimator : MonoBehaviour
     public string reloadActiveString = "Reload Active";
     public string reloadIncrementTrigger = "Next reload stage triggered";
 
+    [Header("Audio")]
+    public AudioSource soundPlayer;
+    public AudioClip[] weaponClips;
+    public void PlaySoundFromArray(int index)
+    {
+        if (weaponClips.Length <= 0)
+        {
+            return;
+        }
+        index = Mathf.Clamp(index, 0, weaponClips.Length - 1);
+        soundPlayer.PlayOneShot(weaponClips[index]);
+    }
+
     private void Awake()
     {
         weaponToAnimate.onDraw.AddListener(()=> controller.SetBool(active, true));

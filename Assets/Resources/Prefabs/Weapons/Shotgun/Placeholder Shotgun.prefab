@@ -463,7 +463,19 @@ MonoBehaviour:
   startTransitionDelay: 0.25
   onIncrementStart:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3275955952633922249}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: PlayOneShot
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8300000, guid: 4f98887edb6878e4c98be239f57706ef, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onIncrementEnd:
     m_PersistentCalls:
       m_Calls: []
@@ -471,7 +483,19 @@ MonoBehaviour:
   delayBetweenLoads: 0.4
   onReloadEnd:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3275955952633922249}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: PlayOneShot
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8300000, guid: 1f5697ce6403ec747a1d4fa117b4c8db, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   endTransitionDelay: 0.25
 --- !u!1 &3275955952515887824
 GameObject:
@@ -576,6 +600,9 @@ MonoBehaviour:
   attackTrigger: Firing
   reloadActiveString: Reload Active
   reloadIncrementTrigger: Reload Incremented
+  soundPlayer: {fileID: 3275955952633922249}
+  weaponClips:
+  - {fileID: 8300000, guid: 1f5697ce6403ec747a1d4fa117b4c8db, type: 3}
 --- !u!1 &3275955952633922251
 GameObject:
   m_ObjectHideFlags: 0
