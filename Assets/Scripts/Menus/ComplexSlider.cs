@@ -11,7 +11,7 @@ public class ComplexSlider : MonoBehaviour
     private void Awake()
     {
         slider.onValueChanged.AddListener(UpdateTextBox);
-        textBox.onValueChanged.AddListener(UpdateSlider);
+        textBox.onEndEdit.AddListener(UpdateSlider);
         if (slider.wholeNumbers)
         {
             textBox.contentType = InputField.ContentType.IntegerNumber;
@@ -22,6 +22,11 @@ public class ComplexSlider : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        UpdateTextBox(slider.value);
+    }
+
     void UpdateTextBox(float value)
     {
         textBox.text = value.ToString();
@@ -30,7 +35,6 @@ public class ComplexSlider : MonoBehaviour
     void UpdateSlider(string text)
     {
         float value = float.Parse(text);
-        value = Mathf.Clamp(value, slider.minValue, slider.maxValue);
         slider.value = value;
         slider.onValueChanged.Invoke(slider.value);
     }
