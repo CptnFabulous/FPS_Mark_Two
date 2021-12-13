@@ -22,9 +22,9 @@ public class VideoOptions : OptionsMenu
         Resolution newResolution = resolutionsAndRefreshRates[resolutions.value][refreshRates.value];
         Screen.SetResolution(newResolution.width, newResolution.height, (FullScreenMode)fullscreenMode.value, newResolution.refreshRate);
     }
-
     public override void ObtainCurrentValues()
     {
+        
         #region Fullscreen
         string[] fullScreenOptions = System.Enum.GetNames(typeof(FullScreenMode));
         fullscreenMode.ClearOptions();
@@ -32,14 +32,14 @@ public class VideoOptions : OptionsMenu
         fullscreenMode.value = (int)Screen.fullScreenMode;
         fullscreenMode.RefreshShownValue();
         #endregion
-
+        
         #region Simple graphics quality
         graphicsQualityPreset.ClearOptions();
         graphicsQualityPreset.AddOptions(new List<string>(QualitySettings.names));
         graphicsQualityPreset.value = QualitySettings.GetQualityLevel();
         graphicsQualityPreset.RefreshShownValue();
         #endregion
-
+        
         #region Sort resolutions and refresh rates
         // Create a list of lists, so each distinct resolution has its variants put in its own list
         resolutionsAndRefreshRates = new List<List<Resolution>>();
@@ -54,14 +54,14 @@ public class VideoOptions : OptionsMenu
             // Add this list to the tables
             resolutionsAndRefreshRates.Add(newResolution);
             // Remove all entries from allResolutions that were copied to newResolution, using the same check as before.
-            newResolution.RemoveAll((r) => r.width == newResolution[0].width && r.height == newResolution[0].height);
+            allResolutions.RemoveAll((r) => r.width == newResolution[0].width && r.height == newResolution[0].height);
             // This code will loop, check the next 'first' struct, copy all with an identical width and height to a separate list, and delete them from allResolutions.
             // This will keep occurring until allResolutions is empty, and therefore that all entries have been sorted into distinct tables.
         }
         // Sort tables by the resolution in each one
         resolutionsAndRefreshRates.Sort((a, b) => (a[0].width * a[0].height).CompareTo(b[0].width * b[0].height));
         #endregion
-
+        
         #region Find current resolution and refresh rate, update both dropdowns and assign the appropriate values
         FindCorrectResolutionAndRefreshRate(out int resolutionIndex, out int refreshRateIndex);
 
