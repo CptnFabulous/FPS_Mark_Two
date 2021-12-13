@@ -195,7 +195,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4932944454966306769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1503,6 +1503,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dropdown Template
       objectReference: {fileID: 0}
+    - target: {fileID: 264161725677058913, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 647508384776357334, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1813,6 +1817,10 @@ PrefabInstance:
     - target: {fileID: 1701432621087004107, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4398842673778431196, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
+      propertyPath: description
+      value: Return to the previous window.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
