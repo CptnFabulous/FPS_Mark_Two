@@ -40,6 +40,7 @@ public class GameplayOptions : OptionsMenu
         invertX.isOn = movement.invertX;
         invertY.isOn = movement.invertY;
         fieldOfView.value = movement.fieldOfView;
+        playerUpdating.movement.worldViewCamera.fieldOfView = fieldOfView.value;
         toggleCrouch.isOn = movement.toggleCrouch;
 
         toggleADS.isOn = playerUpdating.weapons.toggleADS;
@@ -52,6 +53,13 @@ public class GameplayOptions : OptionsMenu
         AddValueChangedEvent(invertX);
         AddValueChangedEvent(invertY);
         AddValueChangedEvent(fieldOfView);
+        fieldOfView.onValueChanged.AddListener((fov) =>
+        {
+            if (playerUpdating != null)
+            {
+                playerUpdating.movement.worldViewCamera.fieldOfView = fov;
+            }
+        });
         AddValueChangedEvent(toggleCrouch);
         AddValueChangedEvent(toggleADS);
     }

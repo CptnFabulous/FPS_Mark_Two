@@ -124,7 +124,6 @@ public class GunADS : MonoBehaviour
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)
         {
-            #region Calculate timer value
             float amountToAdd = Time.deltaTime / transitionTime;
             if (TargetValue < timer)
             {
@@ -132,19 +131,16 @@ public class GunADS : MonoBehaviour
             }
             timer += amountToAdd;
             timer = Mathf.Clamp01(timer);
-            #endregion
-
-            #region Lerp values
-            // If a view camera and sight picture are not present, directly lerp the player's FOV instead
-            if (!IsScope)
-            {
-                float regularFOV = player.movement.fieldOfView;
-                float zoomedFOV = regularFOV / magnification;
-                player.movement.worldViewCamera.fieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
-            }
-            #endregion
         }
-        
+
+        // If a view camera and sight picture are not present, directly lerp the player's FOV instead
+        if (!IsScope)
+        {
+            float regularFOV = player.movement.fieldOfView;
+            float zoomedFOV = regularFOV / magnification;
+            player.movement.worldViewCamera.fieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
+        }
+
         Vector3 cameraDirection = Vector3.Slerp(player.movement.aimAxis.forward, user.AimDirection(), timer);
         player.movement.upperBody.LookAt(player.movement.upperBody.position + cameraDirection);
     }
