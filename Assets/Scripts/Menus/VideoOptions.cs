@@ -113,6 +113,8 @@ public class VideoOptions : OptionsMenu
             Dropdown.OptionData option = new Dropdown.OptionData(r.refreshRate + "Hz");
             refreshRates.options.Add(option);
         }
+        FindCorrectResolutionAndRefreshRate(out resolutionIndex, out int refreshRateIndex);
+        refreshRates.SetValueWithoutNotify(refreshRateIndex);
     }
 
 
