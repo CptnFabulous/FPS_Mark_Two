@@ -195,7 +195,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4932944454966306769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,7 +333,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4932944456467926783}
   m_HandleRect: {fileID: 4932944456467926776}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1260,6 +1260,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4398842673778431196, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
+      propertyPath: description
+      value: Save your changes.
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
 --- !u!224 &576025121985758457 stripped
@@ -1823,6 +1827,10 @@ PrefabInstance:
     - target: {fileID: 1701432621087004107, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4398842673778431196, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
+      propertyPath: description
+      value: Revert settings to what they were the last time you saved them.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d89a6cfa3236dbb41bc62b82ef2661ea, type: 3}
