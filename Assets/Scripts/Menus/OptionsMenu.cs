@@ -98,5 +98,6 @@ public abstract class OptionsMenu : MonoBehaviour
         // Update the options to reflect the current value.
         float valueToShow = currentValue / maxValue * value.maxValue; // Turns original value into a -1 to 1 range
         value.value = Mathf.Clamp(valueToShow, value.minValue, value.maxValue); // Clamp value and update slider accordingly
+        value.onValueChanged.Invoke(value.value);
     }
 }
