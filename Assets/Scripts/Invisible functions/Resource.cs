@@ -46,4 +46,29 @@ public struct Resource
         }
         current = Mathf.Clamp(current, 0, max);
     }
+
+
+    /*
+    public IEnumerator DepleteOverTime(float amountPerSecond, float duration)
+    {
+        float amountToDeplete = 0;
+
+        float timer = 0;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            amountToDeplete += Time.deltaTime * amountPerSecond;
+            while (amountToDeplete > 1)
+            {
+
+            }
+
+
+
+
+
+        }
+    }
+    */
 }

@@ -213,6 +213,38 @@ public static class CustomInput
         LeftStickClick,
         RightStickClick,
     }
+    static readonly int[] controllerMappingNames = new int[]
+    {
+        7,
+        6,
+        3,
+        0,
+        1,
+        2,
+    };
+    public static KeyCode KeyCodeFromButton(ControllerButton button, int controllerIndex)
+    {
+        string enumName = "Joystick";
+        if (controllerIndex > 0)
+        {
+            enumName += (controllerIndex + 1).ToString();
+        }
+        enumName += "Button";
+        enumName += controllerMappingNames[(int)button];
+        return (KeyCode)System.Enum.Parse(typeof(KeyCode), enumName);
+    }
+
+
+
+
+
+    
+
+
+
+
+
+
     public static bool SetPlayerAbilityState(bool currentState, Button button, bool toggle)
     {
         if (toggle == false)
@@ -226,3 +258,12 @@ public static class CustomInput
         return currentState;
     }
 }
+
+
+
+
+
+
+
+
+    
