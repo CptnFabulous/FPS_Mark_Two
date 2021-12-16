@@ -133,4 +133,16 @@ public class VideoOptions : OptionsMenu
         AddValueChangedEvent(fullscreenMode);
         AddValueChangedEvent(graphicsQualityPreset);
     }
+
+
+
+    public static bool ResolutionsMatch(Resolution lhs, Resolution rhs)
+    {
+        return lhs.width == rhs.width && lhs.height == rhs.height;
+    }
+    public static bool RefreshRatesMatch(Resolution lhs, Resolution rhs)
+    {
+        return lhs.refreshRate == rhs.refreshRate;
+    }
+
 }
