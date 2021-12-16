@@ -143,7 +143,6 @@ public class MovementController : MonoBehaviour
     public RaycastHit groundingData;
     float lastTimeJumped;
     CustomInput.Button jump = new CustomInput.Button(KeyCode.Space, CustomInput.ControllerButton.South);
-    CustomInput.Button dodge = new CustomInput.Button(KeyCode.LeftShift, CustomInput.ControllerButton.East);
 
     void SetGroundingData()
     {
@@ -177,6 +176,7 @@ public class MovementController : MonoBehaviour
     public float dodgeCooldown = 1;
     public UnityEvent onDodge;
     float lastTimeDodged;
+    CustomInput.Button dodge = new CustomInput.Button(KeyCode.LeftShift, CustomInput.ControllerButton.East);
 
     public void TryDodge(Vector2 input)
     {
@@ -375,9 +375,6 @@ public class MovementController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         worldViewCamera.fieldOfView = fieldOfView;
-
-        //torsoPosition = Vector3.zero;
-        //torsoRotation = Quaternion.identity;
     }
     void Start()
     {
