@@ -26,7 +26,13 @@ public class VideoOptions : OptionsMenu
     {
         
         #region Fullscreen
-        string[] fullScreenOptions = System.Enum.GetNames(typeof(FullScreenMode));
+        string[] fullScreenOptions = new string[]
+        {
+            "Exclusive Fullscreen",
+            "Fullscreen Windowed",
+            "Maximised Windowed",
+            "Windowed",
+        };//System.Enum.GetNames(typeof(FullScreenMode));
         fullscreenMode.ClearOptions();
         fullscreenMode.AddOptions(new List<string>(fullScreenOptions));
         fullscreenMode.value = (int)Screen.fullScreenMode;
