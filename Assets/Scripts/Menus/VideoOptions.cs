@@ -95,7 +95,7 @@ public class VideoOptions : OptionsMenu
     public override void SetupOptions()
     {
         AddValueChangedEvent(resolutions);
-        resolutions.onValueChanged.AddListener(UpdateRefreshRateDropdown);
+        resolutions.onValueChanged.AddListener((_)=> UpdateRefreshRateDropdown());
         AddValueChangedEvent(refreshRates);
         AddValueChangedEvent(fullscreenMode);
         AddValueChangedEvent(graphicsQualityPreset);
