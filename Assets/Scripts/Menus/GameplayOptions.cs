@@ -35,8 +35,8 @@ public class GameplayOptions : OptionsMenu
         playerUpdating = GetComponentInParent<Player>();
         MovementController movement = playerUpdating.movement;
 
-        OptionsMenu.SensitivityToSliderValue(aimSensitivityX, movement.aimSensitivity.x, maxAimSensitivity);
-        OptionsMenu.SensitivityToSliderValue(aimSensitivityY, movement.aimSensitivity.y, maxAimSensitivity);
+        SensitivityToSliderValue(aimSensitivityX, movement.aimSensitivity.x, maxAimSensitivity);
+        SensitivityToSliderValue(aimSensitivityY, movement.aimSensitivity.y, maxAimSensitivity);
         invertX.isOn = movement.invertX;
         invertY.isOn = movement.invertY;
         fieldOfView.value = movement.fieldOfView;
