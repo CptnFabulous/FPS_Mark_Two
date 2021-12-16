@@ -67,10 +67,8 @@ public class VideoOptions : OptionsMenu
         // Sort tables by the resolution in each one
         resolutionsAndRefreshRates.Sort((a, b) => (a[0].width * a[0].height).CompareTo(b[0].width * b[0].height));
         #endregion
-        
-        #region Find current resolution and refresh rate, update both dropdowns and assign the appropriate values
-        FindCorrectResolutionAndRefreshRate(out int resolutionIndex, out int refreshRateIndex);
 
+        #region Find current resolution and refresh rate, update both dropdowns and assign the appropriate values
         resolutions.ClearOptions();
         for (int i = 0; i < resolutionsAndRefreshRates.Count; i++)
         {
@@ -78,49 +76,18 @@ public class VideoOptions : OptionsMenu
             Dropdown.OptionData option = new Dropdown.OptionData(r.width + " X " + r.height);
             resolutions.options.Add(option);
         }
-
-        UpdateRefreshRateDropdown(resolutionIndex);
-
-        resolutions.SetValueWithoutNotify(resolutionIndex);
-        refreshRates.SetValueWithoutNotify(refreshRateIndex);
+        UpdateRefreshRateDropdown();
         #endregion
     }
-    void FindCorrectResolutionAndRefreshRate(out int resolutionIndex, out int refreshRateIndex)
-    {
-        resolutionIndex = -1;
-        refreshRateIndex = -1;
-        Resolution current = Screen.currentResolution;
-        for (int i = 0; i <  resolutionsAndRefreshRates.Count; i++)
-        {
-            List<Resolution> appropriate = resolutionsAndRefreshRates[i];
-            Resolution r = appropriate[0];
-            if (current.width == r.width && current.height == r.height)
-            {
-                resolutionIndex = i;
-                for (int f = 0; f < appropriate.Count; f++)
-                {
-                    if (current.refreshRate == appropriate[f].refreshRate)
-                    {
-                        refreshRateIndex = f;
-                        return;
-                    }
-                }
-                break;
-            }
-        }
-    }
-    void UpdateRefreshRateDropdown(int resolutionIndex)
+    void UpdateRefreshRateDropdown()
     {
         refreshRates.ClearOptions();
-        List<Resolution> correct = resolutionsAndRefreshRates[resolutionIndex];
-        for (int i = 0; i < correct.Count; i++)
+        for (int i = 0; i < resolutionsAndRefreshRates[resolutions.value].Count; i++)
         {
-            Resolution r = correct[i];
+            Resolution r = resolutionsAndRefreshRates[resolutions.value][i];
             Dropdown.OptionData option = new Dropdown.OptionData(r.refreshRate + "Hz");
             refreshRates.options.Add(option);
         }
-        FindCorrectResolutionAndRefreshRate(out resolutionIndex, out int refreshRateIndex);
-        refreshRates.SetValueWithoutNotify(refreshRateIndex);
     }
 
 
