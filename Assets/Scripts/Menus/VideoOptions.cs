@@ -9,8 +9,9 @@ public class VideoOptions : OptionsMenu
     public Dropdown fullscreenMode;
 
     public Dropdown resolutions;
-    public Dropdown refreshRates;
-    List<List<Resolution>> resolutionsAndRefreshRates;
+    List<Resolution> resolutionStructs;
+
+    public Slider refreshRateTarget;
 
     public Dropdown graphicsQualityPreset;
     public bool applyExpensiveQualityPresetChanges = true;
@@ -19,8 +20,9 @@ public class VideoOptions : OptionsMenu
     public override void ApplySettings()
     {
         QualitySettings.SetQualityLevel(graphicsQualityPreset.value, applyExpensiveQualityPresetChanges);
-        Resolution newResolution = resolutionsAndRefreshRates[resolutions.value][refreshRates.value];
-        Screen.SetResolution(newResolution.width, newResolution.height, (FullScreenMode)fullscreenMode.value, newResolution.refreshRate);
+        Resolution r = resolutionStructs[resolutions.value];
+        Screen.SetResolution(r.width, r.height, (FullScreenMode)fullscreenMode.value, Mathf.RoundToInt(refreshRateTarget.value));
+        //Screen.SetResolution(r.width, r.height, fullscreenEnabled.isOn, Mathf.RoundToInt(refreshRateTarget.value));
     }
     public override void ObtainCurrentValues()
     {
@@ -46,48 +48,38 @@ public class VideoOptions : OptionsMenu
         graphicsQualityPreset.RefreshShownValue();
         #endregion
         
-        #region Sort resolutions and refresh rates
-        // Create a list of lists, so each distinct resolution has its variants put in its own list
-        resolutionsAndRefreshRates = new List<List<Resolution>>();
-        // Obtain all available Resolution structs, converted to a list of varying length
         List<Resolution> allResolutions = new List<Resolution>(Screen.resolutions);
+        allResolutions.Sort((lhs, rhs) => lhs.refreshRate.CompareTo(rhs.refreshRate));
+        refreshRateTarget.minValue = allResolutions[0].refreshRate;
+        refreshRateTarget.maxValue = allResolutions[allResolutions.Count - 1].refreshRate;
+        refreshRateTarget.value = Screen.currentResolution.refreshRate;
+        refreshRateTarget.interactable = Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen;
+
+        resolutionStructs = new List<Resolution>();
         while (allResolutions.Count > 0)
         {
-            // Check the first struct in allResolutions and find every one in the list with the same width and height
-            List<Resolution> newResolution = allResolutions.FindAll((r) => r.width == allResolutions[0].width && r.height == allResolutions[0].height);
-            // Sort list by refresh rates
-            newResolution.Sort((a, b) => a.refreshRate.CompareTo(b.refreshRate));
-            // Add this list to the tables
-            resolutionsAndRefreshRates.Add(newResolution);
-            // Remove all entries from allResolutions that were copied to newResolution, using the same check as before.
-            allResolutions.RemoveAll((r) => r.width == newResolution[0].width && r.height == newResolution[0].height);
-            // This code will loop, check the next 'first' struct, copy all with an identical width and height to a separate list, and delete them from allResolutions.
-            // This will keep occurring until allResolutions is empty, and therefore that all entries have been sorted into distinct tables.
+            Resolution res = allResolutions[0];
+            resolutionStructs.Add(res);
+            allResolutions.RemoveAll((r) => r.width == res.width && r.height == res.height);
         }
-        // Sort tables by the resolution in each one
-        resolutionsAndRefreshRates.Sort((a, b) => (a[0].width * a[0].height).CompareTo(b[0].width * b[0].height));
-        #endregion
 
-        #region Find current resolution and refresh rate, update both dropdowns and assign the appropriate values
+        int currentResolutionIndex = 0;
+
         resolutions.ClearOptions();
-        for (int i = 0; i < resolutionsAndRefreshRates.Count; i++)
+        for (int i = 0; i < resolutionStructs.Count; i++)
         {
-            Resolution r = resolutionsAndRefreshRates[i][0];
-            Dropdown.OptionData option = new Dropdown.OptionData(r.width + " X " + r.height);
-            resolutions.options.Add(option);
+            Resolution r = resolutionStructs[i];
+            string optionText = r.width + " X " + r.height;
+            resolutions.options.Add(new Dropdown.OptionData(optionText));
+
+            if (r.width == Screen.width && r.height == Screen.height)
+            {
+                //Debug.Log("Current resolution is " + currentScreenData);
+                currentResolutionIndex = i;
+            }
         }
-        UpdateRefreshRateDropdown();
-        #endregion
-    }
-    void UpdateRefreshRateDropdown()
-    {
-        refreshRates.ClearOptions();
-        for (int i = 0; i < resolutionsAndRefreshRates[resolutions.value].Count; i++)
-        {
-            Resolution r = resolutionsAndRefreshRates[resolutions.value][i];
-            Dropdown.OptionData option = new Dropdown.OptionData(r.refreshRate + "Hz");
-            refreshRates.options.Add(option);
-        }
+        resolutions.value = currentResolutionIndex;
+        resolutions.RefreshShownValue();
     }
 
 
@@ -95,21 +87,12 @@ public class VideoOptions : OptionsMenu
     public override void SetupOptions()
     {
         AddValueChangedEvent(resolutions);
-        resolutions.onValueChanged.AddListener((_)=> UpdateRefreshRateDropdown());
-        AddValueChangedEvent(refreshRates);
+        AddValueChangedEvent(refreshRateTarget);
+        refreshRateTarget.wholeNumbers = true;
         AddValueChangedEvent(fullscreenMode);
         AddValueChangedEvent(graphicsQualityPreset);
     }
 
 
-
-    public static bool ResolutionsMatch(Resolution lhs, Resolution rhs)
-    {
-        return lhs.width == rhs.width && lhs.height == rhs.height;
-    }
-    public static bool RefreshRatesMatch(Resolution lhs, Resolution rhs)
-    {
-        return lhs.refreshRate == rhs.refreshRate;
-    }
 
 }
