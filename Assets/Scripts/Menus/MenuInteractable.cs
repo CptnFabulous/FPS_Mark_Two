@@ -8,7 +8,7 @@ public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHand
 {
     public Text title;
     public Sprite graphic;
-    public string description = "This is a selectable option.";
+    [Multiline] public string description = "This is a selectable option.";
 
     MenuWindow menu;
 
