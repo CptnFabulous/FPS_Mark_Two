@@ -80,8 +80,8 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "WASD/arrow keys \u2013 Move\r\nMouse \u2013 Aim camera\r\nSpace \u2013
     Jump\r\nLeft shift \u2013 Crouch\r\nLeft mouse \u2013 Fire\r\nRight mouse \u2013
-    Aim down sights\r\nR \u2013 Reload\r\nNumber keys \u2013 Switch weapons\r\nEscape
-    - Pause\r"
+    Aim down sights\r\nR \u2013 Reload\r\nE \u2013 Interact with objects\nNumber
+    keys \u2013 Switch weapons\r\nEscape - Pause\r"
 --- !u!1001 &8886154106423554825
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95,11 +95,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4932944454966306768, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4932944454966306770, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_Name
-      value: Control Options Variant
+      value: Control Options
       objectReference: {fileID: 0}
     - target: {fileID: 4932944454966306774, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_Pivot.x
@@ -200,6 +200,10 @@ PrefabInstance:
     - target: {fileID: 4932944455443839544, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_Text
       value: Controls
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932944456305473892, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 4932944456467926776, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_AnchorMax.x
