@@ -7,26 +7,21 @@ public class VideoOptions : OptionsMenu
 {
     [Header("Simple options")]
     public Dropdown fullscreenMode;
-
+    public Dropdown graphicsQualityPreset;
     public Dropdown resolutions;
-    List<Resolution> resolutionStructs;
-
     public Slider refreshRateTarget;
 
-    public Dropdown graphicsQualityPreset;
+    List<Resolution> resolutionStructs;
     public bool applyExpensiveQualityPresetChanges = true;
-
 
     public override void ApplySettings()
     {
         QualitySettings.SetQualityLevel(graphicsQualityPreset.value, applyExpensiveQualityPresetChanges);
         Resolution r = resolutionStructs[resolutions.value];
         Screen.SetResolution(r.width, r.height, (FullScreenMode)fullscreenMode.value, Mathf.RoundToInt(refreshRateTarget.value));
-        //Screen.SetResolution(r.width, r.height, fullscreenEnabled.isOn, Mathf.RoundToInt(refreshRateTarget.value));
     }
     public override void ObtainCurrentValues()
     {
-        
         #region Fullscreen
         string[] fullScreenOptions = new string[]
         {
@@ -40,21 +35,24 @@ public class VideoOptions : OptionsMenu
         fullscreenMode.value = (int)Screen.fullScreenMode;
         fullscreenMode.RefreshShownValue();
         #endregion
-        
+
         #region Simple graphics quality
         graphicsQualityPreset.ClearOptions();
         graphicsQualityPreset.AddOptions(new List<string>(QualitySettings.names));
         graphicsQualityPreset.value = QualitySettings.GetQualityLevel();
         graphicsQualityPreset.RefreshShownValue();
         #endregion
-        
+
+        #region Setup refresh rate slider
         List<Resolution> allResolutions = new List<Resolution>(Screen.resolutions);
         allResolutions.Sort((lhs, rhs) => lhs.refreshRate.CompareTo(rhs.refreshRate));
         refreshRateTarget.minValue = allResolutions[0].refreshRate;
         refreshRateTarget.maxValue = allResolutions[allResolutions.Count - 1].refreshRate;
         refreshRateTarget.value = Screen.currentResolution.refreshRate;
         refreshRateTarget.interactable = Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen;
+        #endregion
 
+        #region Setup resolution list
         resolutionStructs = new List<Resolution>();
         while (allResolutions.Count > 0)
         {
@@ -63,9 +61,10 @@ public class VideoOptions : OptionsMenu
             allResolutions.RemoveAll((r) => r.width == res.width && r.height == res.height);
         }
         resolutionStructs.Sort((a, b) => (a.width * a.height).CompareTo(b.width * b.height));
+        #endregion
 
+        #region Setup resolution dropdown
         int currentResolutionIndex = 0;
-
         resolutions.ClearOptions();
         for (int i = 0; i < resolutionStructs.Count; i++)
         {
@@ -81,10 +80,8 @@ public class VideoOptions : OptionsMenu
         }
         resolutions.value = currentResolutionIndex;
         resolutions.RefreshShownValue();
+        #endregion
     }
-
-
-
     public override void SetupOptions()
     {
         AddValueChangedEvent(resolutions);
@@ -93,7 +90,4 @@ public class VideoOptions : OptionsMenu
         AddValueChangedEvent(fullscreenMode);
         AddValueChangedEvent(graphicsQualityPreset);
     }
-
-
-
 }
