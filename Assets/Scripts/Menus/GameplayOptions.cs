@@ -33,6 +33,10 @@ public class GameplayOptions : OptionsMenu
     public override void ObtainCurrentValues()
     {
         playerUpdating = GetComponentInParent<Player>();
+        if (playerUpdating == null)
+        {
+            return;
+        }
         MovementController movement = playerUpdating.movement;
 
         SensitivityToSliderValue(aimSensitivityX, movement.aimSensitivity.x, maxAimSensitivity);
