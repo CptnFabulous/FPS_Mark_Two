@@ -11,7 +11,7 @@ public abstract class OptionsMenu : MonoBehaviour
 
     public virtual void Awake()
     {
-        apply.onClick.AddListener(() => Apply());
+        apply.onClick.AddListener(() => StartCoroutine(Apply()));
         revert.onClick.AddListener(() => Refresh());
         SetupOptions();
     }
@@ -19,13 +19,16 @@ public abstract class OptionsMenu : MonoBehaviour
     {
         Refresh();
     }
-
-    public void Apply()
+    IEnumerator Apply()
     {
         ApplySettings();
-        Debug.Log("Settings applied, refreshing now");
+        // Due to some weird shenanigans, the video options won't register the new settings until I wait two frames. Even just waiting one frame didn't work.
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        Debug.Log("Settings applied and frame has passed, refreshing now");
         Refresh();
     }
+
     void Refresh()
     {
         ObtainCurrentValues();
