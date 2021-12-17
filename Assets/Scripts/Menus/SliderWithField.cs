@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ComplexSlider : MonoBehaviour
+public class SliderWithField : MonoBehaviour
 {
     public Slider slider;
     public InputField textBox;
@@ -30,6 +30,7 @@ public class ComplexSlider : MonoBehaviour
     void UpdateTextBox(float value)
     {
         textBox.text = value.ToString();
+        textBox.interactable = slider.interactable;
     }
 
     void UpdateSlider(string text)

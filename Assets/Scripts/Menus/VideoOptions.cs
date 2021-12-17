@@ -9,7 +9,7 @@ public class VideoOptions : OptionsMenu
     public Dropdown fullscreenMode;
     public Dropdown graphicsQualityPreset;
     public Dropdown resolutions;
-    public Slider refreshRateTarget;
+    public SliderWithField refreshRateTarget;
 
     List<Resolution> resolutionStructs;
     public bool applyExpensiveQualityPresetChanges = true;
@@ -18,7 +18,7 @@ public class VideoOptions : OptionsMenu
     {
         QualitySettings.SetQualityLevel(graphicsQualityPreset.value, applyExpensiveQualityPresetChanges);
         Resolution r = resolutionStructs[resolutions.value];
-        Screen.SetResolution(r.width, r.height, (FullScreenMode)fullscreenMode.value, Mathf.RoundToInt(refreshRateTarget.value));
+        Screen.SetResolution(r.width, r.height, (FullScreenMode)fullscreenMode.value, Mathf.RoundToInt(refreshRateTarget.slider.value));
     }
     public override void ObtainCurrentValues()
     {
@@ -46,10 +46,12 @@ public class VideoOptions : OptionsMenu
         #region Setup refresh rate slider
         List<Resolution> allResolutions = new List<Resolution>(Screen.resolutions);
         allResolutions.Sort((lhs, rhs) => lhs.refreshRate.CompareTo(rhs.refreshRate));
-        refreshRateTarget.minValue = allResolutions[0].refreshRate;
-        refreshRateTarget.maxValue = allResolutions[allResolutions.Count - 1].refreshRate;
-        refreshRateTarget.value = Screen.currentResolution.refreshRate;
-        refreshRateTarget.interactable = Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen;
+        refreshRateTarget.slider.minValue = allResolutions[0].refreshRate;
+        refreshRateTarget.slider.maxValue = allResolutions[allResolutions.Count - 1].refreshRate;
+        refreshRateTarget.slider.value = Screen.currentResolution.refreshRate;
+
+        refreshRateTarget.slider.interactable = Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen;
+        refreshRateTarget.textBox.interactable = refreshRateTarget.slider.interactable;
         #endregion
 
         #region Setup resolution list
@@ -85,8 +87,8 @@ public class VideoOptions : OptionsMenu
     public override void SetupOptions()
     {
         AddValueChangedEvent(resolutions);
-        AddValueChangedEvent(refreshRateTarget);
-        refreshRateTarget.wholeNumbers = true;
+        AddValueChangedEvent(refreshRateTarget.slider);
+        refreshRateTarget.slider.wholeNumbers = true;
         AddValueChangedEvent(fullscreenMode);
         AddValueChangedEvent(graphicsQualityPreset);
     }
