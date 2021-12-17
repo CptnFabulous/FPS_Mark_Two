@@ -5,7 +5,20 @@ using UnityEngine;
 public class GunFireController : MonoBehaviour
 {
     public float roundsPerMinute;
+    public float ShotDelay
+    {
+        get
+        {
+            return 60 / roundsPerMinute;
+        }
+    }
+
+
     public int maxBurst;
+    public bool CanBurst(int numberOfShots)
+    {
+        return numberOfShots < maxBurst || maxBurst <= 0;
+    }
 
     public bool InBurst { get; private set; }
     
@@ -15,11 +28,11 @@ public class GunFireController : MonoBehaviour
         InBurst = true;
         int shotsInBurst = 0;
         
-        while ((shotsInBurst < maxBurst || maxBurst <= 0) && mode.User.primary.Held && mode.CanShoot())
+        while (CanBurst(shotsInBurst) && mode.User.primary.Held && mode.CanShoot())
         {
             mode.SingleShot();
             shotsInBurst++;
-            yield return new WaitForSeconds(60 / roundsPerMinute);
+            yield return new WaitForSeconds(ShotDelay);
         }
 
         InBurst = false;
