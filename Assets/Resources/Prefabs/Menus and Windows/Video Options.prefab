@@ -93,7 +93,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 647508384776357334, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -150
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 647508384776357334, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -110,6 +110,30 @@ PrefabInstance:
     - target: {fileID: 1641046610267086711, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_Text
       value: Graphics quality preset
+      objectReference: {fileID: 0}
+    - target: {fileID: 3080716005013176070, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3080716005013176070, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3080716005013176070, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3550257150668831724, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3550257150668831724, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3576050293235822668, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7294548742377283821, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: description
@@ -221,7 +245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 647508384776357334, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: -100
       objectReference: {fileID: 0}
     - target: {fileID: 647508384776357334, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -238,6 +262,26 @@ PrefabInstance:
     - target: {fileID: 1641046610267086711, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_Text
       value: Resolution
+      objectReference: {fileID: 0}
+    - target: {fileID: 3080716005013176070, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3080716005013176070, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3080716005013176070, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3550257150668831724, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3550257150668831724, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7294548742377283821, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: description
@@ -266,6 +310,10 @@ PrefabInstance:
     - target: {fileID: 264161725677058913, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_Name
       value: Refresh rate
+      objectReference: {fileID: 0}
+    - target: {fileID: 264161725677058913, guid: ac8b4095ee205214e974e170f848f423, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 647508384776357334, guid: ac8b4095ee205214e974e170f848f423, type: 3}
       propertyPath: m_Pivot.x
@@ -373,17 +421,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac8b4095ee205214e974e170f848f423, type: 3}
---- !u!114 &7750787851517110903 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3728383205998260629, guid: ac8b4095ee205214e974e170f848f423, type: 3}
-  m_PrefabInstance: {fileID: 6353933359963036642}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d0b652f32a2cc243917e4028fa0f046, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &9090373949878775953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -391,13 +428,78 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 436512669490967459, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 436512669490967459, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 498614434786195459, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 695772655073168300, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 695772655073168300, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 695772655073168300, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1314971274094685257, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -150
+      objectReference: {fileID: 0}
+    - target: {fileID: 2128838155967346505, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2128838155967346505, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2128838155967346505, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2417846783079388984, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_Text
-      value: Fullscreen Mode
+      value: Fullscreen mode
+      objectReference: {fileID: 0}
+    - target: {fileID: 2637926982944810498, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_Name
+      value: Refresh rate target
+      objectReference: {fileID: 0}
+    - target: {fileID: 2637926982944810498, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399640611213344307, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3399640611213344307, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3627147896552418084, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: graphic
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3627147896552418084, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: description
+      value: Select an ideal framerate to run at, and the game will select the best
+        valid value. Only available in Exclusive Fullscreen mode.
       objectReference: {fileID: 0}
     - target: {fileID: 3810533832255124270, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_Name
-      value: Fullscreen Mode
+      value: Fullscreen mode
       objectReference: {fileID: 0}
     - target: {fileID: 3810533832255124270, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_IsActive
@@ -405,7 +507,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4932944454966306768, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4932944454966306770, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_Name
@@ -500,8 +602,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4932944455116432653, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
-      propertyPath: m_Value
+      propertyPath: m_Size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4932944455116432653, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_Value
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4932944455389172694, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_AnchorMax.x
@@ -527,6 +633,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4932944456305473892, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4932944456467926776, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -541,12 +651,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5940442017673455778, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: description
-      value: Select fullscreen for a more cinematic experience, or windowed to easily
-        alt-tab out in case you're supposed to be doing something else.
+      value: "Choose how the game is viewed.\r\nExclusive Fullscreen: Takes up the
+        entire screen, with adjustable refresh rate.\r\nFullscreen Window: Renders
+        a window as large as possible while preserving aspect ratio, with black borders.\r\nWindowed:
+        Render the game in a regular desktop window, in case you want to switch to
+        another program.\r"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6570894693162631325, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_Name
+      value: Fullscreen
       objectReference: {fileID: 0}
     - target: {fileID: 6570894693162631325, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7901155690698814207, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_Text
+      value: Refresh rate target
+      objectReference: {fileID: 0}
+    - target: {fileID: 8791690434005999257, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: description
+      value: Select fullscreen for a more cinematic experience, or windowed to easily
+        alt-tab out in case you're supposed to be doing something else.
+      objectReference: {fileID: 0}
+    - target: {fileID: 9126240086688301463, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+      propertyPath: m_Text
+      value: Fullscreen
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
@@ -560,6 +690,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4932944456305473892, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
   m_PrefabInstance: {fileID: 9090373949878775953}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &39937490029294572 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9127279248818013053, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
+  m_PrefabInstance: {fileID: 9090373949878775953}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8849960090319669579 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 357509650035145178, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
@@ -609,6 +750,6 @@ MonoBehaviour:
   revert: {fileID: 448243300460260954}
   fullscreenMode: {fileID: 8849960090319669579}
   resolutions: {fileID: 8710516448243052680}
-  refreshRates: {fileID: 7750787851517110903}
+  refreshRateTarget: {fileID: 39937490029294572}
   graphicsQualityPreset: {fileID: 2879156388799762204}
   applyExpensiveQualityPresetChanges: 1
