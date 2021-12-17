@@ -62,6 +62,7 @@ public class VideoOptions : OptionsMenu
             resolutionStructs.Add(res);
             allResolutions.RemoveAll((r) => r.width == res.width && r.height == res.height);
         }
+        resolutionStructs.Sort((a, b) => (a.width * a.height).CompareTo(b.width * b.height));
 
         int currentResolutionIndex = 0;
 
