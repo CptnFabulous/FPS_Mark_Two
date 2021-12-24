@@ -10,6 +10,7 @@ public class MovementController : MonoBehaviour
 
     #region Movement
     [Header("Movement")]
+    public bool canMove = true;
     public float defaultSpeed = 5;
     CapsuleCollider collider;
     Rigidbody rb;
@@ -53,6 +54,7 @@ public class MovementController : MonoBehaviour
 
     #region Aiming
     [Header("Aiming")]
+    public bool canLook = true;
     public Transform aimAxis;
     public Transform upperBody;
     public Camera worldViewCamera;
