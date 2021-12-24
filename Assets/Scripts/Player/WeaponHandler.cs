@@ -25,6 +25,7 @@ public class WeaponHandler : MonoBehaviour
     [HideInInspector] public bool isSwitching;
     public Transform holdingSocket;
     public AmmunitionInventory ammo;
+    public RadialMenu weaponSelector;
 
     [Header("Stats")]
     public Transform aimAxis;
@@ -65,6 +66,8 @@ public class WeaponHandler : MonoBehaviour
         {
             ammo = GetComponent<AmmunitionInventory>();
         }
+        //weaponSelector.onValueChanged.AddListener(UpdateInfoInSelector);
+        weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromSelector);
     }
     private void Start()
     {
@@ -140,6 +143,25 @@ public class WeaponHandler : MonoBehaviour
             r.magazine.OnReloadPressed();
         }
     }
+    void OnSelectWeapon(InputValue input)
+    {
+        if (input.isPressed && weaponSelector.OptionsPresent)
+        {
+            // Run function to open weapon selector
+            controller.movement.canLook = false;
+            weaponSelector.EnterMenu(equippedWeaponIndex);
+        }
+        else
+        {
+            // Run function to exit weapon selector
+            controller.movement.canLook = true;
+            weaponSelector.ExitMenu();
+        }
+    }
+    void OnLook(InputValue input)
+    {
+        weaponSelector.InputDirection(input.Get<Vector2>());
+    }
 
     void UpdateAvailableWeapons()
     {
@@ -151,16 +173,14 @@ public class WeaponHandler : MonoBehaviour
             equippedWeapons[i].gameObject.SetActive(false);
         }
 
+        RefreshWeaponSelector();
+
         if (CurrentWeapon != null)
         {
             //Debug.Log("Drawing first weapon, " + CurrentWeapon.name);
             StartCoroutine(SwitchWeapon(equippedWeaponIndex));
         }
     }
-
-
-
-
     IEnumerator SwitchWeapon(int newIndex)
     {
         if (equippedWeapons.Length <= 0)
@@ -199,5 +219,42 @@ public class WeaponHandler : MonoBehaviour
 
         isSwitching = false;
     }
-}
 
+
+
+
+    void RefreshWeaponSelector()
+    {
+        List<Sprite> icons = new List<Sprite>();
+        for (int w = 0; w < equippedWeapons.Length; w++)
+        {
+            for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
+            {
+                icons.Add(equippedWeapons[w].modes[m].icon);
+            }
+            // Calculate where to put borders and weapon graphics
+        }
+        weaponSelector.Refresh(icons.ToArray());
+
+    }
+    public void SwitchWeaponAndModeFromSelector(int index)
+    {
+        GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
+        StartCoroutine(SwitchWeapon(weaponIndex));
+    }
+    public void GetWeaponAndModeFromSelector(int index, out int weaponIndex, out int firingModeIndex)
+    {
+        weaponIndex = 0;
+        firingModeIndex = 0;
+        for (int i = 0; i < index; i++)
+        {
+            firingModeIndex++;
+            if (firingModeIndex >= equippedWeapons[weaponIndex].modes.Length)
+            {
+                weaponIndex++;
+                firingModeIndex = 0;
+            }
+        }
+    }
+
+}
