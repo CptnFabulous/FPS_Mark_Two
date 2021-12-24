@@ -26,7 +26,6 @@ public class PlayerStateHandler : MonoBehaviour
     public Canvas gameOverMenu;
     public UnityEvent onDeath;
     
-
     public PlayerState CurrentState
     {
         get
@@ -72,18 +71,18 @@ public class PlayerStateHandler : MonoBehaviour
         CurrentState = CurrentState; // Assigns value to itself to trigger the appropriate code
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnPause()
     {
-        if (Input.GetButtonDown("Pause") && CurrentState == PlayerState.Active) // Toggle between paused and unpaused
+        if (CurrentState == PlayerState.Active)
         {
             CurrentState = PlayerState.Paused;
         }
     }
+    void OnEnterMenu()
+    {
 
+    }
 
-    
-    
     void SwitchMenu(Canvas currentMenu)
     {
         headsUpDisplay.gameObject.SetActive(false);

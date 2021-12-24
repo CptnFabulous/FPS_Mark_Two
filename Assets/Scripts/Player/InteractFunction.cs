@@ -8,13 +8,10 @@ public class InteractFunction : MonoBehaviour
     public Player player;
     public Transform aimTransform;
     public InteractGUIPrompt window;
-    public CustomInput.Button input = new CustomInput.Button(KeyCode.E, CustomInput.ControllerButton.North);
     
     [Header("Stats")]
     public float interactRange = 3;
     public LayerMask interactionMask = ~0;
-
-    
 
     public Interactable LookingAt
     {
@@ -36,6 +33,14 @@ public class InteractFunction : MonoBehaviour
     }
     Interactable current;
 
+    void OnInteract()
+    {
+        if (LookingAt != null && LookingAt.active)
+        {
+            LookingAt.onInteract.Invoke(player);
+        }
+    }
+
     void Update()
     {
         if (Physics.Raycast(aimTransform.position, aimTransform.forward, out RaycastHit target, interactRange, interactionMask))
@@ -46,10 +51,7 @@ public class InteractFunction : MonoBehaviour
         {
             LookingAt = null;
         }
-
-        if (input.Pressed && LookingAt != null && LookingAt.active)
-        {
-            LookingAt.onInteract.Invoke(player);
-        }
     }
+
+    
 }

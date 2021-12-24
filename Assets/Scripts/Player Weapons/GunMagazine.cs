@@ -25,42 +25,37 @@ public class GunMagazine : MonoBehaviour
     IEnumerator currentSequence;
 
     RangedAttack mode;
-    
 
     public void InputLoop(RangedAttack currentMode)
     {
         mode = currentMode;
         // If player wants to reload their weapon, and if reloading is possible
-        if (WantsToReload && CanReload)
+        if (ammo.current < mode.stats.ammoPerShot && ReloadActive == false)
         {
-            currentSequence = ReloadSequence();
-            StartCoroutine(currentSequence);
+            TryReload();
         }
-        else if (ReloadActive && mode.User.primary.Pressed)
+    }
+    public void OnReloadPressed()
+    {
+        if (!ReloadActive)
+        {
+            TryReload();
+        }
+        else
         {
             CancelReload();
         }
     }
-
-    /// <summary>
-    /// Checks if this magazine needs to be reloaded (either because it's empty or because the player deliberately pressed the reload button)
-    /// </summary>
-    /// <param name="mode"></param>
-    /// <returns></returns>
-    public bool WantsToReload
+    void TryReload()
     {
-        get
+        if (CanReload)
         {
-            // EITHER
-            // If magazine does not have enough ammo to shoot
-            // If player deliberately wants to reload a half empty weapon
-            // AND
-            // If player is not in the middle of a reload cycle
-            bool manual = mode.User.tertiary.Pressed;
-            bool automatic = ammo.current < mode.stats.ammoPerShot;
-            return (manual || automatic) && ReloadActive == false;
+            currentSequence = ReloadSequence();
+            StartCoroutine(currentSequence);
         }
     }
+
+
     /// <summary>
     /// Is the player able to reload their weapon (if not, magazine is full or there is no more ammo to reload with)
     /// </summary>
@@ -78,7 +73,7 @@ public class GunMagazine : MonoBehaviour
     {
         return (int)(mode.User.ammo.GetStock(type) - ammo.current);
     }
-    
+
 
     IEnumerator ReloadSequence()
     {
@@ -91,7 +86,7 @@ public class GunMagazine : MonoBehaviour
             ads.IsAiming = false;
             yield return new WaitUntil(() => !ads.IsAiming && !ads.IsTransitioning);
         }
-        
+
 
         onReloadStart.Invoke();
         yield return new WaitForSeconds(startTransitionDelay);
@@ -124,14 +119,6 @@ public class GunMagazine : MonoBehaviour
         }
         currentSequence = null;
     }
-
-
-    
-    
-
-    
-    
-    
 }
 
 /*

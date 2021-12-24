@@ -119,7 +119,8 @@ public class GunADS : MonoBehaviour
             viewingCamera.fieldOfView = player.movement.fieldOfView / magnification;
         }
 
-        IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS) && mode.NotReloading;
+        IsAiming = user.InADS;
+        //IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS) && mode.NotReloading;
 
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)

@@ -23,7 +23,7 @@
                 },
                 {
                     "name": "Fire",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "500f6abe-d8f3-4ec0-b645-b0ca4c4c7d84",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -43,7 +43,7 @@
                     "id": "9bd7f301-5377-4712-8598-8694767bd32b",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Dodge",
@@ -54,12 +54,12 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Aim",
+                    "name": "ADS",
                     "type": "Button",
                     "id": "4c0284d6-46c1-491f-93b9-f79904551889",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Reload",
@@ -75,7 +75,7 @@
                     "id": "2806d901-1c7c-4874-a1b1-1b5055d3f16f",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press(behavior=2)"
                 },
                 {
                     "name": "Pause",
@@ -259,7 +259,7 @@
                     "id": "8c8e490b-c610-4785-884f-f04217b23ca4",
                     "path": "<Pointer>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=0.05,y=0.05)",
                     "groups": ";Keyboard&Mouse;Touch",
                     "action": "Look",
                     "isComposite": false,
@@ -404,7 +404,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Aim",
+                    "action": "ADS",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -415,7 +415,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Aim",
+                    "action": "ADS",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -521,7 +521,7 @@
                 {
                     "name": "",
                     "id": "c799474c-ec81-4ac6-bbd8-09e7b7e7d980",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

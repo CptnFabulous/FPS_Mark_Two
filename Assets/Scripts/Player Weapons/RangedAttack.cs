@@ -71,7 +71,7 @@ public class RangedAttack : WeaponMode
             optics.InputLoop(this);
         }
 
-        if (User.primary.Pressed && controls.InBurst == false && NotReloading)
+        if (User.TriggerHeld && controls.InBurst == false && NotReloading)
         {
             StartCoroutine(controls.Fire(this));
         }

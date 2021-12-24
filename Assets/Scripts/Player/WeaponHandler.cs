@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class WeaponHandler : MonoBehaviour
 {
@@ -30,9 +31,9 @@ public class WeaponHandler : MonoBehaviour
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
     public bool toggleADS;
-    public CustomInput.Button primary = new CustomInput.Button(KeyCode.Mouse0, CustomInput.ControllerButton.RightTrigger);
-    public CustomInput.Button secondary = new CustomInput.Button(KeyCode.Mouse1, CustomInput.ControllerButton.LeftTrigger);
-    public CustomInput.Button tertiary = new CustomInput.Button(KeyCode.R, CustomInput.ControllerButton.West);
+
+    public bool TriggerHeld { get; private set; }
+    public bool InADS { get; private set; }
 
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;
@@ -96,7 +97,7 @@ public class WeaponHandler : MonoBehaviour
         {
             StartCoroutine(SwitchWeapon(index));
         }
-        
+
         // If player is not in the middle of switching weapons
         // If player has a weapon equipped
         // If player is not in the middle of switching firing modes
@@ -104,17 +105,41 @@ public class WeaponHandler : MonoBehaviour
         {
             CurrentWeapon.CurrentMode.UpdateLoop();
         }
-        
-        
+
+
 
 
     }
 
 
-    
-    
-    
 
+    void OnFire(InputValue input)
+    {
+        //fireButtonHeld = input.Get<float>() > 0;
+        TriggerHeld = input.isPressed;
+    }
+    void OnADS(InputValue input)
+    {
+        if (toggleADS)
+        {
+            if (input.isPressed)
+            {
+                InADS = !InADS;
+            }
+        }
+        else
+        {
+            InADS = input.isPressed;
+        }
+    }
+    void OnReload()
+    {
+        RangedAttack r = CurrentWeapon.CurrentMode as RangedAttack;
+        if (r != null && r.magazine != null)
+        {
+            r.magazine.OnReloadPressed();
+        }
+    }
 
     void UpdateAvailableWeapons()
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-//using UnityEngine.InputSystem;
+using UnityEngine.InputSystem;
 
 public class MovementController : MonoBehaviour
 {
@@ -14,18 +14,18 @@ public class MovementController : MonoBehaviour
     CapsuleCollider collider;
     Rigidbody rb;
     Vector3 movementVelocity;
-    Vector2 MovementInput
+
+    public void OnMove(InputValue input)
     {
-        get
+        if (!canMove)
         {
-            Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            if (input.magnitude > 0) // Check before normalising, to allow proportional control while ensuring value does not exceed 1
-            {
-                input.Normalize();
-            }
-            return input;
+            movementInput = Vector2.zero;
+            return;
         }
+        movementInput = input.Get<Vector2>();
     }
+    Vector2 movementInput;
+
     float CurrentMoveSpeed
     {
         get
@@ -65,30 +65,33 @@ public class MovementController : MonoBehaviour
     float maxAngle = 90;
 
     float verticalAngle = 0;
-    public Vector2 CameraInput
+    
+    void OnLook(InputValue input)
     {
-        get
+        if (!canLook)
         {
-            Vector2 value = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-            value.x *= aimSensitivity.x;
-            value.y *= aimSensitivity.y;
-            if (invertX)
-            {
-                value.x = -value.x;
-            }
-            if (invertY)
-            {
-                value.y = -value.y;
-            }
-            return value;
+            cameraInput = Vector2.zero;
+            return;
+        }
+        cameraInput = input.Get<Vector2>();
+        cameraInput.x *= aimSensitivity.x;
+        cameraInput.y *= aimSensitivity.y;
+        if (invertX)
+        {
+            cameraInput.x = -cameraInput.x;
+        }
+        if (invertY)
+        {
+            cameraInput.y = -cameraInput.y;
         }
     }
+    Vector2 cameraInput;
+    
     public Quaternion RotationVelocity
     {
         get
         {
-            Vector2 input = CameraInput;
-            return Quaternion.Euler(-input.y, input.x, 0) * transform.rotation;
+            return Quaternion.Euler(-cameraInput.y, cameraInput.x, 0) * transform.rotation;
         }
     }
 
@@ -142,8 +145,18 @@ public class MovementController : MonoBehaviour
 
     public RaycastHit groundingData;
     float lastTimeJumped;
-    CustomInput.Button jump = new CustomInput.Button(KeyCode.Space, CustomInput.ControllerButton.South);
 
+    void OnJump()
+    {
+        if (groundingData.collider == null && Time.time - lastTimeJumped >= jumpCooldown)
+        {
+            return;
+        }
+
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        onJump.Invoke();
+        lastTimeJumped = Time.time;
+    }
     void SetGroundingData()
     {
         Vector3 rayOrigin = transform.position + transform.up * (collider.height / 2);
@@ -156,17 +169,6 @@ public class MovementController : MonoBehaviour
         }
         groundingData = newGroundingData; // Update grounding data
     }
-    public void TryJump()
-    {
-        if (groundingData.collider == null && Time.time - lastTimeJumped >= jumpCooldown)
-        {
-            return;
-        }
-
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-        onJump.Invoke();
-        lastTimeJumped = Time.time;
-    }
     #endregion
 
     #region Dodging
@@ -176,19 +178,17 @@ public class MovementController : MonoBehaviour
     public float dodgeCooldown = 1;
     public UnityEvent onDodge;
     float lastTimeDodged;
-    CustomInput.Button dodge = new CustomInput.Button(KeyCode.LeftShift, CustomInput.ControllerButton.East);
-
-    public void TryDodge(Vector2 input)
+    void OnDodge()
     {
         // If player is standing on the ground
         // If cooldown time has elapsed
         // If player is moving in a direction
-        if (groundingData.collider == null && Time.time - lastTimeDodged >= dodgeCooldown && input.magnitude > 0)
+        if (groundingData.collider == null && Time.time - lastTimeDodged >= dodgeCooldown && movementInput.magnitude > 0)
         {
             return;
         }
 
-        Vector3 movement = new Vector3(input.x, 0, input.y) * dodgeDistance;
+        Vector3 movement = new Vector3(movementInput.x, 0, movementInput.y) * dodgeDistance;
         movement = transform.rotation * movement;
         rb.AddForce(movement, ForceMode.Impulse);
         onDodge.Invoke();
@@ -208,8 +208,21 @@ public class MovementController : MonoBehaviour
     public UnityEvent onStand;
     [SerializeField] bool crouched;
     float crouchTimer;
-    CustomInput.Button crouch = new CustomInput.Button(KeyCode.LeftControl, CustomInput.ControllerButton.LeftStickClick);
 
+    void OnCrouch(InputValue input)
+    {
+        if (toggleCrouch)
+        {
+            if (input.isPressed)
+            {
+                IsCrouching = !IsCrouching;
+            }
+        }
+        else
+        {
+            IsCrouching = input.isPressed;
+        }
+    }
     public bool IsCrouching
     {
         get
@@ -308,7 +321,7 @@ public class MovementController : MonoBehaviour
     void WalkCycle()
     {
         // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
-        if (groundingData.collider != null && (MovementInput.magnitude > 0 || walkCycleTimer != 0))
+        if (groundingData.collider != null && (movementInput.magnitude > 0 || walkCycleTimer != 0))
         {
             float walkCycleLength = strideLength * stepsPerCycle / CurrentMoveSpeed;
             float amountToIncrement = Time.deltaTime / walkCycleLength;
@@ -394,10 +407,13 @@ public class MovementController : MonoBehaviour
         {
             TryJump();
         }
+        RotateAim(cameraInput * Time.deltaTime);
     }
     private void FixedUpdate()
     {
         SetGroundingData();
+        Vector3 movement = new Vector3(movementInput.x, 0, movementInput.y) * CurrentMoveSpeed;
+        movementVelocity = transform.rotation * movement;
         rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
     }
     private void LateUpdate()
