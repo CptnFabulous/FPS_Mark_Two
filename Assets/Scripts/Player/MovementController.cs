@@ -397,18 +397,6 @@ public class MovementController : MonoBehaviour
     }
     void Update()
     {
-        IsCrouching = CustomInput.SetPlayerAbilityState(IsCrouching, crouch, toggleCrouch);
-
-        RotateAim(CameraInput * Time.deltaTime);
-
-        Vector2 input = MovementInput;
-        Vector3 movement = new Vector3(input.x, 0, input.y) * CurrentMoveSpeed;
-        movementVelocity = transform.rotation * movement;
-
-        if (jump.Pressed)
-        {
-            TryJump();
-        }
         RotateAim(cameraInput * Time.deltaTime);
     }
     private void FixedUpdate()
