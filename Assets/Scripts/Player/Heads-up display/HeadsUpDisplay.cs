@@ -157,7 +157,7 @@ public class HeadsUpDisplay : MonoBehaviour
     public void RangedAttackUIUpdate(RangedAttack currentMode)
     {
         // If weapon consumes ammo, show reserve
-        bool consumesAmmo = currentMode.stats.ammoType != null && currentMode.stats.ammoPerShot > 0;
+        bool consumesAmmo = currentMode.stats.ConsumesAmmo;
         ammoReserve.gameObject.SetActive(consumesAmmo);
         if (consumesAmmo)
         {
