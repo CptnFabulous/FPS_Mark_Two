@@ -43,7 +43,7 @@ public class RadialMenu : MonoBehaviour
     public UnityEvent<int> onValueChanged;
 
     CanvasGroup elements;
-    bool active;
+    public bool active { get; private set; }
     int index;
     Vector2 cursorDirection;
     float SegmentSize
