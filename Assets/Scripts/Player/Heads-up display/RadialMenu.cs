@@ -57,7 +57,14 @@ public class RadialMenu : MonoBehaviour
     {
         get
         {
-            return Vector3.SignedAngle(Vector2.up, cursorDirection, Vector3.forward);
+            float f = Vector2.SignedAngle(cursorDirection, Vector2.up);
+            //float f = Vector2.SignedAngle(Vector2.up, cursorDirection);
+            if (f < 0)
+            {
+                f += 360;
+            }
+            //Debug.Log(cursorDirection + ", " + Vector2.up + ", " + f);
+            return f;
         }
     }
 
@@ -93,7 +100,7 @@ public class RadialMenu : MonoBehaviour
         options = new Image[icons.Length];
         for (int i = 0; i < options.Length; i++)
         {
-            Quaternion rotation = Quaternion.Euler(0, 0, SegmentSize * i);
+            Quaternion rotation = Quaternion.Euler(0, 0, -SegmentSize * i);
             Vector3 position = rotation * Vector3.up * Vector2.Distance(optionPrefab.rectTransform.anchoredPosition, Vector2.zero);
             options[i] = Instantiate(optionPrefab, transform);
             options[i].gameObject.SetActive(true);
@@ -114,10 +121,13 @@ public class RadialMenu : MonoBehaviour
         }
         // Input mouse/analog stick movement
         cursorDirection += value;
-        cursorDirection.Normalize();
+        if (cursorDirection.magnitude > 1)
+        {
+            cursorDirection.Normalize();
+        }
 
         Value = Mathf.RoundToInt(SelectionAngle / SegmentSize);
-        selectorAxis.localRotation = Quaternion.Euler(0, 0, SelectionAngle);
+        selectorAxis.localRotation = Quaternion.Euler(0, 0, -SelectionAngle);
     }
 
     /// <summary>
