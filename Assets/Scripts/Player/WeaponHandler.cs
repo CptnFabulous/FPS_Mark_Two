@@ -76,7 +76,8 @@ public class WeaponHandler : MonoBehaviour
         {
             ammo = GetComponent<AmmunitionInventory>();
         }
-        weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromSelector);
+        
+        weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
         weaponSelector.onValueChanged.AddListener((i) =>
         {
             GetWeaponAndModeFromSelector(i, out int weaponIndex, out int firingModeIndex);
@@ -95,7 +96,8 @@ public class WeaponHandler : MonoBehaviour
     {
         if (MiscFunctions.NumKeyPressed(out int index, true))
         {
-            StartCoroutine(SwitchWeapon(index));
+            //StartCoroutine(SwitchWeapon(index));
+            SwitchWeaponAndModeFromIndex(index);
         }
     }
 
@@ -201,9 +203,17 @@ public class WeaponHandler : MonoBehaviour
 
         isSwitching = false;
     }
-
-
-
+    IEnumerator SwitchWeaponAndFiringMode(int weaponIndex, int firingModeIndex)
+    {
+        StartCoroutine(SwitchWeapon(weaponIndex));
+        yield return new WaitWhile(()=> isSwitching);
+        CurrentWeapon.StartCoroutine(CurrentWeapon.SwitchMode(firingModeIndex));
+    }
+    public void SwitchWeaponAndModeFromIndex(int index)
+    {
+        GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
+        StartCoroutine(SwitchWeaponAndFiringMode(weaponIndex, firingModeIndex));
+    }
 
     void RefreshWeaponSelector()
     {
@@ -218,11 +228,6 @@ public class WeaponHandler : MonoBehaviour
         }
         weaponSelector.Refresh(icons.ToArray());
 
-    }
-    public void SwitchWeaponAndModeFromSelector(int index)
-    {
-        GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
-        StartCoroutine(SwitchWeapon(weaponIndex));
     }
     public void GetWeaponAndModeFromSelector(int index, out int weaponIndex, out int firingModeIndex)
     {

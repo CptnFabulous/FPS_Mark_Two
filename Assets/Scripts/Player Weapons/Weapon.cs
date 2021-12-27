@@ -76,7 +76,7 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator SwitchMode(int newModeIndex)
     {
-        if (InAction == true)
+        if (InAction == true || newModeIndex == currentModeIndex)
         {
             yield break;
         }
