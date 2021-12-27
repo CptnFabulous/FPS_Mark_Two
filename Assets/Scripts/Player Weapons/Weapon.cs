@@ -51,12 +51,14 @@ public class Weapon : MonoBehaviour
     public IEnumerator Draw()
     {
         //yield return new WaitUntil(() => isSwitching == false);
+        CurrentMode.OnSwitchFrom();
         isSwitching = true;
         gameObject.SetActive(true);
         onDraw.Invoke();
 
         yield return new WaitForSeconds(switchSpeed);
 
+        CurrentMode.OnSwitchTo();
         isSwitching = false;
     }
     public IEnumerator Holster()
@@ -64,6 +66,7 @@ public class Weapon : MonoBehaviour
         yield return new WaitUntil(() => InAction == false);
 
         isSwitching = true;
+        CurrentMode.OnSwitchFrom();
         onHolster.Invoke();
 
         yield return new WaitForSeconds(switchSpeed);
@@ -79,11 +82,13 @@ public class Weapon : MonoBehaviour
         }
 
         isSwitching = true;
+        CurrentMode.OnSwitchFrom();
         modes[newModeIndex].onSwitch.Invoke();
 
         yield return new WaitForSeconds(modes[newModeIndex].switchSpeed);
 
         currentModeIndex = newModeIndex;
+        CurrentMode.OnSwitchTo();
         isSwitching = false;
     }
 }

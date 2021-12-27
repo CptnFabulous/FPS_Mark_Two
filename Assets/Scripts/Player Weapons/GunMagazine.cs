@@ -26,10 +26,14 @@ public class GunMagazine : MonoBehaviour
 
     RangedAttack mode;
 
-    public void InputLoop(RangedAttack currentMode)
+    public void Initialise(RangedAttack currentMode)
     {
         mode = currentMode;
-        // If player wants to reload their weapon, and if reloading is possible
+        enabled = true;
+    }
+    private void Update()
+    {
+        // If there isn't enough ammo in the magazine to fire another shot
         if (ammo.current < mode.stats.ammoPerShot && ReloadActive == false)
         {
             TryReload();

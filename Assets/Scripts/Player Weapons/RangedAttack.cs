@@ -62,26 +62,6 @@ public class RangedAttack : WeaponMode
 
         return true;
     }
-
-
-    public override void UpdateLoop()
-    {
-        if (optics != null)
-        {
-            optics.InputLoop(this);
-        }
-
-        if (User.TriggerHeld && controls.InBurst == false && NotReloading)
-        {
-            StartCoroutine(controls.Fire(this));
-        }
-
-        if (magazine != null)
-        {
-            magazine.InputLoop(this);
-        }
-    }
-
     public void SingleShot()
     {
         if (magazine != null)
@@ -96,16 +76,47 @@ public class RangedAttack : WeaponMode
         stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection(), User.aimAxis.up);
     }
 
-
-    /*
-    private void OnDrawGizmos()
+    public override void OnSwitchTo()
     {
-        if (attachedTo != null && User != null && gameObject.activeInHierarchy == true)
+        optics.Initialise(this);
+        magazine.Initialise(this);
+    }
+    public override void OnSwitchFrom()
+    {
+        optics.enabled = false;
+        magazine.enabled = false;
+    }
+    public override void OnPrimaryInput()
+    {
+        if (attachedTo.user.TriggerHeld && controls.InBurst == false && NotReloading)
         {
-            Gizmos.matrix = User.aimAxis.localToWorldMatrix;
-            Debug.Log(User.standingAccuracy + ", " + stats.sway + ", " + stats.shotSpread);
-            Gizmos.DrawFrustum(Vector3.zero, User.standingAccuracy + stats.sway + stats.shotSpread, stats.range, 0, 1);
+            StartCoroutine(controls.Fire(this));
         }
     }
-    */
+    public override void OnSecondaryInput(bool held)
+    {
+        if (optics == null)
+        {
+            return;
+        }
+
+        if (attachedTo.user.toggleADS)
+        {
+            if (held)
+            {
+                optics.IsAiming = !optics.IsAiming;
+            }
+        }
+        else
+        {
+            optics.IsAiming = held;
+        }
+    }
+    public override void OnTertiaryInput()
+    {
+        if (magazine != null)
+        {
+            magazine.OnReloadPressed();
+        }
+    }
 }

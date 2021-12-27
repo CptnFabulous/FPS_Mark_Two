@@ -23,8 +23,11 @@ public abstract class WeaponMode : MonoBehaviour
     {
         attachedTo = GetComponentInParent<Weapon>();
     }
-    
-    public abstract void UpdateLoop();
+    public abstract void OnSwitchTo();
+    public abstract void OnSwitchFrom();
+    public abstract void OnPrimaryInput();
+    public abstract void OnSecondaryInput(bool held);
+    public abstract void OnTertiaryInput();
 
     public abstract bool InAction { get; }
 }

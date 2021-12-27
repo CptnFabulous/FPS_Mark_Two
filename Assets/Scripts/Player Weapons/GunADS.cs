@@ -29,10 +29,21 @@ public class GunADS : MonoBehaviour
     public UnityEvent onSwitchToHipfire;
 
     
-
-
-    WeaponHandler user;
-    Player player;
+    public RangedAttack currentMode;
+    WeaponHandler user
+    {
+        get
+        {
+            return currentMode.User;
+        }
+    }
+    Player player
+    {
+        get
+        {
+            return user.controller;
+        }
+    }
     bool currentlyAiming;
     float timer;
     Vector3 cosmeticSwayAxes;
@@ -110,18 +121,23 @@ public class GunADS : MonoBehaviour
             sightPicture.material = scopeMaterial;
         }
     }
-    public void InputLoop(RangedAttack mode)
+    public void Initialise(RangedAttack mode)
     {
-        user = mode.User;
-        player = user.controller;
+        currentMode = mode;
         if (IsScope)
         {
             viewingCamera.fieldOfView = player.movement.fieldOfView / magnification;
         }
+        enabled = true;
+    }
 
-        IsAiming = user.InADS;
-        //IsAiming = CustomInput.SetPlayerAbilityState(IsAiming, user.secondary, user.toggleADS) && mode.NotReloading;
-
+    private void Update()
+    {
+        if (currentMode == null)
+        {
+            return;
+        }
+        
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)
         {

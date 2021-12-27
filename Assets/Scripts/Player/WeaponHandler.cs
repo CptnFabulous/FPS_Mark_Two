@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class WeaponHandler : MonoBehaviour
 {
     public Player controller;
-    
+
     [Header("Weapons")]
     public Weapon[] equippedWeapons;
     public int equippedWeaponIndex;
@@ -33,14 +33,6 @@ public class WeaponHandler : MonoBehaviour
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
     public bool toggleADS;
-
-    public bool TriggerHeld { get; private set; }
-    public bool InADS { get; private set; }
-
-    [Header("Other")]
-    public UnityEvent<Weapon> onDraw;
-    public UnityEvent<Weapon> onHolster;
-
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
@@ -61,13 +53,29 @@ public class WeaponHandler : MonoBehaviour
         return aimAxis.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
     }
 
+    [Header("Other")]
+    public UnityEvent<Weapon> onDraw;
+    public UnityEvent<Weapon> onHolster;
+    public bool WeaponReady
+    {
+        get
+        {
+            // If player is not in the middle of switching weapons
+            // If player has a weapon equipped
+            // If player is not in the middle of switching firing modes
+            // If player is not in weapon wheel
+            return enabled && isSwitching == false && CurrentWeapon != null && CurrentWeapon.isSwitching == false/* && weaponSelector.active == false*/;
+        }
+    }
+    public bool TriggerHeld { get; private set; }
+
+
     private void Awake()
     {
         if (ammo == null)
         {
             ammo = GetComponent<AmmunitionInventory>();
         }
-        //weaponSelector.onValueChanged.AddListener(UpdateInfoInSelector);
         weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromSelector);
         weaponSelector.onValueChanged.AddListener((i) =>
         {
@@ -85,73 +93,37 @@ public class WeaponHandler : MonoBehaviour
     }
     private void Update()
     {
-        /*
-        // If player is not currently 
-        if (isSwitching == false && CurrentWeapon.InAction == false)
-        {
-            float scrollAxis = Input.GetAxis("Mouse ScrollWheel");
-            if (scrollAxis != 0)
-            {
-                int newIndex = equippedWeaponIndex;
-                if (scrollAxis > 0)
-                {
-                    newIndex -= 1;
-                }
-                else if (scrollAxis < 0)
-                {
-                    newIndex += 1;
-                }
-                StartCoroutine(SwitchWeapon(newIndex));
-            }
-        }
-        */
-        
         if (MiscFunctions.NumKeyPressed(out int index, true))
         {
             StartCoroutine(SwitchWeapon(index));
         }
-
-        // If player is not in the middle of switching weapons
-        // If player has a weapon equipped
-        // If player is not in the middle of switching firing modes
-        if (isSwitching == false && CurrentWeapon != null && CurrentWeapon.isSwitching == false)
-        {
-            CurrentWeapon.CurrentMode.UpdateLoop();
-        }
-
-
-
-
     }
-
-
 
     void OnFire(InputValue input)
     {
+        if (!WeaponReady)
+        {
+            return;
+        }
         //fireButtonHeld = input.Get<float>() > 0;
         TriggerHeld = input.isPressed;
+        CurrentWeapon.CurrentMode.OnPrimaryInput();
     }
     void OnADS(InputValue input)
     {
-        if (toggleADS)
+        if (!WeaponReady)
         {
-            if (input.isPressed)
-            {
-                InADS = !InADS;
-            }
+            return;
         }
-        else
-        {
-            InADS = input.isPressed;
-        }
+        CurrentWeapon.CurrentMode.OnSecondaryInput(input.isPressed);
     }
     void OnReload()
     {
-        RangedAttack r = CurrentWeapon.CurrentMode as RangedAttack;
-        if (r != null && r.magazine != null)
+        if (!WeaponReady)
         {
-            r.magazine.OnReloadPressed();
+            return;
         }
+        CurrentWeapon.CurrentMode.OnTertiaryInput();
     }
     void OnSelectWeapon(InputValue input)
     {
