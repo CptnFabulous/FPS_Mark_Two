@@ -23,7 +23,7 @@ public class InteractGUIPrompt : MonoBehaviour
             return;
         }
         name.text = current.name;
-        prompt.Refresh(function.input);
+        //prompt.Refresh(function.input);
     }
     void Awake()
     {

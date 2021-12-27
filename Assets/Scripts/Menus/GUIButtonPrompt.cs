@@ -13,7 +13,7 @@ public class GUIButtonPrompt : MonoBehaviour
     public Sprite keyBackground;
     public Sprite[] controllerSprites;
 
-
+    /*
     public void Refresh(CustomInput.Button prompt)
     {
         SetMappingGraphic(prompt.keyboardMapping);
@@ -31,6 +31,7 @@ public class GUIButtonPrompt : MonoBehaviour
         graphic.SetClipRect(r, true);
         keyName.text = "";
     }
+    */
     void SetMappingGraphic(KeyCode key)
     {
         int i;
