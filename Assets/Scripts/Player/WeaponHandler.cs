@@ -26,6 +26,7 @@ public class WeaponHandler : MonoBehaviour
     public Transform holdingSocket;
     public AmmunitionInventory ammo;
     public RadialMenu weaponSelector;
+    public WeaponSelectorHUD selectorInfo;
 
     [Header("Stats")]
     public Transform aimAxis;
@@ -68,6 +69,15 @@ public class WeaponHandler : MonoBehaviour
         }
         //weaponSelector.onValueChanged.AddListener(UpdateInfoInSelector);
         weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromSelector);
+        weaponSelector.onValueChanged.AddListener((i) =>
+        {
+            GetWeaponAndModeFromSelector(i, out int weaponIndex, out int firingModeIndex);
+            RangedAttack r = equippedWeapons[weaponIndex].modes[firingModeIndex] as RangedAttack;
+            if (r != null)
+            {
+                selectorInfo.Refresh(r);
+            }
+        });
     }
     private void Start()
     {
