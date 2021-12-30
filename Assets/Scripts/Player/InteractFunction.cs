@@ -12,6 +12,7 @@ public class InteractFunction : MonoBehaviour
     [Header("Stats")]
     public float interactRange = 3;
     public LayerMask interactionMask = ~0;
+    public readonly string interactInputName = "Interact";
 
     public Interactable LookingAt
     {

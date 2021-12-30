@@ -23,7 +23,8 @@ public class InteractGUIPrompt : MonoBehaviour
             return;
         }
         name.text = current.name;
-        //prompt.Refresh(function.input);
+        UnityEngine.InputSystem.PlayerInput input = function.player.controls;
+        prompt.AssignAction(input.actions.FindAction(function.interactInputName), input);
     }
     void Awake()
     {
