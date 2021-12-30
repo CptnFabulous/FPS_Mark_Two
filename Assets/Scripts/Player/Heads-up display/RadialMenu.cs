@@ -58,12 +58,10 @@ public class RadialMenu : MonoBehaviour
         get
         {
             float f = Vector2.SignedAngle(cursorDirection, Vector2.up);
-            //float f = Vector2.SignedAngle(Vector2.up, cursorDirection);
             if (f < 0)
             {
                 f += 360;
             }
-            //Debug.Log(cursorDirection + ", " + Vector2.up + ", " + f);
             return f;
         }
     }
@@ -89,6 +87,8 @@ public class RadialMenu : MonoBehaviour
     /// <param name="icons"></param>
     public void Refresh(Sprite[] icons)
     {
+        // Destroy existing options icons
+        // Implementing code to save and repurpose current ones might theoretically improve performance, but I'll wait until it actually causes problems.
         for (int i = 0; i < options.Length; i++)
         {
             if (options[i] != null)
@@ -97,15 +97,18 @@ public class RadialMenu : MonoBehaviour
             }
         }
 
+        // New array of options icons
         options = new Image[icons.Length];
         for (int i = 0; i < options.Length; i++)
         {
+            // Establishes rotation relative to centre, and position to spawn object in
             Quaternion rotation = Quaternion.Euler(0, 0, -SegmentSize * i);
             Vector3 position = rotation * Vector3.up * Vector2.Distance(optionPrefab.rectTransform.anchoredPosition, Vector2.zero);
-            options[i] = Instantiate(optionPrefab, transform);
-            options[i].gameObject.SetActive(true);
-            options[i].sprite = icons[i];
-            options[i].rectTransform.anchoredPosition = position;
+            options[i] = Instantiate(optionPrefab, transform); // Spawns icon
+            options[i].gameObject.SetActive(true); // Enables icon since the prefab is hidden
+            options[i].sprite = icons[i]; // Assigns sprite
+            options[i].rectTransform.anchoredPosition = position; // Sets position
+            // If rotateOptions is enabled, rotates icon around centre axis, otherwise sets to zero
             options[i].rectTransform.localRotation = rotateOptions ? rotation : Quaternion.identity;
         }
     }
