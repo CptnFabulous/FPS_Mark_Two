@@ -19,8 +19,10 @@ public class PlayerStateHandler : MonoBehaviour
 
     [Header("Menus")]
     public Canvas headsUpDisplay;
+    public string gameplayControls = "On foot";
     public UnityEvent onResume;
     public Canvas pauseMenu;
+    public string menuControls = "UI";
     public Button resumeButton;
     public UnityEvent onPause;
     public Canvas gameOverMenu;
@@ -95,20 +97,13 @@ public class PlayerStateHandler : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        controlling.controls.SwitchCurrentActionMap(menuControls);
     }
     void ReturnToGameplay()
     {
-        //Debug.Log("Returning to gameplay");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Time.timeScale = 1;
+        controlling.controls.SwitchCurrentActionMap(gameplayControls);
     }
-
-
-    /*
-    public void Die()
-    {
-        
-    }
-    */
 }

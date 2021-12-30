@@ -6,6 +6,7 @@ public class Player : Character
 {
 
     [Header("Player-specific classes")]
+    public UnityEngine.InputSystem.PlayerInput controls;
     public MovementController movement;
     public PlayerStateHandler stateHandler;
     public Health health;
