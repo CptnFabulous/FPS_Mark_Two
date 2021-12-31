@@ -135,4 +135,82 @@ public readonly struct MiscFunctions
         KeyCode.Keypad9,
     };
 
+    public static char Capitalise(char c)
+    {
+        int lowercaseIndex = lowercaseLetters.IndexOf(c);
+        if (WithinArray(lowercaseIndex, lowercaseLetters.Count))
+        {
+            c = uppercaseLetters[lowercaseIndex];
+        }
+        return c;
+    }
+    public static bool IsUppercase(char c)
+    {
+        int uppercaseIndex = uppercaseLetters.IndexOf(c);
+        return WithinArray(uppercaseIndex, uppercaseLetters.Count);
+    }
+    public static readonly List<char> uppercaseLetters = new List<char>(new char[26]
+    {
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'I',
+        'J',
+        'K',
+        'L',
+        'M',
+        'N',
+        'O',
+        'P',
+        'Q',
+        'R',
+        'S',
+        'T',
+        'U',
+        'V',
+        'W',
+        'X',
+        'Y',
+        'Z',
+    });
+    public static readonly List<char> lowercaseLetters = new List<char>(new char[26]
+    {
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+    });
+    
+    public static bool WithinArray(int index, int arrayLength)
+    {
+        return index >= 0 && index < arrayLength;
+    }
+
 }

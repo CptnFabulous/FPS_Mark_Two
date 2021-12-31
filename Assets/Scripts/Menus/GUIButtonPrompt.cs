@@ -151,20 +151,38 @@ public class GUIButtonPrompt : MonoBehaviour
         }
         else
         {
-            // Default to key graphic and display name of binding
+            // Default to key graphic
+            graphic.sprite = keyboardKey;
+            
+            // Display name of binding
             // Cut off everything before the binding name
             int lastSlashBeforeName = path.LastIndexOf("/");
             string displayName = path.Remove(0, lastSlashBeforeName + 1);
-            // Capitalise binding name
+            // Capitalise and format binding name
 
-            //Debug.Log(displayName);
+
+            displayName = MiscFunctions.Capitalise(displayName[0]) + displayName.Remove(0, 1);
+
+            int displayNameIndex = 1;
+            while (displayNameIndex < displayName.Length)
+            {
+                if (MiscFunctions.IsUppercase(displayName[displayNameIndex]))
+                {
+                    displayName = displayName.Insert(displayNameIndex, " ");
+                    displayNameIndex++; // Increase the index a second time to account for the string length being increased by one
+                }
+                displayNameIndex ++;
+                
+            }
+            Debug.Log(displayName);
+
             keyName.text = displayName;
-            graphic.sprite = keyboardKey;
         }
 
         gameObject.SetActive(true);
     }
 
+    
 
     /*
     void SetMappingGraphic(KeyCode key)
