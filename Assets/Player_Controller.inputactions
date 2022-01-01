@@ -22,14 +22,6 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Fire",
-                    "type": "Value",
-                    "id": "500f6abe-d8f3-4ec0-b645-b0ca4c4c7d84",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "ee37a480-e26d-4f73-a21d-d42c9c054fdc",
@@ -49,6 +41,14 @@
                     "name": "Dodge",
                     "type": "Button",
                     "id": "b503a0a7-6fdb-46eb-9e58-b75d00001eb6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Fire",
+                    "type": "Value",
+                    "id": "500f6abe-d8f3-4ec0-b645-b0ca4c4c7d84",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -78,17 +78,9 @@
                     "interactions": "Press(behavior=2)"
                 },
                 {
-                    "name": "Pause",
+                    "name": "Melee Attack",
                     "type": "Button",
-                    "id": "de704e52-d302-43da-931f-8b464c48f8e9",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Enter Menu",
-                    "type": "Button",
-                    "id": "a4086dba-4801-4a37-a805-583c762618ae",
+                    "id": "3d7f3368-79df-4d6d-b3ea-07e9202f7575",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -102,9 +94,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Melee Attack",
+                    "name": "Pause",
                     "type": "Button",
-                    "id": "3d7f3368-79df-4d6d-b3ea-07e9202f7575",
+                    "id": "de704e52-d302-43da-931f-8b464c48f8e9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Enter Menu",
+                    "type": "Button",
+                    "id": "a4086dba-4801-4a37-a805-583c762618ae",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -273,61 +273,6 @@
                     "processors": "",
                     "groups": "Joystick",
                     "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "143bb1cd-cc10-4eca-a2f0-a3664166fe91",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "05f6913d-c316-48b2-a6bb-e225f14c7960",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "886e731e-7071-4ae4-95c0-e61739dad6fd",
-                    "path": "<Touchscreen>/primaryTouch/tap",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Touch",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ee3d0cd2-254e-47a7-a8cb-bc94d9658c54",
-                    "path": "<Joystick>/trigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Joystick",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8255d333-5683-4943-a58a-ccb207ff1dce",
-                    "path": "<XRController>/{PrimaryAction}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "XR",
-                    "action": "Fire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -509,23 +454,56 @@
                 },
                 {
                     "name": "",
-                    "id": "1b59918b-2d0d-4d17-af7a-364be5c41c63",
-                    "path": "<Keyboard>/e",
+                    "id": "143bb1cd-cc10-4eca-a2f0-a3664166fe91",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Interact",
+                    "groups": ";Gamepad",
+                    "action": "Fire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "c799474c-ec81-4ac6-bbd8-09e7b7e7d980",
-                    "path": "<Gamepad>/buttonNorth",
+                    "id": "05f6913d-c316-48b2-a6bb-e225f14c7960",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Interact",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "886e731e-7071-4ae4-95c0-e61739dad6fd",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ee3d0cd2-254e-47a7-a8cb-bc94d9658c54",
+                    "path": "<Joystick>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8255d333-5683-4943-a58a-ccb207ff1dce",
+                    "path": "<XRController>/{PrimaryAction}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "Fire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -548,6 +526,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Melee Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b59918b-2d0d-4d17-af7a-364be5c41c63",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c799474c-ec81-4ac6-bbd8-09e7b7e7d980",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
