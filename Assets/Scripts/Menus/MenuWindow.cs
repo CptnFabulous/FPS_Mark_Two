@@ -31,6 +31,15 @@ public class MenuWindow : MonoBehaviour
         {
             Debug.LogError("No default selection is present for " + name + " and the Event System won't know what to select first! Assign something to 'firstSelection'!");
         }
+        else if (firstSelection.enabled == false)
+        {
+            Debug.LogWarning("Selection " + firstSelection + " is not enabled, and can't be selected by " + name + "!");
+        }
+        else if (firstSelection.interactable == false)
+        {
+            Debug.LogWarning("Selection " + firstSelection + "'s interactability is disabled, and can't be selected by " + name + "!");
+        }
+
         if (back == null)
         {
             Debug.LogWarning("Button 'back' is null, so " + name + " cannot assign a listener for returning to the previous menu. Have you added one manually, or ensured the player does not need to return to its parent menu?");
@@ -124,8 +133,8 @@ public class MenuWindow : MonoBehaviour
 
 
         // Switch EventSystem so player automatically selects the first selectable
-        Debug.Log("Assigning " + newWindow.firstSelection + " to event system");
         EventSystem.current.SetSelectedGameObject(newWindow.firstSelection.gameObject);
+        Debug.Log("Selecting first option, " + newWindow.firstSelection);
     }
     /// <summary>
     /// Automatically switches to the menu's parent, without needing a reference.
