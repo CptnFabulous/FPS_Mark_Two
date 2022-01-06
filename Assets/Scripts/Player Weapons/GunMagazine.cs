@@ -33,6 +33,12 @@ public class GunMagazine : MonoBehaviour
     }
     private void Update()
     {
+        if (mode == null)
+        {
+            enabled = false;
+            return;
+        }
+
         // If there isn't enough ammo in the magazine to fire another shot
         if (ammo.current < mode.stats.ammoPerShot && ReloadActive == false)
         {
