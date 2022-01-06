@@ -53,46 +53,93 @@ public class MovementController : MonoBehaviour
     #endregion
 
     #region Aiming
-    [Header("Aiming")]
+
+    [Header("Camera")]
     public bool canLook = true;
     public Transform aimAxis;
     public Transform upperBody;
     public Camera worldViewCamera;
     public Camera headsUpDisplayCamera;
-    public Vector2 aimSensitivity = new Vector2(75, 75);
-    public bool invertX;
-    public bool invertY;
     [Range(1, 179)] public float fieldOfView = 90;
     float minAngle = -90;
     float maxAngle = 90;
 
     float verticalAngle = 0;
-    
+
+    [Header("Aiming")]
+    public Vector2 aimSensitivity = new Vector2(75, 75);
+    public bool invertX;
+    public bool invertY;
+    public bool useAimAcceleration;
+    public float timeToMaxAimAcceleration = 1;
+    public float aimAcceleration = 3;
+
     void OnLook(InputValue input)
     {
+        // Register zero if player looking is currently disabled
         if (!canLook)
         {
-            cameraInput = Vector2.zero;
+            rawAimInput = Vector2.zero;
             return;
         }
-        cameraInput = input.Get<Vector2>();
-        cameraInput.x *= aimSensitivity.x;
-        cameraInput.y *= aimSensitivity.y;
-        if (invertX)
+
+        // If the aim value has changed (i.e. because this function was run) and the previous aim was zero
+        if (rawAimInput.magnitude <= 0)
         {
-            cameraInput.x = -cameraInput.x;
+            // Player has just started aiming, reset aim time
+            aimStartTime = Time.time;
         }
-        if (invertY)
+
+        rawAimInput = input.Get<Vector2>(); // Update rawAimInput to new value
+    }
+    Vector2 rawAimInput;
+    float aimStartTime;
+
+    public Vector2 AimInput
+    {
+        get
         {
-            cameraInput.y = -cameraInput.y;
+            Vector2 value = rawAimInput; // Get raw input value
+            if (value.magnitude <= 0) // If value is zero, no need to perform additional processing
+            {
+                return value;
+            }
+
+            // Apply aim acceleration
+            if (useAimAcceleration)
+            {
+                float aimTime = Time.time - aimStartTime; // Get time between aim start and current time
+                float timeMultiplier = Mathf.Clamp01(aimTime / timeToMaxAimAcceleration); // Divide by timeToMaxAimAcceleration then clamp to a 0-1 value
+                float aimAccelerationMultiplier = 1 + (timeMultiplier * aimAcceleration); // Multiply by aim acceleration value and add one to get the aim multiplier
+                value *= aimAccelerationMultiplier; // Multiply aim input
+            }
+
+            /*
+            bool usingGamepad = controlling.controls.currentControlScheme.Contains("Gamepad");
+            bool usingKeyboardAndMouse = controlling.controls.currentControlScheme.Contains("Keyboard&Mouse");
+            */
+
+            // Multiply by sensitivity values
+            value.x *= aimSensitivity.x;
+            value.y *= aimSensitivity.y;
+            // Invert axes if appropriate
+            if (invertX)
+            {
+                value.x = -value.x;
+            }
+            if (invertY)
+            {
+                value.y = -value.y;
+            }
+            return value;
         }
     }
-    Vector2 cameraInput;
-    
+
     public Quaternion RotationVelocity
     {
         get
         {
+            Vector2 cameraInput = AimInput;
             return Quaternion.Euler(-cameraInput.y, cameraInput.x, 0) * transform.rotation;
         }
     }
@@ -397,7 +444,7 @@ public class MovementController : MonoBehaviour
     }
     void Update()
     {
-        RotateAim(cameraInput * Time.deltaTime);
+        RotateAim(AimInput * Time.deltaTime);
     }
     private void FixedUpdate()
     {
