@@ -8,9 +8,12 @@ public abstract class OptionsMenu : MonoBehaviour
     [Header("General elements")]
     public Button apply;
     public Button revert;
+    MenuWindow attachedWindow;
 
     public virtual void Awake()
     {
+        attachedWindow = GetComponent<MenuWindow>();
+
         apply.onClick.AddListener(() => StartCoroutine(Apply()));
         revert.onClick.AddListener(() => Refresh());
         SetupOptions();
@@ -35,6 +38,8 @@ public abstract class OptionsMenu : MonoBehaviour
         Debug.Log("Reverting apply and revert buttons on frame " + Time.frameCount);
         apply.interactable = false;
         revert.interactable = false;
+        // Set currently selected option to the default, since pressing the apply or revert buttons will disable them, making it impossible to switch away manually.
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(attachedWindow.firstSelection.gameObject);
     }
     public void OnOptionsChanged()
     {
