@@ -81,6 +81,18 @@ public class Weapon : MonoBehaviour
             yield break;
         }
 
+
+        isSwitching = true;
+        CurrentMode.OnSwitchFrom();
+        currentModeIndex = newModeIndex;
+        CurrentMode.onSwitch.Invoke();
+
+        yield return new WaitForSeconds(CurrentMode.switchSpeed);
+
+        CurrentMode.OnSwitchTo();
+        isSwitching = false;
+
+        /*
         isSwitching = true;
         CurrentMode.OnSwitchFrom();
         modes[newModeIndex].onSwitch.Invoke();
@@ -90,5 +102,6 @@ public class Weapon : MonoBehaviour
         currentModeIndex = newModeIndex;
         CurrentMode.OnSwitchTo();
         isSwitching = false;
+        */
     }
 }
