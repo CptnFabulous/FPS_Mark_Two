@@ -11,121 +11,151 @@ public class ControlOptions : OptionsMenu
 
     [Header("Setup")]
     public RectTransform bindingWindow;
-    public Text mapTitlePrefab;
-    public ControlBindingRow bindingRowPrefab;
+    public GUIButtonPrompt currentBindingPrompt;
 
-    List<ControlBindingRow> allBindingRows = new List<ControlBindingRow>();
-    int currentPendingBinding = -1;
-    public bool BindingIsPendingChange
-    {
-        get
-        {
-            return MiscFunctions.WithinArray(currentPendingBinding, allBindingRows.Count);
-        }
-    }
+    [Header("Binding prefabs")]
+    public Text mapNamePrefab;
+    public Text actionNamePrefab;
+    public BindingOption bindingPrefab;
+    public Text compositeNamePrefab;
+    public BindingOption compositeBindingPrefab;
 
+    List<BindingOption> allBindingOptions = new List<BindingOption>();
+    float windowHeight;
     InputAction getPressedKeyForUpdatingBinding;
-
 
     public override void ApplySettings()
     {
-        //throw new System.NotImplementedException();
-        for (int i = 0; i < allBindingRows.Count; i++)
-        {
-            // Assign new option to current binding
-        }
+        
     }
     public override void ObtainCurrentValues()
     {
-        for (int i = 0; i < allBindingRows.Count; i++)
+        for (int i = 0; i < allBindingOptions.Count; i++)
         {
-            allBindingRows[i].Refresh();
+            allBindingOptions[i].Refresh();
         }
         getPressedKeyForUpdatingBinding.Enable();
-    }
-    private void OnDisable()
-    {
-        getPressedKeyForUpdatingBinding.Disable();
     }
     public override void SetupOptions()
     {
         controls = GetComponentInParent<PlayerInput>();
 
-        mapTitlePrefab.gameObject.SetActive(false);
-        bindingRowPrefab.gameObject.SetActive(false);
-        float windowHeight = 0;
-
-        // Populate window with options for each binding
-        for (int m = 0; m < controls.actions.actionMaps.Count; m++)
-        {
-            InputActionMap map = controls.actions.actionMaps[m];
-
-            // Create title for the action map, to sort the inputs
-            Text mapTitleObject = Instantiate(mapTitlePrefab, bindingWindow);
-            mapTitleObject.gameObject.SetActive(true);
-            mapTitleObject.gameObject.name = "Map Title - " + map.name;
-            mapTitleObject.text = map.name;
-            mapTitleObject.rectTransform.anchoredPosition = new Vector3(0, -windowHeight, 0);
-            windowHeight += mapTitleObject.rectTransform.rect.height;
-
-            // Look through each action to find bindings
-            for (int a = 0; a < map.actions.Count; a++)
-            {
-                InputAction action = map.actions[a];
-
-
-                // Instantiate binding row and determine its position
-                ControlBindingRow bindingRow = Instantiate(bindingRowPrefab, bindingWindow);
-                bindingRow.gameObject.SetActive(true);
-                bindingRow.rectTransform.anchoredPosition = new Vector3(0, -windowHeight, 0);
-                windowHeight += bindingRow.rectTransform.rect.height;
-
-                // Populate binding row with appropriate action and name, and add listener to enable apply/revert buttons when changed.
-                bindingRow.gameObject.name = "Binding Row - " + action.name;
-                bindingRow.Setup(action, controls);
-                bindingRow.onBindingChanged.AddListener(OnOptionsChanged);
-                allBindingRows.Add(bindingRow);
-            }
-        }
-
-        bindingWindow.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, windowHeight);
-
-
-
-
+        SetupAsset(controls.actions);
 
         getPressedKeyForUpdatingBinding = new InputAction(binding: "/*/<button>");
         getPressedKeyForUpdatingBinding.performed += GetCurrentButtonPressed;
     }
 
 
+    private void OnDisable()
+    {
+        getPressedKeyForUpdatingBinding.Disable();
+    }
+
+
+    string allNames;
+    void SetupAsset(InputActionAsset asset)
+    {
+        allNames = "All bindings";
+
+
+        mapNamePrefab.gameObject.SetActive(false);
+        actionNamePrefab.gameObject.SetActive(false);
+        bindingPrefab.gameObject.SetActive(false);
+        compositeNamePrefab.gameObject.SetActive(false);
+        compositeBindingPrefab.gameObject.SetActive(false);
+        for (int m = 0; m < asset.actionMaps.Count; m++)
+        {
+            SetupMap(asset.actionMaps[m]);
+        }
+        bindingWindow.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, windowHeight);
+
+        Debug.Log(allNames);
+    }
+    void SetupMap(InputActionMap map)
+    {
+        allNames += "\n" + map.name;
+
+        // Instantiate title
+        Text mapNameText = Instantiate(mapNamePrefab, bindingWindow);
+        mapNameText.gameObject.name = "Map: " + map.name;
+        mapNameText.text = map.name;
+        ArrangeRectInColumn(mapNameText.rectTransform);
+
+        // For each map, setup each appropriate action
+        for (int a = 0; a < map.actions.Count; a++)
+        {
+            SetupAction(map.actions[a]);
+        }
+    }
+    void SetupAction(InputAction action)
+    {
+        allNames += "\n    " + action.name;
+
+        Text actionNameText = Instantiate(actionNamePrefab, bindingWindow);
+        actionNameText.gameObject.name = "Action: " + action.name;
+        actionNameText.text = action.name;
+        ArrangeRectInColumn(actionNameText.rectTransform);
+
+
+        // A composite binding is made by several consecutive InputBinding structs for an action. One with 'isComposite' plus several more after it.
+        // According to this link, anyway.
+        // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/manual/ActionBindings.html
+
+        for (int b = 0; b < action.bindings.Count; b++)
+        {
+            // Set up options for each binding. Since bindings are structs, reference them by index so it links back to the correct action
+            InputBinding binding = action.bindings[b];
+            if (binding.isComposite)
+            {
+                // Create title for composite binding, but no path
+                Text compositeNameText = Instantiate(compositeNamePrefab, bindingWindow);
+                compositeNameText.gameObject.name = "Composite: " + binding.name;
+                compositeNameText.text = binding.name;
+                ArrangeRectInColumn(compositeNameText.rectTransform);
+            }
+            else if (binding.isPartOfComposite) // If binding is part of the current composite
+            {
+                // Create an option showing a name and path
+                BindingOption compositeBinding = Instantiate(compositeBindingPrefab, bindingWindow);
+                compositeBinding.gameObject.name = "Composite binding: " + binding.name;
+                compositeBinding.SetupBinding(action, b);
+                ArrangeRectInColumn(compositeBinding.rectTransform);
+                allBindingOptions.Add(compositeBinding);
+            }
+            else // New binding is not a composite
+            {
+                BindingOption bindingOption = Instantiate(bindingPrefab, bindingWindow);
+                string shownName = binding.groups;
+                bindingOption.gameObject.name = "Binding: " + shownName;
+                bindingOption.SetupBinding(action, b, shownName);
+                ArrangeRectInColumn(bindingOption.rectTransform);
+                allBindingOptions.Add(bindingOption);
+            }
+
+            // If a binding represents a composite, it will have a name and the 'path' will represent the composite type
+            // If a binding is part of a composite, it will have a name and a path
+            // If a binding is not part of a composite, it will have a path but no name
+            allNames += "\n        " + binding.name + ": " + binding.path;
+        }
+
+    }
 
 
 
 
-
+    void ArrangeRectInColumn(RectTransform rt)
+    {
+        rt.gameObject.SetActive(true);
+        //rt.SetParent(bindingWindow);
+        rt.anchoredPosition = new Vector3(0, -windowHeight, 0);
+        windowHeight += rt.rect.height;
+    }
 
 
     void GetCurrentButtonPressed(InputAction.CallbackContext context)
     {
-        if (!BindingIsPendingChange)
-        {
-            return;
-        }
-        ControlBindingRow binding = allBindingRows[currentPendingBinding];
-        if (binding.assignedAction.type == InputActionType.Button)
-        {
-            binding.CheckToAssignNewBinding(context);
-        }
-
-
-
-
-
-
-
-
-
+        Debug.Log(context.action.activeControl.path);
 
         /*
         if (context.action.type != InputActionType.Button)
