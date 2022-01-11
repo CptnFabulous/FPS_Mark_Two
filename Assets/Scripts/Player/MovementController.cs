@@ -67,12 +67,19 @@ public class MovementController : MonoBehaviour
     float verticalAngle = 0;
 
     [Header("Aiming")]
-    public Vector2 aimSensitivity = new Vector2(75, 75);
+    public float mouseSensitivity = 75;
+    public float mouseMultiplierWhileAiming = 0.5f;
+    public Vector2 gamepadSensitivity = new Vector2(25, 25);
+    public float gamepadMultiplierWhileAiming = 0.25f;
     public bool invertX;
     public bool invertY;
-    public bool useAimAcceleration;
+    public float aimAcceleration = 6;
     public float timeToMaxAimAcceleration = 1;
-    public float aimAcceleration = 3;
+    public AnimationCurve aimAccelerationCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
+    //[HideInInspector] public List<float> aimSensitivityMultipliers = new List<float>();
+
+
 
     void OnLook(InputValue input)
     {
@@ -105,13 +112,37 @@ public class MovementController : MonoBehaviour
                 return value;
             }
 
-            // Apply aim acceleration
-            if (useAimAcceleration)
+            // Apply aim acceleration, if gamepad is enabled and player is not aiming down sights
+            bool usingGamepad = controlling.controls.currentControlScheme.Contains("Gamepad");
+            bool inADS = controlling.weapons != null && controlling.weapons.IsUsingADS;
+            if (usingGamepad)
             {
-                float aimTime = Time.time - aimStartTime; // Get time between aim start and current time
-                float timeMultiplier = Mathf.Clamp01(aimTime / timeToMaxAimAcceleration); // Divide by timeToMaxAimAcceleration then clamp to a 0-1 value
-                float aimAccelerationMultiplier = 1 + (timeMultiplier * aimAcceleration); // Multiply by aim acceleration value and add one to get the aim multiplier
-                value *= aimAccelerationMultiplier; // Multiply aim input
+                if (inADS) // Apply ADS multiplier for easier aiming
+                {
+                    value *= gamepadMultiplierWhileAiming;
+                }
+                else // If player is using a gamepad and out of ADS, apply mouse acceleration
+                {
+                    float aimTime = Time.time - aimStartTime; // Get time between aim start and current time
+                    float timeMultiplier = Mathf.Clamp01(aimTime / timeToMaxAimAcceleration); // Divide by timeToMaxAimAcceleration then clamp to a 0-1 value
+                    timeMultiplier = aimAccelerationCurve.Evaluate(timeMultiplier); 
+                    float aimAccelerationMultiplier = Mathf.Lerp(1, aimAcceleration, timeMultiplier); // Multiply by aim acceleration value and add one to get the aim multiplier
+                    //Debug.Log(aimAccelerationMultiplier);
+                    //value *= aimAccelerationMultiplier; // Multiply aim input on both axes
+                    value.x *= aimAccelerationMultiplier; // Multiply aim input only on the X axis
+                }
+
+                value.x *= gamepadSensitivity.x;
+                value.y *= gamepadSensitivity.y;
+            }
+            else
+            {
+                if (inADS) // Apply ADS multiplier for easier aiming
+                {
+                    value *= mouseMultiplierWhileAiming;
+                }
+                // Multiply by mouse sensitivity values
+                value *= mouseSensitivity;
             }
 
             /*
@@ -119,9 +150,7 @@ public class MovementController : MonoBehaviour
             bool usingKeyboardAndMouse = controlling.controls.currentControlScheme.Contains("Keyboard&Mouse");
             */
 
-            // Multiply by sensitivity values
-            value.x *= aimSensitivity.x;
-            value.y *= aimSensitivity.y;
+            
             // Invert axes if appropriate
             if (invertX)
             {
@@ -131,6 +160,13 @@ public class MovementController : MonoBehaviour
             {
                 value.y = -value.y;
             }
+
+            /*
+            for (int i = 0; i < aimSensitivityMultipliers.Count; i++)
+            {
+                value *= aimSensitivityMultipliers[i];
+            }
+            */
             return value;
         }
     }

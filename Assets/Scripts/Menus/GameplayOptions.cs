@@ -6,9 +6,12 @@ using UnityEngine.UI;
 public class GameplayOptions : OptionsMenu
 {
     [Header("Options")]
-    public Slider aimSensitivityX;
-    public Slider aimSensitivityY;
-    public float maxAimSensitivity = 500;
+    public Slider mouseSensitivity;
+    public float maxMouseSensitivity = 500;
+    public Slider gamepadSensitivityX;
+    public float maxGamepadSensitivityX = 300;
+    public Slider gamepadSensitivityY;
+    public float maxGamepadSensitivityY = 150;
     public Toggle invertX;
     public Toggle invertY;
     public Slider fieldOfView;
@@ -20,8 +23,9 @@ public class GameplayOptions : OptionsMenu
     public override void ApplySettings()
     {
         MovementController movement = playerUpdating.movement;
-        movement.aimSensitivity.x = SliderValueToSensitivity(aimSensitivityX, maxAimSensitivity);
-        movement.aimSensitivity.y = SliderValueToSensitivity(aimSensitivityY, maxAimSensitivity);
+        movement.mouseSensitivity = SliderValueToSensitivity(mouseSensitivity, maxMouseSensitivity);
+        movement.gamepadSensitivity.x = SliderValueToSensitivity(gamepadSensitivityX, maxGamepadSensitivityX);
+        movement.gamepadSensitivity.y = SliderValueToSensitivity(gamepadSensitivityY, maxGamepadSensitivityY);
         movement.invertX = invertX.isOn;
         movement.invertY = invertY.isOn;
         movement.fieldOfView = fieldOfView.value;
@@ -39,8 +43,9 @@ public class GameplayOptions : OptionsMenu
         }
         MovementController movement = playerUpdating.movement;
 
-        SensitivityToSliderValue(aimSensitivityX, movement.aimSensitivity.x, maxAimSensitivity);
-        SensitivityToSliderValue(aimSensitivityY, movement.aimSensitivity.y, maxAimSensitivity);
+        SensitivityToSliderValue(mouseSensitivity, movement.mouseSensitivity, maxMouseSensitivity);
+        SensitivityToSliderValue(gamepadSensitivityX, movement.gamepadSensitivity.x, maxGamepadSensitivityX);
+        SensitivityToSliderValue(gamepadSensitivityY, movement.gamepadSensitivity.y, maxGamepadSensitivityY);
         invertX.isOn = movement.invertX;
         invertY.isOn = movement.invertY;
         fieldOfView.value = movement.fieldOfView;
@@ -52,8 +57,9 @@ public class GameplayOptions : OptionsMenu
 
     public override void SetupOptions()
     {
-        AddValueChangedEvent(aimSensitivityX);
-        AddValueChangedEvent(aimSensitivityY);
+        AddValueChangedEvent(mouseSensitivity);
+        AddValueChangedEvent(gamepadSensitivityX);
+        AddValueChangedEvent(gamepadSensitivityY);
         AddValueChangedEvent(invertX);
         AddValueChangedEvent(invertY);
         AddValueChangedEvent(fieldOfView);

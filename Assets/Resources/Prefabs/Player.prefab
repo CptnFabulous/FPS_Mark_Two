@@ -161,10 +161,39 @@ MonoBehaviour:
   upperBody: {fileID: 1184233747240851141}
   worldViewCamera: {fileID: 5952785222629829733}
   headsUpDisplayCamera: {fileID: 977941391282855979}
-  aimSensitivity: {x: 75, y: 75}
+  fieldOfView: 60
+  mouseSensitivity: 75
+  mouseMultiplierWhileAiming: 0.5
+  gamepadSensitivity: {x: 90, y: 60}
+  gamepadMultiplierWhileAiming: 0.25
   invertX: 0
   invertY: 0
-  fieldOfView: 60
+  aimAcceleration: 2
+  timeToMaxAimAcceleration: 0.5
+  aimAccelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   jumpForce: 5
   jumpCooldown: 0.1
   groundingRayLength: 0.01

@@ -33,6 +33,7 @@ public class WeaponHandler : MonoBehaviour
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
     public bool toggleADS;
+    //public float sensitivityMultiplierWhileAiming = 0.5f;
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
@@ -51,6 +52,21 @@ public class WeaponHandler : MonoBehaviour
         angles *= totalSway; //  Multiplies by accuracy value
         // Creates euler angles and combines with current aim direction
         return aimAxis.transform.rotation * Quaternion.Euler(angles.y, angles.x, 0) * Vector3.forward;
+    }
+    /// <summary>
+    /// Is the player currently in ADS on a particular weapon?
+    /// </summary>
+    public bool IsUsingADS
+    {
+        get
+        {
+            if (CurrentWeapon == null)
+            {
+                return false;
+            }
+            RangedAttack r = CurrentWeapon.CurrentMode as RangedAttack;
+            return r != null && r.optics != null && r.optics.IsAiming;
+        }
     }
 
     [Header("Other")]
