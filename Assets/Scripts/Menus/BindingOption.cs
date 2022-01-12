@@ -18,25 +18,48 @@ public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandl
     InputAction action;
     int bindingIndex;
     string newBindingPath;
+    ControlOptions baseMenu;
 
-    public void SetupBinding(InputAction newAction, int newBindingIndex)
+    InputBinding binding
     {
-        action = newAction;
-        bindingIndex = newBindingIndex;
-        name.text = action.bindings[newBindingIndex].name;
-        shownBinding.enabled = false;
+        get
+        {
+            return action.bindings[bindingIndex];
+        }
     }
-    public void SetupBinding(InputAction newAction, int newBindingIndex, string shownName)
+    static readonly List<char> bindingPunctuationToAddSpaces = new List<char>
+    {
+        '&'
+    };
+    static readonly List<char> bindingPunctuationToRemove = new List<char>
+    {
+        ';'
+    };
+
+    public void SetupBinding(InputAction newAction, int newBindingIndex, ControlOptions menu)
     {
         action = newAction;
         bindingIndex = newBindingIndex;
-        name.text = shownName;
+        baseMenu = menu;
+
+        string displayBindingGroups = MiscFunctions.FormatNameForPresentation(binding.groups, bindingPunctuationToAddSpaces, bindingPunctuationToRemove);
+
+        if (binding.isPartOfComposite)
+        {
+            string displayName = MiscFunctions.FormatNameForPresentation(binding.name);
+            name.text = displayName + " (" + displayBindingGroups + ")";
+        }
+        else
+        {
+            name.text = displayBindingGroups;
+        }
+        
         shownBinding.enabled = false;
     }
 
     public void Refresh()
     {
-        InputBinding binding = action.bindings[bindingIndex];
+        newBindingPath = binding.effectivePath;
         shownBinding.Refresh(binding);
     }
 

@@ -53,12 +53,8 @@ public class ControlOptions : OptionsMenu
     }
 
 
-    string allNames;
     void SetupAsset(InputActionAsset asset)
     {
-        allNames = "All bindings";
-
-
         mapNamePrefab.gameObject.SetActive(false);
         actionNamePrefab.gameObject.SetActive(false);
         bindingPrefab.gameObject.SetActive(false);
@@ -69,13 +65,9 @@ public class ControlOptions : OptionsMenu
             SetupMap(asset.actionMaps[m]);
         }
         bindingWindow.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, windowHeight);
-
-        Debug.Log(allNames);
     }
     void SetupMap(InputActionMap map)
     {
-        allNames += "\n" + map.name;
-
         // Instantiate title
         Text mapNameText = Instantiate(mapNamePrefab, bindingWindow);
         mapNameText.gameObject.name = "Map: " + map.name;
@@ -90,17 +82,13 @@ public class ControlOptions : OptionsMenu
     }
     void SetupAction(InputAction action)
     {
-        allNames += "\n    " + action.name;
-
         Text actionNameText = Instantiate(actionNamePrefab, bindingWindow);
         actionNameText.gameObject.name = "Action: " + action.name;
         actionNameText.text = action.name;
         ArrangeRectInColumn(actionNameText.rectTransform);
 
-
         // A composite binding is made by several consecutive InputBinding structs for an action. One with 'isComposite' plus several more after it.
-        // According to this link, anyway.
-        // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/manual/ActionBindings.html
+        // According to this link, anyway https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/manual/ActionBindings.html
 
         for (int b = 0; b < action.bindings.Count; b++)
         {
@@ -119,16 +107,15 @@ public class ControlOptions : OptionsMenu
                 // Create an option showing a name and path
                 BindingOption compositeBinding = Instantiate(compositeBindingPrefab, bindingWindow);
                 compositeBinding.gameObject.name = "Composite binding: " + binding.name;
-                compositeBinding.SetupBinding(action, b);
+                compositeBinding.SetupBinding(action, b, this);
                 ArrangeRectInColumn(compositeBinding.rectTransform);
                 allBindingOptions.Add(compositeBinding);
             }
             else // New binding is not a composite
             {
                 BindingOption bindingOption = Instantiate(bindingPrefab, bindingWindow);
-                string shownName = binding.groups;
-                bindingOption.gameObject.name = "Binding: " + shownName;
-                bindingOption.SetupBinding(action, b, shownName);
+                bindingOption.gameObject.name = "Binding: " + action.name + " #" + b + 1;
+                bindingOption.SetupBinding(action, b, this);
                 ArrangeRectInColumn(bindingOption.rectTransform);
                 allBindingOptions.Add(bindingOption);
             }
@@ -136,9 +123,7 @@ public class ControlOptions : OptionsMenu
             // If a binding represents a composite, it will have a name and the 'path' will represent the composite type
             // If a binding is part of a composite, it will have a name and a path
             // If a binding is not part of a composite, it will have a path but no name
-            allNames += "\n        " + binding.name + ": " + binding.path;
         }
-
     }
 
 
