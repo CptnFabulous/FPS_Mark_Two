@@ -21,12 +21,16 @@ public class ControlOptions : OptionsMenu
     public BindingOption compositeBindingPrefab;
 
     List<BindingOption> allBindingOptions = new List<BindingOption>();
+    BindingOption pending;
     float windowHeight;
     InputAction getPressedKeyForUpdatingBinding;
 
     public override void ApplySettings()
     {
-        
+        for (int i = 0; i < allBindingOptions.Count; i++)
+        {
+            allBindingOptions[i].Apply();
+        }
     }
     public override void ObtainCurrentValues()
     {
@@ -40,8 +44,15 @@ public class ControlOptions : OptionsMenu
         controls = GetComponentInParent<PlayerInput>();
 
         SetupAsset(controls.actions);
-    }
 
+        //getPressedKeyForUpdatingBinding = new InputAction(binding: "/*/<button>");
+        getPressedKeyForUpdatingBinding = new InputAction("Get New Key");
+        getPressedKeyForUpdatingBinding.AddBinding("/*/<button>");
+        //getPressedKeyForUpdatingBinding.AddBinding("<*>/button");
+        //getPressedKeyForUpdatingBinding.AddBinding("/*/<button>").WithInteraction("tap");
+        //getPressedKeyForUpdatingBinding.performed += GetCurrentButtonPressed;
+        getPressedKeyForUpdatingBinding.performed += GetCurrentButtonPressed;
+    }
 
     void SetupAsset(InputActionAsset asset)
     {
@@ -116,9 +127,6 @@ public class ControlOptions : OptionsMenu
         }
     }
 
-
-
-
     void ArrangeRectInColumn(RectTransform rt)
     {
         rt.gameObject.SetActive(true);
@@ -126,4 +134,72 @@ public class ControlOptions : OptionsMenu
         rt.anchoredPosition = new Vector3(0, -windowHeight, 0);
         windowHeight += rt.rect.height;
     }
+
+    public void SetPendingStatus(BindingOption pendingOption)
+    {
+        if (pending != null)
+        {
+            //Debug.Log(pending + " is already pending, cancelling on frame " + Time.frameCount);
+            return;
+        }
+        
+        // Assign this as the current pending option in baseMenu
+        pending = pendingOption;
+
+        //controls.SwitchCurrentActionMap()
+        // Enable new input detection in baseMenu
+        pending.buttonToRebind.interactable = false;
+        getPressedKeyForUpdatingBinding.Enable();
+
+    }
+    void GetCurrentButtonPressed(InputAction.CallbackContext context)
+    {
+        string path = context.control.path;
+        //string path = context.action.activeControl.path;
+
+        // If a binding is not assigned
+        // OR due to a quirk with the input system, if the path registers as 'anyKey' rather than as an actual specific key
+        if (pending == null || path.Contains("anyKey"))
+        {
+            return;
+        }
+
+        pending.CheckToAssignNewBinding(context.control.path, out bool wrongControlType, out bool bindingAlreadyTaken);
+        if (wrongControlType) // If input doesn't match the control scheme for the current binding
+        {
+            // Show appropriate GUI prompt
+            return;
+        }
+        else if (bindingAlreadyTaken) // If the input is already taken by another binding
+        {
+            // Show appropriate GUI prompt
+            return;
+        }
+        else
+        {
+            OnOptionsChanged();
+        }
+
+        DisablePending();
+    }
+    public void DisablePending()
+    {
+        getPressedKeyForUpdatingBinding.Disable();
+        pending.buttonToRebind.interactable = true;
+        pending = null;
+    }
+
+    // Some stuff I got from Lyrcaxis on Discord, that should allow me to make a custom input system setup
+    /*
+    Dictionary<string, System.Action> actionMap = new();
+
+    [SerializeField] List<string> events;
+    [SerializeField] InputSystem inputSystem;
+
+    void Awake()
+    {
+        foreach (var e in events) { actionMap.Add(e, null); }
+        foreach (var e in events) { inputSystem.Register(e, actionMap[e]); }
+    }
+    */
 }
