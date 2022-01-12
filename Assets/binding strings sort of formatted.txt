@@ -1,0 +1,104 @@
+All bindings
+On foot
+    Move
+        WASD/Arrow Keys: Dpad
+            up: <Keyboard>/w
+            down: <Keyboard>/s
+            left: <Keyboard>/a
+            right: <Keyboard>/d
+            up: <Keyboard>/upArrow
+            down: <Keyboard>/downArrow
+            left: <Keyboard>/leftArrow
+            right: <Keyboard>/rightArrow
+        : <Gamepad>/leftStick
+        : <XRController>/{Primary2DAxis}
+        : <Joystick>/stick
+    Look
+        : <Gamepad>/rightStick
+        : <Pointer>/delta
+        : <Joystick>/{Hatswitch}
+    Jump
+        : <Keyboard>/space
+        : <Gamepad>/buttonSouth
+    Crouch
+        : <Keyboard>/ctrl
+        : <Gamepad>/leftStickPress
+    Dodge
+        : <Keyboard>/shift
+        : <Gamepad>/buttonEast
+    Fire
+        : <Gamepad>/rightTrigger
+        : <Mouse>/leftButton
+        : <Touchscreen>/primaryTouch/tap
+        : <Joystick>/trigger
+        : <XRController>/{PrimaryAction}
+    ADS
+        : <Mouse>/rightButton
+        : <Gamepad>/leftTrigger
+    Reload
+        : <Keyboard>/r
+        : <Gamepad>/buttonWest
+    Select Weapon
+        : <Keyboard>/q
+        : <Gamepad>/rightShoulder
+    Melee Attack
+        : <Mouse>/middleButton
+        : <Gamepad>/rightStickPress
+    Interact
+        : <Keyboard>/e
+        : <Gamepad>/buttonNorth
+    Pause
+        : <Keyboard>/escape
+        : <Gamepad>/start
+    Enter Menu
+        : <Keyboard>/tab
+        : <Gamepad>/select
+UI
+    Navigate
+        Gamepad: 2DVector
+            up: <Gamepad>/leftStick/up
+            up: <Gamepad>/rightStick/up
+            down: <Gamepad>/leftStick/down
+            down: <Gamepad>/rightStick/down
+            left: <Gamepad>/leftStick/left
+            left: <Gamepad>/rightStick/left
+            right: <Gamepad>/leftStick/right
+            right: <Gamepad>/rightStick/right
+        : <Gamepad>/dpad
+        Joystick: 2DVector
+            up: <Joystick>/stick/up
+            down: <Joystick>/stick/down
+            left: <Joystick>/stick/left
+            right: <Joystick>/stick/right
+        Keyboard: 2DVector
+            up: <Keyboard>/w
+            up: <Keyboard>/upArrow
+            down: <Keyboard>/s
+            down: <Keyboard>/downArrow
+            left: <Keyboard>/a
+            left: <Keyboard>/leftArrow
+            right: <Keyboard>/d
+            right: <Keyboard>/rightArrow
+    Submit
+        : */{Submit}
+    Cancel
+        : */{Cancel}
+    Point
+        : <Mouse>/position
+        : <Pen>/position
+        : <Touchscreen>/touch*/position
+    Click
+        : <Mouse>/leftButton
+        : <Pen>/tip
+        : <Touchscreen>/touch*/press
+        : <XRController>/trigger
+    ScrollWheel
+        : <Mouse>/scroll
+    MiddleClick
+        : <Mouse>/middleButton
+    RightClick
+        : <Mouse>/rightButton
+    TrackedDevicePosition
+        : <XRController>/devicePosition
+    TrackedDeviceOrientation
+        : <XRController>/deviceRotation

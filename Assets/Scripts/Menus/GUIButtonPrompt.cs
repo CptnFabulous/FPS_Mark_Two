@@ -141,8 +141,10 @@ public class GUIButtonPrompt : MonoBehaviour
 
     public void Refresh(InputBinding binding)
     {
-        string path = binding.effectivePath;
-
+        Refresh(binding.effectivePath);
+    }
+    public void Refresh(string path)
+    {
         int index = inputStrings.IndexOf(path);
         if (index >= 0 && index < iconArray.Length && iconArray[index] != null) // If index is valid, and the display name has a matching name in the list AND there's a corresponding sprite for the index
         {
@@ -153,101 +155,7 @@ public class GUIButtonPrompt : MonoBehaviour
         {
             // Default to key graphic
             graphic.sprite = keyboardKey;
-            
-            // Display name of binding
-            // Cut off everything before the binding name
-            int lastSlashBeforeName = path.LastIndexOf("/");
-            string displayName = path.Remove(0, lastSlashBeforeName + 1);
-            // Capitalise and format binding name
-
-
-            displayName = MiscFunctions.Capitalise(displayName[0]) + displayName.Remove(0, 1);
-
-            int displayNameIndex = 1;
-            while (displayNameIndex < displayName.Length)
-            {
-                if (MiscFunctions.IsUppercase(displayName[displayNameIndex]))
-                {
-                    displayName = displayName.Insert(displayNameIndex, " ");
-                    displayNameIndex++; // Increase the index a second time to account for the string length being increased by one
-                }
-                displayNameIndex ++;
-                
-            }
-            Debug.Log(displayName);
-
-            keyName.text = displayName;
+            keyName.text = MiscFunctions.FormatNameForPresentation(path);
         }
-
-        gameObject.SetActive(true);
     }
-
-    
-
-    /*
-    void SetMappingGraphic(KeyCode key)
-    {
-        int i;
-        for (i = 0; i < slightlyWider.Length; i++)
-        {
-            if (key == slightlyWider[i])
-            {
-                singleKeyDimensions.x = Mathf.RoundToInt(singleKeyDimensions.x * 1.5f);
-                break;
-            }
-        }
-        for (i = 0; i < wide.Length; i++)
-        {
-            if (key == wide[i])
-            {
-                singleKeyDimensions.x = Mathf.RoundToInt(singleKeyDimensions.x * 2.5f);
-                break;
-            }
-        }
-        for (i = 0; i < tall.Length; i++)
-        {
-            if (key == tall[i])
-            {
-                singleKeyDimensions.y *= 2;
-                break;
-            }
-        }
-        if (key == KeyCode.Space)
-        {
-            singleKeyDimensions *= 6;
-        }
-        Rect r = graphic.rectTransform.rect;
-        r.width = singleKeyDimensions.x;
-        r.height = singleKeyDimensions.y;
-        graphic.SetClipRect(r, true);
-        graphic.sprite = keyboardKey;
-        keyName.text = key.ToString();//System.Enum.GetName(typeof(KeyCode), key);
-    }
-    static readonly KeyCode[] slightlyWider = new KeyCode[]
-        {
-            KeyCode.LeftControl,
-            KeyCode.RightControl,
-            KeyCode.LeftWindows,
-            KeyCode.RightWindows,
-            KeyCode.LeftAlt,
-            KeyCode.RightAlt,
-            KeyCode.AltGr,
-            KeyCode.Tab,
-            KeyCode.LeftApple,
-            KeyCode.RightApple,
-        };
-    static readonly KeyCode[] wide = new KeyCode[]
-    {
-            KeyCode.LeftShift,
-            KeyCode.RightShift,
-            KeyCode.CapsLock,
-            KeyCode.Backspace,
-            KeyCode.Return,
-    };
-    static readonly KeyCode[] tall = new KeyCode[]
-    {
-        KeyCode.KeypadPlus,
-        KeyCode.KeypadEnter,
-    };
-    */
 }

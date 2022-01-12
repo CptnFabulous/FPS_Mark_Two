@@ -1,0 +1,214 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+
+public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandler
+{
+    public Text name;
+    public GUIButtonPrompt shownBinding;
+    public Button buttonToRebind;
+    public RectTransform rectTransform;
+
+
+
+
+    InputAction action;
+    int bindingIndex;
+    string newBindingPath;
+    ControlOptions baseMenu;
+
+    InputBinding binding
+    {
+        get
+        {
+            return action.bindings[bindingIndex];
+        }
+    }
+    static readonly List<char> bindingPunctuationToAddSpaces = new List<char>
+    {
+        '&'
+    };
+    static readonly List<char> bindingPunctuationToRemove = new List<char>
+    {
+        ';'
+    };
+
+    public void SetupBinding(InputAction newAction, int newBindingIndex, ControlOptions menu)
+    {
+        action = newAction;
+        bindingIndex = newBindingIndex;
+        baseMenu = menu;
+
+        string displayBindingGroups = MiscFunctions.FormatNameForPresentation(binding.groups, bindingPunctuationToAddSpaces, bindingPunctuationToRemove);
+
+        if (binding.isPartOfComposite)
+        {
+            string displayName = MiscFunctions.FormatNameForPresentation(binding.name);
+            name.text = displayName + " (" + displayBindingGroups + ")";
+        }
+        else
+        {
+            name.text = displayBindingGroups;
+        }
+        
+        shownBinding.enabled = false;
+        buttonToRebind.onClick.AddListener(()=> baseMenu.SetPendingStatus(this));
+    }
+
+    public void Refresh()
+    {
+        newBindingPath = binding.effectivePath;
+        shownBinding.Refresh(binding);
+    }
+
+    public void CheckToAssignNewBinding(string newPath, out bool wrongControlType, out bool bindingAlreadyTaken)
+    {
+        wrongControlType = false;
+        bindingAlreadyTaken = false;
+
+        Debug.Log("Old: " + binding.path + ", new: " + newPath);
+
+        string oldType = PathType(binding.path);
+        string newType = PathType(newPath);
+        if (oldType != newType)
+        {
+            Debug.Log(newPath + " is the wrong type compared to " + binding.path);
+            wrongControlType = true;
+            return;
+        }
+
+        // Check if path is not already being used by another binding in the same map
+        for (int i = 0; i < action.actionMap.bindings.Count; i++)
+        {
+            Debug.Log(action.actionMap.bindings[i].path);
+            // If the path in this binding matches newPath
+            if (action.actionMap.bindings[i].path == newPath)
+            {
+                Debug.Log(newPath + " is already taken!");
+                bindingAlreadyTaken = true;
+                return;
+            }
+        }
+
+        // If previous checks are passed, set newBindingPath to the path
+        newBindingPath = newPath;
+        shownBinding.Refresh(newBindingPath);
+        return;
+        
+    }
+    public void Apply()
+    {
+        action.ApplyBindingOverride(bindingIndex, newBindingPath);
+    }
+
+
+    
+    public string PathType(string inputPath)
+    {
+        for (int i = 0; i < kbmVariants.Length; i++)
+        {
+            if (inputPath.Contains(kbmVariants[i]))
+            {
+                return "Keyboard&Mouse";
+            }
+        }
+        for (int i = 0; i < gamepadVariants.Length; i++)
+        {
+            if (inputPath.Contains(gamepadVariants[i]))
+            {
+                return "Gamepad";
+            }
+        }
+        return "Other";
+    }
+    /// <summary>
+    /// Names of device types for keyboard and mouse control.
+    /// </summary>
+    public static readonly string[] kbmVariants = new string[]
+    {
+        "Keyboard",
+        "Mouse",
+    };
+    /// <summary>
+    /// Names of device types for gamepad control.
+    /// </summary>
+    public static readonly string[] gamepadVariants = new string[]
+    {
+        "Gamepad",
+        "XInputController",
+        "DualShockGamepad",
+        "SwitchProControllerHID",
+        "WebGLGamepad",
+        "iOSGameController",
+        "AndroidGamepad",
+    };
+
+    /*
+        if (binding.groups.Contains("Keyboard&Mouse") && binding.isComposite == false && binding.isPartOfComposite == false)
+        {
+                
+        }
+        if (binding.groups.Contains("Gamepad") && binding.isComposite == false && binding.isPartOfComposite == false)
+        {
+                
+        }
+        */
+
+    /*
+    for (int i = 0; i < kbmVariants.Length; i++)
+    {
+        if (newPath.Contains(kbmVariants[i]))
+        {
+            //newKeyboardPath = newPath;
+            break;
+        }
+    }
+
+    for (int i = 0; i < gamepadVariants.Length; i++)
+    {
+        if (newPath.Contains(gamepadVariants[i]))
+        {
+            //newGamepadPath = newPath;
+            break;
+        }
+    }
+    */
+
+
+
+
+
+
+
+    /*
+    public static string GroupNameFromBindingPath(string path)
+    {
+        //int startIndex = path.IndexOf('<');
+        //int endIndex = path.IndexOf('>');
+        path.Remove(path.IndexOf('/'), 1);
+        int endIndex = path.IndexOf('/');
+        Debug.Log(path.Substring(0, endIndex));
+        return path.Substring(0, endIndex);
+    }
+    */
+
+
+
+
+
+
+    /*
+    public void OnSelect(BaseEventData eventData)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        throw new System.NotImplementedException();
+    }
+    */
+}
