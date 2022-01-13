@@ -90,14 +90,28 @@ public class MovementController : MonoBehaviour
             return;
         }
 
-        // If the aim value has changed (i.e. because this function was run) and the previous aim was zero
-        if (rawAimInput.magnitude <= 0)
+        Vector2 newInput = input.Get<Vector2>();
+
+        // If the player has just started moving their aim horizontally (or switched to aiming in the opposite direction)
+        float prevX = rawAimInput.x;
+        float newX = newInput.x;
+        if ((newX > 0 && prevX <= 0) || (newX < 0 && prevX >= 0))
         {
-            // Player has just started aiming, reset aim time
+            // Reset aim time for aim acceleration calculations
             aimStartTime = Time.time;
         }
 
-        rawAimInput = input.Get<Vector2>(); // Update rawAimInput to new value
+        /*
+        // If the aim value has changed (i.e. because this function was run) and the previous aim was zero
+        if (rawAimInput.magnitude <= 0)
+        {
+            
+        }
+        */
+
+
+
+        rawAimInput = newInput; // Update rawAimInput to new value
     }
     Vector2 rawAimInput;
     float aimStartTime;
