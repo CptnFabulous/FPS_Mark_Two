@@ -11,7 +11,7 @@ public class ControlOptions : OptionsMenu
 
     [Header("Setup")]
     public RectTransform bindingWindow;
-    public GUIButtonPrompt currentBindingPrompt;
+    public Text instructions;
 
     [Header("Binding prefabs")]
     public Text mapNamePrefab;
@@ -20,7 +20,8 @@ public class ControlOptions : OptionsMenu
     public Text compositeNamePrefab;
     public BindingOption compositeBindingPrefab;
 
-    List<BindingOption> allBindingOptions = new List<BindingOption>();
+    public List<BindingOption> allBindingOptions { get; private set; }
+    BindingOption pending;
     float windowHeight;
     InputAction getPressedKeyForUpdatingBinding;
 
@@ -35,14 +36,16 @@ public class ControlOptions : OptionsMenu
             allBindingOptions[i].Refresh();
         }
     }
+    #region Setting up menu
     public override void SetupOptions()
     {
         controls = GetComponentInParent<PlayerInput>();
-
         SetupAsset(controls.actions);
+
+        getPressedKeyForUpdatingBinding = new InputAction("Get New Key");
+        getPressedKeyForUpdatingBinding.AddBinding("/*/<button>");
+        getPressedKeyForUpdatingBinding.performed += GetCurrentButtonPressed;
     }
-
-
     void SetupAsset(InputActionAsset asset)
     {
         mapNamePrefab.gameObject.SetActive(false);
@@ -50,6 +53,7 @@ public class ControlOptions : OptionsMenu
         bindingPrefab.gameObject.SetActive(false);
         compositeNamePrefab.gameObject.SetActive(false);
         compositeBindingPrefab.gameObject.SetActive(false);
+        allBindingOptions = new List<BindingOption>();
         for (int m = 0; m < asset.actionMaps.Count; m++)
         {
             SetupMap(asset.actionMaps[m]);
@@ -115,15 +119,88 @@ public class ControlOptions : OptionsMenu
             // If a binding is not part of a composite, it will have a path but no name
         }
     }
-
-
-
-
     void ArrangeRectInColumn(RectTransform rt)
     {
         rt.gameObject.SetActive(true);
         //rt.SetParent(bindingWindow);
         rt.anchoredPosition = new Vector3(0, -windowHeight, 0);
         windowHeight += rt.rect.height;
+    }
+    #endregion
+
+    public void SetPending(BindingOption newPendingBinding)
+    {
+        if (allBindingOptions.Contains(newPendingBinding) == false) // If the binding parameter isn't part of this menu
+        {
+            return;
+        }
+
+        if (pending != null) // If another binding was already pending
+        {
+            //Debug.Log(pending + " is already pending, cancelling on frame " + Time.frameCount);
+            return;
+        }
+
+        // Assign this as the current pending option in baseMenu
+        pending = newPendingBinding;
+
+        //controls.SwitchCurrentActionMap()
+        // Enable new input detection in baseMenu
+        pending.buttonToRebind.interactable = false;
+        getPressedKeyForUpdatingBinding.Enable();
+        instructions.text = "Press a button to assign it as the new binding.";
+    }
+    public void GetCurrentButtonPressed(InputAction.CallbackContext context)
+    {
+        string path = context.control.path;
+        // If a binding is not assigned
+        // OR due to a quirk with the input system, if the path registers as 'anyKey' rather than as an actual specific key
+        if (pending == null || path.Contains("anyKey"))
+        {
+            return;
+        }
+
+
+
+
+        //if (context.control.)
+
+        //if (context.control.device != controls.de)
+
+
+        // Check the new path against the current binding path
+        pending.CheckToAssignNewBinding(context.control.path, out BindingOption.BindingAssignResult result);
+        switch (result)
+        {
+            case BindingOption.BindingAssignResult.Succeeded:
+                // Binding change succeeded
+                OnOptionsChanged();
+                DisablePending();
+                break;
+            case BindingOption.BindingAssignResult.BindingIsSame:
+                // Cancel and display a message that the prompt is the same
+                instructions.text = pending + " already has this path assigned!";
+                DisablePending();
+                break;
+            case BindingOption.BindingAssignResult.WrongControlType:
+                // Display a message saying the control scheme is incompatible, but stay in pending mode
+                instructions.text = pending + " does not accept that binding type!";
+                break;
+            case BindingOption.BindingAssignResult.AlreadyTaken:
+                // Display a message saying the binding is already taken by another action, and show an option to swap the binding paths around
+                instructions.text = pending + " cannot use this path, as it is already assigned to another binding!";
+                return;
+            default:
+                // Cancel and display a generic 'binding attempt failed' message
+                instructions.text = "Binding attempt failed (generic error).";
+                DisablePending();
+                break;
+        }
+    }
+    void DisablePending()
+    {
+        getPressedKeyForUpdatingBinding.Disable();
+        pending.buttonToRebind.interactable = true;
+        pending = null;
     }
 }
