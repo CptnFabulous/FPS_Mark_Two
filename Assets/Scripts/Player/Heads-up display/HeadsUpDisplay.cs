@@ -126,10 +126,13 @@ public class HeadsUpDisplay : MonoBehaviour
     public Text weaponModeName;
     public Image weaponModeIcon;
     public GameObject reticle;
-    public void ShowWeaponHUD(Weapon currentWeapon)
+    public void UpdateWeaponHUD(Weapon currentWeapon)
     {
-        weaponInterface.gameObject.SetActive(true);
-        SetWeaponModeFeatures(currentWeapon.CurrentMode);
+        weaponInterface.gameObject.SetActive(currentWeapon != null);
+        if (currentWeapon != null)
+        {
+            SetWeaponModeFeatures(currentWeapon.CurrentMode);
+        }
     }
     public void HideWeaponHUD()
     {
@@ -202,7 +205,7 @@ public class HeadsUpDisplay : MonoBehaviour
     }
     private void LateUpdate()
     {
-        ShowWeaponHUD(controller.weapons.CurrentWeapon);
+        UpdateWeaponHUD(controller.weapons.CurrentWeapon);
         CheckIfLookingAtDamageableEntity();
     }
 
