@@ -134,7 +134,7 @@ public class MenuWindow : MonoBehaviour
 
         // Switch EventSystem so player automatically selects the first selectable
         EventSystem.current.SetSelectedGameObject(newWindow.firstSelection.gameObject);
-        Debug.Log("Selecting first option, " + newWindow.firstSelection);
+        //Debug.Log("Selecting first option, " + newWindow.firstSelection);
     }
     /// <summary>
     /// Automatically switches to the menu's parent, without needing a reference.

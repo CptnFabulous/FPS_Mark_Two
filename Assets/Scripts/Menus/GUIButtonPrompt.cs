@@ -156,6 +156,7 @@ public class GUIButtonPrompt : MonoBehaviour
             // Default to key graphic
             graphic.sprite = keyboardKey;
             keyName.text = MiscFunctions.FormatNameForPresentation(path);
+            // You could've used InputAction.GetBindingDisplayString()
         }
     }
 }

@@ -139,7 +139,7 @@ public readonly struct MiscFunctions
     public static bool CharMatches(char c, List<char> array)
     {
         int index = array.IndexOf(c);
-        Debug.Log(c + ", " + array + ", " + WithinArray(index, array.Count));
+        //Debug.Log(c + ", " + array + ", " + WithinArray(index, array.Count));
         return WithinArray(index, array.Count);
     }
     public static bool IsUppercase(char c)

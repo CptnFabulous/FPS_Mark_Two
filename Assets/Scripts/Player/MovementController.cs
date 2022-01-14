@@ -77,10 +77,6 @@ public class MovementController : MonoBehaviour
     public float timeToMaxAimAcceleration = 1;
     public AnimationCurve aimAccelerationCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
-    //[HideInInspector] public List<float> aimSensitivityMultipliers = new List<float>();
-
-
-
     void OnLook(InputValue input)
     {
         // Register zero if player looking is currently disabled
@@ -101,16 +97,6 @@ public class MovementController : MonoBehaviour
             aimStartTime = Time.time;
         }
 
-        /*
-        // If the aim value has changed (i.e. because this function was run) and the previous aim was zero
-        if (rawAimInput.magnitude <= 0)
-        {
-            
-        }
-        */
-
-
-
         rawAimInput = newInput; // Update rawAimInput to new value
     }
     Vector2 rawAimInput;
@@ -128,6 +114,7 @@ public class MovementController : MonoBehaviour
 
             // Apply aim acceleration, if gamepad is enabled and player is not aiming down sights
             bool usingGamepad = controlling.controls.currentControlScheme.Contains("Gamepad");
+            //bool usingKeyboardAndMouse = controlling.controls.currentControlScheme.Contains("Keyboard&Mouse");
             bool inADS = controlling.weapons != null && controlling.weapons.IsUsingADS;
             if (usingGamepad)
             {
@@ -141,8 +128,6 @@ public class MovementController : MonoBehaviour
                     float timeMultiplier = Mathf.Clamp01(aimTime / timeToMaxAimAcceleration); // Divide by timeToMaxAimAcceleration then clamp to a 0-1 value
                     timeMultiplier = aimAccelerationCurve.Evaluate(timeMultiplier); 
                     float aimAccelerationMultiplier = Mathf.Lerp(1, aimAcceleration, timeMultiplier); // Multiply by aim acceleration value and add one to get the aim multiplier
-                    //Debug.Log(aimAccelerationMultiplier);
-                    //value *= aimAccelerationMultiplier; // Multiply aim input on both axes
                     value.x *= aimAccelerationMultiplier; // Multiply aim input only on the X axis
                 }
 
@@ -158,12 +143,6 @@ public class MovementController : MonoBehaviour
                 // Multiply by mouse sensitivity values
                 value *= mouseSensitivity;
             }
-
-            /*
-            bool usingGamepad = controlling.controls.currentControlScheme.Contains("Gamepad");
-            bool usingKeyboardAndMouse = controlling.controls.currentControlScheme.Contains("Keyboard&Mouse");
-            */
-
             
             // Invert axes if appropriate
             if (invertX)
@@ -175,12 +154,6 @@ public class MovementController : MonoBehaviour
                 value.y = -value.y;
             }
 
-            /*
-            for (int i = 0; i < aimSensitivityMultipliers.Count; i++)
-            {
-                value *= aimSensitivityMultipliers[i];
-            }
-            */
             return value;
         }
     }

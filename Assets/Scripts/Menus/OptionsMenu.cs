@@ -35,7 +35,7 @@ public abstract class OptionsMenu : MonoBehaviour
     void Refresh()
     {
         ObtainCurrentValues();
-        Debug.Log("Reverting apply and revert buttons on frame " + Time.frameCount);
+        //Debug.Log("Reverting apply and revert buttons on frame " + Time.frameCount);
         apply.interactable = false;
         revert.interactable = false;
         // Set currently selected option to the default, since pressing the apply or revert buttons will disable them, making it impossible to switch away manually.
