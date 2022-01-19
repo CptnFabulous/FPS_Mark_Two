@@ -131,8 +131,8 @@ public class AIAim : MonoBehaviour
     /// <returns></returns>
     public bool LookCheckDistance(Vector3 direction, Vector3 target, float threshold)
     {
-        Vector3 aimPoint = direction * Vector3.Distance(LookOrigin, target);
-        float distanceBetweenAimAndTarget = Vector3.Distance(aimPoint, target);
+        Vector3 relativeAimPoint = direction * Vector3.Distance(LookOrigin, target);
+        float distanceBetweenAimAndTarget = Vector3.Distance(LookOrigin + relativeAimPoint, target);
         return distanceBetweenAimAndTarget < threshold;
     }
 
