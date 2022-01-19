@@ -158,7 +158,7 @@ public class GunADS : MonoBehaviour
             player.movement.worldViewCamera.fieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
         }
 
-        Vector3 cameraDirection = Vector3.Slerp(player.movement.aimAxis.forward, user.AimDirection(), timer);
+        Vector3 cameraDirection = Vector3.Slerp(player.movement.aimAxis.forward, user.AimDirection, timer);
         player.movement.upperBody.LookAt(player.movement.upperBody.position + cameraDirection);
     }
     private void LateUpdate()
