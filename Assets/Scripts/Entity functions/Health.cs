@@ -92,6 +92,22 @@ public class Health : MonoBehaviour
             onDamage.Invoke();
         }
     }
+
+    private void Awake()
+    {
+        hitboxes = GetComponentsInChildren<Hitbox>();
+        for (int i = 0; i < hitboxes.Length; i++)
+        {
+            hitboxes[i].sourceHealth = this;
+        }
+    }
+
+
+    public void DestroyOnDeath()
+    {
+        Destroy(gameObject);
+    }
+
     public void Resurrect(float delay)
     {
         StartCoroutine(ResurrectSequence(delay));
@@ -101,14 +117,5 @@ public class Health : MonoBehaviour
         yield return new WaitForSeconds(delay);
         data.current = data.max;
         onHeal.Invoke();
-    }
-
-    private void Awake()
-    {
-        hitboxes = GetComponentsInChildren<Hitbox>();
-        for (int i = 0; i < hitboxes.Length; i++)
-        {
-            hitboxes[i].sourceHealth = this;
-        }
     }
 }
