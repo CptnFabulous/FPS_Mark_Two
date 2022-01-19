@@ -114,6 +114,7 @@ public class WeaponHandler : MonoBehaviour
         }
     }
 
+    #region Inputs
     void OnFire(InputValue input)
     {
         if (!WeaponReady)
@@ -159,22 +160,30 @@ public class WeaponHandler : MonoBehaviour
     {
         weaponSelector.InputDirection(input.Get<Vector2>());
     }
+    #endregion
 
+    #region Weapon switching
     void UpdateAvailableWeapons()
     {
-        //Weapon current = CurrentWeapon;
         equippedWeapons = GetComponentsInChildren<Weapon>(true);
         for (int i = 0; i < equippedWeapons.Length; i++)
         {
-            //Debug.Log("Weapon present: " + equippedWeapons[i].name);
             equippedWeapons[i].gameObject.SetActive(false);
         }
 
-        RefreshWeaponSelector();
+        List<Sprite> icons = new List<Sprite>();
+        for (int w = 0; w < equippedWeapons.Length; w++)
+        {
+            for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
+            {
+                icons.Add(equippedWeapons[w].modes[m].icon);
+            }
+            // Calculate where to put borders and weapon graphics
+        }
+        weaponSelector.Refresh(icons.ToArray());
 
         if (CurrentWeapon != null)
         {
-            //Debug.Log("Drawing first weapon, " + CurrentWeapon.name);
             StartCoroutine(SwitchWeapon(equippedWeaponIndex));
         }
     }
@@ -227,21 +236,6 @@ public class WeaponHandler : MonoBehaviour
         GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
         StartCoroutine(SwitchWeaponAndFiringMode(weaponIndex, firingModeIndex));
     }
-
-    void RefreshWeaponSelector()
-    {
-        List<Sprite> icons = new List<Sprite>();
-        for (int w = 0; w < equippedWeapons.Length; w++)
-        {
-            for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
-            {
-                icons.Add(equippedWeapons[w].modes[m].icon);
-            }
-            // Calculate where to put borders and weapon graphics
-        }
-        weaponSelector.Refresh(icons.ToArray());
-
-    }
     public void GetWeaponAndModeFromSelector(int index, out int weaponIndex, out int firingModeIndex)
     {
         weaponIndex = 0;
@@ -256,5 +250,5 @@ public class WeaponHandler : MonoBehaviour
             }
         }
     }
-
+    #endregion
 }
