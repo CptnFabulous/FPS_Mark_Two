@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AIGridPoints : MonoBehaviour
 {
-    public static AIGridPoints Handler
+    public static AIGridPoints Current
     {
         get
         {
@@ -59,10 +59,14 @@ public class AIGridPoints : MonoBehaviour
                     Vector3 point = origin;
                     point.y = terrainHit[i].point.y;
                     newPoints.Add(point);
-                    Debug.DrawRay(point, Vector3.up, Color.cyan, 30);
+                    //Debug.DrawRay(point, Vector3.up, Color.cyan, 30);
                 }
             }
         }
+
+        //newPoints.Sort((lhs, rhs) => lhs.x.CompareTo(rhs.x));
+        //newPoints.Sort((lhs, rhs) => lhs.y.CompareTo(rhs.y));
+        //newPoints.Sort((lhs, rhs) => lhs.z.CompareTo(rhs.z));
 
         gridPoints = newPoints;
     }
@@ -104,7 +108,7 @@ public class AIGridPoints : MonoBehaviour
             // For example, 45 entries and 15 desired checks means the number increments by 3. When looking for the sixth entry, this would mean checking the eighteenth entry in the array.
             int index = Mathf.RoundToInt(points.Length / number * i);
             desired.Add(points[index]);
-            Debug.DrawRay(points[index], Vector3.up * 3, Color.red, 30);
+            //Debug.DrawRay(points[index], Vector3.up * 3, Color.red, 30);
         }
 
         return desired.ToArray();
