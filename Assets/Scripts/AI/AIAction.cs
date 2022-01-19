@@ -54,12 +54,7 @@ public abstract class AIAction : StateMachine.State
         Vector3 targetCentre = totalBounds.center;
         float rayDistance = Vector3.Distance(lookOrigin, targetCentre) + totalBounds.extents.magnitude;
         List<RaycastHit> results = new List<RaycastHit>(Physics.SphereCastAll(lookOrigin, viewingPathDiameter / 2, targetCentre - lookOrigin, rayDistance, detection));
-        results.Sort((lhs, rhs) =>
-        {
-            float a = Vector3.Distance(lookOrigin, lhs.point);
-            float b = Vector3.Distance(lookOrigin, rhs.point);
-            return a.CompareTo(b);
-        });
+        results.Sort((lhs, rhs) => lhs.distance.CompareTo(rhs.distance));
         for (int i = 0; i < results.Count; i++)
         {
             // Check results against target colliders. If one matches, line of sight is established
