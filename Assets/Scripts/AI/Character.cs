@@ -4,19 +4,10 @@ using UnityEngine;
 
 public class Character : Entity
 {
-    /*
+    public Health health;
+    
     public override void Delete()
     {
-        Hitbox hitbox = GetComponentInChildren<Hitbox>();
-        if (hitbox != null)
-        {
-            int damageForGuaranteedKill = Mathf.RoundToInt(hitbox.sourceHealth.data.current * 2);
-            hitbox.Damage(damageForGuaranteedKill, null);
-        }
-        else
-        {
-            base.Delete();
-        }
+        health.Damage(health.data.max * 999, DamageType.DeletionByGame, null);
     }
-    */
 }

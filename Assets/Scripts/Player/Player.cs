@@ -9,14 +9,9 @@ public class Player : Character
     public UnityEngine.InputSystem.PlayerInput controls;
     public MovementController movement;
     public PlayerStateHandler stateHandler;
-    public Health health;
     public WeaponHandler weapons;
     public HeadsUpDisplay headsUpDisplay;
-    public override void Delete()
-    {
-        health.Damage(health.data.max * 99, DamageType.DeletionByGame, null);
-    }
-
+    
     public void Die()
     {
         movement.enabled = false;
