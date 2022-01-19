@@ -24,7 +24,7 @@ public enum DamageType
 public class Health : MonoBehaviour
 {
     public Resource data = new Resource(100, 100, 20);
-    public Hitbox[] hitboxes { get; private set; }
+    
     public UnityEvent onDamage;
     public UnityEvent onHeal;
     public UnityEvent onDeath;
@@ -36,18 +36,31 @@ public class Health : MonoBehaviour
             return data.current > 0;
         }
     }
+
+    public Hitbox[] hitboxes { get; private set; }
     public Bounds HitboxBounds
     {
         get
         {
-            Bounds entityBounds = hitboxes[0].collider.bounds;
-            for (int i = 1; i < hitboxes.Length; i++)
-            {
-                entityBounds.Encapsulate(hitboxes[i].collider.bounds);
-            }
-            return entityBounds;
+            return MiscFunctions.CombinedBounds(hitboxes);
         }
     }
+    public Collider[] HitboxColliders
+    {
+        get
+        {
+            if (hitboxColliders == null)
+            {
+                hitboxColliders = new Collider[hitboxes.Length];
+                for (int i = 0; i < hitboxColliders.Length; i++)
+                {
+                    hitboxColliders[i] = hitboxes[i].collider;
+                }
+            }
+            return hitboxColliders;
+        }
+    }
+    Collider[] hitboxColliders;
 
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.

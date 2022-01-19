@@ -301,4 +301,42 @@ public readonly struct MiscFunctions
         return index >= 0 && index < arrayLength;
     }
 
+    #region Combined bounds
+    public static Bounds CombinedBounds(Vector3[] positions)
+    {
+        Bounds b = new Bounds(positions[0], Vector3.zero);
+        for (int i = 1; i < positions.Length; i++)
+        {
+            b.Encapsulate(positions[i]);
+        }
+        return b;
+    }
+    public static Bounds CombinedBounds(Bounds[] bounds)
+    {
+        Bounds b = bounds[0];
+        for (int i = 1; i < bounds.Length; i++)
+        {
+            b.Encapsulate(bounds[i]);
+        }
+        return b;
+    }
+    public static Bounds CombinedBounds(Collider[] colliders)
+    {
+        Bounds b = colliders[0].bounds;
+        for (int i = 1; i < colliders.Length; i++)
+        {
+            b.Encapsulate(colliders[i].bounds);
+        }
+        return b;
+    }
+    public static Bounds CombinedBounds(Hitbox[] hitboxes)
+    {
+        Bounds b = hitboxes[0].collider.bounds;
+        for (int i = 1; i < hitboxes.Length; i++)
+        {
+            b.Encapsulate(hitboxes[i].collider.bounds);
+        }
+        return b;
+    }
+    #endregion
 }
