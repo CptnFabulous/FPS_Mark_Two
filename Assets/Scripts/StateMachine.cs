@@ -76,11 +76,11 @@ public class StateMachine : MonoBehaviour
     public abstract class State
     {
         public string name;
-        public abstract void Enter(StateMachine controller);
-        public abstract void Update(StateMachine controller);  
-        public abstract void LateUpdate(StateMachine controller);
-        public abstract void FixedUpdate(StateMachine controller);
-        public abstract void Exit(StateMachine controller);
+        public virtual void Enter(StateMachine controller) { return; }
+        public virtual void Update(StateMachine controller) { return; }
+        public virtual void LateUpdate(StateMachine controller) { return; }
+        public virtual void FixedUpdate(StateMachine controller) { return; }
+        public virtual void Exit(StateMachine controller) { return; }
     }
     public struct Transition
     {
