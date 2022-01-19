@@ -5,8 +5,7 @@ using UnityEngine.AI;
 
 public class AI : MonoBehaviour
 {
-    public Character info;
-    public Health healthData;
+    public Character character;
     public NavMeshAgent agent;
     public AIAim aiming;
     
