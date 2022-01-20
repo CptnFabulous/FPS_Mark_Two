@@ -37,16 +37,6 @@ public class AIAim : MonoBehaviour
         }
     }
     /// <summary>
-    /// The direction the AI is looking in, converted into an easy Vector3 value.
-    /// </summary>
-    public Vector3 AimDirection
-    {
-        get
-        {
-            return (lookRotation * AimSway(Stats.swayAngle, Stats.swaySpeed)) * Vector3.forward;
-        }
-    }
-    /// <summary>
     /// The direction the AI is deliberately aiming towards, excluding sway.
     /// </summary>
     public Vector3 LookDirection
@@ -56,7 +46,16 @@ public class AIAim : MonoBehaviour
             return lookRotation * Vector3.forward;
         }
     }
-
+    /// <summary>
+    /// The direction the AI is looking in, converted into an easy Vector3 value.
+    /// </summary>
+    public Vector3 AimDirection
+    {
+        get
+        {
+            return (lookRotation * AimSway(Stats.swayAngle, Stats.swaySpeed)) * Vector3.forward;
+        }
+    }
     /// <summary>
     /// A direction directly up perpendicular to the direction the AI is looking.
     /// </summary>
@@ -81,7 +80,6 @@ public class AIAim : MonoBehaviour
         //correctRotation *= Quaternion.Inverse(AimSway(Stats.swayAngle, Stats.swaySpeed));
         lookRotation = Quaternion.RotateTowards(lookRotation, correctRotation, degreesPerSecond * Time.deltaTime);
     }
-    
     /// <summary>
     /// Continuously rotates AI aim to return to looking in the direction it is moving.
     /// </summary>
@@ -100,22 +98,17 @@ public class AIAim : MonoBehaviour
     public IEnumerator LookAtThing(Vector3 position, float lookTime, AnimationCurve lookCurve)
     {
         inLookIENumerator = true;
-
-        float timer = 0;
-
         Quaternion originalRotation = lookRotation;
+        float timer = 0;
 
         while (timer < 1)
         {
             timer += Time.deltaTime / lookTime;
-
             lookRotation = Quaternion.Lerp(originalRotation, Quaternion.LookRotation(position, transform.up), lookCurve.Evaluate(timer));
-
             yield return null;
         }
 
         inLookIENumerator = false;
-        print("Agent is now looking at " + position + ".");
     }
     bool inLookIENumerator;
     #endregion
@@ -144,7 +137,6 @@ public class AIAim : MonoBehaviour
         float distanceBetweenAimAndTarget = Vector3.Distance(LookOrigin + relativeAimPoint, target);
         return distanceBetweenAimAndTarget < threshold;
     }
-
 
     #endregion
 
