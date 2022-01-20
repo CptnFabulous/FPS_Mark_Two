@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Character : Entity
 {
+    public Faction affiliation;
     public Health health;
     
     public override void Delete()
