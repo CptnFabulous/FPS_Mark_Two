@@ -8,8 +8,6 @@ public class AIAim : MonoBehaviour
     public Transform viewAxis;
     public AimValues defaultAimStats;
     public AimValues Stats { get; set; }
-
-    public Health target;
     
     void Awake()
     {
