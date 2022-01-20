@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AIAim : MonoBehaviour
 {
+    public AI ai;
     public Transform viewAxis;
     public AimValues defaultAimStats;
     public AimValues Stats { get; set; }
@@ -13,6 +14,16 @@ public class AIAim : MonoBehaviour
     void Awake()
     {
         Stats = defaultAimStats;
+        ai.agent.updateRotation = false;
+    }
+    private void Update()
+    {
+        // Obtains a Vector3 value from lookRotation, 'flattened' to perpendicular to the agent's up axis
+        Vector3 transformDirection = Vector3.ProjectOnPlane(LookDirection, ai.agent.transform.up);
+        // Rotates agent body to match quaternion
+        ai.agent.transform.rotation = Quaternion.LookRotation(transformDirection, ai.agent.transform.up);
+        // Rotates head to look in the appropriate direction
+        viewAxis.rotation = lookRotation;
     }
 
     #region Look direction values
@@ -79,7 +90,7 @@ public class AIAim : MonoBehaviour
     /// <param name="degreesPerSecond"></param>
     public void ReturnToNeutralLookPosition(float degreesPerSecond)
     {
-        RotateLookTowards(LookOrigin + transform.forward, degreesPerSecond);
+        RotateLookTowards(LookOrigin + ai.agent.velocity, degreesPerSecond);
     }
     /// <summary>
     /// Rotates AI aim to look at something, in a specified time.
