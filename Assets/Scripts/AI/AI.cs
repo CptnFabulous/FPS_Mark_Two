@@ -8,5 +8,8 @@ public class AI : MonoBehaviour
     public Character character;
     public NavMeshAgent agent;
     public AIAim aiming;
-    
+
+    [Header("Behaviours")]
+    public StateMachine movementStates;
+    public StateMachine actionStates;
 }
