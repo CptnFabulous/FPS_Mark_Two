@@ -10,6 +10,5 @@ public class AI : MonoBehaviour
     public AIAim aiming;
 
     [Header("Behaviours")]
-    public StateMachine movementStates;
-    public StateMachine actionStates;
+    public StateMachine stateMachine;
 }
