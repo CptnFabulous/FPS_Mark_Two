@@ -15,8 +15,6 @@ public class Projectile : MonoBehaviour
     public RaycastHit surfaceHit;
     Vector3 velocity;
     
-    
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -65,7 +63,7 @@ public class Projectile : MonoBehaviour
         //Debug.DrawRay(transform.position, velocity, Color.green);
     }
 
-    
+
 
     public void OnHit(RaycastHit thingHit)
     {

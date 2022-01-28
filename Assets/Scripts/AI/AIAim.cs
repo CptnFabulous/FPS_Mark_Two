@@ -84,6 +84,7 @@ public class AIAim : MonoBehaviour
         Quaternion correctRotation = Quaternion.LookRotation(position - LookOrigin, transform.up);
         //correctRotation *= Quaternion.Inverse(AimSway(Stats.swayAngle, Stats.swaySpeed));
         lookRotation = Quaternion.RotateTowards(lookRotation, correctRotation, degreesPerSecond * Time.deltaTime);
+        //Debug.Log(lookRotation.eulerAngles);
     }
     /// <summary>
     /// Continuously rotates AI aim to return to looking in the direction it is moving.

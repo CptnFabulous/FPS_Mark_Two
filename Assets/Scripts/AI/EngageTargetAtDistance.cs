@@ -12,7 +12,6 @@ public class EngageTargetAtDistance : AIAction
     public LayerMask detection = ~0;
 
     Vector3 destination;
-    
     Character target
     {
         get
@@ -28,7 +27,6 @@ public class EngageTargetAtDistance : AIAction
         destination = AI.agent.transform.position;
         FindIdealLocation(out bool successful);
     }
-
     public override void Update(StateMachine controller)
     {
         if (LocationCompromised())
@@ -38,14 +36,7 @@ public class EngageTargetAtDistance : AIAction
         AI.agent.destination = destination;
         Debug.DrawLine(AI.transform.position, destination, Color.magenta);
     }
-    public override void Exit(StateMachine controller)
-    {
-        return;
-    }
     
-
-
-
     public void FindIdealLocation(out bool successful)
     {
         Vector3 checkOrigin = target.transform.position;
@@ -81,7 +72,6 @@ public class EngageTargetAtDistance : AIAction
 
         // If bestPathDistance is still set to infinity, it means no path was found to have its distance recorded.
         successful = bestPathDistance < Mathf.Infinity;
-        Debug.Log("Finding new location attempt returned " + successful + ", frame " + Time.frameCount);
     }
     public bool LocationCompromised()
     {

@@ -96,7 +96,6 @@ public class HeadsUpDisplay : MonoBehaviour
 
         Bounds entityBounds = enemyHealth.HitboxBounds;
         Vector3 meterPosition = entityBounds.center + (camera.transform.up * entityBounds.extents.magnitude);
-        Debug.DrawRay(meterPosition, camera.transform.up, Color.red);
 
         Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
         Vector3 canvasPosition = MiscFunctions.ScreenToAnchoredPosition(meterScreenPosition, enemyHealthMeter.rectTransform, rt);//MiscFunctions.ScreenToRectTransformSpace(meterScreenPosition, rt);
