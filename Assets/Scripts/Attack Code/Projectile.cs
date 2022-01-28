@@ -41,11 +41,27 @@ public class Projectile : MonoBehaviour
             //Debug.Log(surfaceHit.collider);
             OnHit(surfaceHit);
         }
-        else // Move bullet
-        {
-            transform.Translate(velocity.normalized * DetectionLength, Space.World);
-            velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
-        }
+        
+        // Move bullet
+        transform.Translate(velocity.normalized * DetectionLength, Space.World);
+        velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
+        transform.LookAt(transform.position + velocity);
+
+        /*
+        More realistic bullet physics ideas
+
+        Static 'Environment' class containing variables for air resistance and wind
+        Function: float Environment.Drag(float airResistance), that uses appropriate calculations to determine actual resistance
+
+        velocity += Time.deltaTime * Physics.gravity;
+        velocity += Time.deltaTime * -Environment.Drag(airResistance) * velocity.normalized;
+        velocity += Time.deltaTime * Environment.wind;
+
+        Simplified thing RooBubba showed me on discord
+        float3 desiredVector = desiredMovementComponent.DesiredMovementVector / (1f + frictionFactor * DeltaTime);
+        Translated to Unity code
+        velocity = velocity / (1f + frictionFactor * Time.deltaTIme);
+        */
         //Debug.DrawRay(transform.position, velocity, Color.green);
     }
 
