@@ -27,7 +27,15 @@ public readonly struct MiscFunctions
         return canvasSpace - anchorOffset; // Adds offset to canvas space to produce an anchored position
     }
 
-
+    public static float[] Vector3Array(Vector3 vector3)
+    {
+        return new float[3]
+        {
+            vector3.x,
+            vector3.y,
+            vector3.z,
+        };
+    }
 
 
     
