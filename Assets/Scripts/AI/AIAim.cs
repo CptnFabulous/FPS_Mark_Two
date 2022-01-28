@@ -69,6 +69,11 @@ public class AIAim : MonoBehaviour
     #endregion
 
     #region Look functions
+    public void RotateLookTowards(Vector3 position)
+    {
+        float degreesPerSecond = Stats.SpeedBasedOnAngle(LookDirection, position - LookOrigin);
+        RotateLookTowards(position, degreesPerSecond);
+    }
     /// <summary>
     /// Continuously rotates AI aim over time to look at position value, at a speed of degreesPerSecond
     /// </summary>
@@ -84,9 +89,9 @@ public class AIAim : MonoBehaviour
     /// Continuously rotates AI aim to return to looking in the direction it is moving.
     /// </summary>
     /// <param name="degreesPerSecond"></param>
-    public void ReturnToNeutralLookPosition(float degreesPerSecond)
+    public void LookInNeutralDirection()
     {
-        RotateLookTowards(LookOrigin + ai.agent.velocity, degreesPerSecond);
+        RotateLookTowards(LookOrigin + ai.agent.velocity, Stats.lookSpeed);
     }
     /// <summary>
     /// Rotates AI aim to look at something, in a specified time.

@@ -54,7 +54,7 @@ public class AimAtTarget : AIAction
         {
             Bounds targetBounds = CombatAI.target.health.HitboxBounds;
             targetPoint = targetBounds.center;
-            AimData.RotateLookTowards(targetPoint, stats.SpeedBasedOnAngle(AimData.AimDirection, targetPoint - AimData.LookOrigin));
+            AimData.RotateLookTowards(TargetPoint); // Shift aim towards target point
 
             //targetAcquired = AimData.LookCheckAngle(AimData.AimDirection, targetPoint, threshold);
             //float distanceLockThreshold = Mathf.Min(/* axes of targetBounds.extents.magnitude */);
@@ -64,11 +64,11 @@ public class AimAtTarget : AIAction
             {
                 whileTargetAcquired.Invoke();
             }
+            AimData.LookInNeutralDirection();
         }
         else // If not, return to neutral pose until target is found again
         {
             TargetAcquired = false; // Enemy obviously doesn't have a target if line of sight is broken
-            AimData.ReturnToNeutralLookPosition(stats.lookSpeed);
         }
         
 
