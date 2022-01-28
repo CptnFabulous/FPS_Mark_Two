@@ -19,7 +19,11 @@ public class PointDamage : MonoBehaviour
 
     public void Damage(RaycastHit rh, Vector3 origin, Entity attacker)
     {
-        bool notAlly = true; // Check for friendly fire (not implemented yet)
+        // Check for friendly fire
+        Character attacking = attacker as Character;
+        Character attacked = rh.collider.GetComponentInParent<Character>();
+        // Set notAlly to true if both the attacker and target have specified factions, and they are hostile towards each other
+        bool notAlly = attacking != null && attacked != null && attacking.affiliation.IsHostileTowards(attacked.affiliation);
         
         Hitbox damageable = rh.collider.GetComponent<Hitbox>();
         if (damageable != null && notAlly) // If a hitbox is present
