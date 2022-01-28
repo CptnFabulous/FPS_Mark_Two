@@ -33,7 +33,6 @@ public class Projectile : MonoBehaviour
     void Update()
     {
         //Debug.DrawRay(transform.position, velocity, Color.red);
-        transform.LookAt(transform.position + velocity);
         if (Physics.SphereCast(transform.position, diameter, velocity, out surfaceHit, DetectionLength, detection))
         {
             //Debug.Log(surfaceHit.collider);
