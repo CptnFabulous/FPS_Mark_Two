@@ -39,7 +39,16 @@ public readonly struct MiscFunctions
 
 
     
-
+    public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, Collider[] exceptions)
+    {
+        List<RaycastHit> list = new List<RaycastHit>(Physics.RaycastAll(origin, direction, distance, layerMask));
+        for (int i = 0; i < exceptions.Length; i++)
+        {
+            // Remove all returned values where the collider is part of the exceptions list
+            list.RemoveAll((rh) => rh.collider == exceptions[i]);
+        }
+        return list;
+    }
 
 
     public static float InverseClamp(float value, float min, float max)
