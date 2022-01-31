@@ -8,6 +8,8 @@ public class AIAim : MonoBehaviour
     public Transform viewAxis;
     public AimValues defaultAimStats;
     public AimValues Stats { get; set; }
+
+    [HideInInspector] public bool lookingInDefaultDirection = true;
     
     void Awake()
     {
@@ -16,6 +18,11 @@ public class AIAim : MonoBehaviour
     }
     private void Update()
     {
+        if (lookingInDefaultDirection)
+        {
+            LookInNeutralDirection();
+        }
+        
         // Obtains a Vector3 value from lookRotation, 'flattened' to perpendicular to the agent's up axis
         Vector3 transformDirection = Vector3.ProjectOnPlane(LookDirection, ai.agent.transform.up);
         // Rotates agent body to match quaternion
@@ -66,6 +73,16 @@ public class AIAim : MonoBehaviour
             return lookRotation * Vector3.up;
         }
     }
+    /// <summary>
+    /// A direction directly right perpendicular to the direction the AI is looking.
+    /// </summary>
+    public Vector3 LookRight
+    {
+        get
+        {
+            return lookRotation * Vector3.right;
+        }
+    }
     #endregion
 
     #region Look functions
@@ -92,7 +109,16 @@ public class AIAim : MonoBehaviour
     /// <param name="degreesPerSecond"></param>
     public void LookInNeutralDirection()
     {
-        RotateLookTowards(LookOrigin + ai.agent.velocity, Stats.lookSpeed);
+        Vector3 direction;
+        if (ai.agent.velocity.magnitude > 0)
+        {
+            direction = ai.agent.velocity; // Look in the current movement direction;
+        }
+        else
+        {
+            direction = ai.agent.transform.forward; // Look straight forwards
+        }
+        RotateLookTowards(LookOrigin + direction, Stats.lookSpeed);
     }
     /// <summary>
     /// Rotates AI aim to look at something, in a specified time.

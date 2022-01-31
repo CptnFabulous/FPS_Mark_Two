@@ -37,6 +37,8 @@ public class AimAtTarget : AIAction
         base.Enter(controller);
 
         AimData.Stats = stats; // Set new stats
+        AimData.lookingInDefaultDirection = false;
+
         attack.behaviourUsingThis = this; // Assign a reference to the attack being triggered by this behaviour
     }
     public override void Update(StateMachine controller)
@@ -70,5 +72,6 @@ public class AimAtTarget : AIAction
     public override void Exit(StateMachine controller)
     {
         attack.CancelSequence();
+        AimData.lookingInDefaultDirection = true;
     }
 }
