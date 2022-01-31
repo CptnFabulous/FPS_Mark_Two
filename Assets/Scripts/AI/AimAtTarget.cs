@@ -66,12 +66,12 @@ public class AimAtTarget : AIAction
         // If aim is on target, attack
         if (TargetAcquired)
         {
-            attack.StartSequence();
+            attack.Initiate();
         }
     }
     public override void Exit(StateMachine controller)
     {
-        attack.CancelSequence();
+        attack.Cancel();
         AimData.lookingInDefaultDirection = true;
     }
 }

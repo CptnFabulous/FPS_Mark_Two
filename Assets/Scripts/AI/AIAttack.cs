@@ -19,22 +19,21 @@ public class AIAttack : MonoBehaviour
     public UnityEvent onCooldown;
 
     public AimAtTarget behaviourUsingThis { get; set; }
+
+    public AttackPhase CurrentPhase { get; private set; }
     IEnumerator currentAttack;
-    bool inAttack;
 
     public IEnumerator AttackSequence()
     {
-        inAttack = true;
-        //Debug.Log("Telegraphing on frame " + Time.frameCount);
+        CurrentPhase = AttackPhase.Telegraphing;
         behaviourUsingThis.AI.aiming.Stats = aimStatsWhileTelegraphing;
         onTelegraph.Invoke();
         yield return new WaitForSeconds(telegraphDelay);
 
-
+        CurrentPhase = AttackPhase.Attacking;
         behaviourUsingThis.AI.aiming.Stats = aimStatsWhileAttacking;
         for (int i = 0; i < maxAttackCount; i++)
         {
-            //Debug.Log("Attacking, #" + (i + 1) + "/" + maxAttackCount + " on " + Time.frameCount);
             onAttack.Invoke();
             yield return new WaitForSeconds(60 / attacksPerMinute);
 
@@ -43,71 +42,49 @@ public class AIAttack : MonoBehaviour
                 End();
             }
 
-            if (inAttack == false) // If attack has been ended, break the loop 
+            if (CurrentPhase == AttackPhase.CoolingDown) // If attack has been ended, break the loop 
             {
                 break;
             }
         }
 
-        inAttack = false;
-        //Debug.Log("Ending attack on " + Time.frameCount);
+        CurrentPhase = AttackPhase.CoolingDown;
         behaviourUsingThis.AI.aiming.Stats = behaviourUsingThis.stats;
         onCooldown.Invoke();
         yield return new WaitForSeconds(cooldownDuration);
 
+        CurrentPhase = AttackPhase.Ready;
         currentAttack = null;
     }
-
-    /// <summary>
-    /// Is this behaviour currently running an attack sequence? If false, set to true to start a new one, or set to false to cancel an in-progress sequence
-    /// </summary>
-
-    public bool InAttack
+    public void Initiate()
     {
-        get
+        if (CurrentPhase != AttackPhase.Ready)
         {
-            return currentAttack != null && inAttack == true;
+            return;
         }
-        private set
-        {
-            if (InAttack != value) // If value has been changed
-            {
-                if (value == true)
-                {
-                    currentAttack = AttackSequence();
-                    StartCoroutine(currentAttack);
-                    inAttack = true;
-                    Debug.Log("Starting attack on frame " + Time.frameCount);
-                }
-                else
-                {
-                    inAttack = false;
-                    Debug.Log("Ending attack on frame " + Time.frameCount);
-                }
-            }
-        }
-    }
-
-    public void StartSequence()
-    {
-        InAttack = true;
+        currentAttack = AttackSequence();
+        StartCoroutine(currentAttack);
     }
     public void End()
     {
-        InAttack = false;
+        CurrentPhase = AttackPhase.CoolingDown;
     }
-    public void CancelSequence()
+    public void Cancel()
     {
         if (currentAttack != null)
         {
             StopCoroutine(currentAttack);
             currentAttack = null;
         }
-        inAttack = false;
-        Debug.Log("Cancelling attack on frame " + Time.frameCount);
+        CurrentPhase = AttackPhase.Ready;
     }
-
-
+    public enum AttackPhase
+    {
+        Ready,
+        Telegraphing,
+        Attacking,
+        CoolingDown
+    }
 
     public void ShootGun(GunGeneralStats stats)
     {
