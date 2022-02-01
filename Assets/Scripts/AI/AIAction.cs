@@ -84,3 +84,14 @@ public abstract class AIAction : StateMachine.State
         return false;
     }
 }
+
+public abstract class AIMovement : AIAction
+{
+    public float movementSpeed = 3.5f;
+
+    public override void Enter(StateMachine controller)
+    {
+        base.Enter(controller);
+        NavMeshAgent.speed = movementSpeed;
+    }
+}

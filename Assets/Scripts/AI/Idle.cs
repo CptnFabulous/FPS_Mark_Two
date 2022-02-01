@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Idle : AIAction
+public class Idle : AIMovement
 {
     public override void Enter(StateMachine controller)
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [System.Serializable]
-public class EngageTargetAtDistance : AIAction
+public class EngageTargetAtDistance : AIMovement
 {
     public float minimumDistance = 10;
     public float maximumDistance = 30;
