@@ -5510,6 +5510,7 @@ GameObject:
   - component: {fileID: 577827450302408048}
   - component: {fileID: 577827450302408015}
   - component: {fileID: 577827450302408052}
+  - component: {fileID: 4324082910333505861}
   - component: {fileID: 577827450302408049}
   - component: {fileID: 577827450302408013}
   - component: {fileID: 577827450302408050}
@@ -5672,6 +5673,25 @@ MonoBehaviour:
       m_Bits: 4294967295
     diameterForUnobstructedSight: 0.5
   lookingInDefaultDirection: 1
+--- !u!114 &4324082910333505861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 577827450302408012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82f18f3084bb6f644a99fbaebbbfa138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewAxis: {fileID: 577827450190796994}
+  viewRange: 25
+  viewingAngles: {x: 60, y: 30}
+  viewDetection:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  hearingRange: 50
 --- !u!114 &577827450302408049
 MonoBehaviour:
   m_ObjectHideFlags: 0
