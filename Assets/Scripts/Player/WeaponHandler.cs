@@ -213,6 +213,7 @@ public class WeaponHandler : MonoBehaviour
             isSwitching = true;
             onHolster.Invoke(CurrentWeapon);
             StartCoroutine(CurrentWeapon.Holster());
+            //Debug.DrawRay(aimAxis.position, -aimAxis.right, Color.red, CurrentWeapon.switchSpeed);
             yield return new WaitUntil(() => CurrentWeapon.InAction == false);
         }
 
@@ -221,6 +222,7 @@ public class WeaponHandler : MonoBehaviour
         equippedWeaponIndex = newIndex;
         onDraw.Invoke(CurrentWeapon);
         StartCoroutine(CurrentWeapon.Draw());
+        //Debug.DrawRay(aimAxis.position, aimAxis.right, Color.green, CurrentWeapon.switchSpeed);
         yield return new WaitUntil(() => CurrentWeapon.isSwitching == false);
 
         isSwitching = false;
