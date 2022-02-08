@@ -34,7 +34,7 @@ public class StateMachine : MonoBehaviour
         {
             return;
         }
-        
+
         for (int i = 0; i < allTransitions.Count; i++)
         {
             // If transition can happen from the current state (or from anywhere)
@@ -101,6 +101,11 @@ public class StateMachine : MonoBehaviour
     /// </summary>
     public class MultiState : StateMachine.State
     {
+        public MultiState(string newName)
+        {
+            name = newName;
+        }
+
         public List<StateMachine.State> allStates = new List<StateMachine.State>();
         public override void Enter(StateMachine controller)
         {
@@ -143,6 +148,11 @@ public class StateMachine : MonoBehaviour
     /// </summary>
     public class SubStateMachine : StateMachine.State
     {
+        public SubStateMachine(string newName)
+        {
+            name = newName;
+        }
+        
         public List<StateMachine.State> allStates = new List<StateMachine.State>();
         public List<StateMachine.Transition> allTransitions = new List<StateMachine.Transition>();
         int currentStateIndex = 0;

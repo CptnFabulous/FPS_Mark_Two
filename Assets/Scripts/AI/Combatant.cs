@@ -15,8 +15,8 @@ public class Combatant : AI
 
     public virtual void Awake()
     {
-        outOfCombat = new StateMachine.SubStateMachine();
-        inCombat = new StateMachine.MultiState();
+        outOfCombat = new StateMachine.SubStateMachine("Out of combat");
+        inCombat = new StateMachine.MultiState("In combat");
         
         outOfCombat.AddState(idleState);
 
