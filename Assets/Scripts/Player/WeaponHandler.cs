@@ -80,7 +80,6 @@ public class WeaponHandler : MonoBehaviour
             return enabled && isSwitching == false && CurrentWeapon != null && CurrentWeapon.isSwitching == false/* && weaponSelector.active == false*/;
         }
     }
-    public bool TriggerHeld { get; private set; }
 
 
     private void Awake()
@@ -121,9 +120,8 @@ public class WeaponHandler : MonoBehaviour
         {
             return;
         }
-        //fireButtonHeld = input.Get<float>() > 0;
-        TriggerHeld = input.isPressed;
-        CurrentWeapon.CurrentMode.OnPrimaryInput();
+        PrimaryHeld = input.isPressed;
+        CurrentWeapon.CurrentMode.OnPrimaryInputChanged();
     }
     void OnADS(InputValue input)
     {
@@ -131,7 +129,8 @@ public class WeaponHandler : MonoBehaviour
         {
             return;
         }
-        CurrentWeapon.CurrentMode.OnSecondaryInput(input.isPressed);
+        SecondaryHeld = input.isPressed;
+        CurrentWeapon.CurrentMode.OnSecondaryInputChanged();
     }
     void OnReload()
     {
@@ -160,6 +159,8 @@ public class WeaponHandler : MonoBehaviour
     {
         weaponSelector.InputDirection(input.Get<Vector2>());
     }
+    public bool PrimaryHeld { get; private set; }
+    public bool SecondaryHeld { get; private set; }
     #endregion
 
     #region Weapon switching

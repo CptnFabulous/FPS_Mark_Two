@@ -86,14 +86,14 @@ public class RangedAttack : WeaponMode
         optics.enabled = false;
         magazine.enabled = false;
     }
-    public override void OnPrimaryInput()
+    public override void OnPrimaryInputChanged()
     {
-        if (attachedTo.user.TriggerHeld && controls.InBurst == false && NotReloading)
+        if (PrimaryHeld && controls.InBurst == false && NotReloading)
         {
             StartCoroutine(controls.Fire(this));
         }
     }
-    public override void OnSecondaryInput(bool held)
+    public override void OnSecondaryInputChanged()
     {
         if (optics == null)
         {
@@ -102,14 +102,14 @@ public class RangedAttack : WeaponMode
 
         if (attachedTo.user.toggleADS)
         {
-            if (held)
+            if (SecondaryHeld)
             {
                 optics.IsAiming = !optics.IsAiming;
             }
         }
         else
         {
-            optics.IsAiming = held;
+            optics.IsAiming = SecondaryHeld;
         }
     }
     public override void OnTertiaryInput()

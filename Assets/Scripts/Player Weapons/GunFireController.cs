@@ -28,14 +28,14 @@ public class GunFireController : MonoBehaviour
         InBurst = true;
         int shotsInBurst = 0;
         
-        while (CanBurst(shotsInBurst) && mode.User.TriggerHeld && mode.CanShoot())
+        while (CanBurst(shotsInBurst) && mode.PrimaryHeld && mode.CanShoot())
         {
             mode.SingleShot();
             shotsInBurst++;
             yield return new WaitForSeconds(ShotDelay);
         }
 
-        yield return new WaitWhile(() => mode.User.TriggerHeld);
+        yield return new WaitWhile(() => mode.PrimaryHeld);
 
         InBurst = false;
     }

@@ -25,9 +25,23 @@ public abstract class WeaponMode : MonoBehaviour
     }
     public abstract void OnSwitchTo();
     public abstract void OnSwitchFrom();
-    public abstract void OnPrimaryInput();
-    public abstract void OnSecondaryInput(bool held);
+    public abstract void OnPrimaryInputChanged();
+    public abstract void OnSecondaryInputChanged();
     public abstract void OnTertiaryInput();
+    public bool PrimaryHeld
+    {
+        get
+        {
+            return User.PrimaryHeld;
+        }
+    }
+    public bool SecondaryHeld
+    {
+        get
+        {
+            return User.SecondaryHeld;
+        }
+    }
 
     public abstract bool InAction { get; }
 }
