@@ -14,8 +14,8 @@ public class Player : Character
     
     public void Die()
     {
-        movement.enabled = false;
-        weapons.enabled = false;
+        //movement.enabled = false;
+        //weapons.enabled = false;
         movement.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
     }
