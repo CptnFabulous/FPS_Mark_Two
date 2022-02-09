@@ -159,7 +159,7 @@ public class GunADS : MonoBehaviour
         }
 
         Vector3 cameraDirection = Vector3.Slerp(player.movement.aimAxis.forward, user.AimDirection, timer);
-        player.movement.upperBody.LookAt(player.movement.upperBody.position + cameraDirection);
+        player.movement.upperBody.LookAt(player.movement.upperBody.position + cameraDirection, player.movement.transform.up);
     }
     private void LateUpdate()
     {
