@@ -426,10 +426,9 @@ public class MovementController : MonoBehaviour
     void TorsoDrag()
     {
         float dragIntensity = Mathf.Clamp01(TotalVelocity.magnitude / speedForMaxDrag);
-        Vector3 direction = transform.InverseTransformDirection(TotalVelocity);
-        Vector3 dragMax = direction.normalized * -upperBodyDragDistance;
-        Vector3 dragValue = Vector3.Lerp(Vector3.zero, dragMax, dragIntensity);
-        torsoPosition += dragValue;
+        Vector3 dragOffset = -upperBodyDragDistance * dragIntensity * TotalVelocity.normalized;
+        //Vector3 dragOffset = Vector3.Lerp(Vector3.zero, -upperBodyDragDistance * TotalVelocity.normalized, dragIntensity);
+        torsoPosition += aimAxis.InverseTransformDirection(dragOffset);
     }
     /// <summary>
     /// Adds cosmetic tilt to the player's hands when they move around.
