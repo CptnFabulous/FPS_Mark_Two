@@ -35,11 +35,11 @@ public abstract class WeaponMode : MonoBehaviour
             return User.PrimaryHeld;
         }
     }
-    public bool SecondaryHeld
+    public bool SecondaryActive
     {
         get
         {
-            return User.SecondaryHeld;
+            return User.SecondaryActive;
         }
     }
 

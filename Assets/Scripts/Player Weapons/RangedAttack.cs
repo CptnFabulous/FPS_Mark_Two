@@ -100,17 +100,7 @@ public class RangedAttack : WeaponMode
             return;
         }
 
-        if (attachedTo.user.toggleADS)
-        {
-            if (SecondaryHeld)
-            {
-                optics.IsAiming = !optics.IsAiming;
-            }
-        }
-        else
-        {
-            optics.IsAiming = SecondaryHeld;
-        }
+        optics.IsAiming = SecondaryActive;
     }
     public override void OnTertiaryInput()
     {

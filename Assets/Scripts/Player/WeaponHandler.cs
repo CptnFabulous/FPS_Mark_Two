@@ -129,7 +129,18 @@ public class WeaponHandler : MonoBehaviour
         {
             return;
         }
-        SecondaryHeld = input.isPressed;
+
+        if (toggleADS)
+        {
+            if (input.isPressed)
+            {
+                SecondaryActive = !SecondaryActive;
+            }
+        }
+        else
+        {
+            SecondaryActive = input.isPressed;
+        }
         CurrentWeapon.CurrentMode.OnSecondaryInputChanged();
     }
     void OnReload()
@@ -160,7 +171,14 @@ public class WeaponHandler : MonoBehaviour
         weaponSelector.InputDirection(input.Get<Vector2>());
     }
     public bool PrimaryHeld { get; private set; }
-    public bool SecondaryHeld { get; private set; }
+    public bool SecondaryActive { get; private set; }
+    public void CancelInputs()
+    {
+        PrimaryHeld = false;
+        CurrentWeapon.CurrentMode.OnPrimaryInputChanged();
+        SecondaryActive = false;
+        CurrentWeapon.CurrentMode.OnSecondaryInputChanged();
+    }
     #endregion
 
     #region Weapon switching
