@@ -82,6 +82,7 @@ public class Health : MonoBehaviour
         if (data.current <= 0)
         {
             onDeath.Invoke();
+            EventHandler.Transmit(new KillMessage(attacker, this, type));
         }
         else if (amount < 0)
         {

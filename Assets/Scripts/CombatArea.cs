@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class CombatArea : MonoBehaviour
 {
     //public bool lockExitsUntilCompleted;
     
-    public List<Combatant> allEnemies;
-    Player playerFighting;
+    public List<Combatant> remainingEnemies;
+    public UnityEvent onPlayerEnter;
+    public UnityEvent onAllEnemiesDefeated;
+    public UnityEvent onPlayerExit;
 
+    Player playerFighting;
     Collider zoneCollider;
     Rigidbody zoneRigidbody;
 
+    
 
     private void Awake()
     {
@@ -24,9 +28,10 @@ public class CombatArea : MonoBehaviour
         }
         zoneRigidbody.isKinematic = true;
 
-        allEnemies = new List<Combatant>(GetComponentsInChildren<Combatant>());
-    }
+        remainingEnemies = new List<Combatant>(GetComponentsInChildren<Combatant>());
 
+        EventHandler.Subscribe(CheckKills, true);
+    }
     private void OnTriggerEnter(Collider other)
     {
         Player entering = other.GetComponentInParent<Player>();
@@ -35,19 +40,24 @@ public class CombatArea : MonoBehaviour
             return;
         }
 
+        if (remainingEnemies.Count <= 0) // If no enemies are left, no need to do anything
+        {
+            return;
+        }
+
         playerFighting = entering;
 
         // Aggro enemies towards player
-        allEnemies.RemoveAll((c) => c == null || c.character.health.IsAlive == false); // Remove empty entries and entries where enemy is already dead
-        for (int i = 0; i < allEnemies.Count; i++)
+        for (int i = 0; i < remainingEnemies.Count; i++)
         {
-            if (allEnemies[i].character.IsHostileTowards(playerFighting) && allEnemies[i].target == null)
+            if (remainingEnemies[i].character.IsHostileTowards(playerFighting) && remainingEnemies[i].target == null)
             {
-                allEnemies[i].target = playerFighting;
+                remainingEnemies[i].target = playerFighting;
             }
         }
-    }
 
+        onPlayerEnter.Invoke();
+    }
     private void OnTriggerExit(Collider other)
     {
         Player leaving = other.GetComponentInParent<Player>();
@@ -63,15 +73,25 @@ public class CombatArea : MonoBehaviour
         }
 
         // De-aggro enemies
-        allEnemies.RemoveAll((c) => c == null || c.character.health.IsAlive == false); // Remove empty entries and entries where enemy is already dead
-        for (int i = 0; i < allEnemies.Count; i++)
+        for (int i = 0; i < remainingEnemies.Count; i++)
         {
-            if (allEnemies[i].target == leaving)
+            if (remainingEnemies[i].target == leaving)
             {
-                allEnemies[i].target = null;
+                remainingEnemies[i].target = null;
             }
         }
+
+        onPlayerExit.Invoke();
     }
 
-
+    void CheckKills(KillMessage message)
+    {
+        // Remove empty entries and entries where enemy is already dead
+        remainingEnemies.RemoveAll((c) => c == null || c.character.health.IsAlive == false);
+        if (remainingEnemies.Count <= 0) // If all enemies are defeated
+        {
+            onAllEnemiesDefeated.Invoke();
+            playerFighting = null;
+        }
+    }
 }
