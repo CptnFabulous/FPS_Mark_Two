@@ -21,12 +21,15 @@ public class PointDamage : MonoBehaviour
     {
         // Check for friendly fire
         Character attacking = attacker as Character;
-        Character attacked = rh.collider.GetComponentInParent<Character>();
-        // Set notAlly to true if both the attacker and target have specified factions, and they are hostile towards each other
-        bool notAlly = attacking != null && attacked != null && attacking.affiliation.IsHostileTowards(attacked.affiliation);
-        
+
         Hitbox damageable = rh.collider.GetComponent<Hitbox>();
-        if (damageable != null && notAlly) // If a hitbox is present
+        Character attacked = rh.collider.GetComponentInParent<Character>();
+
+        // Set canHit to true if both the attacker and target have specified factions, and they are hostile towards each other
+        // Or if there aren't two characters to check the factions of
+        bool canHit = (attacking == null || attacked == null) || attacking.affiliation.IsHostileTowards(attacked.affiliation);
+
+        if (damageable != null && canHit) // If a hitbox is present
         {
             damageable.Damage(damage, criticalMultiplier, type, attacker);
             onDamaged.Invoke(rh);
@@ -36,7 +39,7 @@ public class PointDamage : MonoBehaviour
             onUndamaged.Invoke(rh);
         }
 
-        if (rh.rigidbody != null && notAlly)
+        if (rh.rigidbody != null && canHit)
         {
             Vector3 direction = (rh.point - origin).normalized;
             rh.rigidbody.AddForceAtPosition(direction * knockback, rh.point, ForceMode.Impulse);
