@@ -137,15 +137,18 @@ public class RadialMenu : MonoBehaviour
     /// Opens the radial menu and updates it to the current selection.
     /// </summary>
     /// <param name="index"></param>
-    public void EnterMenu(int index)
+    public void EnterMenu(int newIndex)
     {
         if (options.Length <= 0)
         {
             return;
         }
-        Value = index;
+
+        index = newIndex;
+        onValueChanged.Invoke(index);
+        
         cursorDirection = Vector2.zero;
-        selectorAxis.localRotation = Quaternion.Euler(0, 0, SegmentSize * index);
+        selectorAxis.localRotation = Quaternion.Euler(0, 0, -SegmentSize * index);
         SetActiveState(true);
     }
     /// <summary>

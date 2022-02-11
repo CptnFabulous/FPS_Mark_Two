@@ -157,7 +157,9 @@ public class WeaponHandler : MonoBehaviour
         {
             // Run function to open weapon selector
             controller.movement.canLook = false;
-            weaponSelector.EnterMenu(equippedWeaponIndex);
+            int index = SelectorIndexFromWeaponAndMode(equippedWeaponIndex, CurrentWeapon.currentModeIndex);
+            Debug.Log("Switching, " + index);
+            weaponSelector.EnterMenu(index);
         }
         else
         {
@@ -270,6 +272,23 @@ public class WeaponHandler : MonoBehaviour
                 firingModeIndex = 0;
             }
         }
+    }
+    public int SelectorIndexFromWeaponAndMode(int weaponIndex, int firingModeIndex)
+    {
+        int index = 0;
+        for (int w = 0; w < equippedWeapons.Length; w++)
+        {
+            for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
+            {
+                if (w == weaponIndex && m == firingModeIndex)
+                {
+                    return index;
+                }
+                index++;
+            }
+            // Calculate where to put borders and weapon graphics
+        }
+        return 0;
     }
     #endregion
 }
