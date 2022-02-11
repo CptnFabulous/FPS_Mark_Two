@@ -71,7 +71,8 @@ public class StateMachine : MonoBehaviour
         allTransitions.Add(new Transition(from, to, conditions));
     }
 
-    #region Required classes
+    #region Extra classes
+
     [System.Serializable]
     public abstract class State
     {
@@ -94,7 +95,6 @@ public class StateMachine : MonoBehaviour
             conditions = _conditions;
         }
     }
-    #endregion
 
     /// <summary>
     /// Runs multiple states simultaneously.
@@ -224,45 +224,5 @@ public class StateMachine : MonoBehaviour
         }
     }
 
-    [System.Serializable]
-    public class TestState : State
-    {
-        public float timeLimit;
-        float stateEnterTime;
-
-        public override void Enter(StateMachine controller)
-        {
-            Debug.Log("Entering state " + name + " on frame " + Time.frameCount);
-            stateEnterTime = Time.time;
-        }
-
-        public override void Exit(StateMachine controller)
-        {
-            Debug.Log("Exiting state " + name + " on frame " + Time.frameCount);
-        }
-
-        public override void FixedUpdate(StateMachine controller)
-        {
-            Debug.Log("Physics updating state " + name + " on frame " + Time.frameCount);
-        }
-
-        public override void LateUpdate(StateMachine controller)
-        {
-            Debug.Log("Late updating state " + name + " on frame " + Time.frameCount);
-        }
-
-        public override void Update(StateMachine controller)
-        {
-            Debug.Log("Updating state " + name + " on frame " + Time.frameCount);
-        }
-
-        public Func<bool> TimeLimitExceeded() => () => (Time.time - stateEnterTime) >= timeLimit;
-        /*
-        Func<bool> TimeLimitExceeded() => TimeLimitTest;
-        bool TimeLimitTest()
-        {
-            return (Time.time - stateEnterTime) >= timeLimit;
-        }
-        */
-    }
+    #endregion
 }
