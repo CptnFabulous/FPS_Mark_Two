@@ -5,14 +5,15 @@ using UnityEngine.Events;
 
 public class TimedCosmeticEffect : MonoBehaviour
 {
+    [Range(0, 1)] public float timer;
+
     public float duration = 1;
-    
+
     public bool looping;
     public bool playOnAwake;
     public UnityEvent<float> effects;
 
-    float timer;
-
+    
     private void OnValidate()
     {
         effects.Invoke(timer);
@@ -46,7 +47,7 @@ public class TimedCosmeticEffect : MonoBehaviour
             }
             else
             {
-                Stop();
+                enabled = false;
             }
         }
     }
@@ -78,4 +79,25 @@ public class TimedCosmeticEffect : MonoBehaviour
         timer = Mathf.Clamp01(value);
         effects.Invoke(timer);
     }
+
+    public bool completed
+    {
+        get
+        {
+            return looping == false && timer >= 1;
+        }
+    }
+
+    public RectTransform rectTransform
+    {
+        get
+        {
+            if (rt == null)
+            {
+                rt = GetComponent<RectTransform>();
+            }
+            return rt;
+        }
+    }
+    RectTransform rt;
 }
