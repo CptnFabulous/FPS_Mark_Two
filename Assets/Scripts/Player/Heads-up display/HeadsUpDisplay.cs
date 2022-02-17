@@ -31,33 +31,6 @@ public class HeadsUpDisplay : MonoBehaviour
         return Physics.Raycast(camera.transform.position, camera.transform.forward, out observedObject, range, relevantThingDetection);
     }
 
-    [Header("Player Health")]
-    public ResourceMeter healthMeter;
-    public UnityEvent hurtEffects;
-    public UnityEvent healEffects;
-    public void CheckToRunHealthEffects(DamageMessage message)
-    {
-        if (message.victim != controller.health)
-        {
-            return;
-        }
-
-        UpdateHealthMeter(controller.health);
-
-        if (message.amount < 0)
-        {
-            healEffects.Invoke();
-        }
-        else
-        {
-            hurtEffects.Invoke();
-        }
-    }
-    public void UpdateHealthMeter(Health healthInfo)
-    {
-        healthMeter.Refresh(healthInfo.data);
-    }
-
     [Header("Enemy Health")]
     public ResourceMeter enemyHealthMeter;
     Health observedEnemyHealth;
@@ -196,11 +169,7 @@ public class HeadsUpDisplay : MonoBehaviour
         canvas = GetComponent<Canvas>();
         rt = GetComponent<RectTransform>();
 
-        EventHandler.Subscribe(CheckToRunHealthEffects, true);
         EventHandler.Subscribe(CheckToPlayDamageEffects, true);
-
-        UpdateHealthMeter(controller.health);
-
     }
     private void LateUpdate()
     {
