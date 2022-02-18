@@ -8,6 +8,11 @@ public class AIAim : MonoBehaviour
     public Transform viewAxis;
     public AimValues defaultAimStats;
     public AimValues Stats { get; set; }
+    public void ResetStatsToDefault()
+    {
+        Stats = defaultAimStats;
+    }
+
 
     [HideInInspector] public bool lookingInDefaultDirection = true;
     

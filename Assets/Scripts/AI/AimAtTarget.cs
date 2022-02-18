@@ -8,7 +8,6 @@ public class AimAtTarget : AIAction
 {
     public AIAttack attack;
 
-    public AIAim.AimValues stats;
     public float aimLockThreshold;
     public float aimBreakThreshold;
     public virtual Vector3 GetTargetPoint()
@@ -36,7 +35,6 @@ public class AimAtTarget : AIAction
     {
         base.Enter(controller);
 
-        AimData.Stats = stats; // Set new stats
         AimData.lookingInDefaultDirection = false;
 
         attack.behaviourUsingThis = this; // Assign a reference to the attack being triggered by this behaviour
@@ -44,7 +42,7 @@ public class AimAtTarget : AIAction
     public override void Update(StateMachine controller)
     {
         // Checks if it's presently possible to aim at the target
-        bool lineOfSightPossible = LineOfSightCheck(AimData.LookOrigin, CombatAI.target.health.HitboxColliders, stats.lookDetection, stats.diameterForUnobstructedSight, Character.health.HitboxColliders);
+        bool lineOfSightPossible = LineOfSightCheck(AimData.LookOrigin, CombatAI.target.health.HitboxColliders, AimData.Stats.lookDetection, AimData.Stats.diameterForUnobstructedSight, Character.health.HitboxColliders);
         if (lineOfSightPossible)
         {
             TargetPoint = GetTargetPoint(); // Determine current point in world space to aim at

@@ -56,7 +56,7 @@ public class AIAttack : MonoBehaviour
         }
 
         CurrentPhase = AttackPhase.CoolingDown;
-        behaviourUsingThis.AI.aiming.Stats = behaviourUsingThis.stats;
+        behaviourUsingThis.AI.aiming.ResetStatsToDefault();
         onCooldown.Invoke();
         yield return new WaitForSeconds(cooldownDuration);
 
