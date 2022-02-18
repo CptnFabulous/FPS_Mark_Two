@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum AttackPhase
+{
+    Ready,
+    Telegraphing,
+    Attacking,
+    CoolingDown
+}
 public class AIAttack : MonoBehaviour
 {
     public float telegraphDelay = 0.5f;
@@ -77,13 +84,6 @@ public class AIAttack : MonoBehaviour
             currentAttack = null;
         }
         CurrentPhase = AttackPhase.Ready;
-    }
-    public enum AttackPhase
-    {
-        Ready,
-        Telegraphing,
-        Attacking,
-        CoolingDown
     }
 
     public void ShootGun(GunGeneralStats stats)
