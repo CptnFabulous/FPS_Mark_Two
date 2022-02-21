@@ -11,7 +11,7 @@ public class DirectionalHUDIndicator : MonoBehaviour
     public Vector3 targetWorldSpace;
 
     [Header("Criteria to show")]
-    [Range(10, 90)] public float minimumAngleToShow = 10;
+    [Range(0, 90)] public float minimumAngleToShow = 10;
     public bool checkIfOutsideViewport = true;
 
     [Header("Cosmetics")]
@@ -67,7 +67,7 @@ public class DirectionalHUDIndicator : MonoBehaviour
         // Calculate world direction
         Vector3 direction = position - ViewCamera.transform.position;
 
-        bool outsideThreshold = Vector3.Angle(direction, ViewCamera.transform.forward) > minimumAngleToShow;
+        bool outsideThreshold = Vector3.Angle(direction, ViewCamera.transform.forward) >= minimumAngleToShow;
         if (checkIfOutsideViewport)
         {
             // Calculate viewport position
