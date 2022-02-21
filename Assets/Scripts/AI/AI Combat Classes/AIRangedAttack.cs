@@ -15,13 +15,14 @@ public class AIRangedAttack : AIAttackBehaviour
     bool lineOfSightEstablished;
     bool aimAlreadyLocked;
     
-
-    public override void Setup(StateMachine controller)
+    /*
+    public void Setup(StateMachine controller)
     {
         onTelegraph.AddListener(() => AimData.Stats = aimStatswhileTelegraphing);
         onTelegraph.AddListener(() => AimData.Stats = aimStatswhileAttacking);
         onTelegraph.AddListener(AimData.ResetStatsToDefault);
     }
+    */
     public override void WhileWaitingToAttack()
     {
         targetLocation = GetTargetLocation();
