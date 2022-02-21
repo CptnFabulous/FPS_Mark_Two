@@ -25,7 +25,7 @@ public class AimAtTarget : AIAction
             threshold += aimBreakThreshold;
         }
 
-        return AI.aiming.LookCheckDistance(AI.aiming.AimDirection, TargetPoint, threshold);
+        return AI.aiming.LookCheckDistance(TargetPoint, threshold, true);
     }
     public Vector3 TargetPoint { get; private set; }
     public bool TargetAcquired { get; private set; }

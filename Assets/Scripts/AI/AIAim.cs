@@ -157,8 +157,9 @@ public class AIAim : MonoBehaviour
     /// <param name="position"></param>
     /// <param name="threshold"></param>
     /// <returns></returns>
-    public bool LookCheckAngle(Vector3 direction, Vector3 target, float threshold)
+    public bool LookCheckAngle(Vector3 target, float threshold, bool useAim = false)
     {
+        Vector3 direction = useAim ? AimDirection : LookDirection;
         return Vector3.Angle(target - LookOrigin, direction) <= threshold;
     }
 
@@ -168,8 +169,9 @@ public class AIAim : MonoBehaviour
     /// <param name="position"></param>
     /// <param name="threshold"></param>
     /// <returns></returns>
-    public bool LookCheckDistance(Vector3 direction, Vector3 target, float threshold)
+    public bool LookCheckDistance(Vector3 target, float threshold, bool useAim = false)
     {
+        Vector3 direction = useAim ? AimDirection : LookDirection;
         Vector3 relativeAimPoint = direction * Vector3.Distance(LookOrigin, target);
         float distanceBetweenAimAndTarget = Vector3.Distance(LookOrigin + relativeAimPoint, target);
         return distanceBetweenAimAndTarget < threshold;

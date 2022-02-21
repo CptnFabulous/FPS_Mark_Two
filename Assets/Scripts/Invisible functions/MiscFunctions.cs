@@ -37,8 +37,15 @@ public readonly struct MiscFunctions
         };
     }
 
+    public static float Vector3Min(Vector3 vector3)
+    {
+        return Mathf.Min(Mathf.Min(vector3.x, vector3.y), vector3.z);
+    }
+    public static float Vector3Max(Vector3 vector3)
+    {
+        return Mathf.Max(Mathf.Max(vector3.x, vector3.y), vector3.z);
+    }
 
-    
     public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, Collider[] exceptions)
     {
         List<RaycastHit> list = new List<RaycastHit>(Physics.RaycastAll(origin, direction, distance, layerMask));
