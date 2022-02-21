@@ -472,7 +472,19 @@ public class MovementController : MonoBehaviour
     {
         SetGroundingData();
         Vector3 movement = new Vector3(movementInput.x, 0, movementInput.y) * CurrentMoveSpeed;
-        movementVelocity = transform.rotation * movement;
+        //movementVelocity = transform.rotation * movement;
+        
+        
+        movement = transform.rotation * movement;
+        if (groundingData.collider != null)
+        {
+            // If grounded, rotates movement vector based on angle of surface so the player doesn't start falling by moving too fast off a downward slope.
+            movement = Vector3.ProjectOnPlane(movement, groundingData.normal);
+            Debug.DrawRay(transform.position, groundingData.normal, Color.magenta);
+        }
+        Debug.DrawRay(transform.position, movement);
+        movementVelocity = movement;
+        
         rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
     }
     private void LateUpdate()
