@@ -36,6 +36,17 @@ public readonly struct MiscFunctions
             vector3.z,
         };
     }
+    public static bool ArrayContains(object[] array, object data)
+    {
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i] == data)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static float Vector3Min(Vector3 vector3)
     {

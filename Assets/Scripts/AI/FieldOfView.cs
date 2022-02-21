@@ -50,19 +50,26 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
+
+
+    //
+
+
     /// <summary>
-    /// Calculates and runs a sweep of raycasts to check an area for sections of a particular collider. This is performance-intensive and should not be run regularly.
+    /// Calculates and runs a sweep of raycasts to check a cone-shaped area for colliders. This check will also detect partially-hidden colliders, but is performance-intensive and should not be run regularly.
     /// </summary>
+    /// <param name="targetColliders"></param>
     /// <param name="origin"></param>
-    /// <param name="target"></param>
-    /// <param name="raycastSpacing"></param>
+    /// <param name="direction"></param>
+    /// <param name="angle"></param>
+    /// <param name="range"></param>
     /// <param name="hit"></param>
     /// <param name="viewDetection"></param>
+    /// <param name="raycastSpacing"></param>
     /// <returns></returns>
-    /// 
-    public static bool ComplexLineOfSightCheck(Vector3 origin, Collider target, float raycastSpacing, out RaycastHit hit, LayerMask viewDetection)
+    public static bool ComplexDetectionConeCheck(Collider[] targetColliders, Vector3 origin, Vector3 direction, float angle, float range, out RaycastHit hit, LayerMask viewDetection, float raycastSpacing = 0.25f)
     {
-        Bounds b = target.bounds;
+        Bounds b = MiscFunctions.CombinedBounds(targetColliders);
         Vector3 centre = b.center;
         float maxExtent = b.extents.magnitude;
         Quaternion lookDirection = Quaternion.LookRotation(centre - origin);
@@ -78,25 +85,30 @@ public class FieldOfView : MonoBehaviour
         float spacingY = zoneHeight / gridHeight;
         
         Vector3 gridStartCorner = centre + (-right * zoneWidth / 2) + (-up * zoneHeight / 2);
-        float range = Vector3.Distance(origin, centre) + maxExtent;
 
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
+                // Calculates raycast point to aim for
                 Vector3 raycastHitDestination = gridStartCorner + (right * spacingX * x) + (up * spacingY * y);
-                Vector3 direction = raycastHitDestination - origin;
-                if (Physics.Raycast(origin, direction, out hit, range, viewDetection))
+                Vector3 raycastDirection = raycastHitDestination - origin;
+                // If raycast hits within range and is inside the valid detection angle
+                if (Vector3.Angle(direction, raycastDirection) < angle && Physics.Raycast(origin, raycastDirection, out hit, range, viewDetection))
                 {
-                    Debug.DrawRay(origin, direction.normalized * range, Color.green, 3);
-                    if (hit.collider == target)
+                    if (MiscFunctions.ArrayContains(targetColliders, hit.collider))
                     {
+                        Debug.DrawRay(origin, direction.normalized * range, Color.green, 3);
                         return true;
+                    }
+                    else
+                    {
+                        Debug.DrawRay(origin, direction.normalized * range, Color.yellow, 3);
                     }
                 }
                 else
                 {
-                    Debug.DrawRay(origin, direction.normalized * range, Color.yellow, 3);
+                    Debug.DrawRay(origin, direction.normalized * range, Color.red, 3);
                 }
             }
         }
@@ -107,34 +119,6 @@ public class FieldOfView : MonoBehaviour
 
 
 
-    /*
-    public Collider testCollider;
-    public LayerMask mask = ~0;
-
-    float lastTime;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-        if (Time.time - lastTime > 3)
-        {
-            if (FieldOfView.ComplexLineOfSightCheck(transform.position, testCollider, 0.25f, out RaycastHit hit, mask))
-            {
-                Debug.DrawRay(testCollider.bounds.center, Vector3.up * 5, Color.magenta, 3);
-            }
-            
-            lastTime = Time.time;
-        }
-        
-    }
-    */
 
 
     private void OnDrawGizmos()

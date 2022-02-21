@@ -83,6 +83,18 @@ public abstract class AIAction : StateMachine.State
 
         return false;
     }
+
+    public static bool LineOfSightCheck(Vector3 from, Vector3 to, float viewingPathDiameter, LayerMask detection, List<Collider> exceptions)
+    {
+        float rayDistance = Vector3.Distance(from, to); // Calculate distance
+        // Run SpherecastAll to get all colliders in the path of the object
+        List<RaycastHit> results = new List<RaycastHit>(Physics.SphereCastAll(from, viewingPathDiameter / 2, to - from, rayDistance, detection));
+        // Remove all results that are mentioned in the exceptions array
+        results.RemoveAll(rh => exceptions.Contains(rh.collider));
+        // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
+        return results.Count > 0;
+    }
+
 }
 
 public abstract class AIMovement : AIAction
