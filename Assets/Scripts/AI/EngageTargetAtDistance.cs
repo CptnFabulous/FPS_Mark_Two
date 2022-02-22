@@ -9,7 +9,6 @@ public class EngageTargetAtDistance : AIMovement
     public float minimumDistance = 10;
     public float maximumDistance = 30;
     public int numberOfChecks = 15;
-    public LayerMask detection = ~0;
 
     Vector3 destination;
     Character target
@@ -55,7 +54,7 @@ public class EngageTargetAtDistance : AIMovement
 
             // Check that valid path can be made
             NavMeshPath newPath = new NavMeshPath();
-            bool validPath = NavMesh.CalculatePath(AI.agent.transform.position, samples[i], detection, newPath) && newPath.status == NavMeshPathStatus.PathComplete;
+            bool validPath = NavMesh.CalculatePath(AI.agent.transform.position, samples[i], NavMeshAgent.areaMask, newPath) && newPath.status == NavMeshPathStatus.PathComplete;
             if (validPath == false)
             {
                 continue;
