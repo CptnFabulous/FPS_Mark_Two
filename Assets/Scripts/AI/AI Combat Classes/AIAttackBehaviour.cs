@@ -3,26 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class AIAttackBehaviour : AIAction
+public abstract class AIAttackBehaviour : MonoBehaviour
 {
-    public Character Target
+    public Combatant user;
+    public AIAim aim
     {
         get
         {
-            return CombatAI?.target;
+            return user.aiming;
         }
     }
     
     // Attack stats
     [Header("Attack speed")]
     public float attacksPerMinute;
-    public float minAttackCount;
-    public float maxAttackCount;
+    public int minAttackCount;
+    public int maxAttackCount;
     public float delayBetweenAttacks
     {
         get
         {
             return 60 / attacksPerMinute;
+        }
+    }
+    public bool attackInProgress
+    {
+        get
+        {
+            return currentAttack != null;
         }
     }
 
@@ -38,7 +46,7 @@ public abstract class AIAttackBehaviour : AIAction
     /// <summary>
     /// Actions to perform until a target is found.
     /// </summary>
-    public abstract void WhileWaitingToAttack();
+    public abstract void AcquireTarget();
     /// <summary>
     /// <summary>
     /// Can the AI can viably attack the target?
@@ -46,7 +54,9 @@ public abstract class AIAttackBehaviour : AIAction
     /// <returns></returns>
     public virtual bool CanAttackTarget()
     {
-        return currentAttack == null && Time.time - timeOfLastAttackEnd >= cooldownDuration;
+        // If attack is off cooldown
+        // If AI is not already performing the attack
+        return attackInProgress == false && Time.time - timeOfLastAttackEnd >= cooldownDuration;
     }
     /// <summary>
     /// The IEnumerator controlling the telegraph and attack timing.
@@ -69,7 +79,11 @@ public abstract class AIAttackBehaviour : AIAction
     }
     public void EndAttack()
     {
-        AI.StopCoroutine(currentAttack);
+        if (attackInProgress == false)
+        {
+            return;
+        }
+        StopCoroutine(currentAttack);
         currentAttack = null;
         currentPhase = AttackPhase.CoolingDown;
         onCooldown.Invoke();
@@ -80,40 +94,62 @@ public abstract class AIAttackBehaviour : AIAction
     int counter;
     float timeOfLastAttackEnd;
 
-
-    public override void Update(StateMachine controller)
+    public virtual void Enter() { }
+    public void Loop()
     {
         // Perform default functions until a target is found
-        WhileWaitingToAttack();
+        AcquireTarget();
 
         // If conditions ideal to attack the target
-        // If attack is off cooldown
-        // If AI is not already performing the attack
         if (CanAttackTarget())
         {
             // Start attack sequence
             currentAttack = AttackSequence();
-            AI.StartCoroutine(currentAttack);
+            StartCoroutine(currentAttack);
         }
-        
     }
-
-
-
-
-
-    void WhileTelegraphing()
+    public virtual void Exit()
     {
-
+        EndAttack();
     }
-    void WhileAttacking()
+
+
+
+
+
+
+    public void ShootGun(GunGeneralStats stats)
     {
-
+        stats.Shoot(user.character, aim.LookOrigin, aim.AimDirection, aim.LookUp);
     }
-    void WhileCoolingDown()
+
+
+}
+
+[System.Serializable]
+public class ExecuteAttack : AIAction
+{
+    public AIAttackBehaviour attack;
+    public override void Enter(StateMachine controller)
     {
-
+        base.Enter(controller);
+        attack.user = CombatAI;
+        attack.Enter();
     }
+    public override void Update(StateMachine controller)
+    {
+        attack.Loop();
+    }
+    public override void Exit(StateMachine controller)
+    {
+        attack.Exit();
+    }
+}
 
-
+public enum AttackPhase
+{
+    Ready,
+    Telegraphing,
+    Attacking,
+    CoolingDown
 }

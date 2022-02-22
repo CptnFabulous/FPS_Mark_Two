@@ -4871,7 +4871,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 577827449643995095}
-  - component: {fileID: 577827449643995096}
+  - component: {fileID: 7438278461295849682}
   - component: {fileID: 577827449643995099}
   - component: {fileID: 577827449643995097}
   - component: {fileID: 577827449643995098}
@@ -4901,7 +4901,7 @@ Transform:
   m_Father: {fileID: 577827450190796994}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &577827449643995096
+--- !u!114 &7438278461295849682
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4910,10 +4910,60 @@ MonoBehaviour:
   m_GameObject: {fileID: 577827449643995094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0ea4f34fd7cd334b9d8815761059929, type: 3}
+  m_Script: {fileID: 11500000, guid: a30c14ca320b2c74b8cf036a4a3c38e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  user: {fileID: 0}
+  attacksPerMinute: 600
+  minAttackCount: 3
+  maxAttackCount: 3
   telegraphDelay: 0.5
+  cooldownDuration: 0.5
+  onTelegraph:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 577827449643995098}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  onAttack:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7438278461295849682}
+        m_TargetAssemblyTypeName: AIAttackBehaviour, Assembly-CSharp
+        m_MethodName: ShootGun
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 577827449643995099}
+          m_ObjectArgumentAssemblyTypeName: GunGeneralStats, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onCooldown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 577827449643995098}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   aimStatsWhileTelegraphing:
     lookSpeed: 10
     speedCurve:
@@ -4946,24 +4996,6 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     diameterForUnobstructedSight: 0.5
-  onTelegraph:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 577827449643995098}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  attacksPerMinute: 600
-  minAttackCount: 3
-  maxAttackCount: 3
   aimStatsWhileAttacking:
     lookSpeed: 10
     speedCurve:
@@ -4996,37 +5028,9 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     diameterForUnobstructedSight: 0.5
-  onAttack:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 577827449643995096}
-        m_TargetAssemblyTypeName: AIAttack, Assembly-CSharp
-        m_MethodName: ShootGun
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 577827449643995099}
-          m_ObjectArgumentAssemblyTypeName: GunGeneralStats, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  cooldownDuration: 0.5
-  onCooldown:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 577827449643995098}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  aimBreakThreshold: 0.5
+  minRange: 0
+  maxRange: 20
 --- !u!114 &577827449643995099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5570,22 +5574,23 @@ MonoBehaviour:
   character: {fileID: 577827450302408048}
   agent: {fileID: 577827450302408013}
   aiming: {fileID: 577827450302408052}
+  view: {fileID: 0}
   stateMachine: {fileID: 577827450302408051}
   target: {fileID: 0}
   engagementMovement:
     name: Pursue player
     movementSpeed: 3.5
-    minimumDistance: 10
-    maximumDistance: 30
+    minimumDistance: 15
+    maximumDistance: 20
     numberOfChecks: 15
-    detection:
-      serializedVersion: 2
-      m_Bits: 4294967295
   targetingStats:
     name: Attack with submachine gun
-    attack: {fileID: 577827449643995096}
+    attack: {fileID: 0}
     aimLockThreshold: 0.25
     aimBreakThreshold: 0.5
+  attackStats:
+    name: Attack with submachine gun
+    attack: {fileID: 7438278461295849682}
 --- !u!114 &577827450302408052
 MonoBehaviour:
   m_ObjectHideFlags: 0

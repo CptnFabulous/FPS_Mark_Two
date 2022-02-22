@@ -5,8 +5,8 @@ using UnityEngine;
 public class AIRangedAttack : AIAttackBehaviour
 {
     [Header("Aim stats")]
-    public AIAim.AimValues aimStatswhileTelegraphing;
-    public AIAim.AimValues aimStatswhileAttacking;
+    public AIAim.AimValues aimStatsWhileTelegraphing;
+    public AIAim.AimValues aimStatsWhileAttacking;
     public float aimBreakThreshold;
     public float minRange = 10;
     public float maxRange = 30;
@@ -15,47 +15,71 @@ public class AIRangedAttack : AIAttackBehaviour
     bool lineOfSightEstablished;
     bool aimAlreadyLocked;
     
-    /*
-    public void Setup(StateMachine controller)
+    
+    public void Awake()
     {
-        onTelegraph.AddListener(() => AimData.Stats = aimStatswhileTelegraphing);
-        onTelegraph.AddListener(() => AimData.Stats = aimStatswhileAttacking);
-        onTelegraph.AddListener(AimData.ResetStatsToDefault);
+        onTelegraph.AddListener(() => aim.Stats = aimStatsWhileTelegraphing);
+        onTelegraph.AddListener(() => aim.Stats = aimStatsWhileAttacking);
+        onTelegraph.AddListener(() => aim.ResetStatsToDefault());
     }
-    */
-    public override void WhileWaitingToAttack()
+    public override void Enter()
+    {
+        aim.lookingInDefaultDirection = false;
+    }
+    public override void Exit()
+    {
+        base.Exit();
+        aim.lookingInDefaultDirection = true;
+    }
+
+    public override void AcquireTarget()
     {
         targetLocation = GetTargetLocation();
-        lineOfSightEstablished = LineOfSightCheck(AimData.LookOrigin, Target.health.HitboxColliders, AimData.Stats.lookDetection, AimData.Stats.diameterForUnobstructedSight, Character.health.HitboxColliders);
-        
+        lineOfSightEstablished = AIAction.LineOfSightCheck(aim.LookOrigin, user.target.health.HitboxColliders, aim.Stats.lookDetection, aim.Stats.diameterForUnobstructedSight, user.character.health.HitboxColliders);
+
         if (lineOfSightEstablished) // If AI has a line of sight to attack the target, shift aim towards target
         {
-            AimData.RotateLookTowards(targetLocation);
+            aim.RotateLookTowards(targetLocation);
         }
         else
         {
-            AimData.LookInNeutralDirection();
+            aim.LookInNeutralDirection();
         }
     }
 
     public virtual Vector3 GetTargetLocation()
     {
-        return Target.health.HitboxBounds.center;
+        return user.target.health.HitboxBounds.center;
     }
     public override bool CanAttackTarget()
     {
-        Vector3 boundsExtents = CombatAI.target.health.HitboxBounds.extents;
+        // Checks prematurely for line of sight (already calculated)
+        if (lineOfSightEstablished == false)
+        {
+            return false;
+        }
+
+        // Checks prematurely for base criteria (simple to calculate)
+        if (base.CanAttackTarget() == false)
+        {
+            return false;
+        }
+
+        // Checks if distance is correct
+        float distanceToTarget = Vector3.Distance(aim.LookOrigin, targetLocation);
+        if (distanceToTarget < minRange || distanceToTarget > maxRange)
+        {
+            return false;
+        }
+
+        // Check if aim is on target
+        Vector3 boundsExtents = user.target.health.HitboxBounds.extents;
         float aimThreshold = MiscFunctions.Vector3Min(boundsExtents);
         if (aimAlreadyLocked)
         {
             aimThreshold += aimBreakThreshold;
         }
-        aimAlreadyLocked = AimData.LookCheckDistance(targetLocation, aimThreshold, true);
-
-        float distanceToTarget = Vector3.Distance(AimData.LookOrigin, targetLocation);
-        bool correctDistance = distanceToTarget >= minRange && distanceToTarget <= maxRange;
-
-        // Check if line of sight is established and aim is locked on
-        return base.CanAttackTarget() && aimAlreadyLocked && lineOfSightEstablished && correctDistance;
+        aimAlreadyLocked = aim.LookCheckDistance(targetLocation, aimThreshold, true);
+        return aimAlreadyLocked;
     }
 }
