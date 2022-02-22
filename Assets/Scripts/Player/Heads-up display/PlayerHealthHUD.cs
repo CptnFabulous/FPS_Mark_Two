@@ -66,10 +66,6 @@ public class PlayerHealthHUD : MonoBehaviour
             return;
         }
 
-
-
-        Debug.Log("Checking to assign indicator");
-
         DirectionalHUDIndicator newIndicator = Instantiate(indicatorPrefab, screenCentre);
         newIndicator.Setup(playerTracking, screenCentre);
 
