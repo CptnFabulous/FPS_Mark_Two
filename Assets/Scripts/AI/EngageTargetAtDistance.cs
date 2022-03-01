@@ -10,7 +10,11 @@ public class EngageTargetAtDistance : AIMovement
     public float maximumDistance = 30;
     public int numberOfChecks = 15;
 
-    Vector3 destination;
+    [Header("Self-preservation")]
+    public bool stayCloseToCover = true;
+    public float maxAcceptableDistanceToCover = 3;
+    public int coverChecksPerPositionCheck = 5;
+
     Character target
     {
         get
@@ -18,7 +22,8 @@ public class EngageTargetAtDistance : AIMovement
             return CombatAI?.target;
         }
     }
-    
+    Vector3 destination;
+    Vector3 nearbyCover;
     public override void Enter(StateMachine controller)
     {
         base.Enter(controller);
@@ -33,16 +38,30 @@ public class EngageTargetAtDistance : AIMovement
             FindIdealLocation(out bool successful);
         }
         AI.agent.destination = destination;
+
         Debug.DrawLine(AI.transform.position, destination, Color.magenta);
+
+        Vector3 aimOrigin = AI.RelativeLookOrigin(destination);
+        Debug.DrawLine(destination, aimOrigin, Color.yellow);
+        Debug.DrawLine(aimOrigin, target.CentreOfMass, Color.green);
+        if (stayCloseToCover)
+        {
+            Vector3 centreOfMass = AI.RelativeCentreOfMass(nearbyCover);
+            Debug.DrawLine(nearbyCover, centreOfMass, Color.cyan);
+            Debug.DrawLine(centreOfMass, target.LookOrigin, Color.red);
+        }
     }
     
     public void FindIdealLocation(out bool successful)
     {
-        Vector3 checkOrigin = target.transform.position;
+        //Vector3 checkOrigin = target.transform.position;
 
         float bestPathDistance = Mathf.Infinity; // Calculated once and stored so we don't have to do it every time we check against another path
 
-        AIGridPoints.GridPoint[] samples = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, checkOrigin, minimumDistance, maximumDistance);
+
+        bool bestPositionIsNearCover = false;
+
+        AIGridPoints.GridPoint[] samples = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, target.transform.position, minimumDistance, maximumDistance);
         for (int i = 0; i < samples.Length; i++)
         {
             #region Check that position is viable
@@ -65,11 +84,50 @@ public class EngageTargetAtDistance : AIMovement
 
             // Check if the sample is closer than the previous sample
             float newPathDistance = NavMeshPathDistance(newPath);
-            if (newPathDistance < bestPathDistance)
+            if (newPathDistance > bestPathDistance)
             {
-                destination = samples[i];
-                bestPathDistance = newPathDistance;
+                continue;
             }
+            #endregion
+
+            // If the enemy cares about taking cover, is this position close enough to cover?
+            if (stayCloseToCover)
+            {
+                #region Compare safety of position to that of previous best position
+                bool newPositionIsNearCover = false;
+                // Find valid cover within a short distance of the position
+                AIGridPoints.GridPoint[] nearbyCoverPoints = AIGridPoints.Current.GetSpecificNumberOfPoints(coverChecksPerPositionCheck, samplePosition, 0, maxAcceptableDistanceToCover, true);
+                for (int c = 0; c < nearbyCoverPoints.Length; c++)
+                {
+                    // If a cover point is safe from the player's current position (e.g. if a line of sight check fails)
+                    Vector3 from = target.LookOrigin;
+                    Vector3 to = AI.RelativeCentreOfMass(nearbyCoverPoints[c].position);
+                    if (LineOfSight(from, to, target.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders) == false)
+                    {
+                        // If the line of sight check fails, the position is a safe cover point from the player
+                        newPositionIsNearCover = true;
+                        nearbyCover = nearbyCoverPoints[c].position;
+                        break;
+                    }
+                }
+
+                if (newPositionIsNearCover == false && bestPositionIsNearCover == true)
+                {
+                    // If best position is near cover but new position isn't, don't assign because cover is more important than distance
+                    Debug.DrawRay(samplePosition, Vector3.up, Color.black, 10);
+                    continue;
+                }
+                else
+                {
+                    // If both positions are near cover or not, factor is irrelevant
+                    // If best position is not near cover but new position is, assign position because it's better
+                    bestPositionIsNearCover = true;
+                }
+                #endregion
+            }
+
+            destination = samplePosition;
+            bestPathDistance = newPathDistance;
         }
 
         // If bestPathDistance is still set to infinity, it means no path was found to have its distance recorded.
