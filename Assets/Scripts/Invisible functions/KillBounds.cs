@@ -28,7 +28,7 @@ public class KillBounds : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(levelBounds.center, levelBounds.size);

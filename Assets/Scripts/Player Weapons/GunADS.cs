@@ -195,14 +195,16 @@ public class GunADS : MonoBehaviour
             Vector3 position = player.movement.upperBody.position - reticleRelativeToModelTransform + reticleRelativeToHead;
             modelOrientationTransform.position = Vector3.Lerp(hipFireOrientation.position, position, timer);
         }
-
-        Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.forward, new Color(1, 0.5f, 0));
-        Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.up, new Color(1, 0.5f, 0));
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.DrawRay(reticleAxis.position, -reticleAxis.forward * distanceBetweenReticleAxisAndHead);
+        if (modelOrientationTransform != null)
+        {
+            Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.forward, new Color(1, 0.5f, 0));
+            Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.up, new Color(1, 0.5f, 0));
+        }
     }
 
 }
