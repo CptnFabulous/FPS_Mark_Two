@@ -24,6 +24,16 @@ public class EngageTargetAtDistance : AIMovement
     }
     Vector3 destination;
     Vector3 nearbyCover;
+
+    bool locationCompromised;
+    bool newLocationFound;
+
+    /// <summary>
+    /// True if the location is compromised and a new location cannot be found
+    /// </summary>
+    /// <returns></returns>
+    public System.Func<bool> UnableToEngageTarget() => ()=> locationCompromised && !newLocationFound;
+
     public override void Enter(StateMachine controller)
     {
         base.Enter(controller);
@@ -33,9 +43,10 @@ public class EngageTargetAtDistance : AIMovement
     }
     public override void Update(StateMachine controller)
     {
-        if (LocationCompromised())
+        locationCompromised = LocationCompromised();
+        if (locationCompromised)
         {
-            FindIdealLocation(out bool successful);
+            FindIdealLocation(out newLocationFound);
         }
         AI.agent.destination = destination;
 
@@ -51,7 +62,7 @@ public class EngageTargetAtDistance : AIMovement
             Debug.DrawLine(centreOfMass, target.LookOrigin, Color.red);
         }
     }
-    
+
     public void FindIdealLocation(out bool successful)
     {
         //Vector3 checkOrigin = target.transform.position;
@@ -153,8 +164,4 @@ public class EngageTargetAtDistance : AIMovement
 
         return false;
     }
-
-
-    // Func<bool> that the state machine can use to determine that the location is compromised and a new location cannot be found
-
 }
