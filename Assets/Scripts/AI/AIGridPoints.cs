@@ -65,7 +65,7 @@ public class AIGridPoints : MonoBehaviour
     {
         GenerateGrid();
     }
-    private void OnDrawGizmos()
+    public void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(levelBounds.center, levelBounds.size);
