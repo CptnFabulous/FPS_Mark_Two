@@ -32,11 +32,12 @@ public class AvoidAttack : AIMovement
         Vector3 boundsDifferenceFromTransform = characterBounds.center - NavMeshAgent.transform.position; // Bounds' centre relative to agent transform
         float bestPathDistance = Mathf.Infinity;
 
-        Vector3[] points = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, NavMeshAgent.transform.position, minDistance, maxDistance);
+        AIGridPoints.GridPoint[] points = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, NavMeshAgent.transform.position, minDistance, maxDistance);
         for (int i = 0; i < points.Length; i++)
         {
+            Vector3 samplePosition = points[i].position;
             // Update bounds centre to reflect where it would be if the agent was standing on the currently checked point
-            characterBounds.center = points[i] + boundsDifferenceFromTransform;
+            characterBounds.center = samplePosition + boundsDifferenceFromTransform;
             // If position is dangerous, ignore
             if (attack.AtRisk(characterBounds, AI.character.health.HitboxColliders))
             {
@@ -45,7 +46,7 @@ public class AvoidAttack : AIMovement
 
             // If the agent cannot reach the destination, ignore
             NavMeshPath path = new NavMeshPath();
-            if ((NavMesh.CalculatePath(NavMeshAgent.transform.position, points[i], NavMeshAgent.areaMask, path) && path.status == NavMeshPathStatus.PathComplete) == false)
+            if ((NavMesh.CalculatePath(NavMeshAgent.transform.position, samplePosition, NavMeshAgent.areaMask, path) && path.status == NavMeshPathStatus.PathComplete) == false)
             {
                 continue;
             }
@@ -53,7 +54,7 @@ public class AvoidAttack : AIMovement
             float newPathDistance = NavMeshPathDistance(path);
             if (newPathDistance < bestPathDistance)
             {
-                destination = points[i];
+                destination = samplePosition;
                 bestPathDistance = newPathDistance;
             }
         }

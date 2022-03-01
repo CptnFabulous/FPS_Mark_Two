@@ -42,11 +42,13 @@ public class EngageTargetAtDistance : AIMovement
 
         float bestPathDistance = Mathf.Infinity; // Calculated once and stored so we don't have to do it every time we check against another path
 
-        Vector3[] samples = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, checkOrigin, minimumDistance, maximumDistance);
+        AIGridPoints.GridPoint[] samples = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, checkOrigin, minimumDistance, maximumDistance);
         for (int i = 0; i < samples.Length; i++)
         {
+            #region Check that position is viable
+            Vector3 samplePosition = samples[i].position;
             // Check if the sample is not blocked by cover, so line of sight is established
-            bool lineOfSight = LineOfSightCheck(NewPositionLookOrigin(samples[i]), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.character.health.HitboxColliders);
+            bool lineOfSight = LineOfSightCheck(AI.RelativeLookOrigin(samplePosition), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
             if (lineOfSight == false)
             {
                 continue;
@@ -54,7 +56,7 @@ public class EngageTargetAtDistance : AIMovement
 
             // Check that valid path can be made
             NavMeshPath newPath = new NavMeshPath();
-            bool validPath = NavMesh.CalculatePath(AI.agent.transform.position, samples[i], NavMeshAgent.areaMask, newPath) && newPath.status == NavMeshPathStatus.PathComplete;
+            bool validPath = NavMesh.CalculatePath(AI.agent.transform.position, samplePosition, NavMeshAgent.areaMask, newPath) && newPath.status == NavMeshPathStatus.PathComplete;
             if (validPath == false)
             {
                 continue;
@@ -92,12 +94,6 @@ public class EngageTargetAtDistance : AIMovement
         return false;
     }
 
-    Vector3 NewPositionLookOrigin(Vector3 position)
-    {
-        Vector3 relativePosition = AI.aiming.LookOrigin - AI.transform.position;
-
-        return position + relativePosition;
-    }
 
     // Func<bool> that the state machine can use to determine that the location is compromised and a new location cannot be found
 

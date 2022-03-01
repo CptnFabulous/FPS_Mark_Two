@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AIGridPoints : MonoBehaviour
 {
+    #region Singleton for current level
     public static AIGridPoints Current
     {
         get
@@ -16,11 +18,16 @@ public class AIGridPoints : MonoBehaviour
         }
     }
     static AIGridPoints instance;
-    
+    #endregion
+
+    #region Generation variables
     public Bounds levelBounds;
-    public float gridSpacing = 2;
     public LayerMask terrainDetection = ~0;
-    List<Vector3> gridPoints;
+    public Vector3 floorEulerAngles;
+    
+    public float gridSpacing = 1;
+    public float minAgentHeight = 2;
+
     public Vector2Int GridSize
     {
         get
@@ -30,6 +37,29 @@ public class AIGridPoints : MonoBehaviour
             return new Vector2Int(x, z);
         }
     }
+    public Quaternion floorRotation
+    {
+        get
+        {
+            return Quaternion.Euler(floorEulerAngles);
+        }
+    }
+    public Vector3 floorNormal
+    {
+        get
+        {
+            return floorRotation * Vector3.up;
+        }
+    }
+    #endregion
+
+
+    public struct GridPoint
+    {
+        public Vector3 position;
+        public bool isCover;
+    }
+    List<GridPoint> gridPoints;
 
     private void Awake()
     {
@@ -39,11 +69,23 @@ public class AIGridPoints : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(levelBounds.center, levelBounds.size);
-    }
 
+        if (gridPoints != null)
+        {
+            for (int i = 0; i < gridPoints.Count; i++)
+            {
+                Gizmos.color = gridPoints[i].isCover ? Color.green : Color.red;
+                Gizmos.DrawRay(gridPoints[i].position, floorNormal);
+            }
+        }
+    }
     public void GenerateGrid()
     {
-        List<Vector3> newPoints = new List<Vector3>();
+        List<GridPoint> newPoints = new List<GridPoint>();
+
+        float halfHeight = minAgentHeight / 2;
+        float paddingUpFromFloor = 0.1f;
+        Vector3 halfExtents = new Vector3(gridSpacing, halfHeight - paddingUpFromFloor, gridSpacing);
 
         for (int x = 0; x < GridSize.x; x++)
         {
@@ -51,22 +93,33 @@ public class AIGridPoints : MonoBehaviour
             {
                 float positionX = x * gridSpacing;
                 float positionZ = z * gridSpacing;
+
                 Vector3 origin = new Vector3(levelBounds.min.x + positionX, levelBounds.max.y, levelBounds.min.z + positionZ);
-                RaycastHit[] terrainHit = Physics.RaycastAll(origin, Vector3.down, levelBounds.size.y, terrainDetection);
-                for (int i = 0; i < terrainHit.Length; i++)
+                float distance = levelBounds.size.y - minAgentHeight;
+                while (Physics.Raycast(origin, -floorNormal, out RaycastHit rh, distance, terrainDetection))
                 {
-                    // Uses hit point to account for height and generates a new Vector3 with said height but at the correct grid position.
-                    Vector3 point = origin;
-                    point.y = terrainHit[i].point.y;
-                    newPoints.Add(point);
-                    //Debug.DrawRay(point, Vector3.up, Color.cyan, 30);
+                    // Reset the positions for the next raycast
+                    origin = rh.point + (minAgentHeight * -floorNormal);
+                    distance -= rh.distance;
+
+                    GridPoint newPoint = new GridPoint();
+                    newPoint.position = rh.point;
+
+                    // Calculate cover
+                    Collider[] thingsSurrounding = Physics.OverlapBox(newPoint.position + (halfHeight * floorNormal), halfExtents, floorRotation, terrainDetection);
+                    if (thingsSurrounding.Length > 0)
+                    {
+                        newPoint.isCover = true;
+                    }
+
+                    newPoints.Add(newPoint);
                 }
             }
         }
 
-        //newPoints.Sort((lhs, rhs) => lhs.x.CompareTo(rhs.x));
-        //newPoints.Sort((lhs, rhs) => lhs.y.CompareTo(rhs.y));
-        //newPoints.Sort((lhs, rhs) => lhs.z.CompareTo(rhs.z));
+        //newPoints.Sort((lhs, rhs) => lhs.position.x.CompareTo(rhs.position.x));
+        //newPoints.Sort((lhs, rhs) => lhs.position.y.CompareTo(rhs.position.y));
+        //newPoints.Sort((lhs, rhs) => lhs.position.z.CompareTo(rhs.position.z));
 
         gridPoints = newPoints;
     }
@@ -78,10 +131,20 @@ public class AIGridPoints : MonoBehaviour
     /// <param name="minRadius"></param>
     /// <param name="maxRadius"></param>
     /// <returns></returns>
-    public Vector3[] GetPoints(Vector3 centre, float minRadius, float maxRadius)
+    public GridPoint[] GetPoints(Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
-        List<Vector3> points = new List<Vector3>(gridPoints);
-        points.RemoveAll(p => Vector3.Distance(p, centre) < minRadius || Vector3.Distance(p, centre) > maxRadius);
+        List<GridPoint> points = new List<GridPoint>(gridPoints);
+        points.RemoveAll(p =>
+        {
+            float distance = Vector3.Distance(p.position, centre);
+            return distance < minRadius || distance > maxRadius;
+        });
+        
+        if (onlyIncludeCover)
+        {
+            points.RemoveAll(p => p.isCover == false);
+        }
+
         return points.ToArray();
     }
 
@@ -93,22 +156,21 @@ public class AIGridPoints : MonoBehaviour
     /// <param name="minRadius"></param>
     /// <param name="maxRadius"></param>
     /// <returns></returns>
-    public Vector3[] GetSpecificNumberOfPoints(int number, Vector3 centre, float minRadius, float maxRadius)
+    public GridPoint[] GetSpecificNumberOfPoints(int number, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
-        Vector3[] points = GetPoints(centre, minRadius, maxRadius);
+        GridPoint[] points = GetPoints(centre, minRadius, maxRadius, onlyIncludeCover);
         if (points.Length <= number) // Return all results if there are less than desired by the number
         {
             return points;
         }
 
-        List<Vector3> desired = new List<Vector3>();
+        List<GridPoint> desired = new List<GridPoint>();
         for (int i = 0; i < number; i++) // For the specified number of results
         {
             // Create an index by dividing the length by result number and then multiplying by the check number.
             // For example, 45 entries and 15 desired checks means the number increments by 3. When looking for the sixth entry, this would mean checking the eighteenth entry in the array.
             int index = Mathf.RoundToInt(points.Length / number * i);
             desired.Add(points[index]);
-            //Debug.DrawRay(points[index], Vector3.up * 3, Color.red, 30);
         }
 
         return desired.ToArray();
