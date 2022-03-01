@@ -99,7 +99,7 @@ public class DirectionalAttackMessage : AttackMessage
         // Exclude if line of sight is broken
         List<Collider> exceptions = new List<Collider>(attacker.health.HitboxColliders);
         exceptions.AddRange(characterColliders);
-        if (AIAction.LineOfSightCheck(origin, characterBounds.center, 0, detection, exceptions) == false)
+        if (AIAction.LineOfSight(origin, characterBounds.center, detection, exceptions) == false)
         {
             return false;
         }

@@ -48,7 +48,8 @@ public class EngageTargetAtDistance : AIMovement
             #region Check that position is viable
             Vector3 samplePosition = samples[i].position;
             // Check if the sample is not blocked by cover, so line of sight is established
-            bool lineOfSight = LineOfSightCheck(AI.RelativeLookOrigin(samplePosition), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
+            bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(samplePosition), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
+                //LineOfSightCheck(AI.RelativeLookOrigin(samplePosition), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
             if (lineOfSight == false)
             {
                 continue;
@@ -85,7 +86,8 @@ public class EngageTargetAtDistance : AIMovement
         }
 
         // Check if line of sight between destination and target is not compromised
-        bool lineOfSight = LineOfSightCheck(AI.RelativeLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
+        bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(destination), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
+        //LineOfSightCheck(AI.RelativeLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
         if (lineOfSight == false)
         {
             return true;

@@ -41,51 +41,44 @@ public abstract class AIAction : StateMachine.State
         }
         return distance;
     }
-    public static bool LineOfSightCheck(Vector3 lookOrigin, Collider[] targetColliders, LayerMask detection, float viewingPathDiameter, Collider[] exceptions)
+
+
+    public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, List<Collider> exceptions)
     {
-        Bounds totalBounds = MiscFunctions.CombinedBounds(targetColliders);
-        Vector3 targetCentre = totalBounds.center;
-        float rayDistance = Vector3.Distance(lookOrigin, targetCentre) + totalBounds.extents.magnitude;
-        List<RaycastHit> results = new List<RaycastHit>(Physics.SphereCastAll(lookOrigin, viewingPathDiameter / 2, targetCentre - lookOrigin, rayDistance, detection));
-        results.Sort((lhs, rhs) => lhs.distance.CompareTo(rhs.distance));
-        for (int i = 0; i < results.Count; i++)
-        {
-            // Check results against target colliders. If one matches, line of sight is established
-            for (int t = 0; t < targetColliders.Length; t++)
-            {
-                if (results[i].collider == targetColliders[t])
-                {
-                    return true;
-                }
-            }
-
-            bool isException = false;
-            for (int e = 0; e < exceptions.Length; e++)
-            {
-                if (results[i].collider == exceptions[e])
-                {
-                    isException = true;
-                }
-            }
-            // If collider is not a target or an exception
-            if (isException == false)
-            {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    public static bool LineOfSightCheck(Vector3 from, Vector3 to, float viewingPathDiameter, LayerMask detection, List<Collider> exceptions)
-    {
-        float rayDistance = Vector3.Distance(from, to); // Calculate distance
-        // Run SpherecastAll to get all colliders in the path of the object
-        List<RaycastHit> results = new List<RaycastHit>(Physics.SphereCastAll(from, viewingPathDiameter / 2, to - from, rayDistance, detection));
+        // Calculate direction and use magnitude for distance
+        Vector3 direction = to - from;
+        // Run RaycastAll to get all colliders in the path of the object
+        List<RaycastHit> results = new List<RaycastHit>(Physics.RaycastAll(from, direction, direction.magnitude, detection));
         // Remove all results that are mentioned in the exceptions array
         results.RemoveAll(rh => exceptions.Contains(rh.collider));
         // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
-        return results.Count > 0;
+        return results.Count <= 0;
+    }
+    public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, Collider[] exceptions)
+    {
+        // Calculate direction and use magnitude for distance
+        Vector3 direction = to - from;
+        List<RaycastHit> results = MiscFunctions.RaycastAllWithExceptions(from, direction, direction.magnitude, detection, exceptions);
+        // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
+        return results.Count <= 0;
+    }
+    public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, Collider[] exceptionsListA, Collider[] exceptionsListB)
+    {
+        // Calculate direction and use magnitude for distance
+        Vector3 direction = to - from;
+        // Run RaycastAll to get all colliders in the path of the object
+        List<RaycastHit> results = new List<RaycastHit>(Physics.RaycastAll(from, direction, direction.magnitude, detection));
+        // Remove all results that are mentioned in the exceptions arrays
+        for (int i = 0; i < exceptionsListA.Length; i++)
+        {
+            results.RemoveAll(rh => rh.collider == exceptionsListA[i]);
+        }
+        for (int i = 0; i < exceptionsListB.Length; i++)
+        {
+            results.RemoveAll(rh => rh.collider == exceptionsListB[i]);
+        }
+        // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
+        return results.Count <= 0;
     }
 
 }
