@@ -39,7 +39,7 @@ public class AvoidAttack : AIMovement
             // Update bounds centre to reflect where it would be if the agent was standing on the currently checked point
             characterBounds.center = samplePosition + boundsDifferenceFromTransform;
             // If position is dangerous, ignore
-            if (attack.AtRisk(characterBounds, AI.character.health.HitboxColliders))
+            if (attack.AtRisk(characterBounds, AI.health.HitboxColliders))
             {
                 continue;
             }
