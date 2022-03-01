@@ -5511,7 +5511,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 577827450302408014}
-  - component: {fileID: 577827450302408048}
   - component: {fileID: 577827450302408015}
   - component: {fileID: 577827450302408052}
   - component: {fileID: 4324082910333505861}
@@ -5542,23 +5541,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &577827450302408048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 577827450302408012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0e5e041707c12f4db4f858b4523fb4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  properName: Placeholder Enemy
-  description: An enemy that exists for testing purposes.
-  isUnique: 0
-  affiliation: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
-  health: {fileID: 577827450302408049}
 --- !u!114 &577827450302408015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5571,7 +5553,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a034ff11beda0d043a5cb814f38e93ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 577827450302408048}
+  properName: Placeholder Enemy
+  description: An enemy that exists for testing purposes.
+  isUnique: 0
+  affiliation: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
+  health: {fileID: 577827450302408049}
   agent: {fileID: 577827450302408013}
   aiming: {fileID: 577827450302408052}
   view: {fileID: 0}
@@ -5583,6 +5569,9 @@ MonoBehaviour:
     minimumDistance: 15
     maximumDistance: 20
     numberOfChecks: 15
+    stayCloseToCover: 0
+    maxAcceptableDistanceToCover: 5
+    coverChecksPerPositionCheck: 5
   attackStats:
     name: Attack with submachine gun
     attack: {fileID: 7438278461295849682}

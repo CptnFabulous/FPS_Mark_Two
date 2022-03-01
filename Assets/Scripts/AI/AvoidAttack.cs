@@ -22,13 +22,13 @@ public class AvoidAttack : AIMovement
     public void FindBestPosition(AttackMessage attack, out bool successful)
     {
         // If AI is in danger and the attack damage exceeds the threshold required to bother dodging
-        if ((/*attack. && */attack.AtRisk(AI.character)) == false)
+        if ((/*attack. && */attack.AtRisk(AI)) == false)
         {
             successful = true; // No need to move
             return;
         }
 
-        Bounds characterBounds = AI.character.health.HitboxBounds;
+        Bounds characterBounds = AI.health.HitboxBounds;
         Vector3 boundsDifferenceFromTransform = characterBounds.center - NavMeshAgent.transform.position; // Bounds' centre relative to agent transform
         float bestPathDistance = Mathf.Infinity;
 

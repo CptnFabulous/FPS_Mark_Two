@@ -83,7 +83,7 @@ public class EngageTargetAtDistance : AIMovement
         }
 
         // Check if line of sight between destination and target is not compromised
-        bool lineOfSight = LineOfSightCheck(NewPositionLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.character.health.HitboxColliders);
+        bool lineOfSight = LineOfSightCheck(AI.RelativeLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
         if (lineOfSight == false)
         {
             return true;

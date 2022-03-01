@@ -13,13 +13,6 @@ public abstract class AIAction : StateMachine.State
             return AI as Combatant;
         }
     }
-    public Character Character
-    {
-        get
-        {
-            return AI.character;
-        }
-    }
     public NavMeshAgent NavMeshAgent
     {
         get

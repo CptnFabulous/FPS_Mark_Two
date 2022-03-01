@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class Player : Character
 {
+    public override Vector3 LookOrigin => movement.upperBody.position;
+    public override LayerMask lookMask => movement.worldViewCamera.cullingMask;
+    public override LayerMask attackMask
+    {
+        get
+        {
+            // If no weapon is present, default to some other kind of layer mask
+            if (weapons.CurrentWeapon == null)
+            {
+                // Presently player cannot attack any way other than having a weapon, so return an empty layermask
+                return 0;
+            }
+
+            // Currently just returns everything. I need to implement code to get the detection of the player's current weapon
+            return ~0;
+        }
+    }
 
     [Header("Player-specific classes")]
     public UnityEngine.InputSystem.PlayerInput controls;
