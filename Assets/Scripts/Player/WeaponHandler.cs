@@ -187,19 +187,23 @@ public class WeaponHandler : MonoBehaviour
     void UpdateAvailableWeapons()
     {
         equippedWeapons = GetComponentsInChildren<Weapon>(true);
-        for (int i = 0; i < equippedWeapons.Length; i++)
-        {
-            equippedWeapons[i].gameObject.SetActive(false);
-        }
-
         List<Sprite> icons = new List<Sprite>();
+
         for (int w = 0; w < equippedWeapons.Length; w++)
         {
+            // Assign proper transform values
+            equippedWeapons[w].transform.SetParent(holdingSocket);
+            equippedWeapons[w].transform.localPosition = Vector3.zero;
+            equippedWeapons[w].transform.localRotation = Quaternion.identity;
+
+            // Disable all weapons so that only the appropriate one will be enabled
+            equippedWeapons[w].gameObject.SetActive(false);
+
+            // Generate selector icons
             for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
             {
                 icons.Add(equippedWeapons[w].modes[m].icon);
             }
-            // Calculate where to put borders and weapon graphics
         }
         weaponSelector.Refresh(icons.ToArray());
 
