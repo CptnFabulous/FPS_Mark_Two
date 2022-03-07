@@ -21,7 +21,7 @@ public class AIGridPoints : MonoBehaviour
     #endregion
 
     #region Generation variables
-    public Bounds levelBounds;
+    public Bounds levelBounds = new Bounds(Vector3.zero, Vector3.one * 50);
     public LayerMask terrainDetection = ~0;
     public Vector3 floorEulerAngles;
     
