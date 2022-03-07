@@ -6097,7 +6097,7 @@ GameObject:
   - component: {fileID: 6870649952528205445}
   - component: {fileID: 8446451415843841722}
   m_Layer: 0
-  m_Name: Full-Auto
+  m_Name: 3-Round Burst
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6129,7 +6129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88cc107c241dcaa41b708fa8a4674f32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: Fires a continuous stream of bullets for sustained damage output.
+  description: Fires up to three consecutive shots as long as the trigger is held.
   icon: {fileID: 8037054329841010947, guid: 8b103585e17c3594199f539238a42240, type: 3}
   switchSpeed: 0.25
   onSwitch:
@@ -6165,7 +6165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 600
-  maxBurst: 0
+  maxBurst: 3
 --- !u!1 &9060695553078814932
 GameObject:
   m_ObjectHideFlags: 0
