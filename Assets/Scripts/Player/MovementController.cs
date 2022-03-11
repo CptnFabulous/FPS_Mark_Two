@@ -14,7 +14,7 @@ public class MovementController : MonoBehaviour
     public float defaultSpeed = 5;
     CapsuleCollider collider;
     Rigidbody rb;
-    Vector3 movementVelocity;
+    public Vector3 movementVelocity { get; private set; }
 
     public void OnMove(InputValue input)
     {

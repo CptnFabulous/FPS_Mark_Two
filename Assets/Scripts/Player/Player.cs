@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : Character
 {
-    public override Vector3 LookOrigin => movement.upperBody.position;
+    public override Transform LookTransform => movement.upperBody;
     public override LayerMask lookMask => movement.worldViewCamera.cullingMask;
     public override LayerMask attackMask
     {
@@ -21,6 +21,8 @@ public class Player : Character
             return ~0;
         }
     }
+
+    public override Vector3 MovementDirection => movement.movementVelocity;
 
     [Header("Player-specific classes")]
     public UnityEngine.InputSystem.PlayerInput controls;

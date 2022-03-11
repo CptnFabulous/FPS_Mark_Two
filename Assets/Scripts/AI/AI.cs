@@ -5,9 +5,10 @@ using UnityEngine.AI;
 
 public class AI : Character
 {
-    public override Vector3 LookOrigin => aiming.LookOrigin;
+    public override Transform LookTransform => aiming.viewAxis;
     public override LayerMask lookMask => view.viewDetection;
     public override LayerMask attackMask => aiming.Stats.lookDetection;
+    public override Vector3 MovementDirection => agent.velocity;
 
     [Header("AI-specific components")]
     public NavMeshAgent agent;

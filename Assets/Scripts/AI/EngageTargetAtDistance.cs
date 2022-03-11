@@ -59,7 +59,7 @@ public class EngageTargetAtDistance : AIMovement
         {
             Vector3 centreOfMass = AI.RelativeCentreOfMass(nearbyCover);
             Debug.DrawLine(nearbyCover, centreOfMass, Color.cyan);
-            Debug.DrawLine(centreOfMass, target.LookOrigin, Color.red);
+            Debug.DrawLine(centreOfMass, target.LookTransform.position, Color.red);
         }
     }
 
@@ -111,7 +111,7 @@ public class EngageTargetAtDistance : AIMovement
                 for (int c = 0; c < nearbyCoverPoints.Length; c++)
                 {
                     // If a cover point is safe from the player's current position (e.g. if a line of sight check fails)
-                    Vector3 from = target.LookOrigin;
+                    Vector3 from = target.LookTransform.position;
                     Vector3 to = AI.RelativeCentreOfMass(nearbyCoverPoints[c].position);
                     if (LineOfSight(from, to, target.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders) == false)
                     {
