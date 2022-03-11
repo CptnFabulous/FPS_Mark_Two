@@ -63,6 +63,18 @@ public class Health : MonoBehaviour
     }
     Collider[] hitboxColliders;
 
+    
+
+    private void Awake()
+    {
+        hitboxes = GetComponentsInChildren<Hitbox>();
+        for (int i = 0; i < hitboxes.Length; i++)
+        {
+            hitboxes[i].sourceHealth = this;
+        }
+    }
+
+
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.
     /// </summary>
@@ -92,15 +104,7 @@ public class Health : MonoBehaviour
         else
         {
             onDamage.Invoke();
-        }
-    }
 
-    private void Awake()
-    {
-        hitboxes = GetComponentsInChildren<Hitbox>();
-        for (int i = 0; i < hitboxes.Length; i++)
-        {
-            hitboxes[i].sourceHealth = this;
             if (stunData != null && stun > 0)
             {
                 stunData.WearDown(stun);
