@@ -13,41 +13,41 @@ public class Hitbox : MonoBehaviour
     [Header("Collision Damage")]
     float minimumCollisionForceToDamage = 12;
     float damagePerCollisionForceUnit = 5f;
+    float stunPerCollisionForceUnit = 5f;
 
     private void Awake()
     {
         collider = GetComponent<Collider>();
     }
 
-    public void Damage(int amount, DamageType type, Entity attacker)
+    public void Damage(int damage, int stun, DamageType type, Entity attacker, bool critical = false)
     {
         if (sourceHealth == null)
         {
             return;
         }
-        sourceHealth.Damage(amount, type, attacker);
+        sourceHealth.Damage(damage, stun, critical, type, attacker);
     }
 
-    public void Damage(int amount, float criticalMultiplier, DamageType type, Entity attacker)
+    public void Damage(int damage, float criticalMultiplier, int stun, DamageType type, Entity attacker)
     {
         if (isCritical)
         {
-            amount = Mathf.RoundToInt(amount * criticalMultiplier);
+            damage = Mathf.RoundToInt(damage * criticalMultiplier);
         }
-        Damage(amount, type, attacker);
+        Damage(damage, stun, type, attacker, isCritical);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         // Figure out velocity and deal impact damage accordingly
         float force = collision.relativeVelocity.magnitude;
-        //Debug.Log("Force: " + force);
         if (force > minimumCollisionForceToDamage)
         {
             float damage = (force - minimumCollisionForceToDamage) * damagePerCollisionForceUnit;
-            //Debug.Log("Damage: " + damage);
+            float stun = (force - minimumCollisionForceToDamage) * stunPerCollisionForceUnit;
             Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponent<Entity>();
-            Damage(Mathf.RoundToInt(damage), DamageType.Impact, thingThatDamagedThisHitbox);
+            Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.Impact, thingThatDamagedThisHitbox);
         }
     }
 }

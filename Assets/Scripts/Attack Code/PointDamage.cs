@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class PointDamage : MonoBehaviour
 {
     public int damage = 10;
+    public int stun = 10;
     public float criticalMultiplier = 3;
     public float knockback = 15;
     public DamageType type = DamageType.Piercing;
@@ -31,7 +32,7 @@ public class PointDamage : MonoBehaviour
 
         if (damageable != null && canHit) // If a hitbox is present
         {
-            damageable.Damage(damage, criticalMultiplier, type, attacker);
+            damageable.Damage(damage, criticalMultiplier, stun, type, attacker);
             onDamaged.Invoke(rh);
         }
         else

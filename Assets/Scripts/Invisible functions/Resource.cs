@@ -24,6 +24,13 @@ public struct Resource
             return current <= criticalLevel;
         }
     }
+    public bool isDepleted
+    {
+        get
+        {
+            return current <= 0;
+        }
+    }
 
 
 

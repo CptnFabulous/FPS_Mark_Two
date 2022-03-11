@@ -29,6 +29,7 @@ public class Health : MonoBehaviour
     public UnityEvent onHeal;
     public UnityEvent onDeath;
     public bool allowPosthumousDamage;
+    public Stamina stunData;
     public bool IsAlive
     {
         get
@@ -68,23 +69,23 @@ public class Health : MonoBehaviour
     /// <param name="amount"></param>
     /// <param name="type"></param>
     /// <param name="attacker"></param>
-    public void Damage(int amount, DamageType type, Entity attacker)
+    public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker)
     {
         if (IsAlive == false && allowPosthumousDamage == false)
         {
             return;
         }
 
-        data.Increment(-amount);
+        data.Increment(-damage);
 
-        EventHandler.Transmit(new DamageMessage(attacker, this, type, amount));
+        EventHandler.Transmit(new DamageMessage(attacker, this, type, damage, isCritical, stun));
 
         if (data.current <= 0)
         {
             onDeath.Invoke();
             EventHandler.Transmit(new KillMessage(attacker, this, type));
         }
-        else if (amount < 0)
+        else if (damage < 0)
         {
             onHeal.Invoke();
         }
@@ -100,15 +101,21 @@ public class Health : MonoBehaviour
         for (int i = 0; i < hitboxes.Length; i++)
         {
             hitboxes[i].sourceHealth = this;
+            if (stunData != null && stun > 0)
+            {
+                stunData.WearDown(stun);
+            }
         }
     }
 
 
+
+
+    #region Miscellaneous functions
     public void DestroyOnDeath()
     {
         Destroy(gameObject);
     }
-
     public void Resurrect(float delay)
     {
         StartCoroutine(ResurrectSequence(delay));
@@ -119,4 +126,5 @@ public class Health : MonoBehaviour
         data.current = data.max;
         onHeal.Invoke();
     }
+    #endregion
 }

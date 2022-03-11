@@ -115,14 +115,18 @@ public class DamageMessage
     public Entity attacker;
     public Health victim;
     public DamageType method;
-    public int amount;
+    public int damage;
+    public bool critical;
+    public int stun;
 
-    public DamageMessage(Entity _attacker, Health _victim, DamageType _method, int _amount)
+    public DamageMessage(Entity _attacker, Health _victim, DamageType _method, int _damage, bool _critical, int _stun)
     {
         attacker = _attacker;
         victim = _victim;
         method = _method;
-        amount = _amount;
+        damage = _damage;
+        critical = _critical;
+        stun = _stun;
     }
 }
 

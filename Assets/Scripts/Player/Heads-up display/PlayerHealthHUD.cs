@@ -37,7 +37,7 @@ public class PlayerHealthHUD : MonoBehaviour
 
         healthMeter.Refresh(playerTracking.health.data);
 
-        if (message.amount < 0)
+        if (message.damage < 0)
         {
             healEffects.Invoke();
             return;
