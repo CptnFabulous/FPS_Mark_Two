@@ -519,6 +519,7 @@ GameObject:
   - component: {fileID: 577827450302408052}
   - component: {fileID: 4324082910333505861}
   - component: {fileID: 577827450302408049}
+  - component: {fileID: 6624686555670327458}
   - component: {fileID: 577827450302408013}
   - component: {fileID: 3065874732564475496}
   - component: {fileID: 577827450302408050}
@@ -694,7 +695,110 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   allowPosthumousDamage: 0
-  stunData: {fileID: 0}
+  stunData: {fileID: 6624686555670327458}
+--- !u!114 &6624686555670327458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 577827450302408012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d615ca42cf07b5a4d8bd16239b809ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stamina:
+    name: New Resource
+    max: 15
+    current: 15
+    criticalLevel: 5
+  staminaRegenRate: 5
+  thresholdForQuickStun: 5
+  quickStunDuration: 0.5
+  onStun:
+    m_PersistentCalls:
+      m_Calls: []
+  staggerDuration: 3
+  immunityDurationAfterStaggering: 2
+  onStagger:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 577827450302408013}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3065874732564475496}
+        m_TargetAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+        m_MethodName: set_isKinematic
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 577827450302408051}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRecover:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 577827450302408013}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 3065874732564475496}
+        m_TargetAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+        m_MethodName: set_isKinematic
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 577827450302408051}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!195 &577827450302408013
 NavMeshAgent:
   m_ObjectHideFlags: 0
