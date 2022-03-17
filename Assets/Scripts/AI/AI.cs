@@ -17,4 +17,10 @@ public class AI : Character
 
     [Header("Behaviours")]
     public StateMachine stateMachine;
+    public override void Die()
+    {
+        agent.enabled = false;
+        aiming.enabled = false;
+        stateMachine.enabled = false;
+    }
 }

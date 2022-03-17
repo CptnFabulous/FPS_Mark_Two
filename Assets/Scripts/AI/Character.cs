@@ -36,4 +36,6 @@ public abstract class Character : Entity
     {
         health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null);
     }
+
+    public abstract void Die();
 }

@@ -31,7 +31,7 @@ public class Player : Character
     public WeaponHandler weapons;
     public HeadsUpDisplay headsUpDisplay;
     
-    public void Die()
+    public override void Die()
     {
         //movement.enabled = false;
         //weapons.enabled = false;
