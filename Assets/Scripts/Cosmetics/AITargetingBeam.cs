@@ -31,8 +31,9 @@ public class AITargetingBeam : MonoBehaviour
         beam.enabled = raycastHit == false || rh.distance > minLength;
         if (beam.enabled)
         {
-            points[0] = raycastHit ? rh.point : (maxLength * transform.forward) + transform.position;
-            points[1] = (minLength * transform.forward) + transform.position;
+            points[0] = (minLength * transform.forward) + transform.position;
+            points[1] = raycastHit ? rh.point : (maxLength * transform.forward) + transform.position;
+
             beam.SetPositions(points);
         }
     }
