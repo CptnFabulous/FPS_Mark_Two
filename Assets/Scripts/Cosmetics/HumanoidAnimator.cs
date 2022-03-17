@@ -19,11 +19,17 @@ public class HumanoidAnimator : MonoBehaviour
         
     }
 
-    void LateUpdate()
+    private void Update()
     {
+        // Update walk direction values
         Vector3 walkValues = character.LocalMovementDirection;
         animator.SetFloat(walkXValue, walkValues.x);
         animator.SetFloat(walkZValue, walkValues.z);
+    }
+
+    void LateUpdate()
+    {
+        
 
         // Target position
         // Current aim transform (AimTransform)
