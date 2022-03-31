@@ -256,7 +256,8 @@ public class MovementController : MonoBehaviour
         // If player is standing on the ground
         // If cooldown time has elapsed
         // If player is moving in a direction
-        if (groundingData.collider == null && Time.time - lastTimeDodged >= dodgeCooldown && movementInput.magnitude > 0)
+        bool cooldownElapsed = Time.time - lastTimeDodged >= dodgeCooldown;
+        if (!(isGrounded && cooldownElapsed && movementInput.magnitude > 0))
         {
             return;
         }
