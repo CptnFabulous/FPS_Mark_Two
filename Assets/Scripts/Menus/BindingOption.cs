@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandler
 {
-    public Text name;
+    public Text bindingName;
     public GUIButtonPrompt shownBinding;
     public Button buttonToRebind;
     public RectTransform rectTransform;
@@ -47,11 +47,11 @@ public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandl
         if (binding.isPartOfComposite)
         {
             string displayName = MiscFunctions.FormatNameForPresentation(binding.name);
-            name.text = displayName + " (" + displayBindingGroups + ")";
+            bindingName.text = displayName + " (" + displayBindingGroups + ")";
         }
         else
         {
-            name.text = displayBindingGroups;
+            bindingName.text = displayBindingGroups;
         }
         
         shownBinding.enabled = false;
