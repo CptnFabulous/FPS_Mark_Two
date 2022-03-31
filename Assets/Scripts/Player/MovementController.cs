@@ -50,6 +50,7 @@ public class MovementController : MonoBehaviour
             return rb.velocity + movementVelocity;
         }
     }
+    bool isGrounded => groundingData.collider != null;
     #endregion
 
     #region Aiming
