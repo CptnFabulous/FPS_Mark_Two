@@ -12,7 +12,7 @@ public class MovementController : MonoBehaviour
     [Header("Movement")]
     public bool canMove = true;
     public float defaultSpeed = 5;
-    CapsuleCollider collider;
+    new CapsuleCollider collider;
     Rigidbody rb;
     public Vector3 movementVelocity { get; private set; }
 
@@ -43,13 +43,7 @@ public class MovementController : MonoBehaviour
             return speed;
         }
     }
-    Vector3 TotalVelocity
-    {
-        get
-        {
-            return rb.velocity + movementVelocity;
-        }
-    }
+    Vector3 TotalVelocity => rb.velocity + movementVelocity;
     bool isGrounded => groundingData.collider != null;
     #endregion
 
@@ -158,7 +152,6 @@ public class MovementController : MonoBehaviour
             return value;
         }
     }
-
     public Quaternion RotationVelocity
     {
         get
@@ -474,17 +467,13 @@ public class MovementController : MonoBehaviour
     {
         SetGroundingData();
         Vector3 movement = new Vector3(movementInput.x, 0, movementInput.y) * CurrentMoveSpeed;
-        //movementVelocity = transform.rotation * movement;
-        
-        
         movement = transform.rotation * movement;
+
         if (groundingData.collider != null)
         {
             // If grounded, rotates movement vector based on angle of surface so the player doesn't start falling by moving too fast off a downward slope.
             movement = Vector3.ProjectOnPlane(movement, groundingData.normal);
-            Debug.DrawRay(transform.position, groundingData.normal, Color.magenta);
         }
-        Debug.DrawRay(transform.position, movement);
         movementVelocity = movement;
         
         rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
