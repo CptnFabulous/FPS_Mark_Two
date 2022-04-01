@@ -54,16 +54,10 @@ public class AIRangedAttack : AIAttackBehaviour
     public override bool CanAttackTarget()
     {
         // Checks prematurely for line of sight (already calculated)
-        if (lineOfSightEstablished == false)
-        {
-            return false;
-        }
+        if (lineOfSightEstablished == false) return false;
 
         // Checks prematurely for base criteria (simple to calculate)
-        if (base.CanAttackTarget() == false)
-        {
-            return false;
-        }
+        if (base.CanAttackTarget() == false) return false;
 
         // Checks if distance is correct
         float distanceToTarget = Vector3.Distance(actionRunning.Aim.LookOrigin, targetLocation);
