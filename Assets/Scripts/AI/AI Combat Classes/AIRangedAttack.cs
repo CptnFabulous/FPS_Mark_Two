@@ -18,39 +18,38 @@ public class AIRangedAttack : AIAttackBehaviour
     
     public void Awake()
     {
-        onTelegraph.AddListener(() => aim.Stats = aimStatsWhileTelegraphing);
-        onTelegraph.AddListener(() => aim.Stats = aimStatsWhileAttacking);
-        onTelegraph.AddListener(() => aim.ResetStatsToDefault());
+        onTelegraph.AddListener(() => actionRunning.Aim.Stats = aimStatsWhileTelegraphing);
+        onTelegraph.AddListener(() => actionRunning.Aim.Stats = aimStatsWhileAttacking);
+        onTelegraph.AddListener(() => actionRunning.Aim.ResetStatsToDefault());
     }
     public override void Enter()
     {
-        aim.lookingInDefaultDirection = false;
+        actionRunning.Aim.lookingInDefaultDirection = false;
     }
     public override void Exit()
     {
         base.Exit();
-        aim.lookingInDefaultDirection = true;
+        actionRunning.Aim.lookingInDefaultDirection = true;
     }
 
     public override void AcquireTarget()
     {
         targetLocation = GetTargetLocation();
-        lineOfSightEstablished = AIAction.LineOfSight(aim.LookOrigin, targetLocation, user.attackMask, user.health.HitboxColliders, user.target.health.HitboxColliders);
-                                 //AIAction.LineOfSightCheck(aim.LookOrigin, user.target.health.HitboxColliders, aim.Stats.lookDetection, aim.Stats.diameterForUnobstructedSight, user.health.HitboxColliders);
-
+        lineOfSightEstablished = AIAction.LineOfSight(actionRunning.Aim.LookOrigin, targetLocation, actionRunning.AI.attackMask, actionRunning.AI.health.HitboxColliders, actionRunning.CombatAI.target.health.HitboxColliders);
+        
         if (lineOfSightEstablished) // If AI has a line of sight to attack the target, shift aim towards target
         {
-            aim.RotateLookTowards(targetLocation);
+            actionRunning.Aim.RotateLookTowards(targetLocation);
         }
         else
         {
-            aim.LookInNeutralDirection();
+            actionRunning.Aim.LookInNeutralDirection();
         }
     }
 
     public virtual Vector3 GetTargetLocation()
     {
-        return user.target.health.HitboxBounds.center;
+        return actionRunning.CombatAI.target.health.HitboxBounds.center;
     }
     public override bool CanAttackTarget()
     {
@@ -67,20 +66,14 @@ public class AIRangedAttack : AIAttackBehaviour
         }
 
         // Checks if distance is correct
-        float distanceToTarget = Vector3.Distance(aim.LookOrigin, targetLocation);
-        if (distanceToTarget < minRange || distanceToTarget > maxRange)
-        {
-            return false;
-        }
+        float distanceToTarget = Vector3.Distance(actionRunning.Aim.LookOrigin, targetLocation);
+        if (distanceToTarget < minRange || distanceToTarget > maxRange) return false;
 
         // Check if aim is on target
-        Vector3 boundsExtents = user.target.health.HitboxBounds.extents;
+        Vector3 boundsExtents = actionRunning.CombatAI.target.health.HitboxBounds.extents;
         float aimThreshold = MiscFunctions.Vector3Min(boundsExtents);
-        if (aimAlreadyLocked)
-        {
-            aimThreshold += aimBreakThreshold;
-        }
-        aimAlreadyLocked = aim.LookCheckDistance(targetLocation, aimThreshold, true);
+        if (aimAlreadyLocked) aimThreshold += aimBreakThreshold;
+        aimAlreadyLocked = actionRunning.Aim.LookCheckDistance(targetLocation, aimThreshold, true);
         return aimAlreadyLocked;
     }
 }

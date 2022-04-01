@@ -14,13 +14,11 @@ public class AI : Character
     public NavMeshAgent agent;
     public AIAim aiming;
     public FieldOfView view;
-
-    [Header("Behaviours")]
-    public StateMachine stateMachine;
+    public ActionExecutor actions;
     public override void Die()
     {
         agent.enabled = false;
         aiming.enabled = false;
-        stateMachine.enabled = false;
+        actions.enabled = false;
     }
 }

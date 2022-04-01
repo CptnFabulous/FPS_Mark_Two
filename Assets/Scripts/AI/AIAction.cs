@@ -3,34 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class AIAction : StateMachine.State
+public abstract class AIAction : Action
 {
-    public AI AI { get; private set; }
+    public AI AI
+    {
+        get
+        {
+            if (ai == null)
+            {
+                ai = host.GetComponent<AI>();
+            }
+            return ai;
+        }
+    }
     public Combatant CombatAI
     {
         get
         {
-            return AI as Combatant;
+            if (cmbtnt == null)
+            {
+                cmbtnt = host.GetComponent<Combatant>();
+            }
+            return cmbtnt;
         }
     }
-    public NavMeshAgent NavMeshAgent
-    {
-        get
-        {
-            return AI.agent;
-        }
-    }
-    public AIAim AimData
-    {
-        get
-        {
-            return AI.aiming;
-        }
-    }
-    public override void Enter(StateMachine controller)
-    {
-        AI = controller.GetComponent<AI>();
-    }
+    public NavMeshAgent NavMeshAgent => AI.agent;
+    public AIAim Aim => AI.aiming;
+    AI ai;
+    Combatant cmbtnt;
+
+    
 
     public static float NavMeshPathDistance(NavMeshPath path)
     {
@@ -41,8 +43,6 @@ public abstract class AIAction : StateMachine.State
         }
         return distance;
     }
-
-
     public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, List<Collider> exceptions)
     {
         // Calculate direction and use magnitude for distance
@@ -80,16 +80,14 @@ public abstract class AIAction : StateMachine.State
         // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
         return results.Count <= 0;
     }
-
 }
 
 public abstract class AIMovement : AIAction
 {
     public float movementSpeed = 3.5f;
 
-    public override void Enter(StateMachine controller)
+    public override void Enter()
     {
-        base.Enter(controller);
         NavMeshAgent.speed = movementSpeed;
     }
 }

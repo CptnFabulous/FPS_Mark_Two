@@ -7,35 +7,31 @@ public class Combatant : MonoBehaviour
     [Header("Target")]
     public Character target;
 
-    [Header("While out of combat")]
-    public StateMachine.SubStateMachine outOfCombat;
-    public Idle idleState;
+    [Header("States")]
 
-    public StateMachine.MultiState inCombat;
+    public PriorityActionController eliminateTarget = new PriorityActionController("Eliminate target");
+    public PriorityActionController outOfCombat = new PriorityActionController("Out of combat");
+
+    public Idle idleState = new Idle();
+
+    public AI controlling { get; private set; }
 
     public virtual void Awake()
     {
-        outOfCombat = new StateMachine.SubStateMachine("Out of combat");
-        inCombat = new StateMachine.MultiState("In combat");
+        controlling = GetComponent<AI>();
         
-        outOfCombat.AddState(idleState);
 
-        stateMachine.AddState(outOfCombat, true);
-        stateMachine.AddTransition(outOfCombat, inCombat, TargetAcquired(true));
+        PriorityActionController mainController = new PriorityActionController("Main Controller");
+        mainController.AddAction(eliminateTarget, TargetAcquired());
+        mainController.AddAction(outOfCombat, null);
+        mainController.defaultAction = idleState;
 
-        stateMachine.AddState(inCombat);
-        stateMachine.AddTransition(inCombat, outOfCombat, TargetAcquired(false));
-
+        controlling.actions.SetBaseAction(mainController);
     }
 
-
-
     /// <summary>
-    /// Checks if a target has been found and is not dead
+    /// Checks if a target has been found and is not dead.
     /// </summary>
     /// <returns></returns>
-    public System.Func<bool> TargetAcquired(bool condition) => () =>
-    {
-        return (target != null && target.health.IsAlive == true) == condition;
-    };
+    public System.Func<bool> TargetAcquired() => () => target != null && target.health.IsAlive == true;
 }

@@ -5,14 +5,7 @@ using UnityEngine.Events;
 
 public abstract class AIAttackBehaviour : MonoBehaviour
 {
-    public Combatant user;
-    public AIAim aim
-    {
-        get
-        {
-            return user.aiming;
-        }
-    }
+    [HideInInspector] public ExecuteAttack actionRunning;
     
     // Attack stats
     [Header("Attack speed")]
@@ -120,7 +113,7 @@ public abstract class AIAttackBehaviour : MonoBehaviour
 
     public void ShootGun(GunGeneralStats stats)
     {
-        stats.Shoot(user, aim.LookOrigin, aim.AimDirection, aim.LookUp);
+        stats.Shoot(actionRunning.AI, actionRunning.Aim.LookOrigin, actionRunning.Aim.AimDirection, actionRunning.Aim.LookUp);
     }
 
 
@@ -130,20 +123,13 @@ public abstract class AIAttackBehaviour : MonoBehaviour
 public class ExecuteAttack : AIAction
 {
     public AIAttackBehaviour attack;
-    public override void Enter(StateMachine controller)
+    public override void Enter()
     {
-        base.Enter(controller);
-        attack.user = CombatAI;
+        attack.actionRunning = this;
         attack.Enter();
     }
-    public override void Update(StateMachine controller)
-    {
-        attack.Loop();
-    }
-    public override void Exit(StateMachine controller)
-    {
-        attack.Exit();
-    }
+    public override void Loop() => attack.Loop();
+    public override void Exit() => attack.Exit();
 }
 
 public enum AttackPhase

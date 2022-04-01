@@ -66,18 +66,18 @@ public class AvoidAttack : AIMovement
 
 
 
-    public override void Enter(StateMachine controller)
+    public override void Enter()
     {
-        base.Enter(controller);
+        base.Enter();
         FindBestPosition(attackToAvoid, out bool successful);
     }
 
-    public override void Update(StateMachine controller)
+    public override void Loop()
     {
         
     }
 
-    public override void Exit(StateMachine controller)
+    public override void Exit()
     {
         
     }

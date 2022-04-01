@@ -24,9 +24,9 @@ public class Patrol : AIMovement
     public Route currentRoute;
     public int currentPointIndex;
 
-    public override void Enter(StateMachine controller)
+    public override void Enter()
     {
-        base.Enter(controller);
+        base.Enter();
 
         // Calculate closest point
         float bestPathLength = Mathf.Infinity;
@@ -48,7 +48,7 @@ public class Patrol : AIMovement
 
     }
 
-    public override void Update(StateMachine controller)
+    public override void Loop()
     {
         if (Vector3.Distance(NavMeshAgent.transform.position, NavMeshAgent.destination) < currentRoute.reachedThreshold)
         {

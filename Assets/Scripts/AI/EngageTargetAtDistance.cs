@@ -32,16 +32,28 @@ public class EngageTargetAtDistance : AIMovement
     /// True if the location is compromised and a new location cannot be found
     /// </summary>
     /// <returns></returns>
-    public System.Func<bool> UnableToEngageTarget() => ()=> locationCompromised && !newLocationFound;
-
-    public override void Enter(StateMachine controller)
+    public System.Func<bool> CannotFindValidPosition() => () =>
     {
-        base.Enter(controller);
+        
+        
+        
+        locationCompromised = LocationCompromised();
+        FindIdealLocation(out newLocationFound);
+        // Run LocationCompromised() and FindIdealLocation()
+       
+       
+        return locationCompromised && !newLocationFound;
+    };
+
+    public override void Enter()
+    {
+        base.Enter();
 
         destination = AI.agent.transform.position;
-        FindIdealLocation(out bool successful);
+        locationCompromised = true; // The fact that this state is entered automatically means the agent needs to move to a new location
+        FindIdealLocation(out bool newLocationFound);
     }
-    public override void Update(StateMachine controller)
+    public override void Loop()
     {
         locationCompromised = LocationCompromised();
         if (locationCompromised)
@@ -146,6 +158,11 @@ public class EngageTargetAtDistance : AIMovement
     }
     public bool LocationCompromised()
     {
+        if (newLocationFound == false) // The location can't be viable if it hasn't even been found
+        {
+            return true;
+        }
+        
         // Check if distance is not too close
         // Check if distance is not too far
         float distance = Vector3.Distance(destination, target.transform.position);

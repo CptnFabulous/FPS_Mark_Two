@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class Idle : AIMovement
 {
-    public override void Enter(StateMachine controller)
+    public Idle()
     {
-        base.Enter(controller);
-        NavMeshAgent.isStopped = true;
+        name = "Idle";
     }
 
-    public override void Exit(StateMachine controller)
+    public override void Enter()
+    {
+        base.Enter();
+        NavMeshAgent.isStopped = true;
+    }
+    public override void Exit()
     {
         NavMeshAgent.isStopped = false;
     }

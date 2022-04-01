@@ -34,7 +34,7 @@ public class CombatArea : MonoBehaviour
         // Aggro enemies towards player
         for (int i = 0; i < remainingEnemies.Count; i++)
         {
-            if (remainingEnemies[i].IsHostileTowards(playerFighting) && remainingEnemies[i].target == null)
+            if (remainingEnemies[i].controlling.IsHostileTowards(playerFighting) && remainingEnemies[i].target == null)
             {
                 remainingEnemies[i].target = playerFighting;
             }
@@ -66,7 +66,7 @@ public class CombatArea : MonoBehaviour
     void CheckKills(KillMessage message)
     {
         // Remove empty entries and entries where enemy is already dead
-        remainingEnemies.RemoveAll((c) => c == null || c.health.IsAlive == false);
+        remainingEnemies.RemoveAll((c) => c == null || c.controlling.health.IsAlive == false);
         if (remainingEnemies.Count <= 0) // If all enemies are defeated
         {
             onAllEnemiesDefeated.Invoke();
