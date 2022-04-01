@@ -16,7 +16,7 @@ public class HumanoidAnimator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // Add listeners for other functions e.g. stagger animations
     }
 
     private void Update()
@@ -29,20 +29,8 @@ public class HumanoidAnimator : MonoBehaviour
 
     void LateUpdate()
     {
-        
-
-        // Target position
-        // Current aim transform (AimTransform)
-
-
-        //Vector3 targetPosition;
-
-        //Vector3 targetDirection = targetPosition - character.LookTransform.position;
-        //Quaternion aimTowards = Quaternion.FromToRotation(character.LookTransform.forward, targetDirection);
-
-
         // Set up appropriate aiming rotation of upper body
-        // Use this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
+        // I used this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
 
         // Generates an offset rotation so that the upper body transform rotates in the appropriate direction of the head
         Quaternion rotationOffsetBetweenAIAndBody = Quaternion.FromToRotation(character.transform.forward, character.LookTransform.forward);
