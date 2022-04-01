@@ -8,7 +8,7 @@ public class HeadsUpDisplay : MonoBehaviour
 {
     [Header("General")]
     public Player controller;
-    public Camera camera;
+    public new Camera camera;
     public AudioSource soundPlayer;
     Canvas canvas;
     RectTransform rt;

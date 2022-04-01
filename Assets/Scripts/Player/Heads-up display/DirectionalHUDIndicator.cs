@@ -18,7 +18,7 @@ public class DirectionalHUDIndicator : MonoBehaviour
     public MaskableGraphic graphic;
     public bool rotate = true;
     public float distanceFromCentre = 100;
-    public TimedCosmeticEffect animation;
+    public new TimedCosmeticEffect animation;
     public bool destroyOnAnimationEnd = true;
 
     [Header("Setup")]

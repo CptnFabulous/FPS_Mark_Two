@@ -7,8 +7,8 @@ public class PlayerEventTrigger : MonoBehaviour
 {
     public UnityEvent<Player> onEnter;
 
-    Collider collider;
-    Rigidbody rigidbody;
+    new Collider collider;
+    new Rigidbody rigidbody;
 
     private void Awake()
     {
