@@ -143,12 +143,10 @@ public class ActionExecutorEditor : Editor
         activeStyle = new GUIStyle();
         activeStyle.normal.textColor = Color.green;
     }
-
     private void OnEnable()
     {
         objectBeingEdited = serializedObject.targetObject as ActionExecutor;
     }
-
     public override void OnInspectorGUI()
     {
         if (objectBeingEdited.baseAction != null)
