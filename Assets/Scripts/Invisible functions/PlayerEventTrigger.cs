@@ -28,7 +28,6 @@ public class PlayerEventTrigger : MonoBehaviour
         Player p = other.GetComponentInParent<Player>();
         if (p != null)
         {
-            Debug.Log(p);
             onEnter.Invoke(p);
         }
     }
