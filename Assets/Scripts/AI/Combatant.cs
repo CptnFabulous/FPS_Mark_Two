@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Combatant : AI
+public class Combatant : MonoBehaviour
 {
     [Header("Target")]
     public Character target;
