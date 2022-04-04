@@ -7,6 +7,7 @@ public abstract class Character : Entity
     [Header("Character data")]
     public Faction affiliation;
     public Health health;
+    public Ragdoll characterModel;
 
     public Vector3 CentreOfMass => health.HitboxBounds.center;
     public Vector3 RelativeCentreOfMass(Vector3 hypotheticalTransformPosition)
@@ -42,6 +43,12 @@ public abstract class Character : Entity
         if (health != null && health.stunData != null)
         {
             health.stunData.enabled = false;
+        }
+
+        if (characterModel != null)
+        {
+            characterModel.transform.SetParent(null);
+            characterModel.enabled = true;
         }
     }
 }
