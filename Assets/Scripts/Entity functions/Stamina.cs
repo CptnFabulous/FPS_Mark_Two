@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Health))]
 public class Stamina : MonoBehaviour
 {
     public Resource stamina = new Resource(25, 25, 5);
