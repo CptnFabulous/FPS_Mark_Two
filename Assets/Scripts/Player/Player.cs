@@ -37,5 +37,7 @@ public class Player : Character
         //weapons.enabled = false;
         movement.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
+
+        base.Die();
     }
 }

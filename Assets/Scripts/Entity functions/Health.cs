@@ -105,7 +105,7 @@ public class Health : MonoBehaviour
         {
             onDamage.Invoke();
 
-            if (stunData != null && stun > 0)
+            if (stun > 0 && stunData != null && stunData.enabled)
             {
                 stunData.WearDown(stun);
             }

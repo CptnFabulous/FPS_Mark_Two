@@ -37,5 +37,11 @@ public abstract class Character : Entity
         health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null);
     }
 
-    public abstract void Die();
+    public virtual void Die()
+    {
+        if (health != null && health.stunData != null)
+        {
+            health.stunData.enabled = false;
+        }
+    }
 }

@@ -47,6 +47,10 @@ public class Stamina : MonoBehaviour
     {
         stamina.current = Mathf.Clamp(stamina.current + Time.deltaTime * staminaRegenRate, 0, stamina.max);
     }
+    private void OnDisable()
+    {
+        CurrentCoroutine = null;
+    }
 
     public void WearDown(int amount)
     {

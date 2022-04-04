@@ -20,5 +20,7 @@ public class AI : Character
         agent.enabled = false;
         aiming.enabled = false;
         actions.enabled = false;
+
+        base.Die();
     }
 }
