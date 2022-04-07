@@ -4,23 +4,15 @@ using UnityEngine;
 
 public class GunFireController : MonoBehaviour
 {
-    public float roundsPerMinute;
-    public float ShotDelay
-    {
-        get
-        {
-            return 60 / roundsPerMinute;
-        }
-    }
+    public float roundsPerMinute = 600;
+    public int maxBurst = 1;
 
-
-    public int maxBurst;
-    public bool CanBurst(int numberOfShots)
-    {
-        return numberOfShots < maxBurst || maxBurst <= 0;
-    }
-
+    public float ShotDelay => 60 / roundsPerMinute;
+    public bool CanBurst(int numberOfShots) => numberOfShots < maxBurst || maxBurst <= 0;
     public bool InBurst { get; private set; }
+    
+
+    
     
 
     public IEnumerator Fire(RangedAttack mode)
@@ -32,6 +24,7 @@ public class GunFireController : MonoBehaviour
         {
             mode.SingleShot();
             shotsInBurst++;
+            
             yield return new WaitForSeconds(ShotDelay);
         }
 
@@ -39,7 +32,4 @@ public class GunFireController : MonoBehaviour
 
         InBurst = false;
     }
-    
-    
-
 }
