@@ -23,12 +23,19 @@ public class Interactable : MonoBehaviour
         }
     }
 
+
+    public virtual void OnInteract(Player interactedWith)
+    {
+        onInteract.Invoke(interactedWith);
+        Notification<InteractionMessage>.Transmit(new InteractionMessage(interactedWith, this));
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         Player p = collision.collider.GetComponentInParent<Player>();
         if (activateOnCollision && p != null && active)
         {
-            onInteract.Invoke(p);
+            OnInteract(p);
         }
     }
 

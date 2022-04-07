@@ -72,6 +72,17 @@ public class KillMessage
         causeOfDeath = _causeOfDeath;
     }
 }
+public class InteractionMessage
+{
+    public Character user;
+    public Interactable interactedWith;
+
+    public InteractionMessage(Character _user, Interactable _interactedWith)
+    {
+        user = _user;
+        interactedWith = _interactedWith;
+    }
+}
 public class SpawnMessage
 {
     public Entity spawned;

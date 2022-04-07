@@ -38,7 +38,7 @@ public class InteractFunction : MonoBehaviour
     {
         if (LookingAt != null && LookingAt.active)
         {
-            LookingAt.onInteract.Invoke(player);
+            LookingAt.OnInteract(player);
         }
     }
 
