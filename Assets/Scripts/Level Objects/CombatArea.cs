@@ -19,6 +19,7 @@ public class CombatArea : MonoBehaviour
     {
         remainingEnemies = new List<Combatant>(GetComponentsInChildren<Combatant>());
 
+        Notification<KillMessage>.Receivers += CheckKills;
     }
 
     public void Activate(Player entering)
