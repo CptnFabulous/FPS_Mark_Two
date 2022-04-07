@@ -4,102 +4,96 @@ using UnityEngine;
 
 public abstract class AttackMessage
 {
-    public Character attacker;
-    public List<Character> atRisk;
+    //public static new System.Action<AttackMessage> Receivers;
 
-    // Projectile or melee attack
-    // Damage
-    // Direction
-    // Angle
+    public Character origin;
+    public LayerMask hitDetection;
 
-    // Explosive attack
-    // Max damage
-    // Centre
-    // Blast radius
+    public bool AtRisk(Character c) => AtRisk(c, c.transform.position);
+    public bool AtRisk(Character c, Vector3 transformPosition)
+    {
+        // Check if the attacking character is hostile towards the theoretical victim
+        Character attacker = origin as Character;
+        if (attacker != null && attacker.IsHostileTowards(c) == false) return false;
 
+        // Checks if character's hitbox bounds are inside attack zone
+        // Uses offset between bounds centre and transform position to shift bounds to a hypothetical different position
+        Bounds characterBounds = c.health.HitboxBounds;
+        characterBounds.center -= c.transform.position;
+        characterBounds.center += transformPosition;
+        if (PositionAtRisk(characterBounds, c.health.HitboxColliders) == false) return false;
 
-    public abstract bool AtRisk(Character character, int damageThreshold = 0);
-    public abstract bool AtRisk(Bounds characterBounds, Collider[] characterColliders);
+        return true;
+    }
+    
+    /// <summary>
+    /// Is a set of bounds within the attack zone?
+    /// </summary>
+    /// <param name="characterBounds"></param>
+    /// <param name="characterHitboxes"></param>
+    /// <returns></returns>
+    public abstract bool PositionAtRisk(Bounds characterBounds, Collider[] characterHitboxes);
 }
-
 public class DirectionalAttackMessage : AttackMessage
 {
-    public int damage;
-    public Vector3 origin;
-    public Vector3 direction;
-    public float angle;
-    public float range;
-    public LayerMask detection;
-
-    public DirectionalAttackMessage(Character _attacker, Vector3 _origin, Vector3 _direction, float _angle, float _range, LayerMask _detection)
+    public DirectionalAttackMessage(Character _attacker, Vector3 _originPoint, Vector3 _direction, float _range, float _spread, LayerMask _hitDetection)
     {
-        attacker = _attacker;
-        origin = _origin;
+        origin = _attacker;
+        originPoint = _originPoint;
         direction = _direction;
-        angle = _angle;
         range = _range;
-        detection = _detection;
-
-        // Find characters in level
-        List<Character> characters = new List<Character>(Object.FindObjectsOfType<Character>());
-        // Remove enemies not at risk
-        characters.RemoveAll(c => AtRisk(c) == false);
-
+        spread = _spread;
+        hitDetection = _hitDetection;
     }
+    
+    public Vector3 originPoint;
+    public Vector3 direction;
+    public float range;
+    public float spread;
 
-    public override bool AtRisk(Character characterData, int damageThreshold = 0)
+    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes)
     {
-        // Checks are ran in order from least to most processor intensive, so processing power is not wasted on large checks when a faster check returns a valid answer
-        
-        // Exclude allies
-        if (attacker.IsHostileTowards(characterData) == false)
-        {
-            return false;
-        }
+        // Check range
+        float distanceToTarget = Vector3.Distance(originPoint, bounds.ClosestPoint(originPoint));
+        if (distanceToTarget >= range) return false;
 
-        if (damage <= damageThreshold)
-        {
-            return false;
-        }
+        // Check angle. A special 'closest point' position is created in case a character's transform is outside the attack zone but some of their colliders are.
+        float checkDistance = Mathf.Min(range, Vector3.Distance(originPoint, bounds.center));
+        Vector3 closestPointInsideAngle = bounds.ClosestPoint(originPoint + checkDistance * direction.normalized);
+        float targetAngle = Vector3.Angle(direction, closestPointInsideAngle - originPoint);
+        if (targetAngle >= spread) return false;
 
-        // Exclude enemies outside range, outside angle or behind cover
-        // I was originally going to include separate checks for all of these, but I realised that my complex line of sight code accounts for all three values
-        if (FieldOfView.ComplexDetectionConeCheck(characterData.health.HitboxColliders, origin, direction, angle, range, out RaycastHit rh, detection) == false)
+        // Check if an unobstructed linear path is available between the origin and target point
+        if (AIAction.LineOfSight(originPoint, closestPointInsideAngle, hitDetection, origin.health.HitboxColliders, characterHitboxes) == false)
         {
             return false;
         }
 
         return true;
     }
-
-    /// <summary>
-    /// Is a particular bounds at risk? Since the parameter is just a struct where the centre value can be easily changed, this can be used to detect positions a character is not presently standing on
-    /// </summary>
-    /// <param name="characterBounds"></param>
-    /// <returns></returns>
-    public override bool AtRisk(Bounds characterBounds, Collider[] characterColliders)
+}
+public class AOEAttackMessage : AttackMessage
+{
+    public AOEAttackMessage(Character _attacker, Vector3 _centre, float _radius, LayerMask _hitDetection)
     {
-        // Exclude if outside range
-        float maxBoundsExtents = Mathf.Max(MiscFunctions.Vector3Array(characterBounds.extents));
-        float distanceToTargetCentre = Vector3.Distance(origin, characterBounds.center);
-        if (distanceToTargetCentre - maxBoundsExtents > range) // If distance to target skin is more than the attack's range
-        {
-            return false;
-        }
+        origin = _attacker;
+        centre = _centre;
+        radius = _radius;
+        hitDetection = _hitDetection;
+    }
 
-        // Exclude if outside angle
-        Vector3 sameDistanceMiddleOfShot = origin + (direction.normalized * distanceToTargetCentre);
-        Vector3 closestPointToAttackCone = characterBounds.ClosestPoint(sameDistanceMiddleOfShot);
-        float angleFromAttackPath = Vector3.Angle(closestPointToAttackCone - origin, direction);
-        if (angleFromAttackPath > angle) // If the closest point on the character is from at an angle greater than the attack's angle
-        {
-            return false;
-        }
+    public Vector3 centre;
+    public float radius;
 
-        // Exclude if line of sight is broken
-        List<Collider> exceptions = new List<Collider>(attacker.health.HitboxColliders);
-        exceptions.AddRange(characterColliders);
-        if (AIAction.LineOfSight(origin, characterBounds.center, detection, exceptions) == false)
+    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes)
+    {
+        // Check range
+        Vector3 closestPoint = bounds.ClosestPoint(centre);
+        float distanceToTarget = Vector3.Distance(centre, closestPoint);
+        if (distanceToTarget >= radius) return false;
+
+        // Check if an unobstructed linear path is available between the origin and target point
+        if (AIAction.LineOfSight(centre, closestPoint, hitDetection, origin.health.HitboxColliders, characterHitboxes) == false)
         {
             return false;
         }
