@@ -20,7 +20,7 @@ public class PlayerHealthHUD : MonoBehaviour
     private void Start()
     {
         healthMeter.Refresh(playerTracking.health.data);
-        EventHandler.Subscribe(CheckToRunEffects, true);
+        Notification<DamageMessage>.Receivers += CheckToRunEffects;
 
         indicatorPrefab.gameObject.SetActive(false);
         indicatorPrefab.animation.playOnAwake = true;

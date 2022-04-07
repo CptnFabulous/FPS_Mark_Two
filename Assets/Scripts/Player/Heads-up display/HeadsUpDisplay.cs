@@ -169,7 +169,7 @@ public class HeadsUpDisplay : MonoBehaviour
         canvas = GetComponent<Canvas>();
         rt = GetComponent<RectTransform>();
 
-        EventHandler.Subscribe(CheckToPlayDamageEffects, true);
+        Notification<DamageMessage>.Receivers += CheckToPlayDamageEffects;
     }
     private void LateUpdate()
     {

@@ -18,9 +18,8 @@ public class CombatArea : MonoBehaviour
     private void Awake()
     {
         remainingEnemies = new List<Combatant>(GetComponentsInChildren<Combatant>());
-        EventHandler.Subscribe(CheckKills, true);
-    }
 
+    }
 
     public void Activate(Player entering)
     {

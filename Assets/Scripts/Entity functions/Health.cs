@@ -90,12 +90,14 @@ public class Health : MonoBehaviour
 
         data.Increment(-damage);
 
-        EventHandler.Transmit(new DamageMessage(attacker, this, type, damage, isCritical, stun));
+        DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
+        Notification<DamageMessage>.Transmit(damageMessage);
 
         if (data.current <= 0)
         {
             onDeath.Invoke();
-            EventHandler.Transmit(new KillMessage(attacker, this, type));
+            KillMessage killMessage = new KillMessage(attacker, this, type);
+            Notification<KillMessage>.Transmit(killMessage);
         }
         else if (damage < 0)
         {
