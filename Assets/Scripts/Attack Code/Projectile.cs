@@ -6,73 +6,44 @@ using UnityEngine.Events;
 public class Projectile : MonoBehaviour
 {
     public Entity spawnedBy;
+
+    [Header("Ballistics")]
     public float weight = 1;
     public float diameter = 0.05f;
     public float startingVelocity = 100;
     public LayerMask detection = ~0;
+
+    [Header("Impact")]
     public UnityEvent<RaycastHit> onHit;
 
     public RaycastHit surfaceHit;
     Vector3 velocity;
-    
-    // Start is called before the first frame update
+    float DetectionLength => velocity.magnitude * Time.deltaTime;
+
     void Start()
     {
         velocity = transform.forward * startingVelocity;
     }
-
-    float DetectionLength
-    {
-        get
-        {
-            return velocity.magnitude * Time.deltaTime;
-        }
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        //Debug.DrawRay(transform.position, velocity, Color.red);
+        transform.LookAt(transform.position + velocity);
+
         if (Physics.SphereCast(transform.position, diameter, velocity, out surfaceHit, DetectionLength, detection))
         {
-            //Debug.Log(surfaceHit.collider);
             OnHit(surfaceHit);
         }
         
         // Move bullet
         transform.Translate(velocity.normalized * DetectionLength, Space.World);
         velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
-        transform.LookAt(transform.position + velocity);
-
-        /*
-        More realistic bullet physics ideas
-
-        Static 'Environment' class containing variables for air resistance and wind
-        Function: float Environment.Drag(float airResistance), that uses appropriate calculations to determine actual resistance
-
-        velocity += Time.deltaTime * Physics.gravity;
-        velocity += Time.deltaTime * -Environment.Drag(airResistance) * velocity.normalized;
-        velocity += Time.deltaTime * Environment.wind;
-
-        Simplified thing RooBubba showed me on discord
-        float3 desiredVector = desiredMovementComponent.DesiredMovementVector / (1f + frictionFactor * DeltaTime);
-        Translated to Unity code
-        velocity = velocity / (1f + frictionFactor * Time.deltaTIme);
-        */
-        //Debug.DrawRay(transform.position, velocity, Color.green);
     }
-
-
-
     public void OnHit(RaycastHit thingHit)
     {
-        //Debug.Log(thingHit.collider.name);
         surfaceHit = thingHit;
         onHit.Invoke(surfaceHit);
     }
 
-
-
+    #region Additional functions
     public void Ricochet(float velocityDecayMultiplier = 0.75f)
     {
         Vector3 newDirection = Vector3.Reflect(velocity, surfaceHit.normal).normalized;
@@ -88,7 +59,6 @@ public class Projectile : MonoBehaviour
             enabled = false;
         }
     }
-
     public void SpawnObjectAtImpactPoint(GameObject prefab)
     {
         Instantiate(prefab, surfaceHit.point, Quaternion.identity);
@@ -115,6 +85,6 @@ public class Projectile : MonoBehaviour
         objectToStick.rotation = Quaternion.FromToRotation(rotationAxis, surface.normal);
         objectToStick.parent = surface.transform;
     }
-
+    #endregion
 
 }
