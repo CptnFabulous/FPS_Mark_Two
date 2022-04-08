@@ -14,6 +14,7 @@ public class Projectile : MonoBehaviour
     public LayerMask detection = ~0;
 
     [Header("Impact")]
+    public DamageEffect damageEffect;
     public UnityEvent<RaycastHit> onHit;
 
     public RaycastHit surfaceHit;
@@ -40,6 +41,7 @@ public class Projectile : MonoBehaviour
     public void OnHit(RaycastHit thingHit)
     {
         surfaceHit = thingHit;
+        damageEffect?.DamageFromProjectile(this);
         onHit.Invoke(surfaceHit);
     }
 
