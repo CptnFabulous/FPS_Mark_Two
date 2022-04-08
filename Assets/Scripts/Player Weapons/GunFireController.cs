@@ -29,10 +29,12 @@ public class GunFireController : MonoBehaviour
             // Transmit telegraph message to AI, if it's the first shot or enough time has passed since the previous message transmission
             if (Time.time - timeOfLastMessage > messageDelay)
             {
+                DamageEffect projectileEffect = mode.stats.projectilePrefab.damageEffect;
+                int damage = projectileEffect != null ? projectileEffect.baseDamage : int.MaxValue;
                 float spread = mode.stats.shotSpread + mode.User.standingAccuracy;
-                DirectionalAttackMessage newMessage = new DirectionalAttackMessage(mode.User.controller, mode.User.aimAxis.position, mode.User.AimDirection, mode.stats.range, spread, mode.stats.projectilePrefab.detection);
+
+                DirectionalAttackMessage newMessage = new DirectionalAttackMessage(mode.User.controller, damage, mode.User.aimAxis.position, mode.User.AimDirection, mode.stats.range, spread, mode.stats.projectilePrefab.detection);
                 Notification<AttackMessage>.Transmit(newMessage);
-                //Debug.Log(mode.User.controller + " is firing " + mode.attachedTo + " in its " + mode + " mode, on frame " + Time.frameCount + "!");
 
                 timeOfLastMessage = Time.time; // Resets time
             }
