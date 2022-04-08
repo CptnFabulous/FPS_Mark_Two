@@ -1,9 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MoveToDestination : AIMovement
+public abstract class MoveToDestination : AIMovement, IPriorityAction
 {
+    #region IPriorityAction interface stuff
+    public Action actionToRun => this;
+    public Func<bool> prerequisites => CanAndShouldMove();
+    #endregion
+
     public float destinationThreshold = 0.5f;
     Vector3 destination;
     bool destinationAssigned;
@@ -14,7 +20,6 @@ public abstract class MoveToDestination : AIMovement
     /// <param name="position"></param>
     /// <returns></returns>
     public abstract bool FindPosition(out Vector3 position);
-    
     /// <summary>
     /// Has the agent reached the destination specified by this function?
     /// </summary>
@@ -60,6 +65,8 @@ public abstract class MoveToDestination : AIMovement
             return destinationAssigned;
         };
     }
+
+
 
     public override void Enter()
     {
