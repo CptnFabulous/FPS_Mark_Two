@@ -12,15 +12,8 @@ public class RangedAttack : WeaponMode
     {
         get
         {
-            if (controls.InBurst)
-            {
-                return true;
-            }
-
-            if (magazine != null && magazine.ReloadActive)
-            {
-                return true;
-            }
+            if (controls.InBurst) return true;
+            if (NotReloading == false) return true;
 
             if (optics != null)
             {
