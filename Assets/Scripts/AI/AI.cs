@@ -17,10 +17,12 @@ public class AI : Character
     public ActionExecutor actions;
     public override void Die()
     {
-        agent.enabled = false;
-        aiming.enabled = false;
-        actions.enabled = false;
+        //agent.enabled = false;
+        //aiming.enabled = false;
+        //actions.enabled = false;
 
         base.Die();
+
+        gameObject.SetActive(false);
     }
 }

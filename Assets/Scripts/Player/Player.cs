@@ -33,11 +33,18 @@ public class Player : Character
     
     public override void Die()
     {
+        base.Die();
+
+        if (health != null && health.stunData != null)
+        {
+            health.stunData.enabled = false;
+        }
+
         //movement.enabled = false;
         //weapons.enabled = false;
         movement.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
 
-        base.Die();
+        
     }
 }

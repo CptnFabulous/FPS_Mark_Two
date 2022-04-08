@@ -40,11 +40,6 @@ public abstract class Character : Entity
 
     public virtual void Die()
     {
-        if (health != null && health.stunData != null)
-        {
-            health.stunData.enabled = false;
-        }
-
         if (characterModel != null)
         {
             characterModel.transform.SetParent(null);
