@@ -3,34 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AvoidAttack : AIMovement
+[System.Serializable]
+public class AvoidAttack : MoveToDestination
 {
     AttackMessage attack;
     
     [Header("Finding position")]
-    public int numberOfChecks = 15;
-    public int damageThresholdForAvoidance = 0;
     public float minDistance = 5;
     public float maxDistance = 10;
+    public int numberOfChecks = 15;
+    public int damageThresholdForAvoidance = 0;
     public bool prioritiseCover; // Does the enemy dodge attacks, or just seek cover from them?
 
-    [Header("Reaching destination")]
-    public float destinationThreshold;
-    Vector3 destination;
-
-
-
-    public bool FindSafePosition(out Vector3 position)
+    public override bool ReasonToMove() => attack != null;
+    public override bool PositionCompromised(Vector3 position) => attack.PositionAtRisk(AI, position, damageThresholdForAvoidance, out int potentialDamage);
+    public override bool FindPosition(out Vector3 position)
     {
-        position = AI.agent.destination; // Assign position output to continue moving towards prior destination, in case no valid position is found
+        position = AI.agent.destination;
 
         if (attack.AtRisk(AI, damageThresholdForAvoidance) == false)
         {
-            return true; // No need to move
+            // False alarm, continue moving to normal destination
+            return true;
         }
 
-        Bounds characterBounds = AI.health.HitboxBounds;
-        Vector3 boundsDifferenceFromTransform = characterBounds.center - NavMeshAgent.transform.position; // Bounds' centre relative to agent transform
+
         float bestPathDistance = Mathf.Infinity;
 
         /*
@@ -62,54 +59,30 @@ public class AvoidAttack : AIMovement
             {
                 continue;
             }
-            
 
-            // Somehow sort and prioritise values based on distance to a particular location, if the position is cover (if prioritiseCover is enabled), and how much damage they may take
+            /*
+            Somehow sort and prioritise values based on:
+            * If the position is cover (if prioritiseCover is enabled)
+            * How much damage they may take
+            * Distance to a particular location
+            */
+
 
 
             // If a position has already been found, check if new position is better (e.g. shorter travel distance, less damage taken)
             float newPathDistance = NavMeshPathDistance(path);
-            if (newPathDistance < bestPathDistance)
+            if (newPathDistance > bestPathDistance)
             {
-                destination = samplePosition;
-                bestPathDistance = newPathDistance;
+                // If the new position is a longer distance away, disregard
+                continue;
             }
+
+            position = samplePosition;
+
+            bestPathDistance = newPathDistance;
         }
         
-
         // If bestPathDistance is less than Mathf.Infinity, a valid point was found
         return bestPathDistance < Mathf.Infinity;
     }
-
-
-    
-
-
-
-
-    public override void Enter()
-    {
-        base.Enter();
-        FindSafePosition(out destination);
-    }
-
-    public override void Loop()
-    {
-        NavMeshAgent.destination = destination;
-        if (attack.PositionAtRisk(AI, destination, damageThresholdForAvoidance, out int potentialDamage)) // If position is compromised
-        {
-
-        }
-    }
-
-    public System.Func<bool> NoValidLocationFound() => () =>
-    {
-        return false;
-    };
-    public System.Func<bool> DestinationReached() => () =>
-    {
-        return NavMeshAgent.remainingDistance < destinationThreshold;
-    };
 }
-
-
