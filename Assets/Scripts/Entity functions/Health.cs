@@ -30,13 +30,7 @@ public class Health : MonoBehaviour
     public UnityEvent onDeath;
     public bool allowPosthumousDamage;
     public Stamina stunData;
-    public bool IsAlive
-    {
-        get
-        {
-            return data.current > 0;
-        }
-    }
+    public bool IsAlive => data.current > 0;
 
     public Hitbox[] hitboxes { get; private set; }
     public Bounds HitboxBounds
@@ -90,16 +84,7 @@ public class Health : MonoBehaviour
 
         data.Increment(-damage);
 
-        DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
-        Notification<DamageMessage>.Transmit(damageMessage);
-
-        if (data.current <= 0)
-        {
-            onDeath.Invoke();
-            KillMessage killMessage = new KillMessage(attacker, this, type);
-            Notification<KillMessage>.Transmit(killMessage);
-        }
-        else if (damage < 0)
+        if (damage < 0)
         {
             onHeal.Invoke();
         }
@@ -111,11 +96,18 @@ public class Health : MonoBehaviour
             {
                 stunData.WearDown(stun);
             }
+
+            DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
+            Notification<DamageMessage>.Transmit(damageMessage);
+        }
+
+        if (data.current <= 0)
+        {
+            onDeath.Invoke();
+            KillMessage killMessage = new KillMessage(attacker, this, type);
+            Notification<KillMessage>.Transmit(killMessage);
         }
     }
-
-
-
 
     #region Miscellaneous functions
     public void DestroyOnDeath()
