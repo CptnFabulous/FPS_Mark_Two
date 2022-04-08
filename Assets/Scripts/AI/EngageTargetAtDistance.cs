@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [System.Serializable]
-public class EngageTargetAtDistance : AIMovement
+public class EngageTargetAtDistance : MoveToDestination
 {
     public float minimumDistance = 10;
     public float maximumDistance = 30;
@@ -22,66 +22,34 @@ public class EngageTargetAtDistance : AIMovement
             return CombatAI?.target;
         }
     }
-    Vector3 destination;
+
     Vector3 nearbyCover;
 
-    bool locationCompromised;
-    bool newLocationFound;
 
-    /// <summary>
-    /// True if the location is compromised and a new location cannot be found
-    /// </summary>
-    /// <returns></returns>
-    public System.Func<bool> CannotFindValidPosition() => () =>
+    public override bool ReasonToMove() => target != null;
+    public override bool PositionCompromised(Vector3 position)
     {
-        
-        
-        
-        locationCompromised = LocationCompromised();
-        FindIdealLocation(out newLocationFound);
-        // Run LocationCompromised() and FindIdealLocation()
-       
-       
-        return locationCompromised && !newLocationFound;
-    };
-
-    public override void Enter()
-    {
-        base.Enter();
-
-        destination = AI.agent.transform.position;
-        locationCompromised = true; // The fact that this state is entered automatically means the agent needs to move to a new location
-        FindIdealLocation(out bool newLocationFound);
-    }
-    public override void Loop()
-    {
-        locationCompromised = LocationCompromised();
-        if (locationCompromised)
+        // Check if distance is not too close or too far
+        float distance = Vector3.Distance(position, target.transform.position);
+        if (distance < minimumDistance || distance > maximumDistance)
         {
-            FindIdealLocation(out newLocationFound);
+            return true;
         }
-        AI.agent.destination = destination;
 
-        Debug.DrawLine(AI.transform.position, destination, Color.magenta);
-
-        Vector3 aimOrigin = AI.RelativeLookOrigin(destination);
-        Debug.DrawLine(destination, aimOrigin, Color.yellow);
-        Debug.DrawLine(aimOrigin, target.CentreOfMass, Color.green);
-        if (stayCloseToCover)
+        // Check if line of sight between destination and target is not compromised
+        bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(position), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
+        //LineOfSightCheck(AI.RelativeLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
+        if (lineOfSight == false)
         {
-            Vector3 centreOfMass = AI.RelativeCentreOfMass(nearbyCover);
-            Debug.DrawLine(nearbyCover, centreOfMass, Color.cyan);
-            Debug.DrawLine(centreOfMass, target.LookTransform.position, Color.red);
+            return true;
         }
+
+        return false;
     }
-
-    public void FindIdealLocation(out bool successful)
+    public override bool FindPosition(out Vector3 position)
     {
-        //Vector3 checkOrigin = target.transform.position;
-
+        position = AI.agent.destination;
         float bestPathDistance = Mathf.Infinity; // Calculated once and stored so we don't have to do it every time we check against another path
-
-
         bool bestPositionIsNearCover = false;
 
         AIGridPoints.GridPoint[] samples = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, target.transform.position, minimumDistance, maximumDistance);
@@ -91,7 +59,7 @@ public class EngageTargetAtDistance : AIMovement
             Vector3 samplePosition = samples[i].position;
             // Check if the sample is not blocked by cover, so line of sight is established
             bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(samplePosition), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
-                //LineOfSightCheck(AI.RelativeLookOrigin(samplePosition), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
+            //LineOfSightCheck(AI.RelativeLookOrigin(samplePosition), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
             if (lineOfSight == false)
             {
                 continue;
@@ -149,36 +117,11 @@ public class EngageTargetAtDistance : AIMovement
                 #endregion
             }
 
-            destination = samplePosition;
+            position = samplePosition;
             bestPathDistance = newPathDistance;
         }
 
         // If bestPathDistance is still set to infinity, it means no path was found to have its distance recorded.
-        successful = bestPathDistance < Mathf.Infinity;
-    }
-    public bool LocationCompromised()
-    {
-        if (newLocationFound == false) // The location can't be viable if it hasn't even been found
-        {
-            return true;
-        }
-        
-        // Check if distance is not too close
-        // Check if distance is not too far
-        float distance = Vector3.Distance(destination, target.transform.position);
-        if (distance < minimumDistance || distance > maximumDistance)
-        {
-            return true;
-        }
-
-        // Check if line of sight between destination and target is not compromised
-        bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(destination), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
-        //LineOfSightCheck(AI.RelativeLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
-        if (lineOfSight == false)
-        {
-            return true;
-        }
-
-        return false;
+        return bestPathDistance < Mathf.Infinity;
     }
 }
