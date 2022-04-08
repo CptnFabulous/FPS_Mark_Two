@@ -27,14 +27,11 @@ public class PriorityActionController : Action
     public List<ListedAction> allActions { get; private set; }
     public Action defaultAction;
     int index;
-    public void AddAction(Action action, Func<bool> condition)
-    {
-        allActions.Add(new ListedAction(action, condition));
-    }
-    public void InsertAction(Action action, Func<bool> condition, int index)
-    {
-        allActions.Insert(index, new ListedAction(action, condition));
-    }
+    public void AddAction(Action action, Func<bool> condition) => allActions.Add(new ListedAction(action, condition));
+    public void AddAction(IPriorityAction pa) => AddAction(pa.actionToRun, pa.prerequisites);
+    public void InsertAction(Action action, Func<bool> condition, int index) => allActions.Insert(index, new ListedAction(action, condition));
+    public void InsertAction(IPriorityAction pa, int index) => InsertAction(pa.actionToRun, pa.prerequisites, index);
+
     #endregion
 
     #region Properties
@@ -115,15 +112,9 @@ public class PriorityActionController : Action
     #endregion
 }
 
-public abstract class PriorityAction : Action
+
+public interface IPriorityAction
 {
-    /// <summary>
-    /// In-built prerequisites to perform the action. Use PairForController to add this and them to a PriorityActionController.
-    /// </summary>
-    /// <returns></returns>
-    public abstract Func<bool> Prerequisites();
-    /// <summary>
-    /// Reference this when adding to a PriorityActionController to neatly match this action and its normal prerequisites.
-    /// </summary>
-    public PriorityActionController.ListedAction PairForController => new PriorityActionController.ListedAction(this, Prerequisites());
+    public Action actionToRun { get; }
+    public Func<bool> prerequisites { get; }
 }
