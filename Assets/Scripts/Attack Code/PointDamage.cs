@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PointDamage : MonoBehaviour
+public class PointDamage : DamageEffect
 {
-    public int damage = 10;
-    public int stun = 10;
     public float criticalMultiplier = 3;
-    public float knockback = 15;
-    public DamageType type = DamageType.Piercing;
     public UnityEvent<RaycastHit> onDamaged;
     public UnityEvent<RaycastHit> onUndamaged;
 
-    public void ProjectileDamage(Projectile projectile)
+    public override void DamageFromProjectile(Projectile projectile)
     {
         Damage(projectile.surfaceHit, projectile.transform.position, projectile.spawnedBy);
     }
@@ -32,7 +28,7 @@ public class PointDamage : MonoBehaviour
 
         if (damageable != null && canHit) // If a hitbox is present
         {
-            damageable.Damage(damage, criticalMultiplier, stun, type, attacker);
+            damageable.Damage(baseDamage, criticalMultiplier, stun, type, attacker);
             onDamaged.Invoke(rh);
         }
         else

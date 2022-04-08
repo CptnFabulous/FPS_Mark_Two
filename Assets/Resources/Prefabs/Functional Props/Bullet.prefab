@@ -68,21 +68,10 @@ MonoBehaviour:
   detection:
     serializedVersion: 2
     m_Bits: 4294967295
+  damageEffect: {fileID: 7059086101645604880}
   onHit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7059086101645604880}
-        m_TargetAssemblyTypeName: PointDamage, Assembly-CSharp
-        m_MethodName: ProjectileDamage
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 7059086101645604909}
-          m_ObjectArgumentAssemblyTypeName: Projectile, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 7059086101645604909}
         m_TargetAssemblyTypeName: Projectile, Assembly-CSharp
         m_MethodName: SpawnObjectForwardOffSurface
@@ -131,11 +120,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c53f9d05cb4cd4f883c88f6d47bb24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  baseDamage: 10
   stun: 10
-  criticalMultiplier: 3
   knockback: 15
   type: 0
+  hitDetection:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  additionalEffects:
+    m_PersistentCalls:
+      m_Calls: []
+  criticalMultiplier: 3
   onDamaged:
     m_PersistentCalls:
       m_Calls: []
