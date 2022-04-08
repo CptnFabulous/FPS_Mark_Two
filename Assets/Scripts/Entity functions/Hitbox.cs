@@ -8,7 +8,7 @@ public class Hitbox : MonoBehaviour
     public float damageMultiplier = 1;
     public bool isCritical;
     public Health sourceHealth;
-    public Collider collider { get; private set; }
+    public new Collider collider { get; private set; }
 
     [Header("Collision Damage")]
     float minimumCollisionForceToDamage = 12;
