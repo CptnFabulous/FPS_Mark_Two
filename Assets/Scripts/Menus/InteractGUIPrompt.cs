@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class InteractGUIPrompt : MonoBehaviour
 {
     [Header("UI elements")]
-    public Text name;
+    public Text interactableName;
     public Text action;
     public GUIButtonPrompt prompt;
     public Image statusIcon;
@@ -22,7 +22,7 @@ public class InteractGUIPrompt : MonoBehaviour
         {
             return;
         }
-        name.text = current.name;
+        interactableName.text = current.name;
         UnityEngine.InputSystem.PlayerInput input = function.player.controls;
         prompt.AssignAction(input.actions.FindAction(function.interactInputName), input);
     }
