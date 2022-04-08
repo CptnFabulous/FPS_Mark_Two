@@ -28,6 +28,8 @@ public class AvoidAttack : MoveToDestination
         }
 
 
+        bool bestPositionIsCover = false;
+        int smallestDamageAmount = Mathf.RoundToInt(Mathf.Infinity);
         float bestPathDistance = Mathf.Infinity;
 
         /*
@@ -67,7 +69,19 @@ public class AvoidAttack : MoveToDestination
             * Distance to a particular location
             */
 
+            // (If AI cares about specifically getting cover) is this position cover?
+            if (prioritiseCover && bestPositionIsCover && points[i].isCover == false)
+            {
+                // If it isn't and a cover position has been found, disregard
+                continue;
+            }
 
+            // Will this position lead to the AI taking less damage than the current best position?
+            if (potentialDamage > smallestDamageAmount)
+            {
+                // If they take more damage, disregard.
+                continue;
+            }
 
             // If a position has already been found, check if new position is better (e.g. shorter travel distance, less damage taken)
             float newPathDistance = NavMeshPathDistance(path);
@@ -80,6 +94,8 @@ public class AvoidAttack : MoveToDestination
             position = samplePosition;
 
             bestPathDistance = newPathDistance;
+            smallestDamageAmount = potentialDamage;
+            bestPositionIsCover = points[i].isCover;
         }
         
         // If bestPathDistance is less than Mathf.Infinity, a valid point was found
