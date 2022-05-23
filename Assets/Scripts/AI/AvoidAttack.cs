@@ -16,6 +16,37 @@ public class AvoidAttack : MoveToDestination
     [Min(0)] public float cautionMultiplier = 1;
     public bool prioritiseCover; // Does the enemy dodge attacks, or just seek cover from them?
 
+
+    public override void Setup()
+    {
+        base.Setup();
+        Notification<AttackMessage>.Receivers += CheckIncomingAttack;
+    }
+    void CheckIncomingAttack(AttackMessage newAttack)
+    {
+        // A new attack has been detected!
+        // Check if the attack is dangerous enough to bother avoiding
+        // Check if the AI is not in the middle of avoiding another attack
+        // Check if the executor this state is attached to is actually active
+        if (host.enabled && currentAttackToAvoid == null)
+        {
+            if (newAttack.AtRisk(AI, cautionMultiplier, damageThresholdForAvoidance))
+            {
+                // If so, assign the new attack
+                currentAttackToAvoid = newAttack;
+                Debug.Log(AI.name + " is in the path of " + newAttack + "!");
+            }
+            else
+            {
+                Debug.Log(AI.name + " thinks they're safe from " + newAttack + "!");
+            }
+        }
+        else
+        {
+            Debug.Log(AI.name + " is ignoring " + newAttack + " to avoid an existing attack!");
+        }
+    }
+
     public override bool ReasonToMove() => currentAttackToAvoid != null;
     public override bool PositionCompromised(Vector3 position) => currentAttackToAvoid.PositionAtRisk(AI, position, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage);
     public override bool FindPosition(out Vector3 position)
@@ -101,5 +132,15 @@ public class AvoidAttack : MoveToDestination
         
         // If bestPathDistance is less than Mathf.Infinity, a valid point was found
         return bestPathDistance < Mathf.Infinity;
+    }
+
+    public override void Loop()
+    {
+        base.Loop();
+        if (currentAttackToAvoid != null && DestinationReached()) // If AI has successfully evaded the attack, remove its reference and go back to normal behaviour
+        {
+            Debug.Log(AI.name + " is safe from the current attack, resuming normal behaviour");
+            currentAttackToAvoid = null;
+        }
     }
 }
