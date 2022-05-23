@@ -16,11 +16,14 @@ public class Combatant : MonoBehaviour
 
     public AI controlling { get; private set; }
 
-    public virtual void Awake()
+    public void Awake()
     {
         controlling = GetComponent<AI>();
-        
+        SetupLogicPatterns();
+    }
 
+    public virtual void SetupLogicPatterns()
+    {
         PriorityActionController mainController = new PriorityActionController("Main Controller");
         mainController.AddAction(eliminateTarget, TargetAcquired());
         mainController.AddAction(outOfCombat, null);

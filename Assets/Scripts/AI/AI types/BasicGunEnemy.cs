@@ -9,7 +9,7 @@ public class BasicGunEnemy : Combatant
     public EngageTargetAtDistance engagementMovement;
     public ExecuteAttack attackStats;
 
-    public override void Awake()
+    public override void SetupLogicPatterns()
     {
         
         combatActions.allActions.Add(engagementMovement);
@@ -19,6 +19,6 @@ public class BasicGunEnemy : Combatant
         eliminateTarget.defaultAction = combatActions;
 
 
-        base.Awake();
+        base.SetupLogicPatterns();
     }
 }
