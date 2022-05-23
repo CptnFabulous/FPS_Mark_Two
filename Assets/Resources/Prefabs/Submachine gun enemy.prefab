@@ -572,9 +572,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  evasion:
+    name: Evade Attack
+    movementSpeed: 10
+    destinationThreshold: 0.5
+    minDistance: 5
+    maxDistance: 10
+    numberOfChecks: 15
+    damageThresholdForAvoidance: 0
+    cautionMultiplier: 1.5
+    prioritiseCover: 0
   engagementMovement:
     name: Pursue player
     movementSpeed: 3.5
+    destinationThreshold: 0.5
     minimumDistance: 15
     maximumDistance: 20
     numberOfChecks: 15
