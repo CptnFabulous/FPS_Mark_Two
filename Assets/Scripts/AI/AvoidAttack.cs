@@ -13,15 +13,16 @@ public class AvoidAttack : MoveToDestination
     public float maxDistance = 10;
     public int numberOfChecks = 15;
     public int damageThresholdForAvoidance = 0;
+    [Min(0)] public float cautionMultiplier = 1;
     public bool prioritiseCover; // Does the enemy dodge attacks, or just seek cover from them?
 
     public override bool ReasonToMove() => attack != null;
-    public override bool PositionCompromised(Vector3 position) => attack.PositionAtRisk(AI, position, damageThresholdForAvoidance, out int potentialDamage);
+    public override bool PositionCompromised(Vector3 position) => attack.PositionAtRisk(AI, position, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage);
     public override bool FindPosition(out Vector3 position)
     {
         position = AI.agent.destination;
 
-        if (attack.AtRisk(AI, damageThresholdForAvoidance) == false)
+        if (attack.AtRisk(AI, cautionMultiplier, damageThresholdForAvoidance) == false)
         {
             // False alarm, continue moving to normal destination
             return true;
@@ -50,7 +51,7 @@ public class AvoidAttack : MoveToDestination
             Vector3 samplePosition = points[i].position;
 
             // Check if position is safe. If the check returns true, it isn't.
-            if (attack.PositionAtRisk(AI, samplePosition, damageThresholdForAvoidance, out int potentialDamage))
+            if (attack.PositionAtRisk(AI, samplePosition, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage))
             {
                 continue;
             }

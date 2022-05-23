@@ -10,14 +10,14 @@ public abstract class AttackMessage
     public LayerMask hitDetection;
     public int baseDamage;
 
-    public bool AtRisk(Character c, int damageThresholdToAvoid)
+    public bool AtRisk(Character c, float cautionMultiplier, int damageThresholdToAvoid)
     {
         // Check if the attacking character is hostile towards the theoretical victim
         Character attacker = origin as Character;
         if (attacker != null && attacker.IsHostileTowards(c) == false) return false;
 
         // Checks if position is safe and the damage is actually high enough to justify dodging
-        if (PositionAtRisk(c, c.transform.position, damageThresholdToAvoid, out int blah) == false) return false;
+        if (PositionAtRisk(c, c.transform.position, cautionMultiplier, damageThresholdToAvoid, out int blah) == false) return false;
 
         return true;
     }
@@ -28,14 +28,14 @@ public abstract class AttackMessage
     /// <param name="transformPosition"></param>
     /// <param name="potentialDamage"></param>
     /// <returns></returns>
-    public bool PositionAtRisk(Character c, Vector3 transformPosition, int damageThresholdToAvoid,  out int potentialDamage)
+    public bool PositionAtRisk(Character c, Vector3 transformPosition, float cautionMultiplier, int damageThresholdToAvoid, out int potentialDamage)
     {
         // Checks if character's hitbox bounds are inside attack zone
         // Uses offset between bounds centre and transform position to shift bounds to a hypothetical different position
         Bounds characterBounds = c.health.HitboxBounds;
         characterBounds.center -= c.transform.position;
         characterBounds.center += transformPosition;
-        return PositionAtRisk(characterBounds, c.health.HitboxColliders, out potentialDamage) && potentialDamage > damageThresholdToAvoid;
+        return PositionAtRisk(characterBounds, c.health.HitboxColliders, cautionMultiplier, out potentialDamage) && potentialDamage > damageThresholdToAvoid;
     }
     /// <summary>
     /// Is a bounds in the path of an attack, and how much damage will they take?
@@ -44,7 +44,7 @@ public abstract class AttackMessage
     /// <param name="characterHitboxes"></param>
     /// <param name="potentialDamage"></param>
     /// <returns></returns>
-    public abstract bool PositionAtRisk(Bounds characterBounds, Collider[] characterHitboxes, out int potentialDamage);
+    public abstract bool PositionAtRisk(Bounds characterBounds, Collider[] characterHitboxes, float cautionMultiplier, out int potentialDamage);
 }
 public class DirectionalAttackMessage : AttackMessage
 {
@@ -66,19 +66,22 @@ public class DirectionalAttackMessage : AttackMessage
     public float spread;
     //public AnimationCurve damageFalloff;
 
-    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes, out int potentialDamage)
+    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes, float cautionMultiplier, out int potentialDamage)
     {
+        float perceivedRange = range * cautionMultiplier;
+        float perceivedSpread = spread * cautionMultiplier;
+        
         // Check range
         float distanceToTarget = Vector3.Distance(originPoint, bounds.ClosestPoint(originPoint));
         potentialDamage = baseDamage;//Mathf.RoundToInt(baseDamage * damageFalloff.Evaluate(distanceToTarget / 1));
 
-        if (distanceToTarget >= range) return false;
+        if (distanceToTarget >= perceivedRange) return false;
 
         // Check angle. A special 'closest point' position is created in case a character's transform is outside the attack zone but some of their colliders are.
-        float checkDistance = Mathf.Min(range, Vector3.Distance(originPoint, bounds.center));
+        float checkDistance = Mathf.Min(perceivedRange, Vector3.Distance(originPoint, bounds.center));
         Vector3 closestPointInsideAngle = bounds.ClosestPoint(originPoint + checkDistance * direction.normalized);
         float targetAngle = Vector3.Angle(direction, closestPointInsideAngle - originPoint);
-        if (targetAngle >= spread) return false;
+        if (targetAngle >= perceivedSpread) return false;
 
         // Check if an unobstructed linear path is available between the origin and target point
         if (AIAction.LineOfSight(originPoint, closestPointInsideAngle, hitDetection, origin.health.HitboxColliders, characterHitboxes) == false)
@@ -105,14 +108,16 @@ public class AOEAttackMessage : AttackMessage
     public float radius;
     public AnimationCurve damageFalloff;
 
-    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes, out int potentialDamage)
+    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes, float cautionMultiplier, out int potentialDamage)
     {
+        float perceivedRadius = radius * cautionMultiplier;
+
         // Check range
         Vector3 closestPoint = bounds.ClosestPoint(centre);
         float distanceToTarget = Vector3.Distance(centre, closestPoint);
         potentialDamage = Mathf.RoundToInt(baseDamage * damageFalloff.Evaluate(distanceToTarget / 1));
 
-        if (distanceToTarget >= radius) return false;
+        if (distanceToTarget >= perceivedRadius) return false;
 
         // Check if an unobstructed linear path is available between the origin and target point
         if (AIAction.LineOfSight(centre, closestPoint, hitDetection, origin.health.HitboxColliders, characterHitboxes) == false)
