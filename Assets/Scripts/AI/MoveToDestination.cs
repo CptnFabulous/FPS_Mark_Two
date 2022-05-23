@@ -24,7 +24,7 @@ public abstract class MoveToDestination : AIMovement, IPriorityAction
     /// Has the agent reached the destination specified by this function?
     /// </summary>
     /// <returns></returns>
-    public System.Func<bool> DestinationReached() => () => destinationAssigned && NavMeshAgent.destination == destination && NavMeshAgent.remainingDistance < destinationThreshold;
+    public bool DestinationReached() => destinationAssigned && NavMeshAgent.destination == destination && NavMeshAgent.remainingDistance < destinationThreshold;
     /// <summary>
     /// Does the agent have a reason to move?
     /// </summary>
@@ -45,7 +45,7 @@ public abstract class MoveToDestination : AIMovement, IPriorityAction
         return () =>
         {
             // Is there actually a thing they need to move because of, and if so, do they still need to move to an appropriate destination?
-            if (ReasonToMove() == false || DestinationReached().Invoke() == true)
+            if (ReasonToMove() == false || DestinationReached() == true)
             {
                 // If they don't have a reason (or they did but have arrived at their destination), then they don't need to move
                 return false;
