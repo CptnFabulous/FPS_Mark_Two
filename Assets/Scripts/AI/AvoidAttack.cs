@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [System.Serializable]
 public class AvoidAttack : MoveToDestination
 {
-    AttackMessage attack;
+    AttackMessage currentAttackToAvoid;
     
     [Header("Finding position")]
     public float minDistance = 5;
@@ -16,13 +16,13 @@ public class AvoidAttack : MoveToDestination
     [Min(0)] public float cautionMultiplier = 1;
     public bool prioritiseCover; // Does the enemy dodge attacks, or just seek cover from them?
 
-    public override bool ReasonToMove() => attack != null;
-    public override bool PositionCompromised(Vector3 position) => attack.PositionAtRisk(AI, position, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage);
+    public override bool ReasonToMove() => currentAttackToAvoid != null;
+    public override bool PositionCompromised(Vector3 position) => currentAttackToAvoid.PositionAtRisk(AI, position, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage);
     public override bool FindPosition(out Vector3 position)
     {
         position = AI.agent.destination;
 
-        if (attack.AtRisk(AI, cautionMultiplier, damageThresholdForAvoidance) == false)
+        if (currentAttackToAvoid.AtRisk(AI, cautionMultiplier, damageThresholdForAvoidance) == false)
         {
             // False alarm, continue moving to normal destination
             return true;
@@ -51,7 +51,7 @@ public class AvoidAttack : MoveToDestination
             Vector3 samplePosition = points[i].position;
 
             // Check if position is safe. If the check returns true, it isn't.
-            if (attack.PositionAtRisk(AI, samplePosition, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage))
+            if (currentAttackToAvoid.PositionAtRisk(AI, samplePosition, cautionMultiplier, damageThresholdForAvoidance, out int potentialDamage))
             {
                 continue;
             }
