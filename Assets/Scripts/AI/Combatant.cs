@@ -9,8 +9,8 @@ public class Combatant : MonoBehaviour
 
     [Header("States")]
     public AvoidAttack evasion;
-    public PriorityActionController eliminateTarget = new PriorityActionController("Eliminate target");
-    public PriorityActionController outOfCombat = new PriorityActionController("Out of combat");
+    public PriorityActionController eliminateTarget;
+    public PriorityActionController outOfCombat;
 
 
     public Idle idleState = new Idle();
@@ -20,6 +20,10 @@ public class Combatant : MonoBehaviour
     public void Awake()
     {
         controlling = GetComponent<AI>();
+
+        eliminateTarget = new PriorityActionController("Eliminate target");
+        outOfCombat = new PriorityActionController("Out of combat");
+
         SetupLogicPatterns();
     }
 
