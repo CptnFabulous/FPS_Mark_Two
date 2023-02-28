@@ -40,7 +40,15 @@ public class ControlOptions : OptionsMenu
     public override void SetupOptions()
     {
         controls = GetComponentInParent<PlayerInput>();
-        SetupAsset(controls.actions);
+        if (controls != null)
+        {
+            SetupAsset(controls.actions);
+        }
+        else
+        {
+            SetupAsset(defaultControls);
+        }
+        
 
         getPressedKeyForUpdatingBinding = new InputAction("Get New Key");
         getPressedKeyForUpdatingBinding.AddBinding("/*/<button>");
