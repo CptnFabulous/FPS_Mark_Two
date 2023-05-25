@@ -153,7 +153,7 @@ public class WeaponHandler : MonoBehaviour
     }
     void OnSelectWeapon(InputValue input)
     {
-        if (input.isPressed && weaponSelector.OptionsPresent)
+        if (input.isPressed && weaponSelector.optionsPresent)
         {
             // Run function to open weapon selector
             controller.movement.canLook = false;
@@ -187,26 +187,20 @@ public class WeaponHandler : MonoBehaviour
     void UpdateAvailableWeapons()
     {
         equippedWeapons = GetComponentsInChildren<Weapon>(true);
-        List<Sprite> icons = new List<Sprite>();
 
-        for (int w = 0; w < equippedWeapons.Length; w++)
+        foreach (Weapon w in equippedWeapons)
         {
             // Assign proper transform values
-            equippedWeapons[w].transform.SetParent(holdingSocket);
-            equippedWeapons[w].transform.localPosition = Vector3.zero;
-            equippedWeapons[w].transform.localRotation = Quaternion.identity;
+            w.transform.SetParent(holdingSocket);
+            w.transform.localPosition = Vector3.zero;
+            w.transform.localRotation = Quaternion.identity;
 
             // Disable all weapons so that only the appropriate one will be enabled
-            equippedWeapons[w].gameObject.SetActive(false);
-
-            // Generate selector icons
-            for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
-            {
-                icons.Add(equippedWeapons[w].modes[m].icon);
-            }
+            w.gameObject.SetActive(false);
         }
-        weaponSelector.Refresh(icons.ToArray());
-
+        
+        selectorInfo.Setup(this);
+        
         if (CurrentWeapon != null)
         {
             StartCoroutine(SwitchWeapon(equippedWeaponIndex));

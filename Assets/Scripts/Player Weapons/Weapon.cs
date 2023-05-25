@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class Weapon : MonoBehaviour
 {
+    public Sprite hudGraphic;
+    
     [Header("Attack modes")]
     public WeaponMode[] modes;
     public int currentModeIndex;
