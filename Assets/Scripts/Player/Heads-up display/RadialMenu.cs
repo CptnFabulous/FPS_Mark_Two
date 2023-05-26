@@ -138,6 +138,7 @@ public class RadialMenu : MonoBehaviour
         if (valueToSet >= options.Length) valueToSet = 0;
         value = valueToSet;
 
+    }
     /// <summary>
     /// Opens the radial menu and updates it to the current selection.
     /// </summary>
