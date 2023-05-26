@@ -30,6 +30,7 @@ public class WeaponSelectorHUD : MonoBehaviour
     {
         dividerPrefab.gameObject.SetActive(false);
         weaponGraphicPrefab?.gameObject.SetActive(false);
+        radialMenu.onValueChanged.AddListener(DisplayInfoOnSelectedMode);
     }
 
     public void Setup(WeaponHandler newHandler)
@@ -74,9 +75,6 @@ public class WeaponSelectorHUD : MonoBehaviour
             modeIndex += numberOfModes;
         }
         #endregion
-
-        radialMenu.onValueChanged.RemoveAllListeners();
-        radialMenu.onValueChanged.AddListener(DisplayInfoOnSelectedMode);
     }
 
 
