@@ -81,7 +81,7 @@ public class RadialMenu : MonoBehaviour
         options = new RectTransform[icons.Length];
         for (int i = 0; i < options.Length; i++)
         {
-            Image newOption = Instantiate(optionPrefab);
+            Image newOption = Instantiate(optionPrefab, transform);
             newOption.sprite = icons[i];
             AddVisualEffect(newOption.rectTransform, i, 1, optionRotationsMatchAngle);
             options[i] = newOption.rectTransform;
