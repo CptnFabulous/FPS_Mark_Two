@@ -106,7 +106,7 @@ public class WeaponHandler : MonoBehaviour
     }
     private void Update()
     {
-        if (MiscFunctions.NumKeyPressed(out int index, true))
+        if (weaponSelector.menuIsOpen == false && NumberKeySelector.NumKeyPressed(out int index, true))
         {
             //StartCoroutine(SwitchWeapon(index));
             SwitchWeaponAndModeFromIndex(index);
