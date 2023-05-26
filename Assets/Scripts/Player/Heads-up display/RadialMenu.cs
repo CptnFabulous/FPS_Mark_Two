@@ -58,6 +58,7 @@ public class RadialMenu : MonoBehaviour
     }
 
     #region Setup
+    void SetSelectorAngle(float angle) => selectorAxis.localRotation = Quaternion.Euler(0, 0, -angle);
     /// <summary>
     /// Populates the radial menu with a series of options.
     /// </summary>
@@ -138,6 +139,7 @@ public class RadialMenu : MonoBehaviour
         if (valueToSet >= options.Length) valueToSet = 0;
         value = valueToSet;
 
+        SetSelectorAngle(selectionAngle);
     }
     /// <summary>
     /// Opens the radial menu and updates it to the current selection.
@@ -152,7 +154,7 @@ public class RadialMenu : MonoBehaviour
         onValueChanged.Invoke(cachedIndex);
         
         cursorDirection = Vector2.zero;
-        selectorAxis.localRotation = Quaternion.Euler(0, 0, -segmentSize * index);
+        SetSelectorAngle(segmentSize * cachedIndex);
         SetActiveState(true);
     }
     /// <summary>
