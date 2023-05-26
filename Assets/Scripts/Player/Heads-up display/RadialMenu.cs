@@ -19,20 +19,24 @@ public class RadialMenu : MonoBehaviour
     RectTransform[] options = new RectTransform[0];
     List<RectTransform> visualElements = new List<RectTransform>();
 
-    int index;
+    int cachedIndex; // Don't edit this directly except from inside 'value' setter
     Vector2 cursorDirection;
 
     public bool active { get; private set; }
     public int value
     {
-        get => index;
+        get => cachedIndex;
         set
         {
-            value = MiscFunctions.InverseClamp(value, 0, options.Length - 1);
-            if (index == value) return;// Only perform updating code if value is changed
+            // Should I put this code in InputDirection() instead?
+            // I might also want to set up EnterMenu() to use InputDirection() as well since there's a lot of overlap.
+            
+            value = Mathf.Clamp(value, 0, options.Length - 1);
+            //value = MiscFunctions.InverseClamp(value, 0, options.Length - 1);
+            if (cachedIndex == value) return;// Only perform updating code if value is changed
 
-            index = value;
-            onValueChanged.Invoke(index);
+            cachedIndex = value;
+            onValueChanged.Invoke(cachedIndex);
         }
     }
     public bool optionsPresent => options != null && options.Length > 0;
@@ -125,12 +129,14 @@ public class RadialMenu : MonoBehaviour
             cursorDirection.Normalize();
         }
 
+        // Calculate a 0-360 degree angle based off the vector
         float selectionAngle = Vector2.SignedAngle(cursorDirection, Vector2.up);
         if (selectionAngle < 0) selectionAngle += 360;
 
-        this.value = Mathf.RoundToInt(selectionAngle / segmentSize);
-        selectorAxis.localRotation = Quaternion.Euler(0, 0, -selectionAngle);
-    }
+        // Calculate the correct index for the angle
+        int valueToSet = Mathf.RoundToInt(selectionAngle / segmentSize);
+        if (valueToSet >= options.Length) valueToSet = 0;
+        value = valueToSet;
 
     /// <summary>
     /// Opens the radial menu and updates it to the current selection.
@@ -140,8 +146,9 @@ public class RadialMenu : MonoBehaviour
     {
         if (optionsPresent == false) return;
 
-        index = newIndex;
-        onValueChanged.Invoke(index);
+        // Force-update the index
+        cachedIndex = newIndex;
+        onValueChanged.Invoke(cachedIndex);
         
         cursorDirection = Vector2.zero;
         selectorAxis.localRotation = Quaternion.Euler(0, 0, -segmentSize * index);
