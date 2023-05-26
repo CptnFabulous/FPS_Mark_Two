@@ -8,12 +8,12 @@ public class RadialMenu : MonoBehaviour
     [SerializeField] Image optionPrefab;
     [SerializeField] bool optionRotationsMatchAngle;
     //public float angleOffset;
-    [SerializeField] RectTransform selectorAxis;
 
     public UnityEvent<int> onValueChanged;
     public UnityEvent<int> onValueConfirmed;
 
-
+    [Header("Cosmetics")]
+    [SerializeField] RectTransform selectorAxis;
 
     CanvasGroup elements;
     RectTransform[] options = new RectTransform[0];
@@ -42,7 +42,8 @@ public class RadialMenu : MonoBehaviour
     public bool optionsPresent => options != null && options.Length > 0;
     float radius => Vector2.Distance(optionPrefab.rectTransform.anchoredPosition, Vector2.zero);
     float segmentSize => optionsPresent ? (360 / options.Length) : 360;
-    
+
+    #region Setup
     private void Awake()
     {
         elements = GetComponent<CanvasGroup>();
@@ -56,9 +57,19 @@ public class RadialMenu : MonoBehaviour
         elements.interactable = menuIsOpen;
         elements.blocksRaycasts = menuIsOpen;
     }
+    void Clear()
+    {
+        // Clear options and destroy all instantiated visuals
+        // Implementing code to save and repurpose current ones might theoretically improve performance, but I'll wait until it actually causes problems.
+        foreach (RectTransform visual in visualElements) Destroy(visual.gameObject);
+        visualElements.Clear();
 
-    #region Setup
+        options = new RectTransform[0]; // Set length to zero
+    }
     void SetSelectorAngle(float angle) => selectorAxis.localRotation = Quaternion.Euler(0, 0, -angle);
+    #endregion
+
+    #region Populating menu
     /// <summary>
     /// Populates the radial menu with a series of options.
     /// </summary>
@@ -102,33 +113,20 @@ public class RadialMenu : MonoBehaviour
         visualElements.Add(objectTransform);
         objectTransform.gameObject.SetActive(true);
     }
-    void Clear()
-    {
-        // Clear options and destroy all instantiated visuals
-        // Implementing code to save and repurpose current ones might theoretically improve performance, but I'll wait until it actually causes problems.
-        foreach (RectTransform visual in visualElements) Destroy(visual.gameObject);
-        visualElements.Clear();
-
-        options = new RectTransform[0]; // Set length to zero
-    }
     #endregion
-
 
     #region Controls
     /// <summary>
     /// Inputs a 2D vector based off a mouse or analog stick input, to update the selection angle
     /// </summary>
-    /// <param name="value"></param>
-    public void InputDirection(Vector2 value)
+    /// <param name="inputVector"></param>
+    public void InputDirection(Vector2 inputVector)
     {
         if (!menuIsOpen) return;
 
         // Input mouse/analog stick movement
-        cursorDirection += value;
-        if (cursorDirection.magnitude > 1)
-        {
-            cursorDirection.Normalize();
-        }
+        cursorDirection += inputVector;
+        if (cursorDirection.magnitude > 1) cursorDirection.Normalize();
 
         // Calculate a 0-360 degree angle based off the vector
         float selectionAngle = Vector2.SignedAngle(cursorDirection, Vector2.up);
