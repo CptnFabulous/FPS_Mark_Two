@@ -159,7 +159,7 @@ public class HeadsUpDisplay : MonoBehaviour
         // Show reticle If ADS is null, OR if ADS is present but player is not aiming/transitioning and hideDefaultReticle is false
         GunADS ads = currentMode.optics;
         bool notHiddenDueToAds = ads == null || (!(ads.IsAiming || ads.IsTransitioning) && !ads.hideMainReticle);
-        bool notInWeaponSelector = controller.weapons.weaponSelector.active == false;
+        bool notInWeaponSelector = controller.weapons.weaponSelector.menuIsOpen == false;
         reticle.SetActive(notHiddenDueToAds && notInWeaponSelector);
     }
 

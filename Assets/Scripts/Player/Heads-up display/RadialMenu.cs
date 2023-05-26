@@ -22,7 +22,7 @@ public class RadialMenu : MonoBehaviour
     int cachedIndex; // Don't edit this directly except from inside 'value' setter
     Vector2 cursorDirection;
 
-    public bool active { get; private set; }
+    public bool menuIsOpen { get; private set; }
     public int value
     {
         get => cachedIndex;
@@ -51,10 +51,10 @@ public class RadialMenu : MonoBehaviour
     }
     void SetActiveState(bool enabled)
     {
-        active = enabled;
-        elements.alpha = active ? 1 : 0;
-        elements.interactable = active;
-        elements.blocksRaycasts = active;
+        menuIsOpen = enabled;
+        elements.alpha = menuIsOpen ? 1 : 0;
+        elements.interactable = menuIsOpen;
+        elements.blocksRaycasts = menuIsOpen;
     }
 
     #region Setup
@@ -120,7 +120,7 @@ public class RadialMenu : MonoBehaviour
     /// <param name="value"></param>
     public void InputDirection(Vector2 value)
     {
-        if (!active) return;
+        if (!menuIsOpen) return;
 
         // Input mouse/analog stick movement
         cursorDirection += value;
