@@ -98,15 +98,6 @@ public class WeaponHandler : MonoBehaviour
         }
         
         weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
-        weaponSelector.onValueChanged.AddListener((i) =>
-        {
-            GetWeaponAndModeFromSelector(i, out int weaponIndex, out int firingModeIndex);
-            RangedAttack r = equippedWeapons[weaponIndex].modes[firingModeIndex] as RangedAttack;
-            if (r != null)
-            {
-                selectorInfo.Refresh(r);
-            }
-        });
     }
     private void Start()
     {
