@@ -10,13 +10,19 @@ public class GunReticle : MonoBehaviour
     [SerializeField] WeaponHandler handler;
     [SerializeField] float referenceDistance = 50;
     [SerializeField] RectTransform[] reticleBlades;
+    [SerializeField] AnimationCurve opacityCurveForADS = AnimationCurve.EaseInOut(0, 1, 1, 0);
 
     RectTransform rt;
     CanvasGroup cg;
     Vector2[] originalDirections;
 
     Camera playerCamera => handler.controller.movement.worldViewCamera;
-    
+    float opacity // A bit redundant but not a huge deal
+    {
+        get => cg.alpha;
+        set => cg.alpha = value;
+    }
+
     private void Awake()
     {
         rt = GetComponent<RectTransform>();
@@ -44,22 +50,16 @@ public class GunReticle : MonoBehaviour
         if (r == null)
         {
             //enabled = false;
-            SetVisibility(false);
+            opacity = 0;
             return;
         }
         #endregion
 
         #region Visibility
-        // Disable reticle if player is aiming down weapon sights
-        // Show reticle If ADS is null, OR if ADS is present but player is not aiming/transitioning and hideDefaultReticle is false
-        GunADS ads = r.optics;
-        bool notHiddenDueToAds = ads == null || (!(ads.IsAiming || ads.IsTransitioning) && !ads.hideMainReticle);
-        bool notInWeaponSelector = handler.weaponSelector.menuIsOpen == false;
-        bool reticleIsActive = notHiddenDueToAds && notInWeaponSelector;
-        SetVisibility(reticleIsActive);
-
-        // If reticle is invisible, don't bother updating other elements
-        if (reticleIsActive == false) return;
+        // Set visibility based on various factors specified in reticle opacity
+        opacity = ReticleOpacity(r);
+        // If reticle is not visible, don't bother updating other elements
+        if (opacity <= 0) return;
         #endregion
 
         #region Size
@@ -93,5 +93,25 @@ public class GunReticle : MonoBehaviour
         }
         #endregion
     }
-    void SetVisibility(bool active) => cg.alpha = active ? 1 : 0;
+
+    float ReticleOpacity(RangedAttack r)
+    {
+        // Do not show reticle if currently in the weapon selector
+        if (handler.weaponSelector.menuIsOpen) return 0;
+
+        GunADS ads = r.optics;
+        if (ads != null)
+        {
+            if (ads.hideMainReticle) // If the reticle is never meant to be visible, show nothing
+            {
+                return 0;
+            }
+            else // If ADS does show reticle normally, have it lerp in visibility based on the ADS value.
+            {
+                return opacityCurveForADS.Evaluate(ads.timer);
+            }
+        }
+
+        return 1; // Make the reticle fully visible.
+    }
 }

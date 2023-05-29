@@ -45,7 +45,7 @@ public class GunADS : MonoBehaviour
         }
     }
     bool currentlyAiming;
-    float timer;
+    public float timer { get; private set; }
     Vector3 cosmeticSwayAxes;
     Vector3 cosmeticSwayAngularVelocity;
 
