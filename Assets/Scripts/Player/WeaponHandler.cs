@@ -41,12 +41,20 @@ public class WeaponHandler : MonoBehaviour
     {
         get
         {
+            Quaternion sway = AIAim.AimSway(aimSwayAngle, swaySpeed);
+            return aimAxis.transform.rotation * sway * Vector3.forward;
+        }
+    }
+    public float aimSwayAngle
+    {
+        get
+        {
             float totalSway = standingAccuracy;
-            if (CurrentWeapon.CurrentMode as RangedAttack != null)
+            if (CurrentWeapon.CurrentMode is RangedAttack ra)
             {
-                totalSway += (CurrentWeapon.CurrentMode as RangedAttack).stats.sway;
+                totalSway += ra.stats.sway;
             }
-            return (aimAxis.transform.rotation * AIAim.AimSway(totalSway, swaySpeed)) * Vector3.forward;
+            return totalSway;
         }
     }
 
