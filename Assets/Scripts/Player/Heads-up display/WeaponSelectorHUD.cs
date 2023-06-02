@@ -16,6 +16,8 @@ public class WeaponSelectorHUD : MonoBehaviour
     //[SerializeField] float weaponGraphicRotationOffset;
     [SerializeField] bool rotateWeaponGraphics;
     [SerializeField] float graphicDistanceFromCentre = 0.5f;
+    [SerializeField] Vector3 rotationOffset = new Vector3(0, 0, 90);
+    [SerializeField] Vector3 rotationOffsetIfUpsideDown = new Vector3(180, 0, 0);
 
     [Header("Info on selected firing mode")]
     //public Image weaponImage;
@@ -30,6 +32,7 @@ public class WeaponSelectorHUD : MonoBehaviour
     {
         dividerPrefab.gameObject.SetActive(false);
         weaponGraphicPrefab?.gameObject.SetActive(false);
+
         radialMenu.onValueChanged.AddListener(DisplayInfoOnSelectedMode);
     }
 
@@ -63,26 +66,31 @@ public class WeaponSelectorHUD : MonoBehaviour
                 // WIP: Positions are bugged out for some reason
                 Image weaponGraphic = Instantiate(weaponGraphicPrefab, radialMenu.transform);
                 weaponGraphic.sprite = w.hudGraphic;
-                float weaponGraphicOrder = modeIndex + ((float)numberOfModes * 0.5f);
-                radialMenu.AddVisualEffect(weaponGraphic.rectTransform, weaponGraphicOrder, 1, rotateWeaponGraphics, true);
+                float weaponGraphicOrder = modeIndex + ((numberOfModes - 1) * 0.5f);
+                Debug.Log(weaponGraphicOrder);
+                radialMenu.AddVisualEffect(weaponGraphic.rectTransform, weaponGraphicOrder, graphicDistanceFromCentre, rotateWeaponGraphics);
+                weaponGraphic.rectTransform.SetSiblingIndex(weaponGraphicPrefab.rectTransform.GetSiblingIndex() + 1);
+
+                // Apply extra rotation offsets
+                weaponGraphic.rectTransform.localRotation *= Quaternion.Euler(rotationOffset);
+                if (Vector3.Dot(weaponGraphic.transform.up, radialMenu.transform.up) < 0)
+                {
+                    weaponGraphic.rectTransform.localRotation *= Quaternion.Euler(rotationOffsetIfUpsideDown);
+                }
             }
             
             // Set up dividers
-            RectTransform divider = Instantiate(dividerPrefab, radialMenu.transform);
-            float dividerOrder = modeIndex - 0.5f;
-            radialMenu.AddVisualEffect(divider, dividerOrder, 1, rotateDividers);
-
+            if (dividerPrefab != null)
+            {
+                RectTransform divider = Instantiate(dividerPrefab, radialMenu.transform);
+                float dividerOrder = modeIndex - 0.5f;
+                radialMenu.AddVisualEffect(divider, dividerOrder, 1, rotateDividers);
+            }
+            
             modeIndex += numberOfModes;
         }
         #endregion
     }
-
-
-
-
-
-
-
 
     void DisplayInfoOnSelectedMode(int index)
     {

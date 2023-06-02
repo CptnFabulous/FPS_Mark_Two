@@ -94,7 +94,7 @@ public class RadialMenu : MonoBehaviour
     /// <param name="orderIndex">Corresponds with the index of each option, but as a float so you can put things before or after.</param>
     /// <param name="distance"></param>
     /// <param name="preserveAngle"></param>
-    public void AddVisualEffect(RectTransform objectTransform, float orderIndex, float distance, bool preserveAngle, bool addBehind = false)
+    public void AddVisualEffect(RectTransform objectTransform, float orderIndex, float distance, bool preserveAngle)
     {
         // Establishes rotation relative to centre, and position to spawn object in
         Quaternion rotation = Quaternion.Euler(0, 0, -segmentSize * orderIndex);
@@ -102,10 +102,6 @@ public class RadialMenu : MonoBehaviour
 
         // Parents the object transform and sets up its position and rotation
         objectTransform.SetParent(transform);
-        if (addBehind)
-        {
-            objectTransform.SetAsFirstSibling();
-        }
         objectTransform.anchoredPosition = position; // Sets position
         objectTransform.localRotation = preserveAngle ? rotation : Quaternion.identity; // If preserveAngle is false, object retains an upright rotation
 
