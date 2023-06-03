@@ -10,19 +10,7 @@ public class WeaponHandler : MonoBehaviour
 
     [Header("Weapons")]
     public Weapon[] equippedWeapons;
-    public int equippedWeaponIndex;
-    public Weapon CurrentWeapon
-    {
-        get
-        {
-            if (equippedWeapons.Length <= 0)
-            {
-                return null;
-            }
-            return equippedWeapons[equippedWeaponIndex];
-        }
-    }
-    [HideInInspector] public bool isSwitching;
+    [SerializeField] int equippedWeaponIndex;
     public Transform holdingSocket;
     public AmmunitionInventory ammo;
     public RadialMenu weaponSelector;
@@ -34,6 +22,17 @@ public class WeaponHandler : MonoBehaviour
     public float swaySpeed = 0.5f;
     public bool toggleADS;
 
+    [Header("Other")]
+    public UnityEvent<Weapon> onDraw;
+    public UnityEvent<Weapon> onHolster;
+
+    bool s = false;
+
+    public bool PrimaryHeld { get; private set; }
+    public bool SecondaryActive { get; private set; }
+    public bool isSwitching { get; private set; }
+
+    public Weapon CurrentWeapon => (equippedWeapons.Length > 0) ? equippedWeapons[equippedWeaponIndex] : null;
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
@@ -42,7 +41,7 @@ public class WeaponHandler : MonoBehaviour
         get
         {
             Quaternion sway = AIAim.AimSway(aimSwayAngle, swaySpeed);
-            return aimAxis.transform.rotation * sway * Vector3.forward;
+            return aimAxis.rotation * sway * Vector3.forward;
         }
     }
     public float aimSwayAngle
@@ -57,7 +56,6 @@ public class WeaponHandler : MonoBehaviour
             return totalSway;
         }
     }
-
     /// <summary>
     /// Is the player currently in ADS on a particular weapon?
     /// </summary>
@@ -65,18 +63,11 @@ public class WeaponHandler : MonoBehaviour
     {
         get
         {
-            if (CurrentWeapon == null)
-            {
-                return false;
-            }
+            if (CurrentWeapon == null) return false;
             RangedAttack r = CurrentWeapon.CurrentMode as RangedAttack;
             return r != null && r.optics != null && r.optics.IsAiming;
         }
     }
-
-    [Header("Other")]
-    public UnityEvent<Weapon> onDraw;
-    public UnityEvent<Weapon> onHolster;
     public bool WeaponReady
     {
         get
@@ -90,12 +81,10 @@ public class WeaponHandler : MonoBehaviour
     }
 
 
+
     private void Awake()
     {
-        if (ammo == null)
-        {
-            ammo = GetComponent<AmmunitionInventory>();
-        }
+        if (ammo == null) ammo = GetComponent<AmmunitionInventory>();
         
         weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
     }
@@ -103,38 +92,30 @@ public class WeaponHandler : MonoBehaviour
     {
         UpdateAvailableWeapons();
     }
+    
     private void Update()
     {
         if (weaponSelector.menuIsOpen == false && NumberKeySelector.NumKeyPressed(out int index, true))
         {
-            //StartCoroutine(SwitchWeapon(index));
             SwitchWeaponAndModeFromIndex(index);
         }
     }
+    
 
     #region Inputs
     void OnFire(InputValue input)
     {
-        if (!WeaponReady)
-        {
-            return;
-        }
+        if (!WeaponReady) return;
         PrimaryHeld = input.isPressed;
         CurrentWeapon.CurrentMode.OnPrimaryInputChanged();
     }
     void OnADS(InputValue input)
     {
-        if (!WeaponReady)
-        {
-            return;
-        }
+        if (!WeaponReady) return;
 
         if (toggleADS)
         {
-            if (input.isPressed)
-            {
-                SecondaryActive = !SecondaryActive;
-            }
+            if (input.isPressed) SecondaryActive = !SecondaryActive;
         }
         else
         {
@@ -144,10 +125,7 @@ public class WeaponHandler : MonoBehaviour
     }
     void OnReload()
     {
-        if (!WeaponReady)
-        {
-            return;
-        }
+        if (!WeaponReady) return;
         CurrentWeapon.CurrentMode.OnTertiaryInput();
     }
     void OnSelectWeapon(InputValue input)
@@ -171,8 +149,6 @@ public class WeaponHandler : MonoBehaviour
     {
         weaponSelector.InputDirection(input.Get<Vector2>());
     }
-    public bool PrimaryHeld { get; private set; }
-    public bool SecondaryActive { get; private set; }
     public void CancelInputs()
     {
         PrimaryHeld = false;
@@ -207,10 +183,7 @@ public class WeaponHandler : MonoBehaviour
     }
     IEnumerator SwitchWeapon(int newIndex)
     {
-        if (equippedWeapons.Length <= 0)
-        {
-            yield break;
-        }
+        if (equippedWeapons.Length <= 0) yield break;
 
         newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Length - 1);
         if (equippedWeapons[newIndex] == CurrentWeapon && equippedWeapons[newIndex].gameObject.activeSelf == true)
@@ -247,9 +220,8 @@ public class WeaponHandler : MonoBehaviour
     }
     IEnumerator SwitchWeaponAndFiringMode(int weaponIndex, int firingModeIndex)
     {
-        StartCoroutine(SwitchWeapon(weaponIndex));
-        yield return new WaitWhile(()=> isSwitching);
-        CurrentWeapon.StartCoroutine(CurrentWeapon.SwitchMode(firingModeIndex));
+        yield return SwitchWeapon(weaponIndex);
+        yield return CurrentWeapon.SwitchMode(firingModeIndex);
     }
     public void SwitchWeaponAndModeFromIndex(int index)
     {
