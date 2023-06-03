@@ -11,14 +11,8 @@ public abstract class WeaponMode : MonoBehaviour
     public UnityEvent onSwitch;
     
     [HideInInspector] public Weapon attachedTo;
-    public WeaponHandler User
-    {
-        get
-        {
-            return attachedTo.user;
-        }
-    }
-    
+    public WeaponHandler User => attachedTo.user;
+
     private void Awake()
     {
         attachedTo = GetComponentInParent<Weapon>();
@@ -28,20 +22,8 @@ public abstract class WeaponMode : MonoBehaviour
     public abstract void OnPrimaryInputChanged();
     public abstract void OnSecondaryInputChanged();
     public abstract void OnTertiaryInput();
-    public bool PrimaryHeld
-    {
-        get
-        {
-            return User.PrimaryHeld;
-        }
-    }
-    public bool SecondaryActive
-    {
-        get
-        {
-            return User.SecondaryActive;
-        }
-    }
+    public bool PrimaryHeld => User.PrimaryHeld;
+    public bool SecondaryActive => User.SecondaryActive;
 
     public abstract bool InAction { get; }
 }

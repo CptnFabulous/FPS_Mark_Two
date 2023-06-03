@@ -31,14 +31,8 @@ public class Weapon : MonoBehaviour
     {
         get
         {
-            if (isSwitching)
-            {
-                return true;
-            }
-            if (CurrentMode.InAction)
-            {
-                return true;
-            }
+            if (isSwitching) return true;
+            if (CurrentMode.InAction) return true;
             return false;
         }
     }
@@ -82,11 +76,8 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator SwitchMode(int newModeIndex)
     {
-        if (InAction == true || newModeIndex == currentModeIndex)
-        {
-            yield break;
-        }
-
+        if (InAction == true) yield break;
+        if (newModeIndex == currentModeIndex) yield break;
 
         isSwitching = true;
         CurrentMode.OnSwitchFrom();

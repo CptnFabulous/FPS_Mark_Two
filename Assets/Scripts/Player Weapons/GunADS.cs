@@ -30,20 +30,8 @@ public class GunADS : MonoBehaviour
 
     
     public RangedAttack currentMode;
-    WeaponHandler user
-    {
-        get
-        {
-            return currentMode.User;
-        }
-    }
-    Player player
-    {
-        get
-        {
-            return user.controller;
-        }
-    }
+    WeaponHandler user => currentMode.User;
+    Player player => user.controller;
     bool currentlyAiming;
     public float timer { get; private set; }
     Vector3 cosmeticSwayAxes;
@@ -54,59 +42,21 @@ public class GunADS : MonoBehaviour
     /// </summary>
     public bool IsAiming
     {
-        get
-        {
-            return currentlyAiming;
-        }
+        get => currentlyAiming;
         set
         {
-            if (currentlyAiming == value)
-            {
-                return;
-            }
-
-            if (value == true)
-            {
-                onSwitchToADS.Invoke();
-            }
-            else
-            {
-                onSwitchToHipfire.Invoke();
-            }
+            if (currentlyAiming == value) return;
             currentlyAiming = value;
+            // Invoke either onSwitchToADS or onSwitchToHipfire based on if value is true or false
+            (value ? onSwitchToADS : onSwitchToHipfire).Invoke();
         }
     }
     /// <summary>
     /// Is the player in the process of switching between hip-firing or aiming down the sights?
     /// </summary>
-    public bool IsTransitioning
-    {
-        get
-        {
-            return timer != TargetValue;
-        }
-    }
-    float TargetValue
-    {
-        get
-        {
-            if (IsAiming)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-    }
-    bool IsScope
-    {
-        get
-        {
-            return viewingCamera != null && sightPicture != null;
-        }
-    }
+    public bool IsTransitioning => timer != TargetValue;
+    float TargetValue => IsAiming ? 1 : 0;
+    bool IsScope => viewingCamera != null && sightPicture != null;
     public LookController lookControls => player.movement.lookControls;
 
     private void Awake()
@@ -134,21 +84,13 @@ public class GunADS : MonoBehaviour
 
     private void Update()
     {
-        if (currentMode == null)
-        {
-            return;
-        }
-        
+        if (currentMode == null) return;
+
+
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)
         {
-            float amountToAdd = Time.deltaTime / transitionTime;
-            if (TargetValue < timer)
-            {
-                amountToAdd = -amountToAdd;
-            }
-            timer += amountToAdd;
-            timer = Mathf.Clamp01(timer);
+            timer = Mathf.MoveTowards(timer, TargetValue, Time.deltaTime / transitionTime);
         }
 
         // If a view camera and sight picture are not present, directly lerp the player's FOV instead

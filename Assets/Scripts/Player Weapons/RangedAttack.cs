@@ -8,6 +8,8 @@ public class RangedAttack : WeaponMode
     public GunFireController controls;
     public GunMagazine magazine;
     public GunADS optics;
+
+
     public override bool InAction
     {
         get
@@ -27,13 +29,7 @@ public class RangedAttack : WeaponMode
             return false;
         }
     }
-    public bool NotReloading
-    {
-        get
-        {
-            return magazine == null || magazine.ReloadActive == false;
-        }
-    }
+    public bool NotReloading => magazine == null || magazine.ReloadActive == false;
 
     public bool CanShoot()
     {
