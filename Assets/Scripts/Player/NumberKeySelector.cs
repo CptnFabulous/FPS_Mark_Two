@@ -56,7 +56,7 @@ public class NumberKeySelector : MonoBehaviour
                 if (startWithOne)
                 {
                     keyIndex -= 1;
-                    keyIndex = MiscFunctions.InverseClamp(keyIndex, 0, 9);
+                    keyIndex = MiscFunctions.Loop(keyIndex, 0, 9);
                 }
                 return true;
             }

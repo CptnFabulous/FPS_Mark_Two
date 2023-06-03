@@ -68,37 +68,32 @@ public readonly struct MiscFunctions
         return list;
     }
 
-
-    public static float InverseClamp(float value, float min, float max)
+    /// <summary>
+    /// If the value exceeds the specified range, loop back around to the start.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <returns></returns>
+    public static float Loop(float value, float min, float max)
     {
         if (value > max)
         {
-            return min;
+            // Includes difference
+            return min + (value - max);
         }
         else if (value < min)
         {
-            return max;
+            // Includes difference
+            return max - (min - value);
         }
         else
         {
             return value;
         }
     }
-    public static int InverseClamp(int value, int min, int max)
-    {
-        if (value > max)
-        {
-            return min;
-        }
-        else if (value < min)
-        {
-            return max;
-        }
-        else
-        {
-            return value;
-        }
-    }
+    public static int Loop(int value, int min, int max) => (int)Loop((float)value, (float)min, (float)max);
+    
 
     #region Formatting text
     public static bool CharMatches(char c, List<char> array)
