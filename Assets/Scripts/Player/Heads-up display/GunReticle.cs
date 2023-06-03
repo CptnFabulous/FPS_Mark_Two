@@ -16,7 +16,7 @@ public class GunReticle : MonoBehaviour
     CanvasGroup cg;
     Vector2[] originalDirections;
 
-    Camera playerCamera => handler.controller.movement.worldViewCamera;
+    Camera playerCamera => handler.controller.movement.lookControls.worldViewCamera;
     float opacity // A bit redundant but not a huge deal
     {
         get => cg.alpha;

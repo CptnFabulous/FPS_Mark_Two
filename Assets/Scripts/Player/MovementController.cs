@@ -49,156 +49,8 @@ public class MovementController : MonoBehaviour
 
     #region Aiming
 
-    [Header("Camera")]
-    public bool canLook = true;
-    public Transform aimAxis;
-    public Transform upperBody;
-    public Camera worldViewCamera;
-    public Camera headsUpDisplayCamera;
-    [Range(1, 179)] public float fieldOfView = 90;
-    float minAngle = -90;
-    float maxAngle = 90;
+    public LookController lookControls;
 
-    float verticalAngle = 0;
-
-    [Header("Aiming")]
-    public float mouseSensitivity = 75;
-    public float mouseMultiplierWhileAiming = 0.5f;
-    public Vector2 gamepadSensitivity = new Vector2(25, 25);
-    public float gamepadMultiplierWhileAiming = 0.25f;
-    public bool invertX;
-    public bool invertY;
-    public float aimAcceleration = 6;
-    public float timeToMaxAimAcceleration = 1;
-    public AnimationCurve aimAccelerationCurve = AnimationCurve.Linear(0, 0, 1, 1);
-
-    void OnLook(InputValue input)
-    {
-        // Register zero if player looking is currently disabled
-        if (!canLook)
-        {
-            rawAimInput = Vector2.zero;
-            return;
-        }
-
-        Vector2 newInput = input.Get<Vector2>();
-
-        // If the player has just started moving their aim horizontally (or switched to aiming in the opposite direction)
-        float prevX = rawAimInput.x;
-        float newX = newInput.x;
-        if ((newX > 0 && prevX <= 0) || (newX < 0 && prevX >= 0))
-        {
-            // Reset aim time for aim acceleration calculations
-            aimStartTime = Time.time;
-        }
-
-        rawAimInput = newInput; // Update rawAimInput to new value
-    }
-    Vector2 rawAimInput;
-    float aimStartTime;
-
-    public Vector2 AimInput
-    {
-        get
-        {
-            Vector2 value = rawAimInput; // Get raw input value
-            if (value.magnitude <= 0) // If value is zero, no need to perform additional processing
-            {
-                return value;
-            }
-
-            // Apply aim acceleration, if gamepad is enabled and player is not aiming down sights
-            bool usingGamepad = controlling.controls.currentControlScheme.Contains("Gamepad");
-            //bool usingKeyboardAndMouse = controlling.controls.currentControlScheme.Contains("Keyboard&Mouse");
-            bool inADS = controlling.weapons != null && controlling.weapons.IsUsingADS;
-            if (usingGamepad)
-            {
-                if (inADS) // Apply ADS multiplier for easier aiming
-                {
-                    value *= gamepadMultiplierWhileAiming;
-                }
-                else // If player is using a gamepad and out of ADS, apply mouse acceleration
-                {
-                    float aimTime = Time.time - aimStartTime; // Get time between aim start and current time
-                    float timeMultiplier = Mathf.Clamp01(aimTime / timeToMaxAimAcceleration); // Divide by timeToMaxAimAcceleration then clamp to a 0-1 value
-                    timeMultiplier = aimAccelerationCurve.Evaluate(timeMultiplier); 
-                    float aimAccelerationMultiplier = Mathf.Lerp(1, aimAcceleration, timeMultiplier); // Multiply by aim acceleration value and add one to get the aim multiplier
-                    value.x *= aimAccelerationMultiplier; // Multiply aim input only on the X axis
-                }
-
-                value.x *= gamepadSensitivity.x;
-                value.y *= gamepadSensitivity.y;
-            }
-            else
-            {
-                if (inADS) // Apply ADS multiplier for easier aiming
-                {
-                    value *= mouseMultiplierWhileAiming;
-                }
-                // Multiply by mouse sensitivity values
-                value *= mouseSensitivity;
-            }
-            
-            // Invert axes if appropriate
-            if (invertX)
-            {
-                value.x = -value.x;
-            }
-            if (invertY)
-            {
-                value.y = -value.y;
-            }
-
-            return value;
-        }
-    }
-    public Quaternion RotationVelocity
-    {
-        get
-        {
-            Vector2 cameraInput = AimInput;
-            return Quaternion.Euler(-cameraInput.y, cameraInput.x, 0) * transform.rotation;
-        }
-    }
-
-    public void RotateAim(Vector2 degrees)
-    {
-        verticalAngle -= degrees.y;
-        verticalAngle = Mathf.Clamp(verticalAngle, minAngle, maxAngle);
-        transform.Rotate(0, degrees.x, 0);
-        aimAxis.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
-    }
-    public IEnumerator RotateAimOverTime(Vector2 degrees, float time)
-    {
-        float timer = 0;
-        while (timer != 1)
-        {
-            timer += Time.deltaTime / time;
-            timer = Mathf.Clamp01(timer);
-            RotateAim(degrees * Time.deltaTime / time);
-
-            yield return new WaitForEndOfFrame();
-        }
-    }
-    public IEnumerator RotateAimOverTime(Vector2 degrees, float time, AnimationCurve curve)
-    {
-        float timer = 0;
-        float curveLastFrame = 0;
-
-        while (timer != 1)
-        {
-            timer += Time.deltaTime / time;
-            timer = Mathf.Clamp01(timer);
-
-            float curveThisFrame = curve.Evaluate(timer);
-            float curveDeltaTime = curveThisFrame - curveLastFrame;
-
-            RotateAim(degrees * curveDeltaTime);
-
-            yield return new WaitForEndOfFrame();
-            curveLastFrame = curveThisFrame;
-        }
-    }
     #endregion
 
     #region Jumping
@@ -348,7 +200,7 @@ public class MovementController : MonoBehaviour
     {
         collider.height = Mathf.Lerp(standHeight, crouchHeight, t);
         collider.center = Vector3.up * (collider.height / 2);
-        aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
+        lookControls.aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
     }
     #endregion
 
@@ -423,7 +275,7 @@ public class MovementController : MonoBehaviour
         float dragIntensity = Mathf.Clamp01(TotalVelocity.magnitude / speedForMaxDrag);
         Vector3 dragOffset = -upperBodyDragDistance * dragIntensity * TotalVelocity.normalized;
         //Vector3 dragOffset = Vector3.Lerp(Vector3.zero, -upperBodyDragDistance * TotalVelocity.normalized, dragIntensity);
-        torsoPosition += aimAxis.InverseTransformDirection(dragOffset);
+        torsoPosition += lookControls.aimAxis.InverseTransformDirection(dragOffset);
     }
     /// <summary>
     /// Adds cosmetic tilt to the player's hands when they move around.
@@ -440,7 +292,7 @@ public class MovementController : MonoBehaviour
     /// </summary>
     void TorsoSway()
     {
-        Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(RotationVelocity, transform);
+        Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(lookControls.rotationVelocity, transform);
         float intensity = Mathf.Clamp01(localRotationVelocity.eulerAngles.magnitude / speedForMaxSway);
         Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0);
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);
@@ -453,15 +305,10 @@ public class MovementController : MonoBehaviour
         collider = GetComponent<CapsuleCollider>();
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
-        worldViewCamera.fieldOfView = fieldOfView;
     }
     void Start()
     {
         IsCrouching = IsCrouching;
-    }
-    void Update()
-    {
-        RotateAim(AimInput * Time.deltaTime);
     }
     private void FixedUpdate()
     {

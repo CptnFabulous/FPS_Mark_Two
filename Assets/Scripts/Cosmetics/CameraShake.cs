@@ -43,6 +43,8 @@ public class CameraShake : MonoBehaviour
 
     IEnumerator ShakeSequence(MovementController player, float intensityMultiplier)
     {
+        Camera camera = player.lookControls.worldViewCamera;
+
         float timer = 0;
         while (timer != 1)
         {
@@ -58,9 +60,9 @@ public class CameraShake : MonoBehaviour
             noise *= 2;
             Vector2 deviations = intensity * intensityMultiplier * durationCurve.Evaluate(timer) * noise;
 
-            player.worldViewCamera.transform.localRotation = Quaternion.Euler(deviations.x, deviations.y, 0);
+            camera.transform.localRotation = Quaternion.Euler(deviations.x, deviations.y, 0);
         }
-        player.worldViewCamera.transform.localRotation = Quaternion.identity;
+        camera.transform.localRotation = Quaternion.identity;
     }
 
     /*

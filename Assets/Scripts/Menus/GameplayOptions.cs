@@ -19,19 +19,23 @@ public class GameplayOptions : OptionsMenu
     public Toggle toggleADS;
 
     Player playerUpdating;
-    
+
+    MovementController movement => playerUpdating.movement;
+    LookController lookControls => movement.lookControls;
+    WeaponHandler weaponHandler => playerUpdating.weapons;
+
     public override void ApplySettings()
     {
-        MovementController movement = playerUpdating.movement;
-        movement.mouseSensitivity = SliderValueToSensitivity(mouseSensitivity, maxMouseSensitivity);
-        movement.gamepadSensitivity.x = SliderValueToSensitivity(gamepadSensitivityX, maxGamepadSensitivityX);
-        movement.gamepadSensitivity.y = SliderValueToSensitivity(gamepadSensitivityY, maxGamepadSensitivityY);
-        movement.invertX = invertX.isOn;
-        movement.invertY = invertY.isOn;
-        movement.fieldOfView = fieldOfView.value;
+        lookControls.mouseSensitivity = SliderValueToSensitivity(mouseSensitivity, maxMouseSensitivity);
+        lookControls.gamepadSensitivity.x = SliderValueToSensitivity(gamepadSensitivityX, maxGamepadSensitivityX);
+        lookControls.gamepadSensitivity.y = SliderValueToSensitivity(gamepadSensitivityY, maxGamepadSensitivityY);
+        lookControls.invertX = invertX.isOn;
+        lookControls.invertY = invertY.isOn;
+        lookControls.fieldOfView = fieldOfView.value;
+
         movement.toggleCrouch = toggleCrouch.isOn;
 
-        playerUpdating.weapons.toggleADS = toggleADS.isOn;
+        weaponHandler.toggleADS = toggleADS.isOn;
     }
 
     public override void ObtainCurrentValues()
@@ -43,16 +47,16 @@ public class GameplayOptions : OptionsMenu
         }
         MovementController movement = playerUpdating.movement;
 
-        SensitivityToSliderValue(mouseSensitivity, movement.mouseSensitivity, maxMouseSensitivity);
-        SensitivityToSliderValue(gamepadSensitivityX, movement.gamepadSensitivity.x, maxGamepadSensitivityX);
-        SensitivityToSliderValue(gamepadSensitivityY, movement.gamepadSensitivity.y, maxGamepadSensitivityY);
-        invertX.isOn = movement.invertX;
-        invertY.isOn = movement.invertY;
-        fieldOfView.value = movement.fieldOfView;
-        playerUpdating.movement.worldViewCamera.fieldOfView = fieldOfView.value;
+        SensitivityToSliderValue(mouseSensitivity, lookControls.mouseSensitivity, maxMouseSensitivity);
+        SensitivityToSliderValue(gamepadSensitivityX, lookControls.gamepadSensitivity.x, maxGamepadSensitivityX);
+        SensitivityToSliderValue(gamepadSensitivityY, lookControls.gamepadSensitivity.y, maxGamepadSensitivityY);
+        invertX.isOn = lookControls.invertX;
+        invertY.isOn = lookControls.invertY;
+        fieldOfView.value = lookControls.fieldOfView;
+        lookControls.worldViewCamera.fieldOfView = fieldOfView.value;
         toggleCrouch.isOn = movement.toggleCrouch;
 
-        toggleADS.isOn = playerUpdating.weapons.toggleADS;
+        toggleADS.isOn = weaponHandler.toggleADS;
     }
 
     public override void SetupOptions()
@@ -67,7 +71,7 @@ public class GameplayOptions : OptionsMenu
         {
             if (playerUpdating != null)
             {
-                playerUpdating.movement.worldViewCamera.fieldOfView = fov;
+                lookControls.worldViewCamera.fieldOfView = fov;
             }
         });
         AddValueChangedEvent(toggleCrouch);

@@ -24,13 +24,7 @@ public class DirectionalHUDIndicator : MonoBehaviour
     [Header("Setup")]
     public Player playerDirecting;
     public Transform centrePoint;
-    public Camera ViewCamera
-    {
-        get
-        {
-            return playerDirecting.movement.worldViewCamera;
-        }
-    }
+    public Camera ViewCamera => playerDirecting.movement.lookControls.worldViewCamera;
     public Vector3 TargetPosition
     {
         get

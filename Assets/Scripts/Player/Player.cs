@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Player : Character
 {
-    public override Transform LookTransform => movement.upperBody;
-    public override LayerMask lookMask => movement.worldViewCamera.cullingMask;
+    public override Transform LookTransform => movement.lookControls.upperBody;
+    public override LayerMask lookMask => movement.lookControls.worldViewCamera.cullingMask;
     public override LayerMask attackMask
     {
         get

@@ -133,7 +133,7 @@ public class WeaponHandler : MonoBehaviour
         if (input.isPressed && weaponSelector.optionsPresent)
         {
             // Run function to open weapon selector
-            controller.movement.canLook = false;
+            controller.movement.lookControls.canLook = false;
             int index = SelectorIndexFromWeaponAndMode(equippedWeaponIndex, CurrentWeapon.currentModeIndex);
             Debug.Log("Switching, " + index);
             weaponSelector.EnterMenu(index);
@@ -141,8 +141,8 @@ public class WeaponHandler : MonoBehaviour
         else
         {
             // Run function to exit weapon selector
-            controller.movement.canLook = true;
             weaponSelector.ExitMenu();
+            controller.movement.lookControls.canLook = true;
         }
     }
     void OnLook(InputValue input)
