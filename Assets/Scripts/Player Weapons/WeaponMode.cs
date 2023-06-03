@@ -9,8 +9,8 @@ public abstract class WeaponMode : MonoBehaviour
     public Sprite icon;
     public float switchSpeed;
     public UnityEvent onSwitch;
-    
-    [HideInInspector] public Weapon attachedTo;
+
+    public Weapon attachedTo { get; private set; }
     public WeaponHandler User => attachedTo.user;
 
     private void Awake()

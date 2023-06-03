@@ -37,7 +37,7 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    [HideInInspector] public WeaponHandler user;
+    public WeaponHandler user { get; private set; }
 
     private void OnEnable()
     {
