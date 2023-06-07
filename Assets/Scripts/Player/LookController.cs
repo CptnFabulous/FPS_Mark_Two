@@ -10,16 +10,17 @@ public class LookController : MonoBehaviour
 
     [Header("Aiming")]
     public bool canLook = true;
+    public Transform mainBodyTransform;
     public Transform aimAxis;
     public Transform upperBody;
     public bool invertX;
     public bool invertY;
 
-    [Header("Aiming - Mouse")]
+    [Header("Mouse settings")]
     public float mouseSensitivity = 75;
     public float mouseMultiplierWhileAiming = 0.5f;
 
-    [Header("Aiming - Gamepad")]
+    [Header("Gamepad settings")]
     public Vector2 gamepadSensitivity = new Vector2(25, 25);
     public float gamepadMultiplierWhileAiming = 0.25f;
     public float aimAcceleration = 6;
@@ -31,14 +32,26 @@ public class LookController : MonoBehaviour
     public Camera headsUpDisplayCamera;
     [Range(1, 179)] public float fieldOfView = 90;
 
+    [Header("Recoil and offset")]
+    public RecoilController recoilController;
+
     float minAngle = -90;
     float maxAngle = 90;
-    float verticalAngle = 0;
 
+    Vector2 la;
+    
     public Vector2 rawAimInput { get; private set; }
     public Vector2 processedAimInput { get; private set; }
     public float aimStartTime { get; private set; }
-
+    public Vector2 lookAngles
+    {
+        get => la;
+        set
+        {
+            la = value;
+            la.y = Mathf.Clamp(la.y, minAngle, maxAngle);
+        }
+    }
     public Quaternion rotationVelocity => Quaternion.Euler(-processedAimInput.y, processedAimInput.x, 0) * transform.rotation;
 
     public bool usingGamepad => mainInput.currentControlScheme.Contains("Gamepad");
@@ -49,13 +62,28 @@ public class LookController : MonoBehaviour
     }
     void Update()
     {
+        #region Add player input
         processedAimInput = ProcessAimInput();
-        if (processedAimInput.magnitude > 0)
+        float magnitude = processedAimInput.magnitude;
+        if (magnitude > 0) lookAngles += processedAimInput * Time.deltaTime;
+        #endregion
+
+        #region Set actual rotation
+        Vector2 totalAngles = lookAngles;
+        if (recoilController != null)
         {
-            RotateAim(processedAimInput * Time.deltaTime);
+            totalAngles += recoilController.recoilValue;
         }
+
+        Vector3 eulerAngles = mainBodyTransform.localEulerAngles;
+        eulerAngles.y = totalAngles.x;
+        mainBodyTransform.localEulerAngles = eulerAngles;
+        aimAxis.localRotation = Quaternion.Euler(-totalAngles.y, 0, 0);
+        #endregion
     }
 
+
+    #region Private functions for processing direct input
     void OnLook(InputValue input)
     {
         // Register zero if player looking is currently disabled
@@ -128,43 +156,5 @@ public class LookController : MonoBehaviour
 
         return value;
     }
-    public void RotateAim(Vector2 degrees)
-    {
-        verticalAngle -= degrees.y;
-        verticalAngle = Mathf.Clamp(verticalAngle, minAngle, maxAngle);
-
-        transform.Rotate(0, degrees.x, 0);
-        aimAxis.localRotation = Quaternion.Euler(verticalAngle, 0, 0);
-    }
-    public IEnumerator RotateAimOverTime(Vector2 degrees, float time)
-    {
-        float timer = 0;
-        while (timer != 1)
-        {
-            timer += Time.deltaTime / time;
-            timer = Mathf.Clamp01(timer);
-            RotateAim(degrees * Time.deltaTime / time);
-
-            yield return new WaitForEndOfFrame();
-        }
-    }
-    public IEnumerator RotateAimOverTime(Vector2 degrees, float time, AnimationCurve curve)
-    {
-        float timer = 0;
-        float curveLastFrame = 0;
-
-        while (timer != 1)
-        {
-            timer += Time.deltaTime / time;
-            timer = Mathf.Clamp01(timer);
-
-            float curveThisFrame = curve.Evaluate(timer);
-            float curveDeltaTime = curveThisFrame - curveLastFrame;
-
-            RotateAim(degrees * curveDeltaTime);
-
-            yield return new WaitForEndOfFrame();
-            curveLastFrame = curveThisFrame;
-        }
-    }
+    #endregion
 }
