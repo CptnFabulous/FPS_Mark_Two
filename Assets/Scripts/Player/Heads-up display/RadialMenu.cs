@@ -8,6 +8,7 @@ public class RadialMenu : MonoBehaviour
     [SerializeField] Image optionPrefab;
     [SerializeField] bool optionRotationsMatchAngle;
     //public float angleOffset;
+    public float mouseSensitivity = 0.25f;
 
     public UnityEvent<int> onValueChanged;
     public UnityEvent<int> onValueConfirmed;
@@ -116,12 +117,19 @@ public class RadialMenu : MonoBehaviour
     /// Inputs a 2D vector based off a mouse or analog stick input, to update the selection angle
     /// </summary>
     /// <param name="inputVector"></param>
-    public void InputDirection(Vector2 inputVector)
+    public void InputDirection(Vector2 inputVector, bool usingMouse)
     {
         if (!menuIsOpen) return;
 
         // Input mouse/analog stick movement
-        cursorDirection += inputVector;
+        if (usingMouse)
+        {
+            cursorDirection += inputVector * mouseSensitivity;
+        }
+        else
+        {
+            cursorDirection = inputVector;
+        }
         if (cursorDirection.magnitude > 1) cursorDirection.Normalize();
 
         // Calculate a 0-360 degree angle based off the vector

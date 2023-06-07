@@ -145,10 +145,7 @@ public class WeaponHandler : MonoBehaviour
             controller.movement.lookControls.canLook = true;
         }
     }
-    void OnLook(InputValue input)
-    {
-        weaponSelector.InputDirection(input.Get<Vector2>());
-    }
+    void OnLook(InputValue input) => weaponSelector.InputDirection(input.Get<Vector2>(), controller.movement.lookControls.usingGamepad == false);
     public void CancelInputs()
     {
         PrimaryHeld = false;

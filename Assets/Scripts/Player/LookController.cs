@@ -41,6 +41,8 @@ public class LookController : MonoBehaviour
 
     public Quaternion rotationVelocity => Quaternion.Euler(-processedAimInput.y, processedAimInput.x, 0) * transform.rotation;
 
+    public bool usingGamepad => mainInput.currentControlScheme.Contains("Gamepad");
+
     private void Awake()
     {
         worldViewCamera.fieldOfView = fieldOfView;
@@ -87,7 +89,7 @@ public class LookController : MonoBehaviour
 
         Vector2 value = rawAimInput; // Get raw input value
 
-        bool usingGamepad = mainInput.currentControlScheme.Contains("Gamepad");
+        bool usingGamepad = this.usingGamepad;
         bool inADS = weaponHandler != null && weaponHandler.IsUsingADS;
 
         #region Aim acceleration
