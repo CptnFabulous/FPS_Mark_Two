@@ -146,6 +146,18 @@ public class WeaponHandler : MonoBehaviour
         }
     }
     void OnLook(InputValue input) => weaponSelector.InputDirection(input.Get<Vector2>(), controller.movement.lookControls.usingGamepad == false);
+    void OnScrollWeapon(InputValue input)
+    {
+        float inputValue = input.Get<float>();
+
+        if (isSwitching) return; // Wait until any previous switch operation has finished
+        if (weaponSelector.menuIsOpen) return; // Don't allow any other kinds of selection if the radial menu is open
+        if (inputValue == 0) return; // If there's no input, do nothing
+
+        int increment = Mathf.RoundToInt(Mathf.Sign(inputValue));
+        int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Length);
+        StartCoroutine(SwitchWeapon(newIndex));
+    }
     public void CancelInputs()
     {
         PrimaryHeld = false;
@@ -181,37 +193,39 @@ public class WeaponHandler : MonoBehaviour
     IEnumerator SwitchWeapon(int newIndex)
     {
         if (equippedWeapons.Length <= 0) yield break;
+        if (isSwitching) yield break; // Don't attempt another switch if in the middle of another switch operation
 
         newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Length - 1);
-        if (equippedWeapons[newIndex] == CurrentWeapon && equippedWeapons[newIndex].gameObject.activeSelf == true)
-        {
-            // If selected weapon is already active, no need to run any other code
-            yield break;
-        }
 
-        // If another weapon is already enabled
-        if (CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true)
+        bool weaponIsActive = CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true;
+        if (weaponIsActive)
         {
-            if (CurrentWeapon.InAction) // If weapon is currently doing something, end this function
+            if (equippedWeapons[newIndex] == CurrentWeapon)
             {
-                Debug.Log("Switch failed due to being in action on frame " + Time.frameCount);
+                // If selected weapon is already active, no need to run any other code
                 yield break;
             }
-
-            isSwitching = true;
-            onHolster.Invoke(CurrentWeapon);
-            StartCoroutine(CurrentWeapon.Holster());
-            //Debug.DrawRay(aimAxis.position, -aimAxis.right, Color.red, CurrentWeapon.switchSpeed);
-            yield return new WaitUntil(() => CurrentWeapon.InAction == false);
+            else if (CurrentWeapon.InAction)
+            {
+                // If weapon is currently doing something, end this function
+                yield break;
+            }
         }
 
         isSwitching = true;
-        // Once previous weapon is holstered, switch index to the new weapon and draw it
+
+        if (weaponIsActive)
+        {
+            // Wait for the current weapon to be holstered
+            onHolster.Invoke(CurrentWeapon);
+            StartCoroutine(CurrentWeapon.Holster());
+            yield return new WaitUntil(() => CurrentWeapon.InAction == false);
+        }
+
+        // Switch index to the new weapon and draw it
         equippedWeaponIndex = newIndex;
         onDraw.Invoke(CurrentWeapon);
-        StartCoroutine(CurrentWeapon.Draw());
-        //Debug.DrawRay(aimAxis.position, aimAxis.right, Color.green, CurrentWeapon.switchSpeed);
-        yield return new WaitUntil(() => CurrentWeapon.isSwitching == false);
+        yield return CurrentWeapon.Draw();
 
         isSwitching = false;
     }

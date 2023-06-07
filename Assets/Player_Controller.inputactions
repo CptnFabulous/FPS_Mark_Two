@@ -78,6 +78,14 @@
                     "interactions": "Press(behavior=2)"
                 },
                 {
+                    "name": "Scroll Weapon",
+                    "type": "Value",
+                    "id": "01ef8d88-e531-4ed9-9282-3f1809230c7c",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Melee Attack",
                     "type": "Button",
                     "id": "3d7f3368-79df-4d6d-b3ea-07e9202f7575",
@@ -484,6 +492,50 @@
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "324ad25c-4d83-4ce5-9318-d704340b85f7",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "Invert",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Scroll Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Gamepad inputs",
+                    "id": "5c265859-fab0-4c20-beba-ec8fe00ecf02",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Scroll Weapon",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "8ae9d2f5-e223-400d-ad82-978db7cc1c05",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Scroll Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "62015259-2496-46fc-8104-7d9d7af7d7df",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Scroll Weapon",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },
