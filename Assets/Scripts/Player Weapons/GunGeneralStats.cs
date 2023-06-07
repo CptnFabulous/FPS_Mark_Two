@@ -28,11 +28,10 @@ public class GunGeneralStats : MonoBehaviour
 
     [Header("Recoil")]
     public float recoilMagnitude = 2;
-    public float recoilDeviationAngle = 45;
     public AnimationCurve recoilCurve;
     public float recoilTime = 0.5f;
-
-
+    static float recoilSwaySpeed = 10; // I'm not going to bother making this an editable value because it'll probably be exactly the same.
+    // (I might take the last 3 of these values and make them values in WeaponHandler instead, since these properties most likely won't change from different guns)
 
     public UnityEvent effectsOnFire;
     public void Shoot(Character user, Vector3 origin, Vector3 aimDirection, Vector3 worldUp)
@@ -77,18 +76,22 @@ public class GunGeneralStats : MonoBehaviour
             newProjectile.transform.LookAt(hitPoint, worldUp);
         }
 
-        if (user as Player != null && recoilMagnitude > 0)
+        if (user is Player player && recoilMagnitude > 0)
         {
-            ApplyRecoil((user as Player).movement);
+            ApplyRecoil(player.movement);
         }
     }
 
-
-
     void ApplyRecoil(MovementController player)
     {
-        float recoilAngle = Random.Range(-recoilDeviationAngle, recoilDeviationAngle);
-        Vector2 recoilDirection = Quaternion.Euler(0, 0, recoilAngle) * Vector2.up * recoilMagnitude;
+        float time = Time.time * recoilSwaySpeed;
+        float x = Mathf.PerlinNoise(time, 0);
+        float y = Mathf.PerlinNoise(0, time);
+        x = Mathf.Lerp(-1, 1, x);
+        //y = Mathf.Lerp(-1, 1, y);
+        Vector2 recoilDirection = new Vector2(x, y).normalized;
+        recoilDirection *= recoilMagnitude;
+
         player.StartCoroutine(player.lookControls.recoilController.AddRecoilOverTime(recoilDirection, recoilTime, recoilCurve));
     }
 }

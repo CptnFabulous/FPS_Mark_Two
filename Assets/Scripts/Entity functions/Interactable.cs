@@ -58,8 +58,6 @@ public class Interactable : MonoBehaviour
         cooldownTimer = 0;
         while (cooldownTimer != 1)
         {
-            Debug.Log("Ending cooldown");
-
             cooldownTimer += Time.deltaTime / duration;
             cooldownTimer = Mathf.Clamp01(cooldownTimer);
             yield return null;
