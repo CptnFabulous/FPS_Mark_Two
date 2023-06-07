@@ -5,9 +5,6 @@ using UnityEngine.UI;
 
 public class RadialMenu : MonoBehaviour
 {
-    [SerializeField] Image optionPrefab;
-    [SerializeField] bool optionRotationsMatchAngle;
-    //public float angleOffset;
     public float mouseSensitivity = 0.25f;
 
     public UnityEvent<int> onValueChanged;
@@ -15,6 +12,8 @@ public class RadialMenu : MonoBehaviour
 
     [Header("Cosmetics")]
     [SerializeField] RectTransform selectorAxis;
+    [SerializeField] Image optionPrefab;
+    [SerializeField] bool optionRotationsMatchAngle;
 
     CanvasGroup elements;
     RectTransform[] options = new RectTransform[0];
@@ -33,7 +32,6 @@ public class RadialMenu : MonoBehaviour
             // I might also want to set up EnterMenu() to use InputDirection() as well since there's a lot of overlap.
             
             value = Mathf.Clamp(value, 0, options.Length - 1);
-            //value = MiscFunctions.InverseClamp(value, 0, options.Length - 1);
             if (cachedIndex == value) return;// Only perform updating code if value is changed
 
             cachedIndex = value;
