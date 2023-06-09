@@ -21,6 +21,7 @@ public class RadialMenu : MonoBehaviour
 
     int cachedIndex; // Don't edit this directly except from inside 'value' setter
     Vector2 cursorDirection;
+    HeadsUpDisplay ph;
 
     public bool menuIsOpen { get; private set; }
     public int value
@@ -38,9 +39,11 @@ public class RadialMenu : MonoBehaviour
             onValueChanged.Invoke(cachedIndex);
         }
     }
+    public int numberOfOptions => options.Length;
     public bool optionsPresent => options != null && options.Length > 0;
     float radius => Vector2.Distance(optionPrefab.rectTransform.anchoredPosition, Vector2.zero);
     float segmentSize => optionsPresent ? (360 / options.Length) : 360;
+    HeadsUpDisplay parentHUD => ph ??= GetComponentInParent<HeadsUpDisplay>();
 
     #region Setup
     private void Awake()
@@ -167,11 +170,18 @@ public class RadialMenu : MonoBehaviour
     }
     #endregion
 
-    #region Optional functions
+    #region Cosmetic functions
     public void PositionHighlight(RectTransform selectionHighlight)
     {
         selectionHighlight.anchoredPosition = options[value].anchoredPosition;
         selectionHighlight.rotation = options[value].rotation;
     }
+    public void RotateToIndexAngle(Transform toRotate)
+    {
+        float angle = value * segmentSize;
+        toRotate.localRotation = Quaternion.Euler(0, 0, -angle);
+    }
+    public void PlayOneShotAnimation(Animation animation) => animation.Play();
+    public void PlaySoundEffect(AudioClip clip) => parentHUD.PlayAudioClip(clip);
     #endregion
 }
