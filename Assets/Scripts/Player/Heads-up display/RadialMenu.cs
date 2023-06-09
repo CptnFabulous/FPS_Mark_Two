@@ -127,7 +127,7 @@ public class RadialMenu : MonoBehaviour
         {
             cursorDirection += inputVector * mouseSensitivity;
         }
-        else
+        else if (inputVector.magnitude > 0) // Don't change the controller input if it's zero
         {
             cursorDirection = inputVector;
         }
