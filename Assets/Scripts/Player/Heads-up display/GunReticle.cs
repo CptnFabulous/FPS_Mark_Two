@@ -17,6 +17,8 @@ public class GunReticle : MonoBehaviour
     Vector2[] originalDirections;
 
     Camera playerCamera => handler.controller.movement.lookControls.worldViewCamera;
+    RangedAttack mode => handler.CurrentWeapon.CurrentMode as RangedAttack;
+    GunADS ads => mode != null ? mode.optics : null;
     float opacity // A bit redundant but not a huge deal
     {
         get => cg.alpha;
@@ -46,8 +48,7 @@ public class GunReticle : MonoBehaviour
     private void LateUpdate()
     {
         #region Check that a reticle is present
-        RangedAttack r = handler.CurrentWeapon.CurrentMode as RangedAttack;
-        if (r == null)
+        if (mode == null) // If not, hide the reticle and end the function early since there's nothing to render
         {
             //enabled = false;
             opacity = 0;
@@ -57,13 +58,14 @@ public class GunReticle : MonoBehaviour
 
         #region Visibility
         // Set visibility based on various factors specified in reticle opacity
-        opacity = ReticleOpacity(r);
+        opacity = ReticleOpacity();
         // If reticle is not visible, don't bother updating other elements
         if (opacity <= 0) return;
         #endregion
 
-        #region Size
-        float angle = handler.aimSwayAngle + r.stats.shotSpread;
+        float angle = ReticleAngle();
+
+        #region Update reticle size
         Quaternion offsetRotation = handler.aimAxis.rotation * Quaternion.Euler(angle, 0, 0);
 
         // Calculate direction and distance
@@ -94,12 +96,11 @@ public class GunReticle : MonoBehaviour
         #endregion
     }
 
-    float ReticleOpacity(RangedAttack r)
+    float ReticleOpacity()
     {
         // Do not show reticle if currently in the weapon selector
         if (handler.weaponSelector.menuIsOpen) return 0;
 
-        GunADS ads = r.optics;
         if (ads != null)
         {
             if (ads.hideMainReticle) // If the reticle is never meant to be visible, show nothing
@@ -113,5 +114,16 @@ public class GunReticle : MonoBehaviour
         }
 
         return 1; // Make the reticle fully visible.
+    }
+    float ReticleAngle()
+    {
+        float angle = handler.aimSwayAngle + mode.stats.shotSpread;
+
+        if (ads != null)
+        {
+            angle = Mathf.Lerp(angle, 0, ads.timer);
+        }
+        
+        return angle;
     }
 }
