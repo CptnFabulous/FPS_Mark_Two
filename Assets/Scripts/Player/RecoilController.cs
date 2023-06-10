@@ -5,12 +5,14 @@ using UnityEngine;
 public class RecoilController : MonoBehaviour
 {
     public LookController lookControls;
-    [SerializeField] float recoilRecoveryDegreesPerSecond = 10;
+    [SerializeField] float recoilRecoveryTime = 1;
     [SerializeField] float timeAfterRecoilBeforeRecovery = 0.2f;
-    [SerializeField] float aimSpeedToCancelRecoilRecovery = 15;
+    [SerializeField] AnimationCurve recoilRecoveryCurve = AnimationCurve.EaseInOut(0, 1, 1, 0); // How the recoil drops over time, to ensure it's smooth
+    [SerializeField] float aimSpeedToCancelRecoilRecovery = 15; // If the player's aim input is stronger than this, cancel the recoil recovery
 
-    Vector2 recoil;
-    float lastTimeRecoiled;
+    Vector2 recoil; // The accumulated recoil value
+    float lastTimeRecoiled; // The last time recoil force was applied
+    Vector2 previousRecoil; // What the recoil was before recovery
 
     public Vector2 recoilValue
     {
@@ -19,6 +21,7 @@ public class RecoilController : MonoBehaviour
         {
             recoil = value;
             lastTimeRecoiled = Time.time;
+            previousRecoil = recoil;
         }
     }
     
@@ -30,9 +33,19 @@ public class RecoilController : MonoBehaviour
             lookControls.lookAngles += recoil;
             recoil = Vector2.zero;
         }
-        else if (Time.time - lastTimeRecoiled > timeAfterRecoilBeforeRecovery)
+
+        // Check again if there's still recoil to recover from. If so, shift the value back towards zero.
+        if (recoil.magnitude > 0)
         {
-            recoil = Vector2.MoveTowards(recoil, Vector2.zero, recoilRecoveryDegreesPerSecond * Time.deltaTime);
+            // Calculate how long it's been since the recoil was last influenced
+            float time = Time.time - lastTimeRecoiled - timeAfterRecoilBeforeRecovery;
+            if (time > 0)
+            {
+                // If the time was greater than the delay before recovery, lerp back to zero based on how much time has passed
+                float t = recoilRecoveryCurve.Evaluate(time / recoilRecoveryTime);
+                t = Mathf.Clamp01(t);
+                recoil = Vector2.Lerp(Vector2.zero, previousRecoil, t);
+            }
         }
     }
 
