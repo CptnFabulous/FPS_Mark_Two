@@ -27,11 +27,21 @@ public class RecoilController : MonoBehaviour
     
     private void Update()
     {
+        if (recoilValue.magnitude <= 0) return;
+
         // If the player is putting out a strong enough input to be deliberately adjusting their aim from their current direction, don't recover the recoil.
         if (lookControls.processedAimInput.magnitude > aimSpeedToCancelRecoilRecovery)
         {
-            lookControls.lookAngles += recoil;
-            recoil = Vector2.zero;
+            // Calculate a Vector2 value to move the recoil value directly into lookAngles
+            Vector2 toAdd = recoil;
+            // (Don't adjust the vertical value if it would exceed the min or max degrees)
+            float y = lookControls.lookAngles.y + toAdd.y;
+            float yClamped = Mathf.Clamp(y, lookControls.minAngle, lookControls.maxAngle);
+            if (yClamped != y) toAdd.y = 0;
+            // Add it to lookControls.lookAngles, then subtract from recoil (and previousRecoil as well so if there's any value left the lerping is still consistent)
+            lookControls.lookAngles += toAdd;
+            recoil -= toAdd;
+            previousRecoil -= toAdd;
         }
 
         // Check again if there's still recoil to recover from. If so, shift the value back towards zero.

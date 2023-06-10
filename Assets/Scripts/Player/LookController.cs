@@ -35,8 +35,8 @@ public class LookController : MonoBehaviour
     [Header("Recoil and offset")]
     public RecoilController recoilController;
 
-    float minAngle = -90;
-    float maxAngle = 90;
+    public float minAngle => -90;
+    public float maxAngle => 90;
 
     Vector2 la;
     
