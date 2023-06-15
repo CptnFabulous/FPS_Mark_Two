@@ -26,36 +26,35 @@ public class GameplayOptions : OptionsMenu
 
     public override void ApplySettings()
     {
-        lookControls.mouseSensitivity = SliderValueToSensitivity(mouseSensitivity, maxMouseSensitivity);
-        lookControls.gamepadSensitivity.x = SliderValueToSensitivity(gamepadSensitivityX, maxGamepadSensitivityX);
-        lookControls.gamepadSensitivity.y = SliderValueToSensitivity(gamepadSensitivityY, maxGamepadSensitivityY);
+        // Assign new sensitivity values
+        lookControls.mouseSensitivityRange = (int)mouseSensitivity.value;
+        lookControls.gamepadSensitivityRangeX = (int)gamepadSensitivityX.value;
+        lookControls.gamepadSensitivityRangeY = (int)gamepadSensitivityY.value;
+        // Assign other camera values
         lookControls.invertX = invertX.isOn;
         lookControls.invertY = invertY.isOn;
         lookControls.fieldOfView = fieldOfView.value;
-
+        // Assign other control values
         movement.toggleCrouch = toggleCrouch.isOn;
-
         weaponHandler.toggleADS = toggleADS.isOn;
     }
 
     public override void ObtainCurrentValues()
     {
         playerUpdating = GetComponentInParent<Player>();
-        if (playerUpdating == null)
-        {
-            return;
-        }
-        MovementController movement = playerUpdating.movement;
+        if (playerUpdating == null) return;
 
-        SensitivityToSliderValue(mouseSensitivity, lookControls.mouseSensitivity, maxMouseSensitivity);
-        SensitivityToSliderValue(gamepadSensitivityX, lookControls.gamepadSensitivity.x, maxGamepadSensitivityX);
-        SensitivityToSliderValue(gamepadSensitivityY, lookControls.gamepadSensitivity.y, maxGamepadSensitivityY);
+        // Obtain sensitivity values
+        mouseSensitivity.value = lookControls.mouseSensitivityRange;
+        gamepadSensitivityX.value = lookControls.gamepadSensitivityRangeX;
+        gamepadSensitivityY.value = lookControls.gamepadSensitivityRangeY;
+        // Obtain other camera values
         invertX.isOn = lookControls.invertX;
         invertY.isOn = lookControls.invertY;
         fieldOfView.value = lookControls.fieldOfView;
         lookControls.worldViewCamera.fieldOfView = fieldOfView.value;
+        // Obtain other control values
         toggleCrouch.isOn = movement.toggleCrouch;
-
         toggleADS.isOn = weaponHandler.toggleADS;
     }
 

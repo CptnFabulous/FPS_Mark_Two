@@ -17,15 +17,17 @@ public class LookController : MonoBehaviour
     public bool invertY;
 
     [Header("Mouse settings")]
-    public float mouseSensitivity = 75;
-    public float mouseMultiplierWhileAiming = 0.5f;
+    [SerializeField] float baseMouseSensitivity = 50;
+    [Range(1, 10)] public int mouseSensitivityRange = 3;
+    [Range(0.1f, 1)] public float mouseMultiplierWhileAiming = 0.5f;
 
     [Header("Gamepad settings")]
-    public Vector2 gamepadSensitivity = new Vector2(25, 25);
-    public float gamepadMultiplierWhileAiming = 0.25f;
-    public float aimAcceleration = 6;
-    public float timeToMaxAimAcceleration = 1;
-    public AnimationCurve aimAccelerationCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    [SerializeField] Vector2 baseGamepadSensitivity = new Vector2(50, 40);
+    [Range(1, 10)] public int gamepadSensitivityRangeX = 3;
+    [Range(1, 10)] public int gamepadSensitivityRangeY = 3;
+    [SerializeField] AnimationCurve aimAccelerationCurve = AnimationCurve.Linear(0, 1, 0.5f, 1.75f);
+    [SerializeField] float gamepadAccelerationStrengthThreshold = 0.75f;
+    [Range(0.1f, 1)] public float gamepadMultiplierWhileAiming = 0.25f;
 
     [Header("Camera")]
     public Camera worldViewCamera;
@@ -122,13 +124,9 @@ public class LookController : MonoBehaviour
 
         #region Aim acceleration
         // If player is using a gamepad and out of ADS, apply mouse acceleration
-        if (usingGamepad && !inADS)
+        if (usingGamepad && !inADS && rawAimInput.magnitude >= gamepadAccelerationStrengthThreshold)
         {
-            float t = Time.time - aimStartTime; // Get how long the aim has been moving in a particular direction for
-            t = Mathf.Clamp01(t / timeToMaxAimAcceleration); // Get a 0-1 value proportional to the desired time to reach max aim acceleration
-            t = aimAccelerationCurve.Evaluate(t); // Multiply by curve
-            t = Mathf.Lerp(1, aimAcceleration, t); // Use t to lerp between 1 and the max multiplier over time
-            value.x *= t; // Multiply only on the X axis
+            value.x *= aimAccelerationCurve.Evaluate(Time.time - aimStartTime);
         }
         #endregion
 
@@ -136,12 +134,12 @@ public class LookController : MonoBehaviour
         // Apply sensitivity
         if (usingGamepad)
         {
-            value.x *= gamepadSensitivity.x;
-            value.y *= gamepadSensitivity.y;
+            value.x *= baseGamepadSensitivity.x * gamepadSensitivityRangeX;
+            value.y *= baseGamepadSensitivity.y * gamepadSensitivityRangeY;
         }
         else
         {
-            value *= mouseSensitivity;
+            value *= baseMouseSensitivity * mouseSensitivityRange;
         }
 
         // Apply ADS multiplier for easier aiming
