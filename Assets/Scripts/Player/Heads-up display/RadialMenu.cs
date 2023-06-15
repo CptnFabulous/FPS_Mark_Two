@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class RadialMenu : MonoBehaviour
 {
     public float mouseSensitivity = 0.25f;
+    [Range(0, 1)] public float gamepadMagnitudeForChange = 0.5f;
 
     public UnityEvent<int> onValueChanged;
     public UnityEvent<int> onValueConfirmed;
@@ -127,7 +128,7 @@ public class RadialMenu : MonoBehaviour
         {
             cursorDirection += inputVector * mouseSensitivity;
         }
-        else if (inputVector.magnitude > 0) // Don't change the controller input if it's zero
+        else if (inputVector.magnitude > gamepadMagnitudeForChange) // Don't change the controller input if it's too small (it could be accidental or the player might have intentionally released the stick)
         {
             cursorDirection = inputVector;
         }
