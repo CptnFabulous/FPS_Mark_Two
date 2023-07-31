@@ -17,7 +17,16 @@ public class GunReticle : MonoBehaviour
     Vector2[] originalDirections;
 
     Camera playerCamera => handler.controller.movement.lookControls.worldViewCamera;
-    RangedAttack mode => handler.CurrentWeapon.CurrentMode as RangedAttack;
+    RangedAttack mode
+    {
+        get
+        {
+            Weapon w = handler.CurrentWeapon;
+            if (w == null) return null;
+            if (w.CurrentMode == null) return null;
+            return w.CurrentMode as RangedAttack;
+        }
+    }
     GunADS ads => mode != null ? mode.optics : null;
     float opacity // A bit redundant but not a huge deal
     {
