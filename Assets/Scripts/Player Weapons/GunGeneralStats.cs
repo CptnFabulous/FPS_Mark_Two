@@ -18,13 +18,7 @@ public class GunGeneralStats : MonoBehaviour
     [Header("Ammunition")]
     public AmmunitionType ammoType;
     public int ammoPerShot = 1;
-    public bool ConsumesAmmo
-    {
-        get
-        {
-            return ammoType != null && ammoPerShot > 0;
-        }
-    }
+    //public bool ConsumesAmmo => ammoType != null && ammoPerShot > 0;
 
     [Header("Recoil")]
     public float recoilMagnitude = 2;

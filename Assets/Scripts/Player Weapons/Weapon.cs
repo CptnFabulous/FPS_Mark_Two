@@ -37,11 +37,11 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public WeaponHandler user { get; private set; }
+    public Character user { get; private set; }
 
     private void OnEnable()
     {
-        user = GetComponentInParent<WeaponHandler>();
+        user = GetComponentInParent<Character>();
     }
 
     public IEnumerator Draw()

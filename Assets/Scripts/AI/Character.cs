@@ -29,6 +29,9 @@ public abstract class Character : Entity
     public abstract Vector3 MovementDirection { get; }
     public Vector3 LocalMovementDirection => transform.InverseTransformDirection(MovementDirection);
 
+
+    public WeaponHandler weaponHandler => (this as Player).weapons;
+    public AmmunitionInventory ammo => (weaponHandler != null) ? weaponHandler.ammo : null;
     public bool IsHostileTowards(Character other)
     {
         return affiliation.IsHostileTowards(other.affiliation);

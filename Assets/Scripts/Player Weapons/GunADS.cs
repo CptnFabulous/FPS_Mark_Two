@@ -30,7 +30,7 @@ public class GunADS : MonoBehaviour
 
     
     public RangedAttack currentMode;
-    WeaponHandler user => currentMode.User;
+    WeaponHandler user => currentMode.User.weaponHandler;
     Player player => user.controller;
     bool currentlyAiming;
     public float timer { get; private set; }

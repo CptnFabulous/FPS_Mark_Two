@@ -81,7 +81,16 @@ public class GunMagazine : MonoBehaviour
     }
     public int ReservedAmmo(AmmunitionType type)
     {
-        return (int)(mode.User.ammo.GetStock(type) - ammo.current);
+        AmmunitionInventory inventory = mode.User.ammo;
+        if (inventory != null)
+        {
+            return (int)(inventory.GetStock(type) - ammo.current);
+        }
+        else
+        {
+            return int.MaxValue;//(int)Mathf.Infinity;
+        }
+        
     }
 
 

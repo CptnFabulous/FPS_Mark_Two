@@ -11,7 +11,8 @@ public abstract class WeaponMode : MonoBehaviour
     public UnityEvent onSwitch;
 
     public Weapon attachedTo { get; private set; }
-    public WeaponHandler User => attachedTo.user;
+    public Character User => attachedTo.user;
+
 
     private void Awake()
     {
@@ -22,8 +23,8 @@ public abstract class WeaponMode : MonoBehaviour
     public abstract void OnPrimaryInputChanged();
     public abstract void OnSecondaryInputChanged();
     public abstract void OnTertiaryInput();
-    public bool PrimaryHeld => User.PrimaryHeld;
-    public bool SecondaryActive => User.SecondaryActive;
+    public bool PrimaryHeld => User.weaponHandler.PrimaryHeld;
+    public bool SecondaryActive => User.weaponHandler.SecondaryActive;
 
     public abstract bool InAction { get; }
 }

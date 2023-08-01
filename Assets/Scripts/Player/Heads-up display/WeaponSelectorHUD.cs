@@ -110,10 +110,9 @@ public class WeaponSelectorHUD : MonoBehaviour
         ammoIcon.sprite = (ammoType != null) ? ammoType.icon : null;
 
         // If weapon consumes ammo, show reserve
-        bool consumesAmmo = mode.stats.ConsumesAmmo;
-        if (consumesAmmo)
+        if (mode.consumesAmmo)
         {
-            int ammoCurrent = (int)mode.attachedTo.user.ammo.GetValues(ammoType).current;
+            int ammoCurrent = (int)mode.User.ammo.GetValues(ammoType).current;
 
             if (mode.magazine != null) // If magazine is present, change ammo bar to show reserve excluding magazine amount
             {

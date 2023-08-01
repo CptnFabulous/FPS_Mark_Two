@@ -34,6 +34,8 @@ public class RangedAttack : WeaponMode
     }
     public bool NotReloading => magazine == null || magazine.ReloadActive == false;
 
+    public bool consumesAmmo => User.ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
+
     public bool CanShoot()
     {
         // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
@@ -47,7 +49,7 @@ public class RangedAttack : WeaponMode
         }
 
         // If the weapon consumes ammunition, but there isn't enough to fire
-        if (stats.ConsumesAmmo && User.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
+        if (consumesAmmo && User.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
         {
             return false;
         }
@@ -85,12 +87,12 @@ public class RangedAttack : WeaponMode
         {
             magazine.ammo.current -= stats.ammoPerShot;
         }
-        if (stats.ConsumesAmmo)
+        if (consumesAmmo)
         {
             User.ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
 
-        stats.Shoot(User.controller);
+        stats.Shoot(User);
         //stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection, User.aimAxis.up);
 
         shotsInBurst++;
@@ -103,9 +105,9 @@ public class RangedAttack : WeaponMode
 
         DamageEffect projectileEffect = stats.projectilePrefab.damageEffect;
         int damage = projectileEffect != null ? projectileEffect.baseDamage : int.MaxValue;
-        float spread = stats.shotSpread + User.standingAccuracy;
+        float spread = stats.shotSpread + User.weaponHandler.standingAccuracy;
 
-        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User.controller, damage, User.aimAxis.position, User.AimDirection, stats.range, spread, stats.projectilePrefab.detection);
+        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, stats.range, spread, stats.projectilePrefab.detection);
         Notification<AttackMessage>.Transmit(newMessage);
 
         timeOfLastMessage = Time.time; // Resets time
