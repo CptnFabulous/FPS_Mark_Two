@@ -15,6 +15,7 @@ public class AI : Character
     public AIAim aiming;
     public FieldOfView view;
     public ActionExecutor actions;
+    public override Vector3 aimDirection => LookTransform.forward;
     public override void Die()
     {
         //agent.enabled = false;
