@@ -10,11 +10,14 @@ public class RangedAttack : WeaponMode
     public GunADS optics;
 
 
+    public bool isFiring { get; private set; }
+    public int shotsInBurst { get; private set; }
+
     public override bool InAction
     {
         get
         {
-            if (controls.InBurst) return true;
+            if (isFiring) return true;
             if (NotReloading == false) return true;
 
             if (optics != null)
@@ -51,7 +54,32 @@ public class RangedAttack : WeaponMode
 
         return true;
     }
-    public void SingleShot()
+
+    /// <summary>
+    /// Continuously fires shots until the burst timer is reached, the gun runs out of ammo, or the player lets go of the trigger.
+    /// </summary>
+    IEnumerator FireBurst()
+    {
+        isFiring = true;
+        shotsInBurst = 0;
+        float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer, to infinity to ensure it always sends a message on the first shot.
+
+        while (PrimaryHeld && controls.CanBurst(shotsInBurst) && CanShoot())
+        {
+            TrySendMessage(ref timeOfLastMessage);
+            // Fire shot and increment burst timer
+            yield return SingleShot();
+        }
+
+        // Wait until the fire button is released, then reset the shot timer
+        yield return new WaitUntil(() => PrimaryHeld == false);
+        shotsInBurst = 0;
+        isFiring = false;
+    }
+    /// <summary>
+    /// Fires a single shot and increments the burst counter.
+    /// </summary>
+    public IEnumerator SingleShot()
     {
         if (magazine != null)
         {
@@ -63,6 +91,23 @@ public class RangedAttack : WeaponMode
         }
 
         stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection, User.aimAxis.up);
+
+        shotsInBurst++;
+        yield return new WaitForSeconds(controls.ShotDelay);
+    }
+    void TrySendMessage(ref float timeOfLastMessage)
+    {
+        // Transmit telegraph message to AI, if it's the first shot or enough time has passed since the previous message transmission
+        if (Time.time - timeOfLastMessage <= controls.messageDelay) return;
+
+        DamageEffect projectileEffect = stats.projectilePrefab.damageEffect;
+        int damage = projectileEffect != null ? projectileEffect.baseDamage : int.MaxValue;
+        float spread = stats.shotSpread + User.standingAccuracy;
+
+        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User.controller, damage, User.aimAxis.position, User.AimDirection, stats.range, spread, stats.projectilePrefab.detection);
+        Notification<AttackMessage>.Transmit(newMessage);
+
+        timeOfLastMessage = Time.time; // Resets time
     }
 
     public override void OnSwitchTo()
@@ -77,9 +122,9 @@ public class RangedAttack : WeaponMode
     }
     public override void OnPrimaryInputChanged()
     {
-        if (PrimaryHeld && controls.InBurst == false && NotReloading)
+        if (PrimaryHeld && isFiring == false && NotReloading)
         {
-            StartCoroutine(controls.Fire(this));
+            StartCoroutine(FireBurst());
         }
     }
     public override void OnSecondaryInputChanged()
