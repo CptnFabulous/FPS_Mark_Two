@@ -16,6 +16,7 @@ public abstract class Character : Entity
         return hypotheticalTransformPosition + offset;
     }
     public abstract Transform LookTransform { get; }
+    public abstract Vector3 aimDirection { get; }
     public Vector3 RelativeLookOrigin(Vector3 hypotheticalTransformPosition)
     {
         Vector3 offset = LookTransform.position - transform.position;

@@ -113,7 +113,8 @@ public abstract class AIAttackBehaviour : MonoBehaviour
 
     public void ShootGun(GunGeneralStats stats)
     {
-        stats.Shoot(actionRunning.AI, actionRunning.Aim.LookOrigin, actionRunning.Aim.AimDirection, actionRunning.Aim.LookUp);
+        stats.Shoot(actionRunning.AI);
+        //stats.Shoot(actionRunning.AI, actionRunning.Aim.LookOrigin, actionRunning.Aim.AimDirection, actionRunning.Aim.LookUp);
     }
 
 

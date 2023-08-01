@@ -90,7 +90,8 @@ public class RangedAttack : WeaponMode
             User.ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
 
-        stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection, User.aimAxis.up);
+        stats.Shoot(User.controller);
+        //stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection, User.aimAxis.up);
 
         shotsInBurst++;
         yield return new WaitForSeconds(controls.ShotDelay);

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : Character
 {
     public override Transform LookTransform => movement.lookControls.upperBody;
+    public override Vector3 aimDirection => weapons.AimDirection;
     public override LayerMask lookMask => movement.lookControls.worldViewCamera.cullingMask;
     public override LayerMask attackMask
     {

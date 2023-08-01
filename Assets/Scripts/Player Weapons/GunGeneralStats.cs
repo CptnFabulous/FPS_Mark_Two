@@ -34,8 +34,12 @@ public class GunGeneralStats : MonoBehaviour
     // (I might take the last 3 of these values and make them values in WeaponHandler instead, since these properties most likely won't change from different guns)
 
     public UnityEvent effectsOnFire;
-    public void Shoot(Character user, Vector3 origin, Vector3 aimDirection, Vector3 worldUp)
+    public void Shoot(Character user)
     {
+        Vector3 origin = user.LookTransform.position;
+        Vector3 aimDirection = user.aimDirection;
+        Vector3 worldUp = user.LookTransform.up;
+        
         effectsOnFire.Invoke();
 
         for (int i = 0; i < projectileCount; i++)
