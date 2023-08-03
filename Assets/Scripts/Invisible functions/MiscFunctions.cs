@@ -99,7 +99,21 @@ public readonly struct MiscFunctions
         }
     }
     public static int Loop(int value, int min, int max) => (int)Loop((float)value, (float)min, (float)max);
-    
+    public static int LoopIndex(int value, int length)
+    {
+        if (value < 0)
+        {
+            value = length - value;
+        }
+        else if (value >= length)
+        {
+            value = value - length;
+        }
+        return value;
+    }
+    public static bool WithinRange(float value, float min, float max) => value >= min && value <= max;
+    public static bool WithinArray(int index, int arrayLength) => WithinRange(index, 0, arrayLength - 1);
+    #endregion
 
     #region Formatting text
     public static bool CharMatches(char c, List<char> array)
@@ -261,11 +275,6 @@ public readonly struct MiscFunctions
         return text;
     }
     #endregion
-
-    public static bool WithinArray(int index, int arrayLength)
-    {
-        return index >= 0 && index < arrayLength;
-    }
 
     #region Combined bounds
     public static Bounds CombinedBounds(Vector3[] positions)
