@@ -8,17 +8,15 @@ public class Hitbox : MonoBehaviour
     public float damageMultiplier = 1;
     public bool isCritical;
     public Health sourceHealth;
-    public new Collider collider { get; private set; }
 
     [Header("Collision Damage")]
     float minimumCollisionForceToDamage = 12;
     float damagePerCollisionForceUnit = 5f;
     float stunPerCollisionForceUnit = 5f;
 
-    private void Awake()
-    {
-        collider = GetComponent<Collider>();
-    }
+    Collider c;
+
+    public Collider collider => c ??= GetComponent<Collider>();
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, bool critical = false)
     {

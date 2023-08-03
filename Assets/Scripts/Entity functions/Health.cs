@@ -32,14 +32,22 @@ public class Health : MonoBehaviour
     public Stamina stunData;
     public bool IsAlive => data.current > 0;
 
-    public Hitbox[] hitboxes { get; private set; }
-    public Bounds HitboxBounds
+    public Hitbox[] hitboxes
     {
         get
         {
-            return MiscFunctions.CombinedBounds(hitboxes);
+            if (hb != null) return hb;
+
+            hb = GetComponentsInChildren<Hitbox>();
+            for (int i = 0; i < hitboxes.Length; i++)
+            {
+                hitboxes[i].sourceHealth = this;
+            }
+
+            return hb;
         }
     }
+    public Bounds HitboxBounds => MiscFunctions.CombinedBounds(hitboxes);
     public Collider[] HitboxColliders
     {
         get
@@ -55,19 +63,9 @@ public class Health : MonoBehaviour
             return hitboxColliders;
         }
     }
+
+    Hitbox[] hb;
     Collider[] hitboxColliders;
-
-    
-
-    private void Awake()
-    {
-        hitboxes = GetComponentsInChildren<Hitbox>();
-        for (int i = 0; i < hitboxes.Length; i++)
-        {
-            hitboxes[i].sourceHealth = this;
-        }
-    }
-
 
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.
