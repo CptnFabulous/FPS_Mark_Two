@@ -31,7 +31,16 @@ public readonly struct MiscFunctions
         }
         return false;
     }
+    public static void ShuffleList<T>(IList<T> list)
     {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int r = Random.Range(0, list.Count - 1);
+            if (r == i) continue;
+            T value = list[i];
+            list[i] = list[r];
+            list[r] = value;
+        }
     }
     #endregion
 
