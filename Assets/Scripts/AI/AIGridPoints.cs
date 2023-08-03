@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class AIGridPoints : MonoBehaviour
 {
@@ -36,11 +37,23 @@ public class AIGridPoints : MonoBehaviour
         public Vector3 position;
         public bool isCover;
     }
-    List<GridPoint> gridPoints;
 
-    private void Awake()
+    
+    List<GridPoint> gridPoints
     {
-        GenerateGrid();
+        get
+        {
+            if (_points == null)
+            {
+                Generate();
+                /*
+                // Set up listeners so whenever the scene (and terrain) change, the grid points are updated
+                SceneManager.sceneLoaded += (_, _) => Generate();
+                SceneManager.sceneUnloaded += (_) => Generate();
+                */
+            }
+            return _points;
+        }
     }
     public void OnDrawGizmosSelected()
     {
@@ -56,13 +69,22 @@ public class AIGridPoints : MonoBehaviour
             }
         }
     }
-    public void GenerateGrid()
+
+    #region Generation
+
+    [ContextMenu("Force regeneration")]
+    public void Generate()
     {
-        List<GridPoint> newPoints = new List<GridPoint>();
+        _points = GenerateGrid(levelBounds);
+    }
+    List<GridPoint> GenerateGrid(Bounds levelBounds)
+    {
+        //levelBounds.extents += new Vector3(raycastHeightPadding, raycastHeightPadding, raycastHeightPadding);
 
         float halfHeight = minAgentHeight / 2;
         float paddingUpFromFloor = 0.1f;
         Vector3 halfExtents = new Vector3(gridSpacing, halfHeight - paddingUpFromFloor, gridSpacing);
+        List<GridPoint> newPoints = new List<GridPoint>();
 
         for (int x = 0; x < GridSize.x; x++)
         {
@@ -91,6 +113,7 @@ public class AIGridPoints : MonoBehaviour
 
                     newPoints.Add(newPoint);
                 }
+                
             }
         }
 
@@ -98,7 +121,8 @@ public class AIGridPoints : MonoBehaviour
         //newPoints.Sort((lhs, rhs) => lhs.position.y.CompareTo(rhs.position.y));
         //newPoints.Sort((lhs, rhs) => lhs.position.z.CompareTo(rhs.position.z));
 
-        gridPoints = newPoints;
+        return newPoints;
+    }
     }
 
     /// <summary>
