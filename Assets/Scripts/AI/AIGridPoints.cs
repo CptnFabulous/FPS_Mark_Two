@@ -12,8 +12,14 @@ public class AIGridPoints : MonoBehaviour
     #endregion
 
     #region Generation variables
+
+    [Header("Casting criteria")]
+    public LayerMask environmentMask = ~0;
     public Bounds levelBounds = new Bounds(Vector3.zero, Vector3.one * 50);
-    public LayerMask terrainDetection = ~0;
+    /// <summary>
+    /// (BUGGED, sometimes fails to get certain sections on the edges of the NavMesh) If true, automatically obtains the size of the bounds to check in based on the size of the NavMesh.
+    /// </summary>
+    public bool autoCalculateBounds;
     public Vector3 floorEulerAngles;
     
     public float gridSpacing = 1;
@@ -31,6 +37,7 @@ public class AIGridPoints : MonoBehaviour
     public Quaternion floorRotation => Quaternion.Euler(floorEulerAngles);
     public Vector3 floorNormal => floorRotation * Vector3.up;
 
+    float raycastHeightPadding = 5f; // For if the bounds are too small to have the raycasts actually register because they're spawning inside the colliders. Can happen with perfectly flat environments.
 
     public struct GridPoint
     {
@@ -75,6 +82,10 @@ public class AIGridPoints : MonoBehaviour
     [ContextMenu("Force regeneration")]
     public void Generate()
     {
+        if (autoCalculateBounds)
+        {
+            levelBounds = GetNavMeshBounds();
+        }
         _points = GenerateGrid(levelBounds);
     }
     List<GridPoint> GenerateGrid(Bounds levelBounds)
@@ -95,7 +106,14 @@ public class AIGridPoints : MonoBehaviour
 
                 Vector3 origin = new Vector3(levelBounds.min.x + positionX, levelBounds.max.y, levelBounds.min.z + positionZ);
                 float distance = levelBounds.size.y - minAgentHeight;
-                while (Physics.Raycast(origin, -floorNormal, out RaycastHit rh, distance, terrainDetection))
+
+                // Calculate extra distance for raycasts
+                origin.y += raycastHeightPadding;
+                distance += raycastHeightPadding * 2;
+                //distance = Mathf.Max(distance, raycastHeightPadding * 2);
+
+                //Debug.DrawRay(origin, -floorNormal * distance, Color.black, 20);
+                while (Physics.Raycast(origin, -floorNormal, out RaycastHit rh, distance, environmentMask))
                 {
                     // Reset the positions for the next raycast
                     origin = rh.point + (minAgentHeight * -floorNormal);
@@ -172,5 +190,17 @@ public class AIGridPoints : MonoBehaviour
         }
 
         return desired.ToArray();
+    }
+
+    public static Bounds GetNavMeshBounds()
+    {
+        NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
+        Bounds bounds = new Bounds();
+        bounds.center = triangulation.vertices[0];
+        foreach (Vector3 vertex in triangulation.vertices)
+        {
+            bounds.Encapsulate(vertex);
+        }
+        return bounds;
     }
 }
