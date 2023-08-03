@@ -6,17 +6,7 @@ using UnityEngine.AI;
 public class AIGridPoints : MonoBehaviour
 {
     #region Singleton for current level
-    public static AIGridPoints Current
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<AIGridPoints>();
-            }
-            return instance;
-        }
-    }
+    public static AIGridPoints Current => instance ??= FindObjectOfType<AIGridPoints>();
     static AIGridPoints instance;
     #endregion
 
@@ -37,21 +27,8 @@ public class AIGridPoints : MonoBehaviour
             return new Vector2Int(x, z);
         }
     }
-    public Quaternion floorRotation
-    {
-        get
-        {
-            return Quaternion.Euler(floorEulerAngles);
-        }
-    }
-    public Vector3 floorNormal
-    {
-        get
-        {
-            return floorRotation * Vector3.up;
-        }
-    }
-    #endregion
+    public Quaternion floorRotation => Quaternion.Euler(floorEulerAngles);
+    public Vector3 floorNormal => floorRotation * Vector3.up;
 
 
     public struct GridPoint
@@ -140,10 +117,7 @@ public class AIGridPoints : MonoBehaviour
             return distance < minRadius || distance > maxRadius;
         });
         
-        if (onlyIncludeCover)
-        {
-            points.RemoveAll(p => p.isCover == false);
-        }
+        if (onlyIncludeCover) points.RemoveAll(p => p.isCover == false);
 
         return points.ToArray();
     }
