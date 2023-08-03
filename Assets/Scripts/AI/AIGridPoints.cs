@@ -38,14 +38,25 @@ public class AIGridPoints : MonoBehaviour
     public Vector3 floorNormal => floorRotation * Vector3.up;
 
     float raycastHeightPadding = 5f; // For if the bounds are too small to have the raycasts actually register because they're spawning inside the colliders. Can happen with perfectly flat environments.
+    int numberOfDirectionChecksForCover = 8;
+    List<GridPoint> _points = null;
+
+    float coverCheckRaycastDistance => gridSpacing * 1.5f;
+    public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
+    #endregion
 
     public struct GridPoint
     {
-        public Vector3 position;
-        public bool isCover;
-    }
+        public Vector3 position { get; private set; }
+        public Vector3[] coverDirections { get; private set; }
+        public bool isCover => coverDirections.Length > 0;
 
-    
+        public GridPoint(Vector3 position, Vector3[] coverDirections)
+        {
+            this.position = position;
+            this.coverDirections = coverDirections;
+        }
+    }
     List<GridPoint> gridPoints
     {
         get
@@ -62,6 +73,7 @@ public class AIGridPoints : MonoBehaviour
             return _points;
         }
     }
+
     public void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
@@ -73,6 +85,13 @@ public class AIGridPoints : MonoBehaviour
             {
                 Gizmos.color = gridPoints[i].isCover ? Color.green : Color.red;
                 Gizmos.DrawRay(gridPoints[i].position, floorNormal);
+
+                foreach (Vector3 direction in gridPoints[i].coverDirections)
+                {
+                    Gizmos.color = Color.cyan;
+                    Gizmos.DrawRay(gridPoints[i].position + floorNormal, direction * coverCheckRaycastDistance);
+                }
+                
             }
         }
     }
@@ -92,9 +111,6 @@ public class AIGridPoints : MonoBehaviour
     {
         //levelBounds.extents += new Vector3(raycastHeightPadding, raycastHeightPadding, raycastHeightPadding);
 
-        float halfHeight = minAgentHeight / 2;
-        float paddingUpFromFloor = 0.1f;
-        Vector3 halfExtents = new Vector3(gridSpacing, halfHeight - paddingUpFromFloor, gridSpacing);
         List<GridPoint> newPoints = new List<GridPoint>();
 
         for (int x = 0; x < GridSize.x; x++)
@@ -119,17 +135,9 @@ public class AIGridPoints : MonoBehaviour
                     origin = rh.point + (minAgentHeight * -floorNormal);
                     distance -= rh.distance;
 
-                    GridPoint newPoint = new GridPoint();
-                    newPoint.position = rh.point;
-
-                    // Calculate cover
-                    Collider[] thingsSurrounding = Physics.OverlapBox(newPoint.position + (halfHeight * floorNormal), halfExtents, floorRotation, terrainDetection);
-                    if (thingsSurrounding.Length > 0)
-                    {
-                        newPoint.isCover = true;
-                    }
-
-                    newPoints.Add(newPoint);
+                    Vector3 position = rh.point; // Get the position
+                    List<Vector3> coverDirections = CoverCheck(position); // Calculate cover points
+                    newPoints.Add(new GridPoint(position, coverDirections.ToArray())); // Assemble values and add to the list
                 }
                 
             }
@@ -141,7 +149,24 @@ public class AIGridPoints : MonoBehaviour
 
         return newPoints;
     }
+    public List<Vector3> CoverCheck(Vector3 position)
+    {
+        List<Vector3> directions = new List<Vector3>();
+
+        Vector3 rayOrigin = position + (minAgentHeight / 2 * floorNormal);
+
+        for (int i = 0; i < numberOfDirectionChecksForCover; i++)
+        {
+            Vector3 rayDirection = Quaternion.Euler(0, coverCheckAngleSize * i, 0) * Vector3.forward;
+            if (Physics.Raycast(rayOrigin, rayDirection, out _, coverCheckRaycastDistance, environmentMask))
+            {
+                directions.Add(rayDirection);
+            }
+        }
+
+        return directions;
     }
+    #endregion
 
     /// <summary>
     /// Gets all grid points within a minimum and maximum radius of a certain position.
