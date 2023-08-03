@@ -4,15 +4,9 @@ using UnityEngine;
 
 public readonly struct MiscFunctions
 {
-    public static Quaternion FromToRotation(Quaternion a, Quaternion b)
-    {
-        return a * Quaternion.Inverse(b);
-    }
-    public static Quaternion WorldToLocalRotation(Quaternion worldRotation, Transform target)
-    {
-        return Quaternion.Inverse(target.rotation) * worldRotation;
-    }
-
+    #region Position and rotation
+    public static Quaternion FromToRotation(Quaternion a, Quaternion b) => a * Quaternion.Inverse(b);
+    public static Quaternion WorldToLocalRotation(Quaternion worldRotation, Transform target) => Quaternion.Inverse(target.rotation) * worldRotation;
     public static Vector3 ScreenToAnchoredPosition(Vector3 screenSpace, RectTransform rt, RectTransform parent)
     {
         Vector3 canvasSpace = screenSpace;
@@ -26,36 +20,20 @@ public readonly struct MiscFunctions
         Vector3 anchorOffset = anchorDimensions * parent.rect.size;
         return canvasSpace - anchorOffset; // Adds offset to canvas space to produce an anchored position
     }
+    #endregion
 
-    public static float[] Vector3Array(Vector3 vector3)
+    #region IEnumerables
+    public static bool ArrayContains<T>(IEnumerable<T> array, T data)
     {
-        return new float[3]
+        foreach(T t in array)
         {
-            vector3.x,
-            vector3.y,
-            vector3.z,
-        };
-    }
-    public static bool ArrayContains(object[] array, object data)
-    {
-        for (int i = 0; i < array.Length; i++)
-        {
-            if (array[i] == data)
-            {
-                return true;
-            }
+            if (t.Equals(data)) return true;
         }
         return false;
     }
-
-    public static float Vector3Min(Vector3 vector3)
     {
-        return Mathf.Min(Mathf.Min(vector3.x, vector3.y), vector3.z);
     }
-    public static float Vector3Max(Vector3 vector3)
-    {
-        return Mathf.Max(Mathf.Max(vector3.x, vector3.y), vector3.z);
-    }
+    #endregion
 
     public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, Collider[] exceptions)
     {
@@ -68,6 +46,25 @@ public readonly struct MiscFunctions
         return list;
     }
 
+    #region Math
+    public static float Min(params float[] values)
+    {
+        float final = values[0];
+        for (int i = 1; i < values.Length; i++)
+        {
+            final = Mathf.Min(final, values[i]);
+        }
+        return final;
+    }
+    public static float Max(params float[] values)
+    {
+        float final = values[0];
+        for (int i = 1; i < values.Length; i++)
+        {
+            final = Mathf.Max(final, values[i]);
+        }
+        return final;
+    }
     /// <summary>
     /// If the value exceeds the specified range, loop back around to the start.
     /// </summary>
