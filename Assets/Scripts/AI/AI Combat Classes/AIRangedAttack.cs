@@ -65,7 +65,7 @@ public class AIRangedAttack : AIAttackBehaviour
 
         // Check if aim is on target
         Vector3 boundsExtents = actionRunning.CombatAI.target.health.HitboxBounds.extents;
-        float aimThreshold = MiscFunctions.Vector3Min(boundsExtents);
+        float aimThreshold = MiscFunctions.Min(boundsExtents.x, boundsExtents.y, boundsExtents.z);
         if (aimAlreadyLocked) aimThreshold += aimBreakThreshold;
         aimAlreadyLocked = actionRunning.Aim.LookCheckDistance(targetLocation, aimThreshold, true);
         return aimAlreadyLocked;
