@@ -805,8 +805,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lookControls: {fileID: 2286233210308183897}
-  recoilRecoveryDegreesPerSecond: 10
+  recoilRecoveryTime: 1
   timeAfterRecoilBeforeRecovery: 0.2
+  recoilRecoveryCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   aimSpeedToCancelRecoilRecovery: 15
 --- !u!114 &7479822334647491782
 MonoBehaviour:
