@@ -35,7 +35,10 @@ public class GameplayOptions : OptionsMenu
         lookControls.invertY = invertY.isOn;
         lookControls.fieldOfView = fieldOfView.value;
         // Assign other control values
-        movement.toggleCrouch = toggleCrouch.isOn;
+        if (movement.crouchController != null)
+        {
+            movement.crouchController.toggleCrouch = toggleCrouch.isOn;
+        }
         weaponHandler.toggleADS = toggleADS.isOn;
     }
 
@@ -54,7 +57,7 @@ public class GameplayOptions : OptionsMenu
         fieldOfView.value = lookControls.fieldOfView;
         lookControls.worldViewCamera.fieldOfView = fieldOfView.value;
         // Obtain other control values
-        toggleCrouch.isOn = movement.toggleCrouch;
+        toggleCrouch.isOn = (movement.crouchController != null) ? movement.crouchController.toggleCrouch : false;
         toggleADS.isOn = weaponHandler.toggleADS;
     }
 

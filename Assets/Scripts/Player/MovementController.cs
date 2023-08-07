@@ -8,6 +8,8 @@ public class MovementController : MonoBehaviour
 {
     public Player controlling;
 
+    public LayerMask collisionMask => ~0;
+
     #region Movement
     [Header("Movement")]
     public bool canMove = true;
@@ -38,20 +40,21 @@ public class MovementController : MonoBehaviour
                 speed *= speedModifiers[i];
             }
             */
-            speed *= Mathf.Lerp(1, crouchSpeedMultiplier, crouchTimer);
+            if (crouchController != null)
+            {
+                speed *= Mathf.Lerp(1, crouchController.crouchSpeedMultiplier, crouchController.crouchTimer);
+            }
+            
             //Debug.Log(speed);
             return speed;
         }
     }
     Vector3 TotalVelocity => rb.velocity + movementVelocity;
-    bool isGrounded => groundingData.collider != null;
+    public bool isGrounded => groundingData.collider != null;
     #endregion
-
-    #region Aiming
 
     public LookController lookControls;
-
-    #endregion
+    public CrouchController crouchController;
 
     #region Jumping
     [Header("Jumping")]
@@ -115,95 +118,6 @@ public class MovementController : MonoBehaviour
     }
     #endregion
 
-    #region Crouching
-    [Header("Crouching")]
-    public bool toggleCrouch;
-    public float standHeight = 2;
-    public float crouchHeight = 1;
-    public float headDistanceFromTop = 0.2f;
-    public float crouchSpeedMultiplier = 0.5f;
-    public float crouchTransitionTime = 0.5f;
-    public UnityEvent onCrouch;
-    public UnityEvent onStand;
-    [SerializeField] bool crouched;
-    float crouchTimer;
-
-    void OnCrouch(InputValue input)
-    {
-        if (toggleCrouch)
-        {
-            if (input.isPressed)
-            {
-                IsCrouching = !IsCrouching;
-            }
-        }
-        else
-        {
-            IsCrouching = input.isPressed;
-        }
-    }
-    public bool IsCrouching
-    {
-        get
-        {
-            return crouched;
-        }
-        set
-        {
-            if (crouched == value) // Don't do anything if the player is already in the assigned state
-            {
-                return;
-            }
-
-            if (value == true)
-            {
-                crouched = true;
-                StartCoroutine(Crouch());
-            }
-            else
-            {
-                if (true) // Check to ensure there is space above the player
-                {
-                    crouched = false;
-                    StartCoroutine(Stand());
-                }
-            }
-        }
-    }
-    IEnumerator Crouch()
-    {
-        onCrouch.Invoke();
-
-        //speedModifiers.Add(crouchSpeedMultiplier);
-
-        while (crouchTimer < 1)
-        {
-            LerpCrouch(crouchTimer);
-            crouchTimer += Time.deltaTime / crouchTransitionTime;
-            yield return null;
-        }
-    }
-    IEnumerator Stand()
-    {
-        onStand.Invoke();
-
-        while (crouchTimer > 0)
-        {
-            LerpCrouch(crouchTimer);
-            crouchTimer -= Time.deltaTime / crouchTransitionTime;
-            yield return null;
-        }
-
-        //speedModifiers.Remove(crouchSpeedMultiplier);
-    }
-    void LerpCrouch(float t)
-    {
-        collider.height = Mathf.Lerp(standHeight, crouchHeight, t);
-        collider.center = Vector3.up * (collider.height / 2);
-        lookControls.aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
-    }
-    #endregion
-
     #region Cosmetics
     [Header("Cosmetics")]
     public Transform upperBodyAnimationTransform;
@@ -228,7 +142,7 @@ public class MovementController : MonoBehaviour
     [Header("Return")] // Return to default position and rotation
     public float torsoPositionUpdateTime = 0.1f;
     public float torsoRotationUpdateTime = 0.1f;
-    
+
     Vector3 torsoPosition;
     Quaternion torsoRotation;
     Vector3 torsoMovementVelocity;
@@ -306,10 +220,6 @@ public class MovementController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
-    void Start()
-    {
-        IsCrouching = IsCrouching;
-    }
     private void FixedUpdate()
     {
         SetGroundingData();
@@ -322,7 +232,7 @@ public class MovementController : MonoBehaviour
             movement = Vector3.ProjectOnPlane(movement, groundingData.normal);
         }
         movementVelocity = movement;
-        
+
         rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
     }
     private void LateUpdate()

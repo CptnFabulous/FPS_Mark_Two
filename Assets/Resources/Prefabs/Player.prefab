@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5952785220977947003}
   - component: {fileID: 5952785220977947005}
   - component: {fileID: 5952785220977947007}
+  - component: {fileID: 2692210061216476635}
   - component: {fileID: 2286233210308183897}
   - component: {fileID: 4579184524127900838}
   - component: {fileID: 6080259411863758228}
@@ -164,43 +165,7 @@ MonoBehaviour:
   onDodge:
     m_PersistentCalls:
       m_Calls: []
-  toggleCrouch: 1
-  standHeight: 1.7
-  crouchHeight: 1
-  headDistanceFromTop: 0.2
-  crouchSpeedMultiplier: 0.5
-  crouchTransitionTime: 0.2
-  onCrouch:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5345706760175754708}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  onStand:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5345706760175754708}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  crouched: 0
+  crouchController: {fileID: 2692210061216476635}
   upperBodyAnimationTransform: {fileID: 5952785222623807978}
   strideLength: 3
   stepsPerCycle: 2
@@ -330,6 +295,57 @@ MonoBehaviour:
   speedForMaxSway: 10
   torsoPositionUpdateTime: 0.1
   torsoRotationUpdateTime: 0.2
+--- !u!114 &2692210061216476635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785220977946995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae35432efd6fc645b78a19af342757e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementController: {fileID: 5952785220977947007}
+  collider: {fileID: 5952785220977946993}
+  lookControls: {fileID: 2286233210308183897}
+  toggleCrouch: 1
+  standHeight: 1.7
+  crouchHeight: 1
+  headDistanceFromTop: 0.2
+  crouchSpeedMultiplier: 0.5
+  crouchTransitionTime: 0.2
+  onCrouch:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5345706760175754708}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  onStand:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5345706760175754708}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2286233210308183897
 MonoBehaviour:
   m_ObjectHideFlags: 0
