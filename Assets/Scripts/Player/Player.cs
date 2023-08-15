@@ -23,6 +23,9 @@ public class Player : Character
         }
     }
 
+
+    public override Character target => null; // WIP: Override to determine whatever hostile target is closest to the player's reticle
+
     public override Vector3 MovementDirection => movement.movementVelocity;
 
     [Header("Player-specific classes")]

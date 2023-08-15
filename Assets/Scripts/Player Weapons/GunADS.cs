@@ -28,10 +28,16 @@ public class GunADS : MonoBehaviour
     public UnityEvent onSwitchToADS;
     public UnityEvent onSwitchToHipfire;
 
-    
-    public RangedAttack currentMode;
-    WeaponHandler user => currentMode.User.weaponHandler;
-    Player player => user.controller;
+    WeaponHandler userWeaponHandler => attachedWeapon.user.weaponHandler;
+
+    Weapon attachedWeapon => w ??= GetComponentInParent<Weapon>();
+
+
+
+    Weapon w;
+
+
+    Player player => userWeaponHandler.controller;
     bool currentlyAiming;
     public float timer { get; private set; }
     Vector3 cosmeticSwayAxes;
@@ -72,20 +78,29 @@ public class GunADS : MonoBehaviour
             sightPicture.material = scopeMaterial;
         }
     }
-    public void Initialise(RangedAttack mode)
+    
+    private void OnEnable()
     {
-        currentMode = mode;
+        if (player == null)
+        {
+            enabled = false;
+            return;
+        }
+        //Debug.Log($"{this}: running OnEnable()");
+
         if (IsScope)
         {
             viewingCamera.fieldOfView = lookControls.fieldOfView / magnification;
         }
-        enabled = true;
     }
-
     private void Update()
     {
-        if (currentMode == null) return;
-
+        if (player == null)
+        {
+            enabled = false;
+            return;
+        }
+        //Debug.Log($"{this}: running Update()");
 
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)
@@ -103,11 +118,18 @@ public class GunADS : MonoBehaviour
 
         Transform aimAxis = lookControls.aimAxis;
         Transform upperBody = lookControls.upperBody;
-        Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, user.AimDirection, timer);
+        Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, userWeaponHandler.AimDirection, timer);
         upperBody.LookAt(upperBody.position + cameraDirection, aimAxis.up);
     }
     private void LateUpdate()
     {
+        if (player == null)
+        {
+            enabled = false;
+            return;
+        }
+        //Debug.Log($"{this}: running LateUpdate()");
+
         if (IsAiming || IsTransitioning)
         {
             // Rotate gun so the reticle axis transform is parallel with the player's aim direction

@@ -31,7 +31,8 @@ public abstract class Character : Entity
 
     public override IList<Collider> colliders => health.HitboxColliders;
 
-    public WeaponHandler weaponHandler => (this as Player).weapons;
+
+    public WeaponHandler weaponHandler => (this as Player) != null ? (this as Player).weapons : null;
     public AmmunitionInventory ammo => (weaponHandler != null) ? weaponHandler.ammo : null;
     public bool IsHostileTowards(Character other)
     {

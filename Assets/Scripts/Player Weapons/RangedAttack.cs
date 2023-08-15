@@ -115,7 +115,11 @@ public class RangedAttack : WeaponMode
 
     public override void OnSwitchTo()
     {
-        optics.Initialise(this);
+        if (optics != null)
+        {
+            optics.enabled = true;
+        }
+        
         magazine.Initialise(this);
     }
     public override void OnSwitchFrom()
