@@ -1,19 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AIAim : MonoBehaviour
 {
     public AI ai;
     public Transform viewAxis;
     public AimValues defaultAimStats;
-    public AimValues Stats { get; set; }
+
     public void ResetStatsToDefault()
     {
         Stats = defaultAimStats;
     }
 
 
+    [HideInInspector] public AimValues Stats;
     [HideInInspector] public bool lookingInDefaultDirection = true;
     
     void Awake()
@@ -103,7 +105,7 @@ public class AIAim : MonoBehaviour
     /// <param name="degreesPerSecond"></param>
     public void RotateLookTowards(Vector3 position, float degreesPerSecond)
     {
-        Quaternion correctRotation = Quaternion.LookRotation(position - LookOrigin, transform.up);
+        Quaternion correctRotation = Quaternion.LookRotation(position - LookOrigin, ai.transform.up);
         //correctRotation *= Quaternion.Inverse(AimSway(Stats.swayAngle, Stats.swaySpeed));
         lookRotation = Quaternion.RotateTowards(lookRotation, correctRotation, degreesPerSecond * Time.deltaTime);
         //Debug.Log(lookRotation.eulerAngles);
@@ -114,40 +116,14 @@ public class AIAim : MonoBehaviour
     /// <param name="degreesPerSecond"></param>
     public void LookInNeutralDirection()
     {
-        Vector3 direction;
-        if (ai.agent.velocity.magnitude > 0)
-        {
-            direction = ai.agent.velocity; // Look in the current movement direction;
-        }
-        else
-        {
-            direction = ai.agent.transform.forward; // Look straight forwards
-        }
+        NavMeshAgent agent = ai.agent;
+
+        // If agent is moving, look in the direction the agent is moving. Otherwise, look straight forward.
+        bool isMoving = ai.agent.velocity.magnitude > 0;
+        Vector3 direction = isMoving ? agent.velocity : ai.transform.forward;
+
         RotateLookTowards(LookOrigin + direction, Stats.lookSpeed);
     }
-    /// <summary>
-    /// Rotates AI aim to look at something, in a specified time.
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="lookTime"></param>
-    /// <param name="lookCurve"></param>
-    /// <returns></returns>
-    public IEnumerator LookAtThing(Vector3 position, float lookTime, AnimationCurve lookCurve)
-    {
-        inLookIENumerator = true;
-        Quaternion originalRotation = lookRotation;
-        float timer = 0;
-
-        while (timer < 1)
-        {
-            timer += Time.deltaTime / lookTime;
-            lookRotation = Quaternion.Lerp(originalRotation, Quaternion.LookRotation(position, transform.up), lookCurve.Evaluate(timer));
-            yield return null;
-        }
-
-        inLookIENumerator = false;
-    }
-    bool inLookIENumerator;
     #endregion
 
     #region Look checking
@@ -157,10 +133,10 @@ public class AIAim : MonoBehaviour
     /// <param name="position"></param>
     /// <param name="threshold"></param>
     /// <returns></returns>
-    public bool LookCheckAngle(Vector3 target, float threshold, bool useAim = false)
+    public bool IsLookingAt(Vector3 target, float angleThreshold, bool useAim = false)
     {
         Vector3 direction = useAim ? AimDirection : LookDirection;
-        return Vector3.Angle(target - LookOrigin, direction) <= threshold;
+        return Vector3.Angle(target - LookOrigin, direction) <= angleThreshold;
     }
 
     /// <summary>
@@ -178,6 +154,30 @@ public class AIAim : MonoBehaviour
     }
 
     #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /// <summary>
     /// Multiply this by a Quaternion and a Vector3 to get an aim direction with a smooth sway for accuracy deviation.
@@ -209,6 +209,8 @@ public class AIAim : MonoBehaviour
         
         public float SpeedBasedOnAngle(Vector3 currentAimDirection, Vector3 desiredDirection)
         {
+            if (speedCurve == null) return lookSpeed;
+
             float angle = Vector3.Angle(currentAimDirection, desiredDirection);
             return lookSpeed * speedCurve.Evaluate(angle / 180);
         }

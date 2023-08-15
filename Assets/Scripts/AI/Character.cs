@@ -34,6 +34,9 @@ public abstract class Character : Entity
 
     public WeaponHandler weaponHandler => (this as Player) != null ? (this as Player).weapons : null;
     public AmmunitionInventory ammo => (weaponHandler != null) ? weaponHandler.ammo : null;
+
+
+    public abstract Character target { get; }
     public bool IsHostileTowards(Character other)
     {
         return affiliation.IsHostileTowards(other.affiliation);

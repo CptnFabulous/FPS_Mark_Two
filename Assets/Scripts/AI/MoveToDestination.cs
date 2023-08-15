@@ -12,7 +12,7 @@ public abstract class MoveToDestination : AIMovement, IPriorityAction
 
     public float destinationThreshold = 0.5f;
     Vector3 destination;
-    bool destinationAssigned;
+    public bool destinationAssigned { get; private set; }
 
     /// <summary>
     /// Finds an appropriate position for the agent to move to.
@@ -24,7 +24,13 @@ public abstract class MoveToDestination : AIMovement, IPriorityAction
     /// Has the agent reached the destination specified by this function?
     /// </summary>
     /// <returns></returns>
-    public bool DestinationReached() => destinationAssigned && NavMeshAgent.destination == destination && NavMeshAgent.remainingDistance < destinationThreshold;
+    public bool DestinationReached()
+    {
+        string message = name + ", destination reached: " + destinationAssigned + ", " + (NavMeshAgent.destination == destination) + ", " + (NavMeshAgent.remainingDistance < destinationThreshold);
+        Debug.Log(message);
+
+        return destinationAssigned && NavMeshAgent.destination == destination && NavMeshAgent.remainingDistance < destinationThreshold;
+    }
     /// <summary>
     /// Does the agent have a reason to move?
     /// </summary>
@@ -80,5 +86,15 @@ public abstract class MoveToDestination : AIMovement, IPriorityAction
     {
         CanAndShouldMove().Invoke();
         NavMeshAgent.destination = destination;
+    }
+
+
+    public static void DrawDebugPath(UnityEngine.AI.NavMeshPath path, Color pathColour, Color destinationColour, float duration)
+    {
+        for (int i = 1; i < path.corners.Length; i++)
+        {
+            Debug.DrawLine(path.corners[i - 1], path.corners[i], pathColour, duration);
+        }
+        Debug.DrawRay(path.corners[path.corners.Length - 1], Vector3.up, destinationColour, duration);
     }
 }

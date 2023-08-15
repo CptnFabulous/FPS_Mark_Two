@@ -69,6 +69,14 @@ public abstract class AIAction : Action
 
         return nothingBlocking;
     }
+    public static Vector3 HypotheticalLookOrigin(AI ai, Vector3 positionToLookFrom)
+    {
+        Vector3 offset = ai.LookTransform.position - ai.transform.position;
+
+        //Debug.DrawLine(ai.transform.position, positionToLookFrom, Color.cyan);
+        //Debug.DrawLine(positionToLookFrom, positionToLookFrom + offset, Color.cyan);
+        return positionToLookFrom + offset;
+    }
 }
 
 public abstract class AIMovement : AIAction
