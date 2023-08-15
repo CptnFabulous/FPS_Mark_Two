@@ -24,7 +24,6 @@ public class AIGridPoints : MonoBehaviour
     
     public float gridSpacing = 1;
     public float minAgentHeight = 2;
-
     public Vector2Int GridSize
     {
         get
@@ -175,20 +174,27 @@ public class AIGridPoints : MonoBehaviour
     /// <param name="minRadius"></param>
     /// <param name="maxRadius"></param>
     /// <returns></returns>
-    public GridPoint[] GetPoints(Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
+    public List<GridPoint> GetPoints(Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
-        List<GridPoint> points = new List<GridPoint>(gridPoints);
-        points.RemoveAll(p =>
+        return gridPoints.FindAll(p =>
         {
+            // If checking for cover, exclude points that aren't cover
+            if (onlyIncludeCover && p.isCover == false)
+            {
+                return false;
+            }
+
+            // Check that the distance is correct
             float distance = Vector3.Distance(p.position, centre);
-            return distance < minRadius || distance > maxRadius;
+            if (distance < minRadius || distance > maxRadius)
+            {
+                return false;
+            }
+
+            // Point is valid
+            return true;
         });
-        
-        if (onlyIncludeCover) points.RemoveAll(p => p.isCover == false);
-
-        return points.ToArray();
     }
-
     /// <summary>
     /// Get a specified number of points within a minimum and maximum radius, sampled for somewhat even distribution
     /// </summary>
@@ -199,10 +205,10 @@ public class AIGridPoints : MonoBehaviour
     /// <returns></returns>
     public GridPoint[] GetSpecificNumberOfPoints(int number, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
-        GridPoint[] points = GetPoints(centre, minRadius, maxRadius, onlyIncludeCover);
-        if (points.Length <= number) // Return all results if there are less than desired by the number
+        List<GridPoint> points = GetPoints(centre, minRadius, maxRadius, onlyIncludeCover);
+        if (points.Count <= number) // Return all results if there are less than desired by the number
         {
-            return points;
+            return points.ToArray();
         }
 
         List<GridPoint> desired = new List<GridPoint>();
@@ -210,7 +216,7 @@ public class AIGridPoints : MonoBehaviour
         {
             // Create an index by dividing the length by result number and then multiplying by the check number.
             // For example, 45 entries and 15 desired checks means the number increments by 3. When looking for the sixth entry, this would mean checking the eighteenth entry in the array.
-            int index = Mathf.RoundToInt(points.Length / number * i);
+            int index = Mathf.RoundToInt(points.Count / number * i);
             desired.Add(points[index]);
         }
 
