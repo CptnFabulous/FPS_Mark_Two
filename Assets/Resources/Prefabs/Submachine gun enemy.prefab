@@ -49,7 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionRunning:
-    name: 
+    name: New Action
+    editorPosition: {x: 0, y: 0}
     attack: {fileID: 0}
   attacksPerMinute: 600
   minAttackCount: 3
@@ -189,7 +190,6 @@ MonoBehaviour:
   ammoType: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
   ammoPerShot: 1
   recoilMagnitude: 1
-  recoilDeviationAngle: 45
   recoilCurve:
     serializedVersion: 2
     m_Curve:
@@ -557,8 +557,9 @@ MonoBehaviour:
   characterModel: {fileID: 2246874948169663794}
   agent: {fileID: 577827450302408013}
   aiming: {fileID: 577827450302408052}
-  view: {fileID: 4324082910333505861}
   actions: {fileID: 3712220218142188897}
+  baseMovementSpeed: 5
+  currentTarget: {fileID: 0}
 --- !u!114 &577827450302408015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -573,27 +574,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   evasion:
-    name: Evade Attack
-    movementSpeed: 10
+    name: Avoid attack
+    editorPosition: {x: 0, y: 0}
+    movementSpeed: 3.5
     destinationThreshold: 0.5
     minDistance: 5
     maxDistance: 10
     numberOfChecks: 15
     damageThresholdForAvoidance: 0
-    cautionMultiplier: 1.5
+    cautionMultiplier: 1
     prioritiseCover: 0
   engagementMovement:
-    name: Pursue player
+    name: Engage target
+    editorPosition: {x: 0, y: 0}
     movementSpeed: 3.5
     destinationThreshold: 0.5
-    minimumDistance: 15
-    maximumDistance: 20
+    minimumDistance: 10
+    maximumDistance: 30
     numberOfChecks: 15
     stayCloseToCover: 1
     maxAcceptableDistanceToCover: 3
     coverChecksPerPositionCheck: 5
   attackStats:
     name: Attack with submachine gun
+    editorPosition: {x: 0, y: 0}
     attack: {fileID: 7438278461295849682}
 --- !u!114 &3712220218142188897
 MonoBehaviour:
@@ -662,6 +666,20 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     diameterForUnobstructedSight: 0.5
+  Stats:
+    lookSpeed: 0
+    speedCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    swayAngle: 0
+    swaySpeed: 0
+    lookDetection:
+      serializedVersion: 2
+      m_Bits: 0
+    diameterForUnobstructedSight: 0
   lookingInDefaultDirection: 1
 --- !u!114 &4324082910333505861
 MonoBehaviour:
@@ -753,7 +771,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577827450302408012}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d615ca42cf07b5a4d8bd16239b809ad3, type: 3}
   m_Name: 
@@ -1426,7 +1444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3127231647762430199, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
       propertyPath: m_Name
-      value: Placeholder Rifle Model
+      value: Placeholder Rifle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be6a3112fc750e342803fbd81f01a505, type: 3}

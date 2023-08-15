@@ -27,9 +27,11 @@ public class ActionExecutor : MonoBehaviour
 /// <summary>
 /// Action with enter, exit and loop states, designed to be switched to and from in a system such as a state machine.
 /// </summary>
-public abstract class Action
+public abstract class Action// : UnityEngine.Object
 {
     public string name = "New Action";
+    [HideInInspector] public Vector2 editorPosition;
+
     public ActionExecutor host { get; set; }
 
     /// <summary>
@@ -56,11 +58,12 @@ public abstract class Action
     /// Runs at the same time as LateUpdate().
     /// </summary>
     public virtual void LateLoop() { }
-
+    /*
     public override string ToString()
     {
         return name + " (" + base.ToString() + ")";
     }
+    */
 }
 
 /// <summary>
@@ -127,6 +130,7 @@ public class MultiAction : Action
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(ActionExecutor))]
 public class ActionExecutorEditor : Editor
 {
@@ -149,6 +153,14 @@ public class ActionExecutorEditor : Editor
     }
     public override void OnInspectorGUI()
     {
+        //if (EditorGUILayout.)
+        /*
+        EditorGUIUtility.re
+        if (GUILayout.Button())
+        {
+
+        }
+        */
         if (objectBeingEdited.baseAction != null)
         {
             ListAction(objectBeingEdited.baseAction, true, 0);
@@ -207,10 +219,10 @@ public class ActionExecutorEditor : Editor
     {
         if (EditorGUILayout.Foldout(true, Spacing(layer) + controller.ToString(), CorrectStyle(active)) == false) return;
 
-        for (int i = 0; i < controller.allStates.Count; i++)
+        for (int i = 0; i < controller.states.Count; i++)
         {
-            bool activeInController = active && controller.currentState == controller.allStates[i];
-            ListAction(controller.allStates[i], activeInController, layer + 1);
+            bool activeInController = active && controller.currentState == controller.states[i];
+            ListAction(controller.states[i], activeInController, layer + 1);
         }
     }
 
@@ -232,3 +244,4 @@ public class ActionExecutorEditor : Editor
         return s;
     }
 }
+#endif

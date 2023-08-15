@@ -24,26 +24,25 @@ public class AvoidAttack : MoveToDestination
     }
     void CheckIncomingAttack(AttackMessage newAttack)
     {
+        if (host == null) return;
+        if (host.enabled == false) return;
+
         // A new attack has been detected!
         // Check if the attack is dangerous enough to bother avoiding
         // Check if the AI is not in the middle of avoiding another attack
         // Check if the executor this state is attached to is actually active
-        if (host.enabled && currentAttackToAvoid == null)
+        if (currentAttackToAvoid == null && newAttack.AtRisk(AI, cautionMultiplier, damageThresholdForAvoidance))
         {
-            if (newAttack.AtRisk(AI, cautionMultiplier, damageThresholdForAvoidance))
-            {
-                // If so, assign the new attack
-                currentAttackToAvoid = newAttack;
-                Debug.Log(AI.name + " is in the path of " + newAttack + "!");
-            }
-            else
-            {
-                Debug.Log(AI.name + " thinks they're safe from " + newAttack + "!");
-            }
+            currentAttackToAvoid = newAttack;
+            Debug.Log(AI.name + " is in the path of " + newAttack + "!");
+        }
+        else if (currentAttackToAvoid != null)
+        {
+            Debug.Log(AI.name + " is ignoring " + newAttack + " to avoid an existing attack!");
         }
         else
         {
-            Debug.Log(AI.name + " is ignoring " + newAttack + " to avoid an existing attack!");
+            Debug.Log(AI.name + " thinks they're safe from " + newAttack + "!");
         }
     }
 
@@ -136,11 +135,18 @@ public class AvoidAttack : MoveToDestination
 
     public override void Loop()
     {
-        base.Loop();
-        if (currentAttackToAvoid != null && DestinationReached()) // If AI has successfully evaded the attack, remove its reference and go back to normal behaviour
+        DrawDebugPath(NavMeshAgent.path, Color.red, Color.green, 0);
+
+        bool reached = DestinationReached();
+        //Debug.Log((currentAttackToAvoid != null) + ", " + destinationAssigned + ", " + reached);
+        if (currentAttackToAvoid != null && destinationAssigned && reached) // If AI has successfully evaded the attack, remove its reference and go back to normal behaviour
         {
             Debug.Log(AI.name + " is safe from the current attack, resuming normal behaviour");
             currentAttackToAvoid = null;
         }
+
+        base.Loop();
+
+        
     }
 }

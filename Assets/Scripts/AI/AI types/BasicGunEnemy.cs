@@ -5,13 +5,15 @@ using UnityEngine;
 public class BasicGunEnemy : Combatant
 {
     [Header("Basic attack stats")]
-    MultiAction combatActions = new MultiAction("Attack target");
     public EngageTargetAtDistance engagementMovement;
     public ExecuteAttack attackStats;
 
+    MultiAction combatActions;
+
     public override void SetupLogicPatterns()
     {
-        
+        combatActions = new MultiAction("Attack target");
+
         combatActions.allActions.Add(engagementMovement);
         combatActions.allActions.Add(attackStats);
 

@@ -10,43 +10,43 @@ public class FSM : Action
         name = newName;
     }
 
-    public List<Action> allStates = new List<Action>();
-    public List<Transition> allTransitions = new List<Transition>();
+    public List<Action> states = new List<Action>();
+    public List<Transition> transitions = new List<Transition>();
     int currentStateIndex = 0;
     public Action currentState
     {
         get
         {
-            if (allStates.Count <= 0 || currentStateIndex < 0 || currentStateIndex > allStates.Count - 1)
+            if (states.Count <= 0 || currentStateIndex < 0 || currentStateIndex > states.Count - 1)
             {
                 return null;
             }
-            return allStates[currentStateIndex];
+            return states[currentStateIndex];
         }
         set
         {
-            currentStateIndex = allStates.IndexOf(value);
+            currentStateIndex = states.IndexOf(value);
         }
     }
 
     public override void Setup()
     {
-        for (int i = 0; i < allStates.Count; i++)
+        for (int i = 0; i < states.Count; i++)
         {
-            allStates[i].host = host;
-            allStates[i].Setup();
+            states[i].host = host;
+            states[i].Setup();
         }
     }
     public override void Loop()
     {
-        for (int i = 0; i < allTransitions.Count; i++)
+        for (int i = 0; i < transitions.Count; i++)
         {
             // If transition can happen from the current state (or from anywhere)
-            bool transitionCanOccur = allTransitions[i].from == currentState || allTransitions[i].from == null;
-            if (transitionCanOccur && allTransitions[i].conditions.Invoke() == true)
+            bool transitionCanOccur = transitions[i].from == currentState || transitions[i].from == null;
+            if (transitionCanOccur && transitions[i].conditions.Invoke() == true)
             {
                 currentState?.Exit();
-                currentState = allTransitions[i].to;
+                currentState = transitions[i].to;
                 currentState.Enter();
             }
         }
@@ -61,7 +61,7 @@ public class FSM : Action
 
     public void AddState(Action newState, bool setAsDefault = false)
     {
-        allStates.Add(newState);
+        states.Add(newState);
         if (setAsDefault)
         {
             currentState = newState;
@@ -69,7 +69,7 @@ public class FSM : Action
     }
     public void AddTransition(Action from, Action to, Func<bool> conditions)
     {
-        allTransitions.Add(new Transition(from, to, conditions));
+        transitions.Add(new Transition(from, to, conditions));
     }
 
     public struct Transition
