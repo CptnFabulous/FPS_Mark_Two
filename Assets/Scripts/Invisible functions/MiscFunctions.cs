@@ -20,6 +20,15 @@ public readonly struct MiscFunctions
         Vector3 anchorOffset = anchorDimensions * parent.rect.size;
         return canvasSpace - anchorOffset; // Adds offset to canvas space to produce an anchored position
     }
+    public static Vector3 ClampDirection(Vector3 direction, Vector3 reference, float maxAngle)
+    {
+        float angle = Vector3.Angle(direction, reference);
+        if (angle > maxAngle)
+        {
+            direction = Vector3.RotateTowards(direction, reference, angle - maxAngle, 0);
+        }
+        return direction;
+    }
     #endregion
 
     #region IEnumerables
@@ -113,6 +122,7 @@ public readonly struct MiscFunctions
     }
     public static bool WithinRange(float value, float min, float max) => value >= min && value <= max;
     public static bool WithinArray(int index, int arrayLength) => WithinRange(index, 0, arrayLength - 1);
+    public static float InverseSquareValue(float startingValue, float distance) => startingValue / (distance * distance);
     #endregion
 
     #region Formatting text

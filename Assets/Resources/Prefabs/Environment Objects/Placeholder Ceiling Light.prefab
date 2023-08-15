@@ -91,6 +91,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5407311688207057940}
   - component: {fileID: 5407311688207057943}
+  - component: {fileID: 5729389251628605151}
   m_Layer: 7
   m_Name: Placeholder Ceiling Light
   m_TagString: Untagged
@@ -125,9 +126,9 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 0.8, b: 0.5, a: 1}
-  m_Intensity: 3
-  m_Range: 20
-  m_SpotAngle: 150
+  m_Intensity: 40
+  m_Range: 5
+  m_SpotAngle: 90
   m_InnerSpotAngle: 1
   m_CookieSize: 10
   m_Shadows:
@@ -175,3 +176,15 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &5729389251628605151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5407311688207057941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18659aaac2bb11f4cbc9cdb2677296ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
