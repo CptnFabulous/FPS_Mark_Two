@@ -6,60 +6,46 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RectTransform))]
 public class ResourceMeter : MonoBehaviour
 {
-    public Text amount;
     public Image currentMeter;
     public Image previousMeter;
     public float barChangeSpeed = 0.1f;
     public Color safeColour = Color.green;
     public Color criticalColour = Color.red;
+    public Text amount;
 
     public RectTransform rectTransform { get; private set; }
-    IEnumerator transition;
+    float currentFill
+    {
+        get => currentMeter.fillAmount;
+        set => currentMeter.fillAmount = value;
+    }
+    float previousFill
+    {
+        get => previousMeter.fillAmount;
+        set => previousMeter.fillAmount = value;
+    }
 
-    private void Awake()
-    {
-        rectTransform = GetComponent<RectTransform>();
-    }
-    private void OnEnable()
-    {
-        //previousMeter.fillAmount = currentMeter.fillAmount;
-        transition = Transition();
-        StartCoroutine(transition);
-    }
+    private void Awake() => rectTransform = GetComponent<RectTransform>();
+    private void OnEnable() => previousFill = currentFill;
 
     public void Refresh(Resource values)
     {
-        amount.text = values.current.ToString();
-        currentMeter.fillAmount = values.current / values.max;
-        if (values.isCritical)
+        if (amount != null)
         {
-            currentMeter.color = criticalColour;
-        }
-        else
-        {
-            currentMeter.color = safeColour;
+            amount.text = values.current.ToString();
         }
 
-        if (transition == null)
-        {
-            transition = Transition();
-            StartCoroutine(transition);
-        }
+        currentFill = values.current / values.max;
+        currentMeter.color = values.isCritical ? criticalColour : safeColour;
     }
-    public IEnumerator Transition()
+
+    private void LateUpdate()
     {
-        while (previousMeter.fillAmount != currentMeter.fillAmount)
+        if (previousFill != currentFill)
         {
-            if (previousMeter.fillAmount > currentMeter.fillAmount)
-            {
-                previousMeter.fillAmount -= Time.deltaTime * barChangeSpeed;
-            }
-            else
-            {
-                previousMeter.fillAmount = currentMeter.fillAmount;
-            }
-            yield return null;
+            bool lowerThan = currentFill < previousFill;
+            float fillSpeed = lowerThan ? Time.deltaTime * barChangeSpeed : Mathf.Infinity;
+            previousFill = Mathf.MoveTowards(previousMeter.fillAmount, currentFill, fillSpeed);
         }
-        transition = null;
     }
 }
