@@ -8,6 +8,7 @@ public class MovementController : MonoBehaviour
 {
     public Player controlling;
 
+    public Rigidbody rigidbody => rb;
     public LayerMask collisionMask => ~0;
 
     #region Movement
@@ -16,6 +17,8 @@ public class MovementController : MonoBehaviour
     public float defaultSpeed = 5;
     new CapsuleCollider collider;
     Rigidbody rb;
+
+    public Vector2 movementInput { get; private set; }
     public Vector3 movementVelocity { get; private set; }
 
     public void OnMove(InputValue input)
@@ -27,7 +30,6 @@ public class MovementController : MonoBehaviour
         }
         movementInput = input.Get<Vector2>();
     }
-    Vector2 movementInput;
 
     float CurrentMoveSpeed
     {
