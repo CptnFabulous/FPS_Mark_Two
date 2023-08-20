@@ -11,7 +11,10 @@ public class ResourceMeter : MonoBehaviour
     public float barChangeSpeed = 0.1f;
     public Color safeColour = Color.green;
     public Color criticalColour = Color.red;
+
+    [Header("Text display")]
     public Text amount;
+    public int decimalPlaces = 0;
 
     public RectTransform rectTransform { get; private set; }
     float currentFill
@@ -30,11 +33,8 @@ public class ResourceMeter : MonoBehaviour
 
     public void Refresh(Resource values)
     {
-        if (amount != null)
-        {
-            amount.text = values.current.ToString();
-        }
-
+        // Set amount as text
+        if (amount != null) amount.text = MiscFunctions.RoundToDecimalPlaces(values.current, decimalPlaces).ToString();
         currentFill = values.current / values.max;
         currentMeter.color = values.isCritical ? criticalColour : safeColour;
     }
