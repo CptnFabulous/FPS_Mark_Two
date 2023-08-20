@@ -36,12 +36,11 @@ public class MovementController : MonoBehaviour
         get
         {
             float speed = defaultSpeed;
-            /*
-            for (int i = 0; i < speedModifiers.Count; i++)
+            
+            if (sprintController != null && sprintController.isSprinting)
             {
-                speed *= speedModifiers[i];
+                speed *= sprintController.speedMultiplier;
             }
-            */
             if (crouchController != null)
             {
                 speed *= Mathf.Lerp(1, crouchController.crouchSpeedMultiplier, crouchController.crouchTimer);
@@ -57,6 +56,7 @@ public class MovementController : MonoBehaviour
 
     public LookController lookControls;
     public CrouchController crouchController;
+    public SprintController sprintController;
 
     #region Jumping
     [Header("Jumping")]
@@ -93,7 +93,7 @@ public class MovementController : MonoBehaviour
         groundingData = newGroundingData; // Update grounding data
     }
     #endregion
-
+    /*
     #region Dodging
     [Header("Dodging")]
     public float dodgeSpeed = 10;
@@ -119,6 +119,7 @@ public class MovementController : MonoBehaviour
         lastTimeDodged = Time.time;
     }
     #endregion
+    */
 
     #region Cosmetics
     [Header("Cosmetics")]
