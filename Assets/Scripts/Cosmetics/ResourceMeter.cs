@@ -6,11 +6,14 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RectTransform))]
 public class ResourceMeter : MonoBehaviour
 {
+    [Header("Main meter")]
     public Image currentMeter;
-    public Image previousMeter;
-    public float barChangeSpeed = 0.1f;
     public Color safeColour = Color.green;
     public Color criticalColour = Color.red;
+
+    [Header("'Previous' meter")]
+    public Image previousMeter;
+    public float barChangeSpeed = 0.1f;
 
     [Header("Text display")]
     public Text amount;
@@ -35,6 +38,7 @@ public class ResourceMeter : MonoBehaviour
     {
         // Set amount as text
         if (amount != null) amount.text = MiscFunctions.RoundToDecimalPlaces(values.current, decimalPlaces).ToString();
+        // Update meter fill and colour
         currentFill = values.current / values.max;
         currentMeter.color = values.isCritical ? criticalColour : safeColour;
     }
@@ -43,8 +47,8 @@ public class ResourceMeter : MonoBehaviour
     {
         if (previousFill != currentFill)
         {
-            bool lowerThan = currentFill < previousFill;
-            float fillSpeed = lowerThan ? Time.deltaTime * barChangeSpeed : Mathf.Infinity;
+            // If current value is lower, have secondary fill shrink over time. If greater, have it change instantly.
+            float fillSpeed = (currentFill < previousFill) ? (Time.deltaTime * barChangeSpeed) : Mathf.Infinity;
             previousFill = Mathf.MoveTowards(previousMeter.fillAmount, currentFill, fillSpeed);
         }
     }
