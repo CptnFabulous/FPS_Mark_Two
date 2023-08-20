@@ -21,12 +21,12 @@ public struct Resource
     public bool isFull => current >= max;
     public bool isDepleted => current <= 0;
 
-    public void Increment(int amount)
+    public void Increment(float amount)
     {
         current += amount;
         current = Mathf.Clamp(current, 0, max);
     }
-    public void Increment(int amount, out float leftover)
+    public void Increment(float amount, out float leftover)
     {
         leftover = 0;
         current += amount;
