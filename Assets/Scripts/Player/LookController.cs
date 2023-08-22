@@ -62,6 +62,13 @@ public class LookController : MonoBehaviour
     {
         worldViewCamera.fieldOfView = fieldOfView;
     }
+    private void OnEnable()
+    {
+        // Get local rotation of movement controller
+        Vector2 newLookAngles = lookAngles;
+        newLookAngles.x = mainBodyTransform.localEulerAngles.y;
+        lookAngles = newLookAngles;
+    }
     void Update()
     {
         #region Add player input
