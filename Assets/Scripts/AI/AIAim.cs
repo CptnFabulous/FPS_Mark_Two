@@ -17,7 +17,12 @@ public class AIAim : MonoBehaviour
 
     [HideInInspector] public AimValues Stats;
     [HideInInspector] public bool lookingInDefaultDirection = true;
-    
+
+    /// <summary>
+    /// The world-space position the AI is looking towards. If shifting, represents reference position. If rotating, represents the desired target.
+    /// </summary>
+    public Vector3 lookingTowards { get; private set; }
+
     void Awake()
     {
         Stats = defaultAimStats;
@@ -43,53 +48,23 @@ public class AIAim : MonoBehaviour
     /// <summary>
     /// The point in space the AI looks and aims from.
     /// </summary>
-    public Vector3 LookOrigin
-    {
-        get
-        {
-            return viewAxis.position;
-        }
-    }
+    public Vector3 LookOrigin => viewAxis.position;
     /// <summary>
     /// The direction the AI is deliberately aiming towards, excluding sway.
     /// </summary>
-    public Vector3 LookDirection
-    {
-        get
-        {
-            return lookRotation * Vector3.forward;
-        }
-    }
+    public Vector3 LookDirection => lookRotation * Vector3.forward;
     /// <summary>
     /// The direction the AI is looking in, converted into an easy Vector3 value.
     /// </summary>
-    public Vector3 AimDirection
-    {
-        get
-        {
-            return (lookRotation * AimSway(Stats.swayAngle, Stats.swaySpeed)) * Vector3.forward;
-        }
-    }
+    public Vector3 AimDirection => lookRotation * AimSway(Stats.swayAngle, Stats.swaySpeed) * Vector3.forward;
     /// <summary>
     /// A direction directly up perpendicular to the direction the AI is looking.
     /// </summary>
-    public Vector3 LookUp
-    {
-        get
-        {
-            return lookRotation * Vector3.up;
-        }
-    }
+    public Vector3 LookUp => lookRotation * Vector3.up;
     /// <summary>
     /// A direction directly right perpendicular to the direction the AI is looking.
     /// </summary>
-    public Vector3 LookRight
-    {
-        get
-        {
-            return lookRotation * Vector3.right;
-        }
-    }
+    public Vector3 LookRight => lookRotation * Vector3.right;
     #endregion
 
     #region Look functions
@@ -99,16 +74,28 @@ public class AIAim : MonoBehaviour
         RotateLookTowards(position, degreesPerSecond);
     }
     /// <summary>
-    /// Continuously rotates AI aim over time to look at position value, at a speed of degreesPerSecond
+    /// Rotates AI aim over time to look at position value, at a speed of degreesPerSecond
     /// </summary>
     /// <param name="position"></param>
     /// <param name="degreesPerSecond"></param>
     public void RotateLookTowards(Vector3 position, float degreesPerSecond)
     {
+        /*
+        // An experimental version that should ensure the position doesn't snap when switching between rotate and shift based look functions
+        Vector3 direction = Vector3.RotateTowards(lookingTowards - LookOrigin, position - LookOrigin, degreesPerSecond * Mathf.Deg2Rad, 0);
+        lookRotation = Quaternion.LookRotation(direction, ai.transform.up);
+        lookingTowards = LookOrigin + direction;
+        */
+
+        lookingTowards = position;
         Quaternion correctRotation = Quaternion.LookRotation(position - LookOrigin, ai.transform.up);
         //correctRotation *= Quaternion.Inverse(AimSway(Stats.swayAngle, Stats.swaySpeed));
         lookRotation = Quaternion.RotateTowards(lookRotation, correctRotation, degreesPerSecond * Time.deltaTime);
-        //Debug.Log(lookRotation.eulerAngles);
+    }
+    public void ShiftLookTowards(Vector3 position, float distancePerSecond)
+    {
+        lookingTowards = Vector3.MoveTowards(lookingTowards, position, distancePerSecond * Time.deltaTime);
+        lookRotation = Quaternion.LookRotation(lookingTowards - LookOrigin, ai.transform.up);
     }
     /// <summary>
     /// Continuously rotates AI aim to return to looking in the direction it is moving.
