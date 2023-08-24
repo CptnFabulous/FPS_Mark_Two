@@ -41,6 +41,38 @@ public class AIGunAttack : MonoBehaviour
         if (target == null) return;
         if (target.health.IsAlive == false) return;
 
+
+        // While attacking, rotate aim towards target
+        // While telegraphing and attacking, shift aim towards target at a speed roughly equivalent to their standard movement speed
+        // While cooling down, rotate aim normally
+
+        currentAimTarget = targetPosition;
+        bool canTarget = AIAction.LineOfSight(rootAI.LookTransform.position, currentAimTarget, rootAI.attackMask, rootAI.health.HitboxColliders, target.health.HitboxColliders);
+
+        aim.lookingInDefaultDirection = false;
+        if (inAttack)
+        {
+            // Shift aim target position linearly
+            // (at a speed proportional to the player's movement speed, so it's more difficult when moving normally but easier when sprinting)
+            float speed = 0;
+            if (target is Player p) speed = p.movement.defaultSpeed * 0.5f; // Should I add a property for the multiplier?
+            aim.ShiftLookTowards(targetPosition, speed);
+        }
+        else if (canTarget)
+        {
+            // Rotate aim
+            aim.RotateLookTowards(currentAimTarget);
+            if (aimIsCorrect)
+            {
+                StartCoroutine(AttackSequence());
+            }
+        }
+        else
+        {
+            aim.lookingInDefaultDirection = true; // Look in default direction
+        }
+        
+        /*
         bool aiming = inAttack || AIAction.LineOfSight(rootAI.LookTransform.position, targetPosition, rootAI.attackMask, rootAI.health.HitboxColliders, target.health.HitboxColliders);
         aim.lookingInDefaultDirection = !aiming;
         if (aiming)
@@ -55,6 +87,7 @@ public class AIGunAttack : MonoBehaviour
                 StartCoroutine(AttackSequence());
             }
         }
+        */
     }
 
 
@@ -62,7 +95,7 @@ public class AIGunAttack : MonoBehaviour
     {
         inAttack = true;
 
-        currentAimTarget = targetPosition;
+        //currentAimTarget = targetPosition;
         rootAI.agent.speed = rootAI.baseMovementSpeed * telegraphMoveSpeedMultiplier;
         yield return new WaitForSeconds(telegraphDelay);
 
