@@ -314,10 +314,10 @@ public readonly struct MiscFunctions
         }
         return b;
     }
-    public static Bounds CombinedBounds(Collider[] colliders)
+    public static Bounds CombinedBounds(IList<Collider> colliders)
     {
         Bounds b = colliders[0].bounds;
-        for (int i = 1; i < colliders.Length; i++)
+        for (int i = 1; i < colliders.Count; i++)
         {
             b.Encapsulate(colliders[i].bounds);
         }
