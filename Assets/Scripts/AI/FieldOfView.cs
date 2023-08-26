@@ -5,9 +5,11 @@ using UnityEngine;
 public class FieldOfView : MonoBehaviour
 {
     public float viewRange = 25;
-    public Vector2 viewingAngles = new Vector2(60, 30);
+    public Vector2 viewingAngles = new Vector2(90, 30);
     public LayerMask viewDetection = ~0;
     public float raycastSpacing = 0.25f;
+
+    static List<Vector2Int> gridPointsToCheck = new List<Vector2Int>(); // A cached collection of grid points to check, allowing the checks to fan out in a desired order but without wasting memory on new lists for each call
 
     private void OnDrawGizmos()
     {
@@ -26,70 +28,69 @@ public class FieldOfView : MonoBehaviour
     {
         Bounds b = MiscFunctions.CombinedBounds(targetColliders);
 
+        #region Calculate grid to check
         // Calculate the sizes of the zone to calculate in (width and height are the same presently but I might make it more precise)
         float maxExtent = MiscFunctions.Max(b.extents.x, b.extents.y, b.extents.z);
         float zoneWidth = maxExtent * 2;
         float zoneHeight = maxExtent * 2;
         // Calculate the dimensions of the grid to raycast in
-        int gridWidth = Mathf.CeilToInt(zoneWidth / raycastSpacing);
-        int gridHeight = Mathf.CeilToInt(zoneHeight / raycastSpacing);
+        Vector2Int grid = new Vector2Int();
+        grid.x = Mathf.CeilToInt(zoneWidth / raycastSpacing);
+        grid.y = Mathf.CeilToInt(zoneHeight / raycastSpacing);
         // Calculate the spacing between each ray
-        float spacingX = zoneWidth / gridWidth;
-        float spacingY = zoneHeight / gridHeight;
+        float spacingX = zoneWidth / grid.x;
+        float spacingY = zoneHeight / grid.y;
         // Calculate grid start
         Vector3 centre = b.center;
         Quaternion targetDirection = Quaternion.LookRotation(centre - origin.position);
         Vector3 targetUp = targetDirection * Vector3.up;
         Vector3 targetRight = targetDirection * Vector3.right;
         Vector3 gridStartCorner = centre + (-targetRight * zoneWidth / 2) + (-targetUp * zoneHeight / 2);
+        #endregion
 
-        /*
-        Bounds b = MiscFunctions.CombinedBounds(targetColliders);
-        Vector3 centre = b.center;
-        float maxExtent = b.extents.magnitude;
-        Quaternion targetDirection = Quaternion.LookRotation(centre - origin.position);
-        Vector3 targetUp = targetDirection * Vector3.up;
-        Vector3 targetRight = targetDirection * Vector3.right;
-
-        // Calculate the width and height of the zone to raycast in
-        //float zoneWidth = Vector3.Distance(centre + (-targetRight * maxExtent), centre + (targetRight * maxExtent));
-        //float zoneHeight = Vector3.Distance(centre + (-targetUp * maxExtent), centre + (targetUp * maxExtent));
-
-        // Calculate the dimensions of the grid to raycast in
-        int gridWidth = Mathf.CeilToInt(zoneWidth / raycastSpacing);
-        int gridHeight = Mathf.CeilToInt(zoneHeight / raycastSpacing);
-
-        float spacingX = zoneWidth / gridWidth;
-        float spacingY = zoneHeight / gridHeight;
-        
-        Vector3 gridStartCorner = centre + (-targetRight * zoneWidth / 2) + (-targetUp * zoneHeight / 2);
-        */
-        for (int x = 0; x < gridWidth; x++)
+        #region Calculate order of points
+        gridPointsToCheck.Clear();
+        for (int x = 0; x < grid.x; x++)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < grid.y; y++)
             {
-                // Calculates raycast point to aim for
-                Vector3 raycastHitDestination = gridStartCorner + (targetRight * spacingX * x) + (targetUp * spacingY * y);
-                Vector3 raycastDirection = raycastHitDestination - origin.position;
-                // If raycast hits within range and is inside the valid detection angle
-
-                // Don't check in this direction if it's outside the AI's peripheral vision
-                if (AngleCheck(raycastDirection, origin, angles) == false) continue;
-                //if (Vector3.Angle(origin.forward, raycastDirection) >= angle) continue;
-
-                // Run a line of sight check
-                if (Physics.Raycast(origin.position, raycastDirection, out hit, range, viewDetection) == false) continue;
-
-                if (MiscFunctions.ArrayContains(targetColliders, hit.collider) == false) continue;
-
-                return true;
+                gridPointsToCheck.Add(new Vector2Int(x, y));
             }
         }
+        Vector2Int gridCentre = grid / 2;
+        gridPointsToCheck.Sort((a, b) =>
+        {
+            // Square magnitudes are quicker for comparison than the regular magnitude
+            float aDis = (a - gridCentre).sqrMagnitude;
+            float bDis = (b - gridCentre).sqrMagnitude;
+            return aDis.CompareTo(bDis);
+        });
+        #endregion
+
+        #region Check each point for the target
+        foreach (Vector2Int point in gridPointsToCheck)
+        {
+            // Calculates raycast point to aim for
+            Vector3 raycastHitDestination = gridStartCorner + (targetRight * spacingX * point.x) + (targetUp * spacingY * point.y);
+            Vector3 raycastDirection = raycastHitDestination - origin.position;
+            // If raycast hits within range and is inside the valid detection angle
+
+            // Don't check in this direction if it's outside the AI's peripheral vision
+            if (AngleCheck(raycastDirection, origin, angles) == false) continue;
+            //if (Vector3.Angle(origin.forward, raycastDirection) >= angle) continue;
+
+            // Run a line of sight check
+            if (Physics.Raycast(origin.position, raycastDirection, out hit, range, viewDetection) == false) continue;
+
+            if (MiscFunctions.ArrayContains(targetColliders, hit.collider) == false) continue;
+
+            return true;
+        }
+        #endregion
 
         hit = new RaycastHit();
         return false;
     }
-
     public static bool AngleCheck(Vector3 direction, Transform origin, Vector2 angles)
     {
         float x = AngleOnAxis(direction, origin.forward, origin.up);
@@ -101,6 +102,7 @@ public class FieldOfView : MonoBehaviour
         Vector3 onPlane = Vector3.ProjectOnPlane(direction, up);
         return Vector3.Angle(onPlane, forward);
     }
+
     /*
     public static Vector2 AngleThing(Vector3 extents, Vector3 direction)
     {
