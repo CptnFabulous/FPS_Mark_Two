@@ -50,7 +50,7 @@ public class AIGunAttack : MonoBehaviour
         
 
         bool canTarget = rootAI.targeting.canSeeTarget;
-        currentAimTarget = rootAI.targeting.targetHit.point;
+        currentAimTarget = rootAI.targeting.lastHit.point;
         Debug.DrawLine(aim.LookOrigin, currentAimTarget, Color.magenta);
         /*
         currentAimTarget = targetPosition;
