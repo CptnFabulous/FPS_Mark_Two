@@ -70,11 +70,27 @@ public class EngageTarget : TravelToDestination
 
 
 
-    
+    float lostSightTimer;
+    float waitTimeBeforeFindingNewPosition = 5;
+
 
 
     public override void OnUpdate()
     {
+        // If line of sight is blocked, wait several seconds in case the player has taken cover.
+        // If they still haven't moved, the player is either turtling or flanking. Seek a new position (I'll need to change the code to allow alternate tactics such as throwing a grenade)
+        bool canShootAt = IsPathViable();
+        lostSightTimer = canShootAt ? 0 : lostSightTimer + Time.deltaTime;
+        if (lostSightTimer > waitTimeBeforeFindingNewPosition)
+        {
+            NavMeshPath path = GetPath();
+            if (path != null)
+            {
+                navMeshAgent.path = path;
+            }
+        }
+
+        /*
         bool valid = IsPathViable();
         if (valid == false)
         {
@@ -84,6 +100,7 @@ public class EngageTarget : TravelToDestination
                 navMeshAgent.path = GetPath();
             }
         }
+        */
         //Debug.Log($"{this}: path valid = {valid}");
         
         
