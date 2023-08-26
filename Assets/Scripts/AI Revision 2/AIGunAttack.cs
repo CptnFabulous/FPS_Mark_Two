@@ -46,9 +46,16 @@ public class AIGunAttack : MonoBehaviour
         // While telegraphing and attacking, shift aim towards target at a speed roughly equivalent to their standard movement speed
         // While cooling down, rotate aim normally
 
+
+        
+
+        bool canTarget = rootAI.targeting.canSeeTarget;
+        currentAimTarget = rootAI.targeting.targetHit.point;
+        Debug.DrawLine(aim.LookOrigin, currentAimTarget, Color.magenta);
+        /*
         currentAimTarget = targetPosition;
         bool canTarget = AIAction.LineOfSight(rootAI.LookTransform.position, currentAimTarget, rootAI.attackMask, rootAI.health.HitboxColliders, target.health.HitboxColliders);
-
+        */
         aim.lookingInDefaultDirection = false;
         if (inAttack)
         {
