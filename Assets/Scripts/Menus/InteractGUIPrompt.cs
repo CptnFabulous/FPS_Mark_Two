@@ -13,16 +13,19 @@ public class InteractGUIPrompt : MonoBehaviour
     public Image progressBar;
 
     Interactable current;
+    Player player;
 
     public void Refresh(InteractFunction function)
     {
-        current = function.LookingAt;
+        current = function.lookingAt;
         gameObject.SetActive(current != null);
-        if (current == null)
-        {
-            return;
-        }
+
+        if (current == null) return;
+
+        player = function.player;
+
         interactableName.text = current.name;
+
         UnityEngine.InputSystem.PlayerInput input = function.player.controls;
         prompt.AssignAction(input.actions.FindAction(function.interactInputName), input);
     }
@@ -32,16 +35,15 @@ public class InteractGUIPrompt : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (current == null)
-        {
-            return;
-        }
+        if (current == null) return;
+
+        bool interactable = current.CanInteract(player);
 
         if (current.Progress > 0 && current.Progress < 1)
         {
             action.text = current.inProgressMessage;
         }
-        else if (current.active == false)
+        else if (interactable == false)
         {
             action.text = current.disabledMessage;
         }
@@ -50,8 +52,8 @@ public class InteractGUIPrompt : MonoBehaviour
             action.text = current.promptMessage;
         }
 
-        prompt.gameObject.SetActive(current.active);
-        statusIcon.gameObject.SetActive(!current.active);
+        prompt.gameObject.SetActive(interactable);
+        statusIcon.gameObject.SetActive(!interactable);
 
         progressBar.fillAmount = current.Progress;
     }

@@ -7,23 +7,19 @@ using UnityEngine.Events;
 public class Interactable : MonoBehaviour
 {
     public bool active = true;
+    public bool activateOnCollision;
     public string promptMessage = "Interact";
     public string inProgressMessage = "In progress";
     public string disabledMessage = "Cannot interact";
-    public bool activateOnCollision;
+
     public UnityEvent<Player> onInteract;
+    public System.Func<Player, bool> canInteract;
 
     IEnumerator cooldown;
     float cooldownTimer;
-    public float Progress
-    {
-        get
-        {
-            return cooldownTimer;
-        }
-    }
+    public float Progress => cooldownTimer;
 
-
+    public bool CanInteract(Player player) => active && (canInteract == null || canInteract.Invoke(player));
     public virtual void OnInteract(Player interactedWith)
     {
         onInteract.Invoke(interactedWith);
@@ -32,8 +28,14 @@ public class Interactable : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (activateOnCollision == false) return;
+
+        Debug.Log("Checking collision for player");
         Player p = collision.collider.GetComponentInParent<Player>();
-        if (activateOnCollision && p != null && active)
+        if (p == null) return;
+
+        Debug.Log("Player is present, checking if interactable");
+        if (CanInteract(p))
         {
             OnInteract(p);
         }
@@ -52,7 +54,7 @@ public class Interactable : MonoBehaviour
         cooldown = Cooldown(duration);
         StartCoroutine(cooldown);
     }
-    public IEnumerator Cooldown(float duration)
+    IEnumerator Cooldown(float duration)
     {
         active = false;
         cooldownTimer = 0;
