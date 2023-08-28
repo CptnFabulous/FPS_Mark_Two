@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -75,15 +76,13 @@ public class Health : MonoBehaviour
     /// <param name="attacker"></param>
     public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker)
     {
-        if (IsAlive == false && allowPosthumousDamage == false)
-        {
-            return;
-        }
+        if (IsAlive == false && allowPosthumousDamage == false) return;
 
         data.Increment(-damage);
 
         if (damage < 0)
         {
+            type = DamageType.Healing;
             onHeal.Invoke();
         }
         else
@@ -94,10 +93,10 @@ public class Health : MonoBehaviour
             {
                 stunData.WearDown(stun);
             }
-
-            DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
-            Notification<DamageMessage>.Transmit(damageMessage);
         }
+
+        DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
+        Notification<DamageMessage>.Transmit(damageMessage);
 
         if (data.current <= 0)
         {
@@ -106,6 +105,7 @@ public class Health : MonoBehaviour
             Notification<KillMessage>.Transmit(killMessage);
         }
     }
+    public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer);
 
     #region Miscellaneous functions
     public void DestroyOnDeath()
