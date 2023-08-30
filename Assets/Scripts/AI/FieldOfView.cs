@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ViewStatus
+{
+    Visible,
+    OutsideViewAngle,
+    BehindCover,
+    NotPresent,
+}
+
 public class FieldOfView : MonoBehaviour
 {
     public float viewRange = 25;
@@ -16,7 +24,7 @@ public class FieldOfView : MonoBehaviour
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawFrustum(Vector3.zero, viewingAngles.y, viewRange, 0, viewingAngles.x / viewingAngles.y);
     }
-    public bool VisionConeCheck(IList<Collider> targetColliders, out RaycastHit hit)
+    public ViewStatus VisionConeCheck(IList<Collider> targetColliders, out RaycastHit hit)
     {
         return VisionConeCheck(targetColliders, transform, viewingAngles, viewRange, out hit, viewDetection, raycastSpacing);
     }
@@ -24,7 +32,7 @@ public class FieldOfView : MonoBehaviour
     /// <summary>
     /// Calculates and runs a sweep of raycasts to check a cone-shaped area for colliders. This check will also detect partially-hidden colliders, but is performance-intensive and should not be run regularly.
     /// </summary>
-    public static bool VisionConeCheck(IList<Collider> targetColliders, Transform origin, Vector2 angles, float range, out RaycastHit hit, LayerMask viewDetection, float raycastSpacing = 0.25f)
+    public static ViewStatus VisionConeCheck(IList<Collider> targetColliders, Transform origin, Vector2 angles, float range, out RaycastHit hit, LayerMask viewDetection, float raycastSpacing = 0.25f)
     {
         Bounds b = MiscFunctions.CombinedBounds(targetColliders);
 
@@ -68,6 +76,10 @@ public class FieldOfView : MonoBehaviour
         #endregion
 
         #region Check each point for the target
+
+        // Set up values to check why each cast failed
+        //int outOfViewAngle = 0;
+        int blocked = 0;
         foreach (Vector2Int point in gridPointsToCheck)
         {
             // Calculates raycast point to aim for
@@ -75,21 +87,37 @@ public class FieldOfView : MonoBehaviour
             Vector3 raycastDirection = raycastHitDestination - origin.position;
             // If raycast hits within range and is inside the valid detection angle
 
-            // Don't check in this direction if it's outside the AI's peripheral vision
-            if (AngleCheck(raycastDirection, origin, angles) == false) continue;
-            //if (Vector3.Angle(origin.forward, raycastDirection) >= angle) continue;
+            // Check if this cast is inside the AI's peripheral vision
+            if (AngleCheck(raycastDirection, origin, angles) == false)
+            //if (Vector3.Angle(origin.forward, raycastDirection) >= angle)
+            {
+                //outOfViewAngle++;
+                continue;
+            }
+            // Check that something is hit
+            if (Physics.Raycast(origin.position, raycastDirection, out hit, range, viewDetection) == false)
+            {
+                continue;
+            }
+            // Check that the hit object was part of the target
+            if (MiscFunctions.ArrayContains(targetColliders, hit.collider) == false)
+            {
+                blocked++;
+                continue;
+            }
 
-            // Run a line of sight check
-            if (Physics.Raycast(origin.position, raycastDirection, out hit, range, viewDetection) == false) continue;
-
-            if (MiscFunctions.ArrayContains(targetColliders, hit.collider) == false) continue;
-
-            return true;
+            return ViewStatus.Visible;
         }
         #endregion
 
         hit = new RaycastHit();
-        return false;
+
+        // If the only casts that hit were blocked, the object is behind cover.
+        // If a cast is outside the viewing angle, the AI couldn't see it anyway, so we didn't bother checking if it's blocked 
+        if (blocked > 0) return ViewStatus.BehindCover;
+
+        // Otherwise, the target is completely outside the viewing angle
+        return ViewStatus.OutsideViewAngle;
     }
     public static bool AngleCheck(Vector3 direction, Transform origin, Vector2 angles)
     {

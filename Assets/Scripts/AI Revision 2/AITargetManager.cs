@@ -10,7 +10,7 @@ public class AITargetManager : MonoBehaviour
     public AI controlling;
     public FieldOfView visionCone;
 
-    public bool canSeeTarget { get; private set; }
+    public ViewStatus canSeeTarget { get; private set; }
     public RaycastHit lastHit { get; private set; }
     public Vector3 lastKnownPosition { get; private set; }
 
@@ -18,12 +18,12 @@ public class AITargetManager : MonoBehaviour
     {
         if (target == null)
         {
-            canSeeTarget = false;
+            canSeeTarget = ViewStatus.NotPresent;
             return;
         }
 
         canSeeTarget = visionCone.VisionConeCheck(target.colliders, out RaycastHit hit);
-        if (canSeeTarget)
+        if (canSeeTarget == ViewStatus.Visible)
         {
             lastHit = hit;
             lastKnownPosition = target.transform.position;
