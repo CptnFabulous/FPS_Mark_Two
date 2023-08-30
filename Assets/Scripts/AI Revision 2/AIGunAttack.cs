@@ -9,10 +9,7 @@ public class AIGunAttack : MonoBehaviour
     public AI rootAI;
     
     public RangedAttack weapon;
-
-    [Header("Aiming")]
-    public float aimAngleThreshold = 0f;
-
+    
     [Header("Telegraph")]
     public float telegraphDelay = 0.25f;
     public float telegraphMoveSpeedMultiplier = 0.5f;
@@ -34,7 +31,7 @@ public class AIGunAttack : MonoBehaviour
     AIAim aim => rootAI.aiming;
     Character target => rootAI.target;
     Vector3 targetPosition => target.bounds.center;
-    bool aimIsCorrect => aim.IsLookingAt(currentAimTarget, aimAngleThreshold);
+    bool aimIsCorrect => aim.IsLookingAt(currentAimTarget);
 
     private void Update()
     {

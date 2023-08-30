@@ -8,6 +8,7 @@ public class AIAim : MonoBehaviour
     public AI ai;
     public Transform viewAxis;
     public AimValues defaultAimStats;
+    public float targetThresholdAngle = 0;
 
     public void ResetStatsToDefault()
     {
@@ -120,10 +121,10 @@ public class AIAim : MonoBehaviour
     /// <param name="position"></param>
     /// <param name="threshold"></param>
     /// <returns></returns>
-    public bool IsLookingAt(Vector3 target, float angleThreshold, bool useAim = false)
+    public bool IsLookingAt(Vector3 target, bool useAim = false)
     {
         Vector3 direction = useAim ? AimDirection : LookDirection;
-        return Vector3.Angle(target - LookOrigin, direction) <= angleThreshold;
+        return Vector3.Angle(target - LookOrigin, direction) <= targetThresholdAngle;
     }
 
     /// <summary>
