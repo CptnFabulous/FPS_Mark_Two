@@ -10,6 +10,7 @@ public class AI : Character
     public AIAim aiming;
     public ActionExecutor actions;
     public float baseMovementSpeed = 5;
+    public float destinationThreshold = 1;
 
     [Header("Current data")]
     public AITargetManager targeting;
@@ -20,6 +21,8 @@ public class AI : Character
     public override LayerMask attackMask => aiming.Stats.lookDetection;
     public override Vector3 MovementDirection => agent.velocity;
     public override Character target => targeting.target;
+
+    public bool reachedDestination => agent.remainingDistance < destinationThreshold;
 
     public override void Die()
     {
