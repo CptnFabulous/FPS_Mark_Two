@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using CptnFabulous.StateMachines;
 
-public abstract class TravelToDestination : AIState
+public abstract class TravelToDestination : AIStateFunction
 {
     public float destinationThreshold = 0.5f;
     public bool endStateOnceDestinationReached = true;
@@ -19,7 +19,7 @@ public abstract class TravelToDestination : AIState
     // Flanking maneuver
 
     public bool DestinationReached() => navMeshAgent.remainingDistance <= destinationThreshold;
-
+    /*
     public override Status GetStatus()
     {
         NavMeshPath path = navMeshAgent.path;
@@ -36,7 +36,8 @@ public abstract class TravelToDestination : AIState
         }
         return Status.Blocked; // Destination is either invalid or no longer viable
     }
-    protected sealed override void OnEnter()
+    */
+    protected virtual void OnEnable()
     {
         navMeshAgent.isStopped = false;
 

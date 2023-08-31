@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MoveAlongPatrolRoute : AIState
+public class MoveAlongPatrolRoute : AIStateFunction
 {
     /*
     private void OnDisable()
@@ -21,9 +21,9 @@ public class MoveAlongPatrolRoute : AIState
 
     PatrolRoute route => r ??= GameObject.Find(routeName).GetComponent<PatrolRoute>();
 
-    public override Status GetStatus() => (route != null) ? Status.Active : Status.Blocked;
+    //public override Status GetStatus() => (route != null) ? Status.Active : Status.Blocked;
 
-    protected override void OnEnter()
+    protected void OnEnable()
     {
         // Get the index of the closest point on the route.
         int bestIndex = 0;
@@ -42,7 +42,7 @@ public class MoveAlongPatrolRoute : AIState
 
         index = bestIndex;
     }
-    public override void OnUpdate()
+    public void Update()
     {
         // Set the destination to the next point on the route
         // Once the point is reached, set the index to the next one

@@ -6,31 +6,83 @@ using UnityEngine.AI;
 
 public class EngageTarget : TravelToDestination
 {
-    public float checkDistance = 30;
-
-    int maxNumberOfChecks = 100;
-    //bool findNewPositionIfCompromised = true;
+    [Header("Attack")]
+    [SerializeField] AIGunAttack currentAttack;
+    [SerializeField] AIStateFunction onTargetEliminated;
 
     [Header("Seeking target")]
-    public float minTargetDistance = 5;
-    public float maxTargetDistance = 15;
-    /*
-    [Header("Changing position")]
-    float timeToSpendInPosition = 5;
-    */
+    [SerializeField] float checkDistance = 30;
+    int maxNumberOfChecks = 100;
+    //bool findNewPositionIfCompromised = true;
+    [SerializeField] float minTargetDistance = 5;
+    [SerializeField] float maxTargetDistance = 15;
+    
     [Header("Seeking cover")]
-    [Min(0)]
-    [Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
-    public float coverDistance = 2;
+    [SerializeField, Min(0), Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
+    float coverDistance = 2;
 
-    /*
-    bool currentlyAtDestination;
-    float timeElapsedInCurrentPosition;
-    bool seekingCover;
-    */
-    public Character target => rootAI.target;
+
+    [Header("On sight lost")]
+    public AIStateFunction onFailedToReacquireTarget;
+
+    float lostSightTimer;
+    float waitTimeBeforeFindingNewPosition = 5;
+
+
+    IEnumerator seekNewTargetCoroutine;
+
+    public Character target => targetManager.target;
     public float maxMoveDistance => checkDistance > 0 ? checkDistance : Mathf.Infinity;
-    //public bool stayCloseToCover => coverDistance > 0;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        //currentAttack.enabled = true;
+    }
+    private void OnDisable()
+    {
+        currentAttack.enabled = false;
+    }
+    public void Update()
+    {
+        if (targetManager.noTarget)
+        {
+            SwitchToState(onTargetEliminated);
+            return;
+        }
+        
+        // Check if the AI can currently see the target
+        bool targetIsVisible = targetManager.canSeeTarget == ViewStatus.Visible;
+        currentAttack.enabled = targetIsVisible;
+        if (targetIsVisible == false)
+        {
+            if (seekNewTargetCoroutine == null)
+            {
+                seekNewTargetCoroutine = targetManager.QuickLookForLostTarget(() => SwitchToState(onFailedToReacquireTarget));
+                StartCoroutine(seekNewTargetCoroutine);
+            }
+        }
+        else if (seekNewTargetCoroutine != null)
+        {
+            StopCoroutine(seekNewTargetCoroutine);
+            seekNewTargetCoroutine = null;
+        }
+        
+        /*
+        // If line of sight is blocked, wait several seconds in case the player has taken cover.
+        // If they still haven't moved, the player is either turtling or flanking. Seek a new position (I'll need to change the code to allow alternate tactics such as throwing a grenade)
+        bool canShootAt = IsPathViable();
+        lostSightTimer = canShootAt ? 0 : lostSightTimer + Time.deltaTime;
+        if (lostSightTimer > waitTimeBeforeFindingNewPosition)
+        {
+            NavMeshPath path = GetPath();
+            if (path != null)
+            {
+                navMeshAgent.path = path;
+            }
+        }
+        */
+    }
 
     protected override NavMeshPath GetPath()
     {
@@ -65,87 +117,6 @@ public class EngageTarget : TravelToDestination
         //Debug.Log($"{this}: IsPathViable() check = {valid}");
         return valid;
     }
-    public override Status GetStatus() => Status.Active;
-
-
-
-
-    float lostSightTimer;
-    float waitTimeBeforeFindingNewPosition = 5;
-
-
-
-    public override void OnUpdate()
-    {
-        // If line of sight is blocked, wait several seconds in case the player has taken cover.
-        // If they still haven't moved, the player is either turtling or flanking. Seek a new position (I'll need to change the code to allow alternate tactics such as throwing a grenade)
-        bool canShootAt = IsPathViable();
-        lostSightTimer = canShootAt ? 0 : lostSightTimer + Time.deltaTime;
-        if (lostSightTimer > waitTimeBeforeFindingNewPosition)
-        {
-            NavMeshPath path = GetPath();
-            if (path != null)
-            {
-                navMeshAgent.path = path;
-            }
-        }
-
-        /*
-        bool valid = IsPathViable();
-        if (valid == false)
-        {
-            NavMeshPath path = GetPath();
-            if (path != null)
-            {
-                navMeshAgent.path = GetPath();
-            }
-        }
-        */
-        //Debug.Log($"{this}: path valid = {valid}");
-        
-        
-        
-        // If the target position becomes unviable, seek a new one
-        // If the AI is behind cover, instead check the current position.
-
-        // When the AI arrives at its destination, reset the timer.
-        // Count up the timer until the time has elapsed
-
-        // Once the time has elapsed, if stayCloseToCover is false, just select a new position.
-        // If it's true, select a close-by cover position. Enable a 'seekingCover' bool so the enemy doesn't get confused. Once the position has been reached, count up time and go back out to resume 
-        /*
-        if (IsPathViable() == false)
-        {
-            navMeshAgent.path = GetPath(out destinationPoint);
-        }
-
-        // Trigger reset of time elapsed when the destination is reached
-        bool reached = DestinationReached();
-        if (reached != currentlyAtDestination)
-        {
-            Debug.Log("Agent destination reached = " + reached);
-            currentlyAtDestination = reached;
-            if (currentlyAtDestination)
-            {
-                timeElapsedInCurrentPosition = 0;
-            }
-        }
-
-        if (currentlyAtDestination)
-        {
-            timeElapsedInCurrentPosition += Time.deltaTime;
-            if (timeElapsedInCurrentPosition > timeToSpendInPosition)
-            {
-                Debug.Log("Seeking new position");
-                navMeshAgent.path = SeekNewPosition();
-            }
-        }
-        */
-
-
-    }
-
-
     public static bool VantagePointIsValid(AI ai, Character target, Vector3 position, float minDistance, float maxDistance, float coverDistance)
     {
         if (ai == null) return false;
