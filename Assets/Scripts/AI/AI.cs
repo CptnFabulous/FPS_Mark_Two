@@ -5,14 +5,16 @@ using UnityEngine.AI;
 
 public class AI : Character
 {
-    [Header("AI-specific components")]
-    public NavMeshAgent agent;
-    public AIAim aiming;
+    [Header("Behaviour")]
     public ActionExecutor actions;
+
+    [Header("Movement and pathing")]
+    public NavMeshAgent agent;
     public float baseMovementSpeed = 5;
     public float destinationThreshold = 1;
 
-    [Header("Current data")]
+    [Header("Aiming and targeting")]
+    public AIAim aiming;
     public AITargetManager targeting;
 
     public override Transform LookTransform => aiming.viewAxis;
