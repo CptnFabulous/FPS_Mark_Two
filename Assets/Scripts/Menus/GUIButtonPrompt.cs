@@ -6,127 +6,93 @@ using UnityEngine.InputSystem;
 
 public class GUIButtonPrompt : MonoBehaviour
 {
-    public Image graphic;
-    public Text keyName;
-    Vector2Int singleKeyDimensions;
+    [SerializeField] Image graphic;
+    [SerializeField] Text keyName;
 
     [Header("Sprites - Keyboard + mouse")]
-    public Sprite keyboardKey;
-    public Sprite mouseLeft;
-    public Sprite mouseRight;
-    public Sprite mouseMiddle;
-    public Sprite mouseMove;
-    public Sprite mouseScrollWheel;
+    [SerializeField] Sprite keyboardKey;
+    [SerializeField] Sprite mouseLeft;
+    [SerializeField] Sprite mouseRight;
+    [SerializeField] Sprite mouseMiddle;
+    [SerializeField] Sprite mouseMove;
+    [SerializeField] Sprite mouseScrollWheel;
     [Header("Sprites - Gamepad")]
-    public Sprite leftStickMove;
-    public Sprite rightStickMove;
-    public Sprite leftStickClick;
-    public Sprite rightStickClick;
-    public Sprite faceButtonNorth;
-    public Sprite faceButtonSouth;
-    public Sprite faceButtonEast;
-    public Sprite faceButtonWest;
-    public Sprite dpadUp;
-    public Sprite dpadDown;
-    public Sprite dpadLeft;
-    public Sprite dpadRight;
-    public Sprite leftBumper;
-    public Sprite rightBumper;
-    public Sprite leftTrigger;
-    public Sprite rightTrigger;
-    public Sprite start;
-    public Sprite select;
-
-    
+    [SerializeField] Sprite leftStickMove;
+    [SerializeField] Sprite rightStickMove;
+    [SerializeField] Sprite leftStickClick;
+    [SerializeField] Sprite rightStickClick;
+    [SerializeField] Sprite faceButtonNorth;
+    [SerializeField] Sprite faceButtonSouth;
+    [SerializeField] Sprite faceButtonEast;
+    [SerializeField] Sprite faceButtonWest;
+    [SerializeField] Sprite dpadUp;
+    [SerializeField] Sprite dpadDown;
+    [SerializeField] Sprite dpadLeft;
+    [SerializeField] Sprite dpadRight;
+    [SerializeField] Sprite leftBumper;
+    [SerializeField] Sprite rightBumper;
+    [SerializeField] Sprite leftTrigger;
+    [SerializeField] Sprite rightTrigger;
+    [SerializeField] Sprite start;
+    [SerializeField] Sprite select;
 
     InputAction assignedInput;
     InputBinding assignedBinding;
     PlayerInput player;
+    Dictionary<string, Sprite> _dictionary;
 
-    public Sprite[] iconArray
+    public Dictionary<string, Sprite> iconDictionary => _dictionary ??= new Dictionary<string, Sprite>()
     {
-        get
-        {
-            return new Sprite[]
-            {
-                mouseLeft,
-                mouseRight,
-                mouseMiddle,
-                mouseMove,
-                mouseScrollWheel,
-                leftStickMove,
-                rightStickMove,
-                leftStickClick,
-                rightStickClick,
-                faceButtonNorth,
-                faceButtonSouth,
-                faceButtonEast,
-                faceButtonWest,
-                dpadUp,
-                dpadDown,
-                dpadLeft,
-                dpadRight,
-                leftBumper,
-                rightBumper,
-                leftTrigger,
-                rightTrigger,
-                start,
-                select,
-            };
-        }
-    }
-    public static readonly List<string> inputStrings = new List<string>(new string[]
-    {
-        "<Mouse>/leftButton",
-        "<Mouse>/rightButton",
-        "<Mouse>/middleButton",
-        "<Pointer>/delta",
-        "<Mouse>/scroll/y",
-        "<Gamepad>/leftStick",
-        "<Gamepad>/rightStick",
-        "<Gamepad>/leftStickPress",
-        "<Gamepad>/rightStickPress",
-        "<Gamepad>/buttonNorth",
-        "<Gamepad>/buttonSouth",
-        "<Gamepad>/buttonEast",
-        "<Gamepad>/buttonWest",
-        "<Gamepad>/dpad/up",
-        "<Gamepad>/dpad/down",
-        "<Gamepad>/dpad/left",
-        "<Gamepad>/dpad/right",
-        "<Gamepad>/leftShoulder",
-        "<Gamepad>/rightShoulder",
-        "<Gamepad>/leftTrigger",
-        "<Gamepad>/rightTrigger",
-        "<Gamepad>/start",
-        "<Gamepad>/select",
-    });
+        {"<Mouse>/leftButton", mouseLeft },
+        {"<Mouse>/rightButton", mouseRight },
+        {"<Mouse>/middleButton", mouseMiddle },
+        {"<Pointer>/delta", mouseMove },
+        {"<Mouse>/scroll/y", mouseScrollWheel },
+
+        {"<Gamepad>/leftStick", leftStickMove },
+        {"<Gamepad>/rightStick", rightStickMove },
+        {"<Gamepad>/leftStickPress", leftStickClick },
+        {"<Gamepad>/rightStickPress", rightStickClick },
+
+        {"<Gamepad>/buttonNorth", faceButtonNorth },
+        {"<Gamepad>/buttonSouth", faceButtonSouth },
+        {"<Gamepad>/buttonEast", faceButtonEast },
+        {"<Gamepad>/buttonWest", faceButtonWest },
+
+        {"<Gamepad>/dpad/up", dpadUp },
+        {"<Gamepad>/dpad/down", dpadDown },
+        {"<Gamepad>/dpad/left", dpadLeft },
+        {"<Gamepad>/dpad/right", dpadRight },
+
+        {"<Gamepad>/leftShoulder", leftBumper },
+        {"<Gamepad>/rightShoulder", rightBumper },
+        {"<Gamepad>/leftTrigger", leftTrigger },
+        {"<Gamepad>/rightTrigger", rightTrigger },
+
+        {"<Gamepad>/start", start },
+        {"<Gamepad>/select", select },
+    };
+
+    private void Update() => DetermineCurrentBinding(player);
 
     public void AssignAction(InputAction newInput, PlayerInput newPlayer)
     {
         assignedInput = newInput;
         player = newPlayer;
-        gameObject.SetActive(true);
-        Update();
+
+        bool active = assignedInput != null && player != null;
+        gameObject.SetActive(active);
+        if (active == false) return;
+
+        DetermineCurrentBinding(player);
     }
 
-    private void Update()
+    void DetermineCurrentBinding(PlayerInput player)
     {
-        if (assignedInput == null || player == null)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
-
-        // Set up some kind of code so this code updates automatically when the input scheme changes
-
-        // Figure out the player's current input scheme
         string currentPlayerInputScheme = player.currentControlScheme;
-        for (int i = 0; i < assignedInput.bindings.Count; i++)
+        foreach (InputBinding b in assignedInput.bindings)
         {
             // Check if an available binding matches the current control scheme
-            InputBinding b = assignedInput.bindings[i];
-            //Debug.Log(b.groups + ", " + b.path + ", " + currentPlayerInputScheme);
             if (assignedBinding != b && b.groups.Contains(currentPlayerInputScheme))
             {
                 assignedBinding = b;
@@ -134,29 +100,22 @@ public class GUIButtonPrompt : MonoBehaviour
                 return;
             }
         }
-        // Reaching this point means a binding matching the current scheme was not found
-        // Disable button prompt
+        // Disable button prompt because a binding was not found
         gameObject.SetActive(false);
     }
-
-    public void Refresh(InputBinding binding)
-    {
-        Refresh(binding.effectivePath);
-    }
+    public void Refresh(InputBinding binding) => Refresh(binding.effectivePath);
     public void Refresh(string path)
     {
-        int index = inputStrings.IndexOf(path);
-        if (index >= 0 && index < iconArray.Length && iconArray[index] != null) // If index is valid, and the display name has a matching name in the list AND there's a corresponding sprite for the index
+        if (iconDictionary.TryGetValue(path, out Sprite sprite))
         {
-            graphic.sprite = iconArray[index];
-            keyName.text = "";
+            graphic.sprite = sprite;
+            keyName.text = ""; // Don't show text because the icon explains it
         }
-        else
+        else // Default to key graphic
         {
-            // Default to key graphic
             graphic.sprite = keyboardKey;
             keyName.text = MiscFunctions.FormatNameForPresentation(path);
-            // You could've used InputAction.GetBindingDisplayString()
+            // I might be able to use InputAction.GetBindingDisplayString(), but I don't fully understand how it works.
         }
     }
 }
