@@ -15,6 +15,7 @@ public class GameplayOptions : OptionsMenu
     public Toggle invertX;
     public Toggle invertY;
     public Slider fieldOfView;
+    public Toggle toggleSprint;
     public Toggle toggleCrouch;
     public Toggle toggleADS;
 
@@ -39,6 +40,10 @@ public class GameplayOptions : OptionsMenu
         {
             movement.crouchController.toggleCrouch = toggleCrouch.isOn;
         }
+        if (movement.sprintController != null)
+        {
+            movement.sprintController.toggleInput = toggleSprint.isOn;
+        }
         weaponHandler.toggleADS = toggleADS.isOn;
     }
 
@@ -58,6 +63,7 @@ public class GameplayOptions : OptionsMenu
         lookControls.worldViewCamera.fieldOfView = fieldOfView.value;
         // Obtain other control values
         toggleCrouch.isOn = (movement.crouchController != null) ? movement.crouchController.toggleCrouch : false;
+        toggleSprint.isOn = (movement.sprintController != null) ? movement.sprintController.toggleInput : false;
         toggleADS.isOn = weaponHandler.toggleADS;
     }
 
@@ -76,6 +82,7 @@ public class GameplayOptions : OptionsMenu
                 lookControls.worldViewCamera.fieldOfView = fov;
             }
         });
+        AddValueChangedEvent(toggleSprint);
         AddValueChangedEvent(toggleCrouch);
         AddValueChangedEvent(toggleADS);
     }

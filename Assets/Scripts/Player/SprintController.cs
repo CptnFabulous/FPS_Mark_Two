@@ -11,6 +11,7 @@ public class SprintController : MonoBehaviour
     public float staminaPerSecond = 1;
 
     [Header("Utility")]
+    public bool toggleInput;
     public float timeStillBeforeCancel = 0.25f;
     public MovementController movementController;
     public RegeneratingResource stamina;
@@ -42,7 +43,17 @@ public class SprintController : MonoBehaviour
     bool isMoving => standStillTimer < timeStillBeforeCancel;
     bool canSprint => isMoving && staminaPresent;
 
-    public void OnSprint() => isSprinting = true;
+    public void OnSprint(InputValue input)
+    {
+        if (toggleInput == false)
+        {
+            isSprinting = input.isPressed;
+        }
+        else if (input.isPressed)
+        {
+            isSprinting = !isSprinting;
+        }
+    }
     void TryStartSprint(out bool willSprint)
     {
         willSprint = false;
