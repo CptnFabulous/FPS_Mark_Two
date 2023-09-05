@@ -12,49 +12,41 @@ public class InteractGUIPrompt : MonoBehaviour
     public Image statusIcon;
     public Image progressBar;
 
-    Interactable current;
-    Player player;
+    InteractFunction following;
+    Interactable current => following.lookingAt;
+    Player player => following.player;
+    bool canInteract => following.canInteract;
 
     public void Refresh(InteractFunction function)
     {
-        current = function.lookingAt;
+        following = function;
+
         gameObject.SetActive(current != null);
 
         if (current == null) return;
 
-        player = function.player;
-
+        // Set name
         interactableName.text = current.name;
-
-        UnityEngine.InputSystem.PlayerInput input = function.player.controls;
+        // Assign button prompt
+        UnityEngine.InputSystem.PlayerInput input = player.controls;
         prompt.AssignAction(input.actions.FindAction(function.interactInputName), input);
-    }
-    void Awake()
-    {
-        gameObject.SetActive(false);
     }
     private void LateUpdate()
     {
-        if (current == null) return;
+        gameObject.SetActive(current != null);
+        if (gameObject.activeSelf == false) return;
 
-        bool interactable = current.CanInteract(player);
+        prompt.gameObject.SetActive(canInteract);
+        statusIcon.gameObject.SetActive(!canInteract);
 
+        progressBar.fillAmount = current.Progress;
         if (current.Progress > 0 && current.Progress < 1)
         {
             action.text = current.inProgressMessage;
         }
-        else if (interactable == false)
-        {
-            action.text = current.disabledMessage;
-        }
         else
         {
-            action.text = current.promptMessage;
+            action.text = canInteract ? current.promptMessage : current.disabledMessage;
         }
-
-        prompt.gameObject.SetActive(interactable);
-        statusIcon.gameObject.SetActive(!interactable);
-
-        progressBar.fillAmount = current.Progress;
     }
 }

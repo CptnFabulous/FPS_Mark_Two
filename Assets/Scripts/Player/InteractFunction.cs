@@ -14,21 +14,14 @@ public class InteractFunction : MonoBehaviour
     public LayerMask interactionMask = ~0;
     public readonly string interactInputName = "Interact";
 
-    public Interactable lookingAt
-    {
-        get => current;
-        set
-        {
-            if (value == current) return;
-            current = value;
-            window.Refresh(this);
-        }
-    }
-    Interactable current;
+    public Interactable lookingAt { get; private set; }
+    public bool canInteract { get; private set; }
 
     void OnInteract()
     {
-        if (lookingAt != null && lookingAt.CanInteract(player))
+        if (lookingAt == null) return;
+
+        if (lookingAt.CanInteract(player))
         {
             lookingAt.OnInteract(player);
         }
@@ -37,8 +30,16 @@ public class InteractFunction : MonoBehaviour
     void Update()
     {
         bool hit = Physics.Raycast(aimTransform.position, aimTransform.forward, out RaycastHit target, interactRange, interactionMask);
-        lookingAt = hit ? target.collider.GetComponent<Interactable>() : null;
-    }
+        // Determine if the player is looking at an interactable
+        Interactable nowLookingAt = hit ? target.collider.GetComponent<Interactable>() : null;
+        // Determine if the player can interact with what they're looking at
+        canInteract = (nowLookingAt != null) ? nowLookingAt.CanInteract(player) : false;
 
-    
+        // If the player is looking at something different to before, update the interaction window
+        if (nowLookingAt != lookingAt)
+        {
+            lookingAt = nowLookingAt;
+            window.Refresh(this);
+        }
+    }
 }
