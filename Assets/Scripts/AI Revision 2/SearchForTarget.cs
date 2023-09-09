@@ -17,6 +17,7 @@ public class SearchForTarget : AIStateFunction
     private void Update()
     {
         navMeshAgent.destination = targetManager.target.transform.position;
+        aim.LookInNeutralDirection();
 
         // If the target becomes visible again, end coroutine and switch to the success state
         if (targetManager.canSeeTarget == ViewStatus.Visible)
