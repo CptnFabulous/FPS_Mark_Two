@@ -24,6 +24,11 @@ public class AIGridPoints : MonoBehaviour
     
     public float gridSpacing = 1;
     public float minAgentHeight = 2;
+
+    [Header("Cover")]
+    public float halfCoverHeight = 0.9f;
+    public int numberOfDirectionChecksForCover = 8;
+
     public Vector2Int GridSize
     {
         get
@@ -37,7 +42,6 @@ public class AIGridPoints : MonoBehaviour
     public Vector3 floorNormal => floorRotation * Vector3.up;
 
     float raycastHeightPadding = 5f; // For if the bounds are too small to have the raycasts actually register because they're spawning inside the colliders. Can happen with perfectly flat environments.
-    int numberOfDirectionChecksForCover = 8;
     List<GridPoint> _points = null;
 
     float coverCheckRaycastDistance => gridSpacing * 1.5f;
@@ -152,7 +156,9 @@ public class AIGridPoints : MonoBehaviour
     {
         List<Vector3> directions = new List<Vector3>();
 
-        Vector3 rayOrigin = position + (minAgentHeight / 2 * floorNormal);
+        
+        Vector3 rayOrigin = position + (halfCoverHeight * floorNormal);
+        //Vector3 rayOrigin = position + (minAgentHeight / 2 * floorNormal);
 
         for (int i = 0; i < numberOfDirectionChecksForCover; i++)
         {
