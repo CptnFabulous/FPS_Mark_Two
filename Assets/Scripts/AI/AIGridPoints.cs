@@ -50,13 +50,14 @@ public class AIGridPoints : MonoBehaviour
 
     public struct GridPoint
     {
-        public Vector3 position { get; private set; }
+        public Vector3 position => navMeshData.position;
         public Vector3[] coverDirections { get; private set; }
         public bool isCover => coverDirections.Length > 0;
+        public NavMeshHit navMeshData { get; private set; }
 
-        public GridPoint(Vector3 position, Vector3[] coverDirections)
+        public GridPoint(NavMeshHit navMeshData, Vector3[] coverDirections)
         {
-            this.position = position;
+            this.navMeshData = navMeshData;
             this.coverDirections = coverDirections;
         }
     }
@@ -138,9 +139,11 @@ public class AIGridPoints : MonoBehaviour
                     origin = rh.point + (minAgentHeight * -floorNormal);
                     distance -= rh.distance;
 
-                    Vector3 position = rh.point; // Get the position
-                    List<Vector3> coverDirections = CoverCheck(position); // Calculate cover points
-                    newPoints.Add(new GridPoint(position, coverDirections.ToArray())); // Assemble values and add to the list
+                    // Check that this point is on the NavMesh
+                    if (NavMesh.SamplePosition(rh.point, out NavMeshHit hit, gridSpacing, ~0) == false) continue;
+
+                    Vector3[] coverDirections = CoverCheck(hit.position).ToArray(); // Calculate cover points
+                    newPoints.Add(new GridPoint(hit, coverDirections)); // Assemble values and add to the list
                 }
                 
             }
