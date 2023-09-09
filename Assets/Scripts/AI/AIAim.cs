@@ -143,8 +143,41 @@ public class AIAim : MonoBehaviour
 
     #endregion
 
+    public IEnumerator RotateTowards(Vector3 position)
+    {
+        while (IsLookingAt(position) == false)
+        {
+            yield return null;
+            RotateLookTowards(position);
+        }
+    }
+    
+    // UNTESTED: Sweeps all around the AI 
+    public IEnumerator SweepSurroundings()
+    {
+        Quaternion startingRotation = lookRotation;
+        Vector2 viewAngles = ai.targeting.visionCone.viewingAngles;
+        Vector2 zoneToCheck = new Vector2(180, 360);
+        Vector2 zoneToMove = zoneToCheck - viewAngles;
+        int numberOfSweeps = Mathf.CeilToInt(zoneToCheck.x / viewAngles.x);
 
+        // Creates an IEnumerator inside the IEnumerator for rotating towards a specific euler angle
+        // This is normally a super janky move but it won't be used anywhere else.
+        IEnumerator RotateTowardsEulerAngles(Vector3 eulerAngles)
+        {
+            Quaternion rotation = startingRotation * Quaternion.Euler(eulerAngles);
+            Vector3 position = rotation * Vector3.forward;
+            yield return RotateTowards(position);
+        }
+        for (int i = 0; i < numberOfSweeps; i++)
+        {
+            float y = zoneToMove.y / 2; // Sweeps left and right
+            float x = (zoneToMove.x * i) - (zoneToCheck.x / 2); // Increments up each time (subtracts half of the vertical value so it goes from -vertical to +vertical)
 
+            yield return RotateTowardsEulerAngles(new Vector3(x, y));
+            yield return RotateTowardsEulerAngles(new Vector3(x, -y));
+        }
+    }
 
 
 

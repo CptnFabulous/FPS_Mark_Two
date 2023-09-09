@@ -37,7 +37,7 @@ public class SearchForTarget : AIStateFunction
         yield return new WaitUntil(() => rootAI.reachedDestination);
 
         // Look around
-        yield return aim.SweepArea();
+        yield return aim.SweepSurroundings();
 
 
         // If not found, predict where the target could have gone
