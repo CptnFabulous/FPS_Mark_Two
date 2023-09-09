@@ -555,11 +555,12 @@ MonoBehaviour:
   affiliation: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
   health: {fileID: 577827450302408049}
   characterModel: {fileID: 2246874948169663794}
-  agent: {fileID: 577827450302408013}
-  aiming: {fileID: 577827450302408052}
   actions: {fileID: 3712220218142188897}
+  agent: {fileID: 577827450302408013}
   baseMovementSpeed: 5
-  currentTarget: {fileID: 0}
+  destinationThreshold: 1
+  aiming: {fileID: 577827450302408052}
+  targeting: {fileID: 0}
 --- !u!114 &577827450302408015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -666,6 +667,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     diameterForUnobstructedSight: 0.5
+  targetThresholdAngle: 0
   Stats:
     lookSpeed: 0
     speedCurve:
