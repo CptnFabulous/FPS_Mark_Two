@@ -59,7 +59,7 @@ public class CrouchController : MonoBehaviour
             wantsToCrouch = false;
         }
         // If the user wants to stand up, check if there is enough space to do so.
-        if (!wantsToCrouch && Physics.Raycast(transform.position, transform.up, out RaycastHit rh, standHeight, movementController.collisionMask))
+        if (!wantsToCrouch && Physics.Raycast(transform.position, transform.up, out RaycastHit _, standHeight, movementController.collisionMask))
         {
             wantsToCrouch = true;
         }

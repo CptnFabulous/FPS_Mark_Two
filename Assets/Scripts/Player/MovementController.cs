@@ -9,7 +9,7 @@ public class MovementController : MonoBehaviour
     public Player controlling;
 
     public Rigidbody rigidbody => rb;
-    public LayerMask collisionMask => ~0;
+    public LayerMask collisionMask => MiscFunctions.GetPhysicsLayerMask(collider.gameObject.layer);
 
     #region Movement
     [Header("Movement")]

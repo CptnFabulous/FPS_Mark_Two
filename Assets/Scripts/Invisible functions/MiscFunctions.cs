@@ -63,6 +63,15 @@ public readonly struct MiscFunctions
         }
         return list;
     }
+    public static LayerMask GetPhysicsLayerMask(int currentLayer)
+    {
+        int finalMask = 0;
+        for (int i = 0; i < 32; i++)
+        {
+            if (!Physics.GetIgnoreLayerCollision(currentLayer, i)) finalMask = finalMask | (1 << i);
+        }
+        return finalMask;
+    }
 
     #region Math
     public static float Min(params float[] values)
