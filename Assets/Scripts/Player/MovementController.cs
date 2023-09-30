@@ -41,9 +41,9 @@ public class MovementController : MonoBehaviour
             {
                 speed *= sprintController.speedMultiplier;
             }
-            if (crouchController != null)
+            else if (crouchController != null && crouchController.isCrouching)
             {
-                speed *= Mathf.Lerp(1, crouchController.crouchSpeedMultiplier, crouchController.crouchTimer);
+                speed *= crouchController.crouchSpeedMultiplier;
             }
             
             //Debug.Log(speed);
