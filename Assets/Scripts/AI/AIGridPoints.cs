@@ -61,7 +61,7 @@ public class AIGridPoints : MonoBehaviour
             this.coverDirections = coverDirections;
         }
     }
-    List<GridPoint> gridPoints
+    public List<GridPoint> gridPoints
     {
         get
         {
