@@ -69,6 +69,20 @@ public class AIAim : MonoBehaviour
     #endregion
 
     #region Look functions
+    /// <summary>
+    /// Continuously rotates AI aim to return to looking in the direction it is moving.
+    /// </summary>
+    /// <param name="degreesPerSecond"></param>
+    public void LookInNeutralDirection()
+    {
+        NavMeshAgent agent = ai.agent;
+
+        // If agent is moving, look in the direction the agent is moving. Otherwise, look straight forward.
+        bool isMoving = ai.agent.velocity.magnitude > 0;
+        Vector3 direction = isMoving ? agent.velocity : ai.transform.forward;
+
+        RotateLookTowards(LookOrigin + direction, Stats.lookSpeed);
+    }
     public void RotateLookTowards(Vector3 position)
     {
         float degreesPerSecond = Stats.SpeedBasedOnAngle(LookDirection, position - LookOrigin);
@@ -98,20 +112,7 @@ public class AIAim : MonoBehaviour
         lookingTowards = Vector3.MoveTowards(lookingTowards, position, distancePerSecond * Time.deltaTime);
         lookRotation = Quaternion.LookRotation(lookingTowards - LookOrigin, ai.transform.up);
     }
-    /// <summary>
-    /// Continuously rotates AI aim to return to looking in the direction it is moving.
-    /// </summary>
-    /// <param name="degreesPerSecond"></param>
-    public void LookInNeutralDirection()
-    {
-        NavMeshAgent agent = ai.agent;
-
-        // If agent is moving, look in the direction the agent is moving. Otherwise, look straight forward.
-        bool isMoving = ai.agent.velocity.magnitude > 0;
-        Vector3 direction = isMoving ? agent.velocity : ai.transform.forward;
-
-        RotateLookTowards(LookOrigin + direction, Stats.lookSpeed);
-    }
+    
     #endregion
 
     #region Look checking
@@ -240,8 +241,9 @@ public class AIAim : MonoBehaviour
     public static Quaternion AimSway(float maxSwayAngle, float swaySpeed)
     {
         // Generates changing values from noise
-        float noiseX = Mathf.PerlinNoise(Time.time * swaySpeed, 0);
-        float noiseY = Mathf.PerlinNoise(0, Time.time * swaySpeed);
+        float t = Time.time * swaySpeed;
+        float noiseX = Mathf.PerlinNoise(t, 0);
+        float noiseY = Mathf.PerlinNoise(0, t);
         // Converts values from 0 - 1 to -1 - 1
         Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
         angles *= maxSwayAngle; //  Multiplies by accuracy value
