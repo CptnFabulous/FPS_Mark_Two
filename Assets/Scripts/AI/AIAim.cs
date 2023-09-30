@@ -155,30 +155,61 @@ public class AIAim : MonoBehaviour
     // UNTESTED: Sweeps all around the AI 
     public IEnumerator SweepSurroundings()
     {
-        Quaternion startingRotation = lookRotation;
-        Vector2 viewAngles = ai.targeting.visionCone.viewingAngles;
-        Vector2 zoneToCheck = new Vector2(180, 360);
-        Vector2 zoneToMove = zoneToCheck - viewAngles;
-        int numberOfSweeps = Mathf.CeilToInt(zoneToCheck.x / viewAngles.x);
+        yield break;
 
-        // Creates an IEnumerator inside the IEnumerator for rotating towards a specific euler angle
-        // This is normally a super janky move but it won't be used anywhere else.
-        IEnumerator RotateTowardsEulerAngles(Vector3 eulerAngles)
-        {
-            Quaternion rotation = startingRotation * Quaternion.Euler(eulerAngles);
-            Vector3 position = rotation * Vector3.forward;
-            yield return RotateTowards(position);
-        }
-        for (int i = 0; i < numberOfSweeps; i++)
-        {
-            float y = zoneToMove.y / 2; // Sweeps left and right
-            float x = (zoneToMove.x * i) - (zoneToCheck.x / 2); // Increments up each time (subtracts half of the vertical value so it goes from -vertical to +vertical)
+        float distance = 5; // I'm pretty sure this could be anything
 
-            yield return RotateTowardsEulerAngles(new Vector3(x, y));
-            yield return RotateTowardsEulerAngles(new Vector3(x, -y));
+        int count = Mathf.CeilToInt(360 / ai.targeting.visionCone.viewingAngles.y);
+        float angleSegment = 180 / (count - 1);
+
+        Vector3 eulerAngles = Vector3.zero;
+        for (int i = 0; i < count; i++)
+        {
+            eulerAngles.y = 0; // Resets horizontal direction
+            eulerAngles.x = (angleSegment * i) - 90; // Sets vertical direction (shifts from -90 to 90)
+
+            for (int j = 0; j < 4; j++)
+            {
+                eulerAngles.y += 90;
+
+                Vector3 p = Quaternion.Euler(eulerAngles) * Vector3.forward;
+                p *= distance;
+
+                Debug.Log($"{i} = {eulerAngles.x}, {j} = {eulerAngles.y}");
+
+                yield return RotateTowards(viewAxis.TransformPoint(p));
+            }
         }
     }
+    /*
+    void SweepCalculation(Transform t, int count, float distance, Color debugColour)
+    {
+        Vector3 previousPoint = Vector3.zero;
 
+
+        Vector3 eulerAngles = Vector3.zero;
+        for (int i = 0; i < count; i++)
+        {
+            // Goes from -90 to 90
+            eulerAngles.y = 0;
+
+            eulerAngles.x = 180 / (count - 1) * i;
+            eulerAngles.x -= 90;
+
+            for (int j = 0; j < 4; j++)
+            {
+                eulerAngles.y += 90;
+
+                Vector3 p = Quaternion.Euler(eulerAngles) * Vector3.forward;
+                p *= distance;
+
+
+                Debug.DrawLine(t.TransformPoint(previousPoint), t.TransformPoint(p), debugColour);
+                previousPoint = p;
+            }
+        }
+    }
+    */
 
 
 
