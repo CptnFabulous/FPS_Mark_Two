@@ -141,6 +141,7 @@ public readonly struct MiscFunctions
         value /= multiplier;
         return value;
     }
+    public static float LengthOfDiagonal(float width, float height) => Mathf.Sqrt((width * width) + (height * height));
     #endregion
 
     #region Formatting text

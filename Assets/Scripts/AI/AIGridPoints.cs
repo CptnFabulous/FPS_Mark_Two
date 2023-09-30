@@ -44,7 +44,7 @@ public class AIGridPoints : MonoBehaviour
     float raycastHeightPadding = 5f; // For if the bounds are too small to have the raycasts actually register because they're spawning inside the colliders. Can happen with perfectly flat environments.
     List<GridPoint> _points = null;
 
-    float coverCheckRaycastDistance => gridSpacing * 1.5f;
+    float coverCheckRaycastDistance => MiscFunctions.LengthOfDiagonal(gridSpacing, gridSpacing);
     public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
     #endregion
 
