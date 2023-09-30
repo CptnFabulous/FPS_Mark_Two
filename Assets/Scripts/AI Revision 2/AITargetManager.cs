@@ -67,6 +67,6 @@ public class AITargetManager : MonoBehaviour
 
         // Seek new target position
         Debug.Log($"{this}: cannot find target");
-        onFailedToReacquireTarget.Invoke();
+        onFailedToReacquireTarget?.Invoke();
     }
 }
