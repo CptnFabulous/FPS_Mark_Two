@@ -5,6 +5,7 @@ using UnityEngine;
 public enum ViewStatus
 {
     Visible,
+    OutOfRange,
     OutsideViewAngle,
     BehindCover,
     NotPresent,
@@ -17,18 +18,32 @@ public class FieldOfView : MonoBehaviour
     public LayerMask viewDetection = ~0;
     public float raycastSpacing = 0.25f;
 
+    AI _root;
     static List<Vector2Int> gridPointsToCheck = new List<Vector2Int>(); // A cached collection of grid points to check, allowing the checks to fan out in a desired order but without wasting memory on new lists for each call
+
+    public AI rootAI => _root ??= GetComponentInParent<AI>();
 
     private void OnDrawGizmos()
     {
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawFrustum(Vector3.zero, viewingAngles.y, viewRange, 0, viewingAngles.x / viewingAngles.y);
     }
+    public ViewStatus VisionConeCheck(Vector3 position)
+    {
+        Vector3 direction = position - transform.position;
+        // Check range
+        if (direction.magnitude > viewRange) return ViewStatus.OutOfRange;
+        // Check angle
+        if (AngleCheck(direction, transform, viewingAngles) == false) return ViewStatus.OutsideViewAngle;
+        // Check line of sight
+        bool seen = AIAction.LineOfSight(transform.position, position, viewDetection, rootAI.colliders);
+        return seen ? ViewStatus.Visible : ViewStatus.BehindCover;
+    }
     public ViewStatus VisionConeCheck(IList<Collider> targetColliders, out RaycastHit hit)
     {
         return VisionConeCheck(targetColliders, transform, viewingAngles, viewRange, out hit, viewDetection, raycastSpacing);
     }
-    
+
     /// <summary>
     /// Calculates and runs a sweep of raycasts to check a cone-shaped area for colliders. This check will also detect partially-hidden colliders, but is performance-intensive and should not be run regularly.
     /// </summary>
@@ -37,8 +52,9 @@ public class FieldOfView : MonoBehaviour
         Bounds b = MiscFunctions.CombinedBounds(targetColliders);
 
         #region Calculate grid to check
-        // Calculate the sizes of the zone to calculate in (width and height are the same presently but I might make it more precise)
+        // Calculate the sizes of the zone to calculate in 
         float maxExtent = MiscFunctions.Max(b.extents.x, b.extents.y, b.extents.z);
+        // Width and height are the same presently but I might make it more precise in the future
         float zoneWidth = maxExtent * 2;
         float zoneHeight = maxExtent * 2;
         // Calculate the dimensions of the grid to raycast in
@@ -130,14 +146,4 @@ public class FieldOfView : MonoBehaviour
         Vector3 onPlane = Vector3.ProjectOnPlane(direction, up);
         return Vector3.Angle(onPlane, forward);
     }
-
-    /*
-    public static Vector2 AngleThing(Vector3 extents, Vector3 direction)
-    {
-        // Idea: somehow rotate the extents as if it's a direction, towards direction? I'm pretty sure that should swap around the axes and scale them at the same time.
-        //Vector3 newDir = Vector3.RotateTowards(extents, )
-    }
-    */
-
-
 }
