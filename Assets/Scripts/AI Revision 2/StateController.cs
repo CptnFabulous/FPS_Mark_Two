@@ -13,7 +13,8 @@ public class StateController : MonoBehaviour
     }
     public void SwitchToState(StateFunction newState)
     {
-        if (newState.transform.IsChildOf(transform) == false) return;
+        Debug.Log($"{this}: switching from {current} to {newState}");
+        if (newState != null && newState.transform.IsChildOf(transform) == false) return;
 
         current.enabled = false;
         current = newState;
