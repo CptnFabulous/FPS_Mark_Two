@@ -21,12 +21,11 @@ public class WeaponHandler : MonoBehaviour
     public float standingAccuracy = 1;
     public float swaySpeed = 0.5f;
     public bool toggleADS;
+    public bool quickSwitchModes = true;
 
     [Header("Other")]
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
-
-    bool s = false;
 
     public bool PrimaryHeld { get; private set; }
     public bool SecondaryActive { get; private set; }
@@ -141,15 +140,25 @@ public class WeaponHandler : MonoBehaviour
     void OnLook(InputValue input) => weaponSelector.InputDirection(input.Get<Vector2>(), controller.movement.lookControls.usingGamepad == false);
     void OnScrollWeapon(InputValue input)
     {
-        float inputValue = input.Get<float>();
-
         if (isSwitching) return; // Wait until any previous switch operation has finished
         if (weaponSelector.menuIsOpen) return; // Don't allow any other kinds of selection if the radial menu is open
+        
+        float inputValue = input.Get<float>();
         if (inputValue == 0) return; // If there's no input, do nothing
 
         int increment = Mathf.RoundToInt(Mathf.Sign(inputValue));
-        int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Length);
-        StartCoroutine(SwitchWeapon(newIndex));
+
+        // Switch either your weapon, or the firing mode on your current weapon
+        if (quickSwitchModes)
+        {
+            int newIndex = MiscFunctions.LoopIndex(CurrentWeapon.currentModeIndex + increment, CurrentWeapon.modes.Length);
+            StartCoroutine(CurrentWeapon.SwitchMode(newIndex));
+        }
+        else
+        {
+            int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Length);
+            StartCoroutine(SwitchWeapon(newIndex));
+        }
     }
     public void CancelInputs()
     {

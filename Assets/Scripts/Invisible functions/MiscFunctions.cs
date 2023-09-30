@@ -119,14 +119,11 @@ public readonly struct MiscFunctions
     public static int Loop(int value, int min, int max) => (int)Loop((float)value, (float)min, (float)max);
     public static int LoopIndex(int value, int length)
     {
-        if (value < 0)
-        {
-            value = length - value;
-        }
-        else if (value >= length)
-        {
-            value = value - length;
-        }
+        // If the value has gone backwards, start at the max length and subtract by how far the value has been incremented
+        while (value < 0) value = length + value;
+        // If the value goes over the length, subtract the length to represent how the value has looped
+        while (value >= length) value = value - length;
+
         return value;
     }
     public static bool WithinRange(float value, float min, float max) => value >= min && value <= max;
