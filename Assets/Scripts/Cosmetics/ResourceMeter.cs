@@ -17,7 +17,7 @@ public class ResourceMeter : MonoBehaviour
 
     [Header("Text display")]
     public Text amount;
-    public int decimalPlaces = 0;
+    public string decimalFormatting = "0";
 
     [Header("Additional animations")]
     [Tooltip("Current = 'Current', critical = 'Critical', full = 'Full', depleted = 'Depleted'")]
@@ -35,13 +35,10 @@ public class ResourceMeter : MonoBehaviour
         set => previousMeter.fillAmount = value;
     }
 
-    private void Awake() => rectTransform = GetComponent<RectTransform>();
-    private void OnEnable() => previousFill = currentFill;
-
     public void Refresh(Resource values)
     {
         // Set amount as text
-        if (amount != null) amount.text = MiscFunctions.RoundToDecimalPlaces(values.current, decimalPlaces).ToString();
+        if (amount != null) amount.text = values.current.ToString(decimalFormatting);
         // Update meter fill and colour
         currentFill = values.current / values.max;
         currentMeter.color = values.isCritical ? criticalColour : safeColour;
@@ -55,6 +52,8 @@ public class ResourceMeter : MonoBehaviour
         }
     }
 
+    private void Awake() => rectTransform = GetComponent<RectTransform>();
+    private void OnEnable() => previousFill = currentFill;
     private void LateUpdate()
     {
         if (previousFill != currentFill)
