@@ -19,6 +19,10 @@ public class ResourceMeter : MonoBehaviour
     public Text amount;
     public int decimalPlaces = 0;
 
+    [Header("Additional animations")]
+    [Tooltip("Current = 'Current', critical = 'Critical', full = 'Full', depleted = 'Depleted'")]
+    public Animator animationController;
+
     public RectTransform rectTransform { get; private set; }
     float currentFill
     {
@@ -41,6 +45,14 @@ public class ResourceMeter : MonoBehaviour
         // Update meter fill and colour
         currentFill = values.current / values.max;
         currentMeter.color = values.isCritical ? criticalColour : safeColour;
+
+        if (animationController != null)
+        {
+            animationController.SetFloat("Current", values.current);
+            animationController.SetBool("Critical", values.isCritical);
+            animationController.SetBool("Full", values.isFull);
+            animationController.SetBool("Depleted", values.isDepleted);
+        }
     }
 
     private void LateUpdate()
