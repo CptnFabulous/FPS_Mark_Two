@@ -342,4 +342,11 @@ public readonly struct MiscFunctions
         return b;
     }
     #endregion
+    public static bool GetToggleableInput(bool currentState, bool buttonPressed, bool isToggled)
+    {
+        if (isToggled == false) currentState = buttonPressed;
+        else if (buttonPressed) currentState = !currentState;
+
+        return currentState;
+    }
 }

@@ -43,17 +43,11 @@ public class SprintController : MonoBehaviour
     bool isMoving => standStillTimer < timeStillBeforeCancel;
     bool canSprint => isMoving && staminaPresent;
 
-    public void OnSprint(InputValue input)
-    {
-        if (toggleInput == false)
-        {
-            isSprinting = input.isPressed;
-        }
-        else if (input.isPressed)
-        {
-            isSprinting = !isSprinting;
-        }
-    }
+    /// <summary>
+    /// Registers the player's input to start or stop sprinting.
+    /// </summary>
+    /// <param name="input"></param>
+    public void OnSprint(InputValue input) => isSprinting = MiscFunctions.GetToggleableInput(isSprinting, input.isPressed, toggleInput);
     void TryStartSprint(out bool willSprint)
     {
         willSprint = false;

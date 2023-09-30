@@ -33,17 +33,7 @@ public class CrouchController : MonoBehaviour
     /// Receives the player's input value to change if they're crouching or standing.
     /// </summary>
     /// <param name="input"></param>
-    void OnCrouch(InputValue input)// => isCrouching = (toggleCrouch && input.isPressed) ? !isCrouching : input.isPressed;
-    {
-        if (toggleCrouch == false)
-        {
-            isCrouching = input.isPressed;
-        }
-        else if (input.isPressed)
-        {
-            isCrouching = !isCrouching;
-        }
-    }
+    void OnCrouch(InputValue input) => isCrouching = MiscFunctions.GetToggleableInput(isCrouching, input.isPressed, toggleCrouch);
     /// <summary>
     /// Attempts to either crouch or stand back up.
     /// </summary>

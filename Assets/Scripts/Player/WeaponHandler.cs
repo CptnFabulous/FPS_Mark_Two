@@ -113,14 +113,7 @@ public class WeaponHandler : MonoBehaviour
     {
         if (!WeaponReady) return;
 
-        if (toggleADS)
-        {
-            if (input.isPressed) SecondaryActive = !SecondaryActive;
-        }
-        else
-        {
-            SecondaryActive = input.isPressed;
-        }
+        SecondaryActive = MiscFunctions.GetToggleableInput(SecondaryActive, input.isPressed, toggleADS);
         CurrentWeapon.CurrentMode.OnSecondaryInputChanged();
     }
     void OnReload()
