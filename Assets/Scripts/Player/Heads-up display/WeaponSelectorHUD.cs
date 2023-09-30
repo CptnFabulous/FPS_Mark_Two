@@ -67,7 +67,7 @@ public class WeaponSelectorHUD : MonoBehaviour
                 Image weaponGraphic = Instantiate(weaponGraphicPrefab, radialMenu.transform);
                 weaponGraphic.sprite = w.hudGraphic;
                 float weaponGraphicOrder = modeIndex + ((numberOfModes - 1) * 0.5f);
-                Debug.Log(weaponGraphicOrder);
+                //Debug.Log(weaponGraphicOrder);
                 radialMenu.AddVisualEffect(weaponGraphic.rectTransform, weaponGraphicOrder, graphicDistanceFromCentre, rotateWeaponGraphics);
                 weaponGraphic.rectTransform.SetSiblingIndex(weaponGraphicPrefab.rectTransform.GetSiblingIndex() + 1);
 

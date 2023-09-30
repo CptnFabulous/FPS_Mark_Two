@@ -21,7 +21,7 @@ public class VisibilityMeter : MonoBehaviour
     void LateUpdate()
     {
         float value = DiegeticLightSource.EntityIllumination(targetPlayer);
-        Debug.Log(value);
+        //Debug.Log(value);
         float t = Mathf.Clamp01(value / maxBrightness);
         display.color = gradient.Evaluate(t);
         onBrightnessUpdated.Invoke(t);
