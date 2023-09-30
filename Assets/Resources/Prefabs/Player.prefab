@@ -306,6 +306,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedMultiplier: 2
   staminaPerSecond: 1
+  toggleInput: 0
+  timeStillBeforeCancel: 0.25
   movementController: {fileID: 5952785220977947007}
   stamina: {fileID: 3101386227917314236}
   onActionStart:
@@ -551,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14923afd798d5a14b9301be044be64cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stamina:
+  values:
     name: New Resource
     max: 3
     current: 3
@@ -1007,7 +1009,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 215
+    m_Bits: 727
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
