@@ -19,15 +19,12 @@ public class StateController : MonoBehaviour
         current = newState;
         current.enabled = true;
     }
-
-    private void Start()
+    private void Awake()
     {
-        // Pre-emptively disable all attached states
         foreach (StateFunction f in GetComponentsInChildren<StateFunction>()) f.enabled = false;
-        // Enable the starting state
-        if (currentState != null) currentState.enabled = true;
-
     }
+    private void OnEnable() => currentState.enabled = true;
+    private void OnDisable() => currentState.enabled = false;
 }
 
 public abstract class StateFunction : MonoBehaviour
