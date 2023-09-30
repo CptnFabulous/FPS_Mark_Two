@@ -21,15 +21,7 @@ public class MovementController : MonoBehaviour
     public Vector2 movementInput { get; private set; }
     public Vector3 movementVelocity { get; private set; }
 
-    public void OnMove(InputValue input)
-    {
-        if (!canMove)
-        {
-            movementInput = Vector2.zero;
-            return;
-        }
-        movementInput = input.Get<Vector2>();
-    }
+    public void OnMove(InputValue input) => movementInput = canMove ? input.Get<Vector2>() : Vector2.zero;
 
     float CurrentMoveSpeed
     {
@@ -93,34 +85,7 @@ public class MovementController : MonoBehaviour
         groundingData = newGroundingData; // Update grounding data
     }
     #endregion
-    /*
-    #region Dodging
-    [Header("Dodging")]
-    public float dodgeSpeed = 10;
-    public float dodgeDistance = 5;
-    public float dodgeCooldown = 1;
-    public UnityEvent onDodge;
-    float lastTimeDodged;
-    void OnDodge()
-    {
-        // If player is standing on the ground
-        // If cooldown time has elapsed
-        // If player is moving in a direction
-        bool cooldownElapsed = Time.time - lastTimeDodged >= dodgeCooldown;
-        if (!(isGrounded && cooldownElapsed && movementInput.magnitude > 0))
-        {
-            return;
-        }
-
-        Vector3 movement = new Vector3(movementInput.x, 0, movementInput.y) * dodgeDistance;
-        movement = transform.rotation * movement;
-        rb.AddForce(movement, ForceMode.Impulse);
-        onDodge.Invoke();
-        lastTimeDodged = Time.time;
-    }
-    #endregion
-    */
-
+    
     #region Cosmetics
     [Header("Cosmetics")]
     public Transform upperBodyAnimationTransform;
