@@ -9,5 +9,7 @@ public abstract class AIStateFunction : StateFunction
     public AI rootAI => _root ??= GetComponentInParent<AI>();
     public NavMeshAgent navMeshAgent => rootAI.agent;
     public AIAim aim => rootAI.aiming;
+    public FieldOfView visionCone => targetManager.visionCone;
     public AITargetManager targetManager => rootAI.targeting;
+    public Vector3 standingPosition => navMeshAgent.transform.position;
 }
