@@ -8,7 +8,6 @@ public class EngageTarget : TravelToDestination
 {
     [Header("Attack")]
     [SerializeField] AIGunAttack currentAttack;
-    [SerializeField] AIStateFunction onTargetEliminated;
 
     [Header("Seeking target")]
     [SerializeField] float checkDistance = 30;
@@ -21,24 +20,23 @@ public class EngageTarget : TravelToDestination
     [SerializeField, Min(0), Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
     float coverDistance = 2;
 
-
-    [Header("On sight lost")]
-    public AIStateFunction onFailedToReacquireTarget;
-
-    float lostSightTimer;
-    float waitTimeBeforeFindingNewPosition = 5;
-
-
-    IEnumerator seekNewTargetCoroutine;
+    [Header("Alternate states")]
+    [SerializeField] AIStateFunction onTargetEliminated;
+    [SerializeField] AIStateFunction onTargetLost;
 
     public Character target => targetManager.target;
     public float maxMoveDistance => checkDistance > 0 ? checkDistance : Mathf.Infinity;
 
     protected override void OnEnable()
     {
+        // I might need to change this so that it only picks a new position during OnEnable() if a certain amount of time has passed between switching away from this state and returning to it.
+        // So if the AI only switches for like a second (e.g. to look around) and doesn't actually need to change position, it doesn't constantly zip around like a maniac
+        
+        
         base.OnEnable();
         //currentAttack.enabled = true;
     }
+
     private void OnDisable()
     {
         currentAttack.enabled = false;
@@ -50,38 +48,15 @@ public class EngageTarget : TravelToDestination
             SwitchToState(onTargetEliminated);
             return;
         }
-        
+
         // Check if the AI can currently see the target
         bool targetIsVisible = targetManager.canSeeTarget == ViewStatus.Visible;
         currentAttack.enabled = targetIsVisible;
         if (targetIsVisible == false)
         {
-            if (seekNewTargetCoroutine == null)
-            {
-                seekNewTargetCoroutine = targetManager.QuickLookForLostTarget(() => SwitchToState(onFailedToReacquireTarget));
-                StartCoroutine(seekNewTargetCoroutine);
-            }
+            SwitchToState(onTargetLost);
+            return;
         }
-        else if (seekNewTargetCoroutine != null)
-        {
-            StopCoroutine(seekNewTargetCoroutine);
-            seekNewTargetCoroutine = null;
-        }
-        
-        /*
-        // If line of sight is blocked, wait several seconds in case the player has taken cover.
-        // If they still haven't moved, the player is either turtling or flanking. Seek a new position (I'll need to change the code to allow alternate tactics such as throwing a grenade)
-        bool canShootAt = IsPathViable();
-        lostSightTimer = canShootAt ? 0 : lostSightTimer + Time.deltaTime;
-        if (lostSightTimer > waitTimeBeforeFindingNewPosition)
-        {
-            NavMeshPath path = GetPath();
-            if (path != null)
-            {
-                navMeshAgent.path = path;
-            }
-        }
-        */
     }
 
     protected override NavMeshPath GetPath()

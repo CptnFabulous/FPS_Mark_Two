@@ -250,12 +250,12 @@ MonoBehaviour:
   destinationThreshold: 0.5
   endStateOnceDestinationReached: 1
   currentAttack: {fileID: 1904696813103451037}
-  onTargetEliminated: {fileID: 0}
   checkDistance: 100
   minTargetDistance: 5
   maxTargetDistance: 30
   coverDistance: 3
-  onFailedToReacquireTarget: {fileID: 5691326587957119647}
+  onTargetEliminated: {fileID: 0}
+  onTargetLost: {fileID: 5691326587957119647}
 --- !u!1 &7555169701559161300
 GameObject:
   m_ObjectHideFlags: 0

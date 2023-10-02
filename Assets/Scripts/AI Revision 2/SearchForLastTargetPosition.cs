@@ -9,6 +9,7 @@ public class SearchForLastTargetPosition : AIStateFunction
     public StateFunction onFail;
 
     IEnumerator currentCoroutine;
+    bool notUpdatingLookAutomatically = false; // Is the AI currently updating where they're looking?
 
     private void OnEnable()
     {
@@ -18,12 +19,11 @@ public class SearchForLastTargetPosition : AIStateFunction
     private void Update()
     {
         //navMeshAgent.destination = targetManager.target.transform.position;
-        if (testThing == false)
+        if (notUpdatingLookAutomatically == false)
         {
             aim.LookInNeutralDirection();
         }
         
-
         // If the target becomes visible again, end coroutine and switch to the success state
         if (targetManager.canSeeTarget == ViewStatus.Visible)
         {
@@ -35,21 +35,25 @@ public class SearchForLastTargetPosition : AIStateFunction
     private void OnDisable()
     {
         StopCoroutine(currentCoroutine);
-        testThing = false;
+        notUpdatingLookAutomatically = false;
     }
 
-    bool testThing = false;
 
     IEnumerator SearchCoroutine()
     {
+        Debug.Log($"{this}: looking around in case target simply moved out of its field of vision.");
+        notUpdatingLookAutomatically = true;
+        yield return targetManager.QuickLookForLostTarget(null);
+
         Debug.Log($"{this}: travelling to target's last-known position");
         navMeshAgent.SetDestination(targetManager.lastKnownPosition);
+        notUpdatingLookAutomatically = false;
         yield return new WaitUntil(() => rootAI.reachedDestination);
 
         Debug.Log($"{this}: looking around target's last-known position");
-        testThing = true;
+        notUpdatingLookAutomatically = true;
         yield return aim.SweepSurroundings();
-        testThing = false;
+        notUpdatingLookAutomatically = false;
 
         Debug.Log($"{this}: Target not at last-known position");
         SwitchToState(onFail);
