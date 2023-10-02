@@ -16,10 +16,12 @@ public class SweepAreaForTarget : AIStateFunction
     List<AIGridPoints.GridPoint> pointsToCheck;
     float lastTimeDestinationUpdated;
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
+
         Debug.Log($"{rootAI}: starting search");
-        
+
         //if (pointsToCheck == null) GetPoints();
         StartNewSearch();
     }

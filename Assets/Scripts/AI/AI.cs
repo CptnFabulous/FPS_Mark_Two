@@ -17,6 +17,9 @@ public class AI : Character
     public AIAim aiming;
     public AITargetManager targeting;
 
+    [Header("Animations and feedback")]
+    public AIStatusIcon statusIcon;
+
     public override Transform LookTransform => aiming.viewAxis;
     public override Vector3 aimDirection => LookTransform.forward;
     public override LayerMask lookMask => aiming.Stats.lookDetection;

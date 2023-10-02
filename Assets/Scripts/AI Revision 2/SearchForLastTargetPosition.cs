@@ -11,8 +11,9 @@ public class SearchForLastTargetPosition : AIStateFunction
     IEnumerator currentCoroutine;
     bool notUpdatingLookAutomatically = false; // Is the AI currently updating where they're looking?
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         currentCoroutine = SearchCoroutine();
         StartCoroutine(currentCoroutine);
     }

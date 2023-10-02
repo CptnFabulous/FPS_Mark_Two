@@ -17,13 +17,14 @@ public abstract class TravelToDestination : AIStateFunction
     // Avoiding an incoming attack
     // Flanking maneuver
 
-    protected virtual void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
+
         navMeshAgent.isStopped = false;
 
         NavMeshPath path = GetPath();
         if (path != null) navMeshAgent.path = path;
-
     }
 
 

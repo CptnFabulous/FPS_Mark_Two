@@ -23,8 +23,10 @@ public class MoveAlongPatrolRoute : AIStateFunction
 
     //public override Status GetStatus() => (route != null) ? Status.Active : Status.Blocked;
 
-    protected void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
+
         // Get the index of the closest point on the route.
         int bestIndex = 0;
         float bestLength = Mathf.Infinity;
