@@ -443,7 +443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 5952785220977947003}
   equippedWeapons: []
-  equippedWeaponIndex: 0
+  offhand: {fileID: 0}
   holdingSocket: {fileID: 5952785222623807978}
   ammo: {fileID: 7479822334647491782}
   weaponSelector: {fileID: 1942817378809579715}
@@ -452,6 +452,7 @@ MonoBehaviour:
   standingAccuracy: 1
   swaySpeed: 0.5
   toggleADS: 0
+  quickSwitchModes: 1
   onDraw:
     m_PersistentCalls:
       m_Calls:
@@ -915,6 +916,10 @@ MonoBehaviour:
     max: 90
     current: 90
     criticalLevel: 15
+  - name: Smoke Grenades
+    max: 3
+    current: 3
+    criticalLevel: 1
 --- !u!1 &5952785222623807981
 GameObject:
   m_ObjectHideFlags: 0

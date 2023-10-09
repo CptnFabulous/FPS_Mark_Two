@@ -38,6 +38,9 @@ TextureImporter:
   - first:
       213: -7510832469597688673
     second: weapon mode icons_11
+  - first:
+      213: 3888079278410702650
+    second: throw smoke grenade
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -166,12 +169,12 @@ TextureImporter:
       name: pistol_semiauto
       rect:
         serializedVersion: 2
-        x: 1
-        y: 571
+        x: 0
+        y: 580
         width: 272
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -188,11 +191,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 293
-        y: 571
+        y: 580
         width: 273
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -209,11 +212,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 587
-        y: 571
+        y: 580
         width: 272
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -230,11 +233,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 880
-        y: 571
+        y: 580
         width: 272
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -251,11 +254,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 286
+        y: 295
         width: 272
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -272,11 +275,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 293
-        y: 286
+        y: 295
         width: 273
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -293,11 +296,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 586
-        y: 285
+        y: 295
         width: 273
         height: 273
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -314,11 +317,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 880
-        y: 285
+        y: 295
         width: 272
         height: 273
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -335,11 +338,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
-        y: 1
+        y: 10
         width: 272
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -356,11 +359,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 293
-        y: 0
+        y: 9
         width: 273
         height: 273
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -377,11 +380,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 586
-        y: 0
+        y: 10
         width: 273
         height: 272
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -398,7 +401,28 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 880
-        y: 0
+        y: 6
+        width: 272
+        height: 272
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9ce82ab9a924c790800000000000000
+      internalID: -7510832469597688673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: throw smoke grenade
+      rect:
+        serializedVersion: 2
+        x: 1172
+        y: 579
         width: 272
         height: 272
       alignment: 0
@@ -408,8 +432,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f9ce82ab9a924c790800000000000000
-      internalID: -7510832469597688673
+      spriteID: a3f1a38f08b35f530800000000000000
+      internalID: 3888079278410702650
       vertices: []
       indices: 
       edges: []

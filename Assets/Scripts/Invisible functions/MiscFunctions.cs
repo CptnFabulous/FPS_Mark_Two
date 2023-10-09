@@ -53,13 +53,24 @@ public readonly struct MiscFunctions
     }
     #endregion
 
-    public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, Collider[] exceptions)
+    public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit rh, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
+    {
+        List<RaycastHit> list = RaycastAllWithExceptions(origin, direction, distance, layerMask, exceptions);
+        bool hit = list.Count > 0;
+        if (hit)
+        {
+            list.Sort((a, b) => a.distance.CompareTo(b.distance)); // Sort entries by distance
+        }
+        rh = hit ? list[0] : new RaycastHit();
+        return hit;
+    }
+    public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
     {
         List<RaycastHit> list = new List<RaycastHit>(Physics.RaycastAll(origin, direction, distance, layerMask));
-        for (int i = 0; i < exceptions.Length; i++)
+        foreach (Collider c in exceptions)
         {
             // Remove all returned values where the collider is part of the exceptions list
-            list.RemoveAll((rh) => rh.collider == exceptions[i]);
+            list.RemoveAll((rh) => rh.collider == c);
         }
         return list;
     }
