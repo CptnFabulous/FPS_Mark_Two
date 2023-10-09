@@ -5,9 +5,6 @@ using UnityEngine.Events;
 
 public class PlayerHealthHUD : MonoBehaviour
 {
-    
-
-    public Player playerTracking;
     public ResourceMeter healthMeter;
     public UnityEvent damageEffects;
     public UnityEvent healEffects;
@@ -17,8 +14,12 @@ public class PlayerHealthHUD : MonoBehaviour
     public Transform screenCentre;
     List<DirectionalHUDIndicator> currentIndicators = new List<DirectionalHUDIndicator>();
 
+    Player playerTracking;
+
     private void Start()
     {
+        playerTracking = GetComponentInParent<Player>();
+
         healthMeter.Refresh(playerTracking.health.data);
         Notification<DamageMessage>.Receivers += CheckToRunEffects;
 
