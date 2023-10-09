@@ -45,33 +45,21 @@ public class GunGeneralStats : MonoBehaviour
 
             // Calculates a direction for the projectile, given random spread angles
             Vector3 spreadAngles = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * shotSpread;
-            Vector3 projectileDirection = Quaternion.LookRotation(aimDirection, worldUp) * Quaternion.Euler(spreadAngles) * Vector3.forward;
-            
-            // Calculates a point out based on the angle and range, to aim the projectile if the subsequent raycast fails
-            Vector3 hitPoint;
-            List<RaycastHit> thingsHit = MiscFunctions.RaycastAllWithExceptions(origin, projectileDirection, range, projectilePrefab.detection, user.health.HitboxColliders);
-            if (thingsHit.Count > 0)
-            {
-                thingsHit.Sort((a, b) => a.distance.CompareTo(b.distance)); // Sort entries by distance
-                hitPoint = thingsHit[0].point;
+            Vector3 castDirection = Quaternion.LookRotation(aimDirection, worldUp) * Quaternion.Euler(spreadAngles) * Vector3.forward;
 
-                // If for some reason the hitpoint is behind the muzzle, projectile has no distance to move. Activate OnHit immediately and proceed to next projectile
-                if (Vector3.Angle(hitPoint - muzzle.position, projectileDirection) > 90)
-                {
-                    newProjectile.transform.position = hitPoint;
-                    newProjectile.transform.LookAt(transform.position + projectileDirection, worldUp);
-                    newProjectile.OnHit(thingsHit[0]);
-                    continue;
-                }
-            }
-            else
+            WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, newProjectile.detection, user.health.HitboxColliders, out _, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
+            if (behindMuzzle)
             {
-                hitPoint = origin + (projectileDirection * range);
+                // If muzzle is close enough, projectile has no distance to move. Activate OnHit immediately and proceed to next projectile
+                newProjectile.transform.position = hitPoint;
+                newProjectile.transform.LookAt(transform.position + castDirection, worldUp);
+                newProjectile.OnHit(rh);
             }
-
-            // Spawn projectile at muzzle and rotate it towards the hit point
-            newProjectile.transform.position = muzzle.position;
-            newProjectile.transform.LookAt(hitPoint, worldUp);
+            else // Regular launch. Spawn projectile at muzzle and rotate it towards the hit point
+            {
+                newProjectile.transform.position = muzzle.position;
+                newProjectile.transform.LookAt(hitPoint, worldUp);
+            }
         }
 
         if (user is Player player && recoilMagnitude > 0)

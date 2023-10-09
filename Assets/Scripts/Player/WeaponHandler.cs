@@ -39,14 +39,7 @@ public class WeaponHandler : MonoBehaviour
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
-    public Vector3 AimDirection
-    {
-        get
-        {
-            Quaternion sway = AIAim.AimSway(aimSwayAngle, swaySpeed);
-            return aimAxis.rotation * sway * Vector3.forward;
-        }
-    }
+    public Vector3 AimDirection => aimAxis.rotation * WeaponUtility.AimSway(aimSwayAngle, swaySpeed) * Vector3.forward;
     public float aimSwayAngle
     {
         get

@@ -44,32 +44,7 @@ public class WeaponModeInfo : MonoBehaviour
         //magazineMeter.gameObject.SetActive(isValid);
         //ammoReserveMeter.gameObject.SetActive(isValid);
 
-        bool consumesAmmo = rangedAttack.consumesAmmo;
-        int totalAmmo = Mathf.RoundToInt(mode.User.weaponHandler.ammo.GetValues(rangedAttack.stats.ammoType).current);
-        //int totalAmmo = Mathf.RoundToInt(mode.User.weaponHandler.ammo[rangedAttack.stats.ammoType].current);
-
-        if (rangedAttack.magazine != null)
-        {
-            int ammoInMagazine = Mathf.RoundToInt(rangedAttack.magazine.ammo.current);
-
-            if (consumesAmmo)
-            {
-                int reserve = totalAmmo - ammoInMagazine;
-                ammoText.text = $"{ammoInMagazine}/{reserve}";
-            }
-            else
-            {
-                ammoText.text = $"{ammoInMagazine}";
-            }
-        }
-        else if (consumesAmmo)
-        {
-            ammoText.text = $"{totalAmmo}";
-        }
-        else
-        {
-            ammoText.text = "Infinite";
-        }
+        ammoText.text = WeaponUtility.AmmoCounterHUDDisplay(rangedAttack, "Infinite");
 
         /*
 

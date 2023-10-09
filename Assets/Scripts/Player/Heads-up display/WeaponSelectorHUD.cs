@@ -109,24 +109,6 @@ public class WeaponSelectorHUD : MonoBehaviour
         AmmunitionType ammoType = mode.stats.ammoType;
         ammoIcon.sprite = (ammoType != null) ? ammoType.icon : null;
 
-        // If weapon consumes ammo, show reserve
-        if (mode.consumesAmmo)
-        {
-            int ammoCurrent = (int)mode.User.ammo.GetValues(ammoType).current;
-
-            if (mode.magazine != null) // If magazine is present, change ammo bar to show reserve excluding magazine amount
-            {
-                int magazineCurrent = (int)mode.magazine.ammo.current;
-                ammoCapacity.text = magazineCurrent + "/" + (ammoCurrent - magazineCurrent);
-            }
-            else
-            {
-                ammoCapacity.text = ammoCurrent.ToString();
-            }
-        }
-        else
-        {
-            ammoCapacity.text = "INFINITE";
-        }
+        ammoCapacity.text = WeaponUtility.AmmoCounterHUDDisplay(mode, "INFINITE");
     }
 }

@@ -57,7 +57,7 @@ public class AIAim : MonoBehaviour
     /// <summary>
     /// The direction the AI is looking in, converted into an easy Vector3 value.
     /// </summary>
-    public Vector3 AimDirection => lookRotation * AimSway(Stats.swayAngle, Stats.swaySpeed) * Vector3.forward;
+    public Vector3 AimDirection => lookRotation * WeaponUtility.AimSway(Stats.swayAngle, Stats.swaySpeed) * Vector3.forward;
     /// <summary>
     /// A direction directly up perpendicular to the direction the AI is looking.
     /// </summary>
@@ -232,24 +232,7 @@ public class AIAim : MonoBehaviour
 
 
 
-    /// <summary>
-    /// Multiply this by a Quaternion and a Vector3 to get an aim direction with a smooth sway for accuracy deviation.
-    /// </summary>
-    /// <param name="maxSwayAngle"></param>
-    /// <param name="swaySpeed"></param>
-    /// <returns></returns>
-    public static Quaternion AimSway(float maxSwayAngle, float swaySpeed)
-    {
-        // Generates changing values from noise
-        float t = Time.time * swaySpeed;
-        float noiseX = Mathf.PerlinNoise(t, 0);
-        float noiseY = Mathf.PerlinNoise(0, t);
-        // Converts values from 0 - 1 to -1 - 1
-        Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
-        angles *= maxSwayAngle; //  Multiplies by accuracy value
-        // Creates euler angles and combines with current aim direction
-        return Quaternion.Euler(angles.y, angles.x, 0);
-    }
+    
 
     [System.Serializable]
     public struct AimValues
