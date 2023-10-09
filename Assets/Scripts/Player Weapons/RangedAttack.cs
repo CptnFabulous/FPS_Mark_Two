@@ -9,7 +9,6 @@ public class RangedAttack : WeaponMode
     public GunMagazine magazine;
     public GunADS optics;
 
-
     public bool isFiring { get; private set; }
     public int shotsInBurst { get; private set; }
 
@@ -93,7 +92,6 @@ public class RangedAttack : WeaponMode
         }
 
         stats.Shoot(User);
-        //stats.Shoot(User.controller, User.aimAxis.position, User.AimDirection, User.aimAxis.up);
 
         shotsInBurst++;
         yield return new WaitForSeconds(controls.ShotDelay);
@@ -127,14 +125,14 @@ public class RangedAttack : WeaponMode
         optics.enabled = false;
         magazine.enabled = false;
     }
-    public override void OnPrimaryInputChanged()
+    protected override void OnPrimaryInputChanged(bool held)
     {
-        if (PrimaryHeld && isFiring == false && NotReloading)
+        if (held && isFiring == false && NotReloading)
         {
             StartCoroutine(FireBurst());
         }
     }
-    public override void OnSecondaryInputChanged()
+    protected override void OnSecondaryInputChanged()
     {
         if (optics == null)
         {
@@ -149,5 +147,10 @@ public class RangedAttack : WeaponMode
         {
             magazine.OnReloadPressed();
         }
+    }
+
+    protected override void OnInterrupt()
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -116,6 +116,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Offhand Attack",
+                    "type": "Button",
+                    "id": "2c4fb4ee-1d42-43ae-abad-7ed75f2f487f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)"
                 }
             ],
             "bindings": [
@@ -536,6 +544,28 @@
                     "action": "Scroll Weapon",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "5caac157-5fc5-4370-aa56-aac93da82759",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Offhand Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a9728102-55d3-4a53-95ef-f27f30e49c15",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Offhand Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

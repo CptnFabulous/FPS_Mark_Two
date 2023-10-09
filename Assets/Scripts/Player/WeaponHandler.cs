@@ -10,7 +10,9 @@ public class WeaponHandler : MonoBehaviour
 
     [Header("Weapons")]
     public Weapon[] equippedWeapons;
-    [SerializeField] int equippedWeaponIndex;
+
+    public WeaponMode offhand;
+
     public Transform holdingSocket;
     public AmmunitionInventory ammo;
     public RadialMenu weaponSelector;
@@ -27,7 +29,9 @@ public class WeaponHandler : MonoBehaviour
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
 
-    public bool PrimaryHeld { get; private set; }
+    int equippedWeaponIndex = 0;
+
+    //public bool PrimaryHeld { get; private set; }
     public bool SecondaryActive { get; private set; }
     public bool isSwitching { get; private set; }
 
@@ -105,20 +109,26 @@ public class WeaponHandler : MonoBehaviour
     void OnFire(InputValue input)
     {
         if (!WeaponReady) return;
-        PrimaryHeld = input.isPressed;
-        CurrentWeapon.CurrentMode.OnPrimaryInputChanged();
+        //PrimaryHeld = input.isPressed;
+        CurrentWeapon.CurrentMode.SetPrimaryInput(input.isPressed);
     }
     void OnADS(InputValue input)
     {
         if (!WeaponReady) return;
 
         SecondaryActive = MiscFunctions.GetToggleableInput(SecondaryActive, input.isPressed, toggleADS);
-        CurrentWeapon.CurrentMode.OnSecondaryInputChanged();
+        CurrentWeapon.CurrentMode.SetSecondaryInput(SecondaryActive);
     }
     void OnReload()
     {
         if (!WeaponReady) return;
         CurrentWeapon.CurrentMode.OnTertiaryInput();
+    }
+    void OnOffhandAttack(InputValue input)
+    {
+        if (!WeaponReady) return;
+        if (offhand == null) return;
+        offhand.SetPrimaryInput(input.isPressed);
     }
     void OnSelectWeapon(InputValue input)
     {
@@ -159,13 +169,6 @@ public class WeaponHandler : MonoBehaviour
             int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Length);
             StartCoroutine(SwitchWeapon(newIndex));
         }
-    }
-    public void CancelInputs()
-    {
-        PrimaryHeld = false;
-        CurrentWeapon.CurrentMode.OnPrimaryInputChanged();
-        SecondaryActive = false;
-        CurrentWeapon.CurrentMode.OnSecondaryInputChanged();
     }
     #endregion
 

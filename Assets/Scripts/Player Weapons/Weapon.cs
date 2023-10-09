@@ -14,10 +14,7 @@ public class Weapon : MonoBehaviour
     {
         get
         {
-            if (modes.Length < 1)
-            {
-                modes = new WeaponMode[1];
-            }
+            currentModeIndex = Mathf.Clamp(currentModeIndex, 0, modes.Length - 1);
             return modes[currentModeIndex];
         }
     }
@@ -88,17 +85,5 @@ public class Weapon : MonoBehaviour
 
         CurrentMode.OnSwitchTo();
         isSwitching = false;
-
-        /*
-        isSwitching = true;
-        CurrentMode.OnSwitchFrom();
-        modes[newModeIndex].onSwitch.Invoke();
-
-        yield return new WaitForSeconds(modes[newModeIndex].switchSpeed);
-
-        currentModeIndex = newModeIndex;
-        CurrentMode.OnSwitchTo();
-        isSwitching = false;
-        */
     }
 }
