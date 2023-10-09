@@ -100,58 +100,45 @@ public class HeadsUpDisplay : MonoBehaviour
     public void UpdateWeaponHUD(Weapon currentWeapon)
     {
         weaponInterface.gameObject.SetActive(currentWeapon != null);
-        if (currentWeapon != null)
-        {
-            SetWeaponModeFeatures(currentWeapon.CurrentMode);
-        }
-    }
-    public void HideWeaponHUD()
-    {
-        weaponInterface.gameObject.SetActive(false);
-    }
-    public void SetWeaponModeFeatures(WeaponMode currentMode)
-    {
-        weaponModeName.text = currentMode.name;
-        weaponModeIcon.sprite = currentMode.icon;
-        RefreshModeValues(currentMode);
-    }
-    public void RefreshModeValues(WeaponMode currentMode)
-    {
-        
-        
+        if (currentWeapon == null) return;
+
+        WeaponMode mode = currentWeapon.CurrentMode;
+        weaponModeName.text = mode.name;
+        weaponModeIcon.sprite = mode.icon;
+
+
+
+
+
+
         // Check if attack is a ranged mode
-        RangedAttack rangedMode = currentMode as RangedAttack;
-        magazineMeter.gameObject.SetActive(rangedMode != null);
-        ammoReserve.gameObject.SetActive(rangedMode != null);
-        if (rangedMode != null)
-        {
-            RangedAttackUIUpdate(rangedMode);
-        }
-    }
-    public void RangedAttackUIUpdate(RangedAttack currentMode)
-    {
+        RangedAttack rangedAttack = mode as RangedAttack;
+        magazineMeter.gameObject.SetActive(rangedAttack != null);
+        ammoReserve.gameObject.SetActive(rangedAttack != null);
+
+        if (rangedAttack == null) return;
+
         // If weapon consumes ammo, show reserve
-        bool consumesAmmo = currentMode.consumesAmmo;
+        bool consumesAmmo = rangedAttack.consumesAmmo;
         ammoReserve.gameObject.SetActive(consumesAmmo);
         if (consumesAmmo)
         {
-            ammoReserve.gameObject.SetActive(true);
-            Resource remainingAmmo = controller.weapons.ammo.GetValues(currentMode.stats.ammoType);
+            Resource remainingAmmo = controller.weapons.ammo.GetValues(rangedAttack.stats.ammoType);
 
-            if (currentMode.magazine != null) // If magazine is present, change ammo bar to show reserve excluding magazine amount
+            if (rangedAttack.magazine != null) // If magazine is present, change ammo bar to show reserve excluding magazine amount
             {
-                remainingAmmo.current -= currentMode.magazine.ammo.current;
-                remainingAmmo.max -= (int)currentMode.magazine.ammo.max;
+                remainingAmmo.current -= rangedAttack.magazine.ammo.current;
+                remainingAmmo.max -= (int)rangedAttack.magazine.ammo.max;
             }
 
             ammoReserve.Refresh(remainingAmmo);
         }
 
         // If weapon has a magazine, show values
-        magazineMeter.gameObject.SetActive(currentMode.magazine != null);
-        if (currentMode.magazine != null)
+        magazineMeter.gameObject.SetActive(rangedAttack.magazine != null);
+        if (rangedAttack.magazine != null)
         {
-            magazineMeter.Refresh(currentMode.magazine.ammo);
+            magazineMeter.Refresh(rangedAttack.magazine.ammo);
         }
     }
 
@@ -165,7 +152,7 @@ public class HeadsUpDisplay : MonoBehaviour
     }
     private void LateUpdate()
     {
-        UpdateWeaponHUD(controller.weapons.CurrentWeapon);
+        //UpdateWeaponHUD(controller.weapons.CurrentWeapon);
         CheckIfLookingAtDamageableEntity();
     }
 
