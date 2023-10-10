@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class SearchForLastTargetPosition : AIStateFunction
 {
+    public float timeToWaitBeforeReacquiringTarget = 5;
     public StateFunction onSuccess;
     public StateFunction onFail;
 
@@ -42,11 +43,17 @@ public class SearchForLastTargetPosition : AIStateFunction
 
     IEnumerator SearchCoroutine()
     {
-        Debug.Log($"{this}: looking around in case target simply moved out of its field of vision.");
-        notUpdatingLookAutomatically = true;
-        yield return targetManager.QuickLookForLostTarget(null);
+        Debug.Log($"{this}: target lost, checking if outside field of view");
+        // Look towards the target's last-known position.
+        yield return aim.RotateTowards(targetManager.lastHit.point);
 
-        Debug.Log($"{this}: travelling to target's last-known position");
+        // The AI now knows the target is blocked by cover. Wait for several seconds
+        // (in case the target has simply taken cover, or to allow the player to perform a flanking maneuver) 
+        Debug.Log($"{this}: target must be behind cover, waiting cautiously");
+        yield return new WaitForSeconds(timeToWaitBeforeReacquiringTarget);
+
+        // Seek new target position
+        Debug.Log($"{this}: cannot see target, travelling to target's last-known position");
         navMeshAgent.SetDestination(targetManager.lastKnownPosition);
         notUpdatingLookAutomatically = false;
         yield return new WaitUntil(() => rootAI.reachedDestination);
