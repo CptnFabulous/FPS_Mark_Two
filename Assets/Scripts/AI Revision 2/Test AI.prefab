@@ -45,6 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 690883873600460605, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundBytes: {fileID: 0}
+  timeToWaitBeforeReacquiringTarget: 5
   onSuccess: {fileID: 8339017120048449204}
   onFail: {fileID: 2618743024015922463}
 --- !u!1 &561253031028663283
@@ -423,7 +424,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  timeToWaitBeforeReacquiringTarget: 5
   controlling: {fileID: 7555169701559161296}
   visionCone: {fileID: 3071744553832184711}
 --- !u!114 &7555169701559161295
