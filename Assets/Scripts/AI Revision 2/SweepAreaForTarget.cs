@@ -19,9 +19,7 @@ public class SweepAreaForTarget : AIStateFunction
     protected override void OnEnable()
     {
         base.OnEnable();
-
         Debug.Log($"{rootAI}: starting search");
-
         //if (pointsToCheck == null) GetPoints();
         StartNewSearch();
     }
@@ -29,9 +27,9 @@ public class SweepAreaForTarget : AIStateFunction
     {
         aim.LookInNeutralDirection();
         
+        // If the AI can see their target, switch to the success state.
         if (targetManager.canSeeTarget == ViewStatus.Visible)
         {
-            // Target found
             Debug.Log($"{rootAI}: found target");
             SwitchToState(successState);
             pointsToCheck = null;
@@ -42,7 +40,7 @@ public class SweepAreaForTarget : AIStateFunction
         pointsToCheck.RemoveAll((point) => visionCone.VisionConeCheck(point.position) == ViewStatus.Visible);
         // Also remove points that are really close to the agent 
         pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) < distanceForInstinctCheck);
-        // If all points have been checked, switch to the fail state (since the target found check occurred earlier in the frame)
+        // If all points have been checked, switch to the fail state (or start the search again if no fail state is present)
         if (pointsToCheck.Count <= 0)
         {
             Debug.Log($"{rootAI}: all points have been searched");
@@ -58,39 +56,27 @@ public class SweepAreaForTarget : AIStateFunction
             return;
         }
 
+        // If the AI has reached the current destination but still has more points to check, find the next one to go to.
         if (rootAI.reachedDestination) GetNextDestination();
     }
     private void OnDrawGizmosSelected()
     {
-        if (pointsToCheck != null)
+        if (pointsToCheck == null) return;
+        foreach (AIGridPoints.GridPoint gridPoint in pointsToCheck)
         {
-            foreach (AIGridPoints.GridPoint gridPoint in pointsToCheck)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawRay(gridPoint.position, navMeshAgent.transform.up);
-            }
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(gridPoint.position, navMeshAgent.transform.up);
         }
     }
 
     void StartNewSearch()
     {
+        // Get a copy of the cached grid points
         pointsToCheck = new List<AIGridPoints.GridPoint>(AIGridPoints.Current.gridPoints);
-
-        // Ignore paths the AI cannot reach
-        NavMeshPath path = navMeshAgent.path;
-        pointsToCheck.RemoveAll((p) =>
-        {
-            bool canReach = navMeshAgent.CalculatePath(p.position, path) && path.status == NavMeshPathStatus.PathComplete;
-            return canReach == false;
-        });
-
         // Remove all points outside the search range
         if (maxSearchDistance > 0)
         {
-            pointsToCheck.RemoveAll((point) =>
-            {
-                return Vector3.Distance(point.position, standingPosition) > maxSearchDistance;
-            });
+            pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) > maxSearchDistance);
         }
         // Assign a new destination
         GetNextDestination();
@@ -99,21 +85,34 @@ public class SweepAreaForTarget : AIStateFunction
     {
         if (pointsToCheck.Count <= 0) return;
 
-        // Sort points by distance
+        // Sort points by distance (in reverse order since we need to iterate backwards through the array)
         pointsToCheck.Sort((a, b) =>
         {
             float aDis = (a.position - standingPosition).sqrMagnitude;
             float bDis = (b.position - standingPosition).sqrMagnitude;
-            return aDis.CompareTo(bDis);
+            return bDis.CompareTo(aDis);
         });
 
-        AIGridPoints.GridPoint pointToTravelTo = pointsToCheck.First((p) =>
+        // Ignore paths the AI cannot reach
+        NavMeshPath path = navMeshAgent.path;
+        for (int i = pointsToCheck.Count - 1; i >= 0; i--)
         {
-            // Check if distance is not too close to the current position
-            float distance = Vector3.Distance(navMeshAgent.transform.position, p.position);
-            return distance > distanceForInstinctCheck;
-        });
-        navMeshAgent.destination = pointToTravelTo.position;
+            Vector3 position = pointsToCheck[i].position;
+            // Check if agent can reach point, and remove the entry if they can't
+            bool canReach = navMeshAgent.CalculatePath(position, path) && path.status == NavMeshPathStatus.PathComplete;
+            if (canReach == false)
+            {
+                pointsToCheck.RemoveAt(i);
+                continue;
+            }
+            // Check if the position is not too close to the agent's current position
+            if (AIAction.NavMeshPathDistance(path) <= distanceForInstinctCheck) continue;
+
+            // We have the next destination! Assign 'path' because it was already generated.
+            navMeshAgent.path = path;
+            //navMeshAgent.destination = position;
+            break;
+        }
     }
 }
 
