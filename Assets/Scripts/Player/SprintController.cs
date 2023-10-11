@@ -40,7 +40,7 @@ public class SprintController : MonoBehaviour
     CrouchController crouch => movementController.crouchController;
     bool consumesStamina => staminaPerSecond > 0 && stamina != null; // Does this ability consume stamina?
     bool staminaPresent => !consumesStamina || stamina.values.current > 0; // Can always sprint if no stamina value is present (or is set to not consume stamina)
-    bool isMoving => standStillTimer < timeStillBeforeCancel;
+    bool isMoving => standStillTimer <= timeStillBeforeCancel;
     bool canSprint => isMoving && staminaPresent;
 
     /// <summary>
