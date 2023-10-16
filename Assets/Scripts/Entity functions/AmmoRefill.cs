@@ -6,7 +6,9 @@ public class AmmoRefill : MonoBehaviour
 {
     public Interactable interactable;
     public AmmunitionType type;
+    [Tooltip("If less than one, restores all ammo")]
     public int amountToRestore;
+    public bool limitedSupply;
 
 
     private void Awake()
@@ -15,6 +17,7 @@ public class AmmoRefill : MonoBehaviour
         interactable.canInteract += CanInteract;
     }
     public bool CanInteract(Player player) => player.weapons.ammo.GetStock(type) < player.weapons.ammo.GetMax(type);
+    // public bool CanInteract(Player player) => player.weapons.ammo[type].current < player.weapons.ammo[type].max;
     public void RefillAmmo(Player player)
     {
         int amount = amountToRestore;
@@ -23,5 +26,8 @@ public class AmmoRefill : MonoBehaviour
             amount = int.MaxValue;
         }
         player.weapons.ammo.Collect(type, amount, out amount);
+        // player.weapons.ammo[type].Restore(amount, out amount);
+
+        if (limitedSupply) Destroy(gameObject);
     }
 }
