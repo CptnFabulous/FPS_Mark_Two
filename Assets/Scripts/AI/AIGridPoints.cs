@@ -6,6 +6,20 @@ using UnityEngine.SceneManagement;
 
 public class AIGridPoints : MonoBehaviour
 {
+    public struct GridPoint
+    {
+        public Vector3 position => navMeshData.position;
+        public Vector3[] coverDirections { get; private set; }
+        public bool isCover => coverDirections.Length > 0;
+        public NavMeshHit navMeshData { get; private set; }
+
+        public GridPoint(NavMeshHit navMeshData, Vector3[] coverDirections)
+        {
+            this.navMeshData = navMeshData;
+            this.coverDirections = coverDirections;
+        }
+    }
+
     #region Singleton for current level
     public static AIGridPoints Current => instance ??= FindObjectOfType<AIGridPoints>();
     static AIGridPoints instance;
@@ -48,19 +62,6 @@ public class AIGridPoints : MonoBehaviour
     public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
     #endregion
 
-    public struct GridPoint
-    {
-        public Vector3 position => navMeshData.position;
-        public Vector3[] coverDirections { get; private set; }
-        public bool isCover => coverDirections.Length > 0;
-        public NavMeshHit navMeshData { get; private set; }
-
-        public GridPoint(NavMeshHit navMeshData, Vector3[] coverDirections)
-        {
-            this.navMeshData = navMeshData;
-            this.coverDirections = coverDirections;
-        }
-    }
     public List<GridPoint> gridPoints
     {
         get
@@ -149,9 +150,13 @@ public class AIGridPoints : MonoBehaviour
             }
         }
 
-        //newPoints.Sort((lhs, rhs) => lhs.position.x.CompareTo(rhs.position.x));
-        //newPoints.Sort((lhs, rhs) => lhs.position.y.CompareTo(rhs.position.y));
-        //newPoints.Sort((lhs, rhs) => lhs.position.z.CompareTo(rhs.position.z));
+        /*
+        // Sort points on each position axis
+        for (int i = 0; i < 3; i++)
+        {
+            newPoints.Sort((lhs, rhs) => lhs.position[i].CompareTo(rhs.position[i]));
+        }
+        */
 
         return newPoints;
     }
