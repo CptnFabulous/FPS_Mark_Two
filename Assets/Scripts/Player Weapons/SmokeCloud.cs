@@ -30,12 +30,19 @@ public class SmokeCloud : MonoBehaviour
             }
         }
     }
+    int collisionLayer => particleSystem.gameObject.layer;
 
     private void Awake()
     {
         int maxParticles = particleSystem.main.maxParticles;
         particleArray = new ParticleSystem.Particle[maxParticles];
         colliderArray = new SphereCollider[maxParticles];
+        /*
+        ParticleSystem.MainModule main = particleSystem.main;
+        main.startColor = Color.green;
+        */
+        //ParticleSystem.CollisionModule collision = particleSystem.collision;
+        //collision.collidesWith = MiscFunctions.GetPhysicsLayerMask(collisionLayer);
 
         // Set up object pool handlers (runs here to minimise the amount of checks)
         if (colliderPool == null) colliderPool = new Queue<SphereCollider>();
@@ -85,12 +92,11 @@ public class SmokeCloud : MonoBehaviour
                 {
                     GameObject g = new GameObject("Smoke Collider");
                     g.transform.parent = poolParent;
-                    g.layer = particleSystem.gameObject.layer;
                     c = g.AddComponent<SphereCollider>();
                 }
 
                 colliderArray[i] = c;
-                c.gameObject.layer = particleSystem.gameObject.layer;
+                c.gameObject.layer = collisionLayer;
                 c.gameObject.SetActive(true);
                 #endregion
             }
