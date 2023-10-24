@@ -68,6 +68,10 @@ public class MovementController : MonoBehaviour
             return;
         }
 
+        if (crouchController != null)
+        {
+            crouchController.isCrouching = false;
+        }
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         onJump.Invoke();
         lastTimeJumped = Time.time;
