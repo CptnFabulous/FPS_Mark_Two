@@ -28,6 +28,21 @@ public class FieldOfView : MonoBehaviour
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawFrustum(Vector3.zero, viewingAngles.y, viewRange, 0, viewingAngles.x / viewingAngles.y);
     }
+
+    public T FindObjectInFieldOfView<T>(System.Predicate<T> criteria, out RaycastHit hit) where T : Entity
+    {
+        foreach (T e in FindObjectsOfType<T>())
+        {
+            // Ignore if not meeting the criteria
+            if (criteria.Invoke(e) == false) continue;
+            // If it is a relevant object, check if the AI can actually see it.
+            if (VisionConeCheck(e.colliders, out hit) != ViewStatus.Visible) continue;
+            // We've found one!
+            return e;
+        }
+        hit = new RaycastHit();
+        return null;
+    }
     public ViewStatus VisionConeCheck(Vector3 position)
     {
         Vector3 direction = position - transform.position;

@@ -290,7 +290,7 @@ MonoBehaviour:
   positionUpdateInterval: 2
   distanceForInstinctCheck: 2
   successState: {fileID: 8339017120048449204}
-  failState: {fileID: 0}
+  failState: {fileID: 1998196516955973173}
 --- !u!1 &4523392251199138075
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,8 +343,55 @@ MonoBehaviour:
   minTargetDistance: 5
   maxTargetDistance: 30
   coverDistance: 3
-  onTargetEliminated: {fileID: 0}
+  onTargetEliminated: {fileID: 1998196516955973173}
   onTargetLost: {fileID: 5691326587957119647}
+--- !u!1 &7161686342594176071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7269599322796750088}
+  - component: {fileID: 1998196516955973173}
+  m_Layer: 6
+  m_Name: Patrol
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7269599322796750088
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7161686342594176071}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7555169701559161299}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1998196516955973173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7161686342594176071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bcafa003029b9949af7baa7144d9bc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 514770500111043204, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
+  soundBytes: {fileID: 0}
+  areaToPatrol: {fileID: 0}
+  ifTargetFound: {fileID: 8339017120048449204}
 --- !u!1 &7555169701559161300
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,6 +430,7 @@ Transform:
   - {fileID: 6865889221189543224}
   - {fileID: 429659991118692250}
   - {fileID: 2324363274852508006}
+  - {fileID: 7269599322796750088}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -500,7 +548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad8f5a9188714604fabca8d7a08661b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  current: {fileID: 2618743024015922463}
+  current: {fileID: 1998196516955973173}
 --- !u!1 &7555169702278949067
 GameObject:
   m_ObjectHideFlags: 0
@@ -1018,6 +1066,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7778758533985661154, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1660126055874503159, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
 --- !u!224 &6576444739976557574 stripped
