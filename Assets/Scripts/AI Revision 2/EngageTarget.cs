@@ -43,7 +43,7 @@ public class EngageTarget : TravelToDestination
     }
     public void Update()
     {
-        if (targetManager.noTarget)
+        if (targetManager.targetExists == false)
         {
             SwitchToState(onTargetEliminated);
             return;

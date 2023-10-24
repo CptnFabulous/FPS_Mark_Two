@@ -15,7 +15,7 @@ public class AITargetManager : MonoBehaviour
     public Vector3 lastKnownPosition { get; private set; }
 
     AIAim aim => controlling.aiming;
-    public bool noTarget => target == null || target.health.IsAlive == false;
+    public bool targetExists => target != null && target.health.IsAlive;
 
     void Update()
     {
