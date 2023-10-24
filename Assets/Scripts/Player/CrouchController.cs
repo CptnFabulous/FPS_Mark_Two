@@ -60,6 +60,17 @@ public class CrouchController : MonoBehaviour
             if (ceilingInWay) wantsToCrouch = true;
         }
 
+        // If currently sprinting, try to cancel sprint
+        if (wantsToCrouch)
+        {
+            SprintController sprint = movementController.sprintController;
+            if (sprint != null)
+            {
+                sprint.isSprinting = false;
+                if (sprint.isSprinting == true) return;
+            }
+        }
+
         //Debug.Log(this + ": Setting crouch to " + wantsToCrouch);
         crouched = wantsToCrouch;
         //speedModifiers.Add(crouchSpeedMultiplier);
