@@ -74,6 +74,7 @@ public readonly struct MiscFunctions
         }
         return list;
     }
+    public static bool IsLayerInLayerMask(LayerMask mask, int layer) => mask == (mask | (1 << layer));
     public static LayerMask GetPhysicsLayerMask(int currentLayer)
     {
         int finalMask = 0;

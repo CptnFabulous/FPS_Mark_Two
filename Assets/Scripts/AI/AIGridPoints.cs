@@ -236,6 +236,14 @@ public class AIGridPoints : MonoBehaviour
 
         return desired.ToArray();
     }
+    public List<GridPoint> GetGridPointsInArea(LevelArea rootArea)
+    {
+        if (rootArea == null) return null;
+        return gridPoints.FindAll((p) => rootArea.Contains(p.position));
+    }
+
+    
+
 
     public static Bounds GetNavMeshBounds()
     {
