@@ -43,17 +43,24 @@ public class CrouchController : MonoBehaviour
         // Don't do anything if the player is already in the assigned state
         if (isCrouching == wantsToCrouch) return;
 
+        //Debug.Log(this + ": Attempting to set crouching to " + wantsToCrouch);
+
         // If the user wants to crouch, check if they are on solid ground.
-        if (wantsToCrouch && movementController.isGrounded == false)
+        if (wantsToCrouch)
         {
-            wantsToCrouch = false;
+            if (movementController.isGrounded == false) wantsToCrouch = false;
         }
-        // If the user wants to stand up, check if there is enough space to do so.
-        if (!wantsToCrouch && Physics.Raycast(transform.position, transform.up, out RaycastHit _, standHeight, movementController.collisionMask))
+        else
         {
-            wantsToCrouch = true;
+            // If the user wants to stand up, check if there is enough space to do so.
+            Vector3 centre = collider.transform.TransformPoint(collider.center);
+            Vector3 direction = collider.transform.TransformDirection(collider.height / 2 * Vector3.up);
+            bool ceilingInWay = Physics.Raycast(centre, direction, out RaycastHit _, direction.magnitude, movementController.collisionMask);
+            
+            if (ceilingInWay) wantsToCrouch = true;
         }
 
+        //Debug.Log(this + ": Setting crouch to " + wantsToCrouch);
         crouched = wantsToCrouch;
         //speedModifiers.Add(crouchSpeedMultiplier);
         //speedModifiers.Remove(crouchSpeedMultiplier);
