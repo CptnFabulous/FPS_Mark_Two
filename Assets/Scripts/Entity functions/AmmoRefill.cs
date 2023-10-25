@@ -8,7 +8,7 @@ public class AmmoRefill : MonoBehaviour
     public AmmunitionType type;
     [Tooltip("If less than one, restores all ammo")]
     public int amountToRestore;
-    public bool limitedSupply;
+    public bool limitedSupply = true;
 
 
     private void Awake()
