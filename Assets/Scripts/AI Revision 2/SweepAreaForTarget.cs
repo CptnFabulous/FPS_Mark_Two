@@ -72,12 +72,22 @@ public class SweepAreaForTarget : AIStateFunction
     void StartNewSearch()
     {
         // Get a copy of the cached grid points
-        pointsToCheck = new List<AIGridPoints.GridPoint>(AIGridPoints.Current.gridPoints);
-        // Remove all points outside the search range
-        if (maxSearchDistance > 0)
+        LevelArea areaToSearch = LevelArea.FindAreaOfPosition(targetManager.lastKnownPosition);
+        Debug.Log($"{this}: area to search = " + areaToSearch);
+        if (areaToSearch != null)
         {
-            pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) > maxSearchDistance);
+            pointsToCheck = AIGridPoints.Current.GetGridPointsInArea(areaToSearch);
         }
+        else
+        {
+            pointsToCheck = new List<AIGridPoints.GridPoint>(AIGridPoints.Current.gridPoints);
+            // Remove all points outside the search range
+            if (maxSearchDistance > 0)
+            {
+                pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) > maxSearchDistance);
+            }
+        }
+        
         // Assign a new destination
         GetNextDestination();
     }
