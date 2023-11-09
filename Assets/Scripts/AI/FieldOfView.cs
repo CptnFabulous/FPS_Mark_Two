@@ -43,6 +43,18 @@ public class FieldOfView : MonoBehaviour
         hit = new RaycastHit();
         return null;
     }
+    public List<T> FindObjectsInFieldOfView<T>(System.Predicate<T> criteria) where T : Entity
+    {
+        List<T> entities = new List<T>(FindObjectsOfType<T>());
+        entities.RemoveAll((e) =>
+        {
+            if (criteria.Invoke(e) == false) return true;
+            if (VisionConeCheck(e.colliders, out _) != ViewStatus.Visible) return true;
+            return false;
+        });
+        return entities;
+    }
+
     public ViewStatus VisionConeCheck(Vector3 position)
     {
         Vector3 direction = position - transform.position;
