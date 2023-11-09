@@ -13,8 +13,17 @@ public enum AmmoTypeEnum
 */
 public class AmmunitionInventory : MonoBehaviour
 {
+    public bool startEmpty;
     public Resource[] ammunitionTypes;
-    
+
+    private void Start()
+    {
+        for (int i = 0; i < ammunitionTypes.Length; i++)
+        {
+            ammunitionTypes[i].current = startEmpty ? 0 : ammunitionTypes[i].max;
+        }
+    }
+
     public Resource GetValues(AmmunitionType type)
     {
         return ammunitionTypes[AmmunitionType.GetIndex(type)];
