@@ -35,17 +35,23 @@ public class AIAim : MonoBehaviour
         {
             LookInNeutralDirection();
         }
-        
-        // Obtains a Vector3 value from lookRotation, 'flattened' to perpendicular to the agent's up axis
-        Vector3 transformDirection = Vector3.ProjectOnPlane(LookDirection, ai.agent.transform.up);
-        // Rotates agent body to match quaternion
-        ai.agent.transform.rotation = Quaternion.LookRotation(transformDirection, ai.agent.transform.up);
-        // Rotates head to look in the appropriate direction
-        viewAxis.rotation = lookRotation;
     }
 
     #region Look direction values
-    Quaternion lookRotation;
+    Quaternion lookRotation
+    {
+        get => viewAxis.rotation;
+        set
+        {
+            Vector3 LookDirection = value * Vector3.forward;
+            // Obtains a Vector3 value from lookRotation, 'flattened' to perpendicular to the agent's up axis
+            Vector3 transformDirection = Vector3.ProjectOnPlane(LookDirection, ai.agent.transform.up);
+            // Rotates agent body to match quaternion
+            ai.agent.transform.rotation = Quaternion.LookRotation(transformDirection, ai.agent.transform.up);
+            // Rotates head to look in the appropriate direction
+            viewAxis.rotation = value;
+        }
+    }
     /// <summary>
     /// The point in space the AI looks and aims from.
     /// </summary>
@@ -53,19 +59,11 @@ public class AIAim : MonoBehaviour
     /// <summary>
     /// The direction the AI is deliberately aiming towards, excluding sway.
     /// </summary>
-    public Vector3 LookDirection => lookRotation * Vector3.forward;
+    public Vector3 LookDirection => viewAxis.forward;
     /// <summary>
     /// The direction the AI is looking in, converted into an easy Vector3 value.
     /// </summary>
     public Vector3 AimDirection => lookRotation * WeaponUtility.AimSway(Stats.swayAngle, Stats.swaySpeed) * Vector3.forward;
-    /// <summary>
-    /// A direction directly up perpendicular to the direction the AI is looking.
-    /// </summary>
-    public Vector3 LookUp => lookRotation * Vector3.up;
-    /// <summary>
-    /// A direction directly right perpendicular to the direction the AI is looking.
-    /// </summary>
-    public Vector3 LookRight => lookRotation * Vector3.right;
     #endregion
 
     #region Look functions
