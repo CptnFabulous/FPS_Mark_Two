@@ -5,7 +5,7 @@ using UnityEngine;
 public class ItemPickup : MonoBehaviour
 {
     [SerializeField] Interactable interactable;
-    [SerializeField] RandomSoundPlayer pickupNoise;
+    [SerializeField] DiegeticSound pickupNoise;
 
     private void Awake()
     {

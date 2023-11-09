@@ -16,7 +16,7 @@ public class HeadsUpDisplay : MonoBehaviour
     {
         soundPlayer.PlayOneShot(clip);
     }
-    public void PlayAudioClip(RandomSoundPlayer soundEffect)
+    public void PlayAudioClip(DiegeticSound soundEffect)
     {
         soundEffect.Play(soundPlayer);
     }

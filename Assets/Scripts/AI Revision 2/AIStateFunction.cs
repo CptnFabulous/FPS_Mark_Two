@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public abstract class AIStateFunction : StateFunction
 {
     public Sprite icon; // The icon that appears as a visual shorthand to show the enemy's state has changed
-    public RandomSoundPlayer soundBytes; // Sounds that the enemy makes to signal that it's switched to the new state
+    public DiegeticSound soundBytes; // Sounds that the enemy makes to signal that it's switched to the new state
 
     AI _root;
     public AI rootAI => _root ??= GetComponentInParent<AI>();

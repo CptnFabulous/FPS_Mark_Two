@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Random Sound Player", menuName = "ScriptableObjects/Random Sound Player", order = 0)]
-public class RandomSoundPlayer : ScriptableObject
+public class DiegeticSound : ScriptableObject
 {
     public AudioClip[] sounds;
     [Range(-3, 3)]
@@ -15,8 +15,6 @@ public class RandomSoundPlayer : ScriptableObject
     [Range(0, 1)]
     public float maxVolumeVariance = 1;
     public float delay;
-
-    WaitForSeconds delayYield;
 
     public void Play(AudioSource source)
     {
@@ -42,23 +40,21 @@ public class RandomSoundPlayer : ScriptableObject
 
     public void PlayWithoutSource(Transform positionTransform)
     {
-        int index = Random.Range(0, sounds.Length - 1);
-        float volume = Random.Range(minVolumeVariance, maxVolumeVariance);
-        AudioSource.PlayClipAtPoint(sounds[index], positionTransform.position, volume);
+        PlayWithoutSource(positionTransform.position, 1);
+    }
+    public void PlayWithoutSource(Vector3 origin, float playerVolume)
+    {
+        int index = Random.Range(0, sounds.Length);
+        float volume = Random.Range(minVolumeVariance, maxVolumeVariance) * playerVolume;
+        AudioSource.PlayClipAtPoint(sounds[index], origin, volume);
     }
 
 
     
 
-    public IEnumerator DelayPlay(AudioSource source)
+    IEnumerator DelayPlay(AudioSource source)
     {
-        if (delayYield == null)
-        {
-            delayYield = new WaitForSeconds(delay);
-        }
-        yield return delayYield;
-
-
+        yield return new WaitForSeconds(delay);
         PlayWithoutDelay(source);
     }
 }
