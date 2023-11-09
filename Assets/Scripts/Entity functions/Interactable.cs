@@ -15,6 +15,9 @@ public class Interactable : MonoBehaviour
     public UnityEvent<Player> onInteract;
     public System.Func<Player, bool> canInteract;
 
+    public Collider collider => c ??= GetComponent<Collider>();
+    Collider c;
+
     IEnumerator cooldown;
     float cooldownTimer;
     public float Progress => cooldownTimer;
