@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,10 +27,17 @@ public class GunMagazine : MonoBehaviour
 
     RangedAttack mode;
 
+    AmmunitionInventory inventory => mode.User.ammo;
+    AmmunitionType type => mode.stats.ammoType;
+
     public void Initialise(RangedAttack currentMode)
     {
         mode = currentMode;
         enabled = true;
+    }
+    private void OnEnable()
+    {
+        ammo.current = Mathf.Min(ammo.current, inventory.GetStock(type));
     }
     private void Update()
     {
@@ -38,6 +46,8 @@ public class GunMagazine : MonoBehaviour
             enabled = false;
             return;
         }
+
+        //if (mode.InAction) return;
 
         // If there isn't enough ammo in the magazine to fire another shot
         if (ammo.current < mode.stats.ammoPerShot && ReloadActive == false)
@@ -76,12 +86,11 @@ public class GunMagazine : MonoBehaviour
             // If player's magazine is not empty
             // AND
             // If enough ammunition is remaining to reload weapon with
-            return ammo.current < ammo.max && ReservedAmmo(mode.stats.ammoType) > 0;
+            return ammo.current < ammo.max && ReservedAmmo(type) > 0;
         }
     }
     public int ReservedAmmo(AmmunitionType type)
     {
-        AmmunitionInventory inventory = mode.User.ammo;
         if (inventory != null)
         {
             return (int)(inventory.GetStock(type) - ammo.current);
@@ -116,7 +125,7 @@ public class GunMagazine : MonoBehaviour
             onIncrementStart.Invoke();
             yield return new WaitForSeconds(delayBetweenLoads);
             // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
-            int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(mode.stats.ammoType));
+            int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(type));
             ammo.Increment(amountToAdd, out float leftover);
             onIncrementEnd.Invoke();
         }
