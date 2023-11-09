@@ -202,7 +202,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7207485253456316098}
-  - component: {fileID: 2504070873118893099}
   - component: {fileID: 1731013374030992691}
   - component: {fileID: 7338882055252588375}
   - component: {fileID: 3205852489123771662}
@@ -231,33 +230,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &2504070873118893099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1555084939683408409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18ec9c5619453f043a2a8514bc413bc9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  closeTime: 0
-  eulerAnglesForShut: {x: 0, y: 0, z: 0}
-  doorOpenDirectionForce: {x: 5, y: 5, z: 5}
-  doorBody: {fileID: 1745854523864217618}
-  doorJoint: {fileID: 2285461335779973000}
-  animator: {fileID: 0}
-  interactionControls: {fileID: 8502892133610164780}
-  openAnimatorBool: Open
-  open: 0
-  onOpen:
-    m_PersistentCalls:
-      m_Calls: []
-  onClose:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!95 &1731013374030992691
 Animator:
   serializedVersion: 3
