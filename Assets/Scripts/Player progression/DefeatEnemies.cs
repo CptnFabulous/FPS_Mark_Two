@@ -15,7 +15,6 @@ public class DefeatEnemies : Objective
 
     protected override bool DetermineSuccess()
     {
-        Debug.Log($"{this}: enemy count = {enemies.Count}");
         foreach (Character c in enemies)
         {
             if (c.health.IsAlive) return false;

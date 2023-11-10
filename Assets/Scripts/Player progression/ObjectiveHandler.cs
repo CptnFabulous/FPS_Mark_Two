@@ -32,13 +32,13 @@ public class ObjectiveHandler : MonoBehaviour
         }
     }
     //public static System.Action<Objective> onObjectiveUpdated;
-    
-    
-    
-    
+
+    public LevelCompletionScreen completionScreen;
+    public string nextLevelName;
 
     List<Objective> _all;
     Player _p;
+    bool levelCompleted;
 
     public List<Objective> allObjectives => _all ??= new List<Objective>(GetComponentsInChildren<Objective>());
     public List<Objective> activeObjectives => allObjectives.FindAll((o) => o.status != ObjectiveStatus.Inactive);
@@ -47,26 +47,33 @@ public class ObjectiveHandler : MonoBehaviour
 
     private void Awake()
     {
+        levelCompleted = false;
         foreach (Objective o in allObjectives)
         {
             o.serialisedProgress = "";
         }
+        completionScreen.gameObject.SetActive(false);
     }
     private void Update()
     {
-        /*
-        TO DO: check if all mandatory objectives have been completed.
-        If so, run the necessary end-of-level actions e.g.:
-        * Open 'level complete' menu
-        * Switch player to 'in menus' and disable their controls
-        * Set timescale to zero just to be safe
-        */
+        if (levelCompleted == false)
+        {
+            bool readyToComplete = RequiredObjectivesCompleted();
+            if (readyToComplete)
+            {
+                levelCompleted = true;
+                StartCoroutine(completionScreen.EndLevel());
+            }
+        }
     }
 
-    bool AllObjectivesCompleted()
+    bool RequiredObjectivesCompleted()
     {
         foreach (Objective o in allObjectives)
         {
+            // Ignore optional objectives
+            if (o.optional) continue;
+            // Return false if a mandatory objective has yet to be completed
             if (o.status != ObjectiveStatus.Completed) return false;
         }
         return true;

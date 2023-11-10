@@ -35,16 +35,15 @@ public class ObjectiveInfo : MonoBehaviour
     }
     private void RefreshDisplay()
     {
-        Debug.Log("Checking if objective handler exists");
-
         if (ObjectiveHandler.current == null) return;
-
-        Debug.Log("Refreshing display");
-
+        RefreshDisplay(ObjectiveHandler.current.activeObjectives);
+    }
+    public void RefreshDisplay(IList<Objective> objectivesToShow)
+    {
         // Check for new objectives. If one is active but a display is not present, add one.
-        for (int i = 0; i < ObjectiveHandler.current.activeObjectives.Count; i++)
+        for (int i = 0; i < objectivesToShow.Count; i++)
         {
-            Objective objective = ObjectiveHandler.current.activeObjectives[i];
+            Objective objective = objectivesToShow[i];
             if (displays.ContainsKey(objective) == false)
             {
                 // If a display is not present, create a new one

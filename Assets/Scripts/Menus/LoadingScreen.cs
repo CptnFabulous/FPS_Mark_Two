@@ -16,9 +16,20 @@ public class LoadingScreen : MonoBehaviour
 
 
     public static readonly string loadingSceneName = "Loading Screen";
+    public static readonly string mainMenuSceneName = "Main Menu";
 
+    public static void LoadScene(string sceneToLoad)
+    {
+        SceneManager.LoadScene(sceneToLoad);
+        // StartCoroutine(LoadSequence(newScene));
+    }
 
-    public static IEnumerator LoadSequence(string newScene)
+    public static void ReturnToMainMenu()
+    {
+        LoadScene(mainMenuSceneName);
+    }
+
+    static IEnumerator LoadSequence(string newScene)
     {
         AsyncOperation screenTransition = SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Single);
         // yield return new WaitUntil(() => loadScreenLoad.isDone);
@@ -86,4 +97,5 @@ public class LoadingScreen : MonoBehaviour
         sequence.allowSceneActivation = true;
     }
     */
+
 }
