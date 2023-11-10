@@ -5,15 +5,15 @@ using UnityEngine.Events;
 
 public abstract class WeaponMode : MonoBehaviour
 {
+    [SerializeField] Weapon _attachedTo; // Don't reference directly, instead use 'attachedTo'
     public string description = "A distinct attack mode for a weapon.";
     public Sprite icon;
     public float switchSpeed;
     public UnityEvent onSwitch;
 
-    Weapon _attached;
     Character _user;
 
-    public Weapon attachedTo => _attached ??= GetComponentInParent<Weapon>();
+    public Weapon attachedTo => _attachedTo ??= GetComponentInParent<Weapon>();
     public Character User
     {
         get
