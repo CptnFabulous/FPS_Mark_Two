@@ -13,10 +13,14 @@ public enum ObjectiveStatus
 
 public abstract class Objective : MonoBehaviour
 {
+    [Multiline] public string description;
     public bool optional;
     public List<Objective> prerequisites;
 
+    bool alreadyCompleted = false;
+
     ObjectiveHandler _h;
+
 
     public ObjectiveHandler handler => _h ??= GetComponentInParent<ObjectiveHandler>();
     public Player targetPlayer => handler.targetPlayer;
@@ -24,13 +28,19 @@ public abstract class Objective : MonoBehaviour
     {
         get
         {
+            if (alreadyCompleted) return ObjectiveStatus.Completed;
+
             // This objective cannot be revealed yet if any of the prerequisites aren't completed
             foreach (Objective prerequisite in prerequisites)
             {
                 if (prerequisite.status != ObjectiveStatus.Completed) return ObjectiveStatus.Inactive;
             }
             // Check if passed, or failed
-            if (DetermineSuccess()) return ObjectiveStatus.Completed;
+            if (DetermineSuccess())
+            {
+                alreadyCompleted = true;
+                return ObjectiveStatus.Completed;
+            }
             if (DetermineFailure()) return ObjectiveStatus.Failed;
             // Otherwise is active
             return ObjectiveStatus.Active;
@@ -41,13 +51,14 @@ public abstract class Objective : MonoBehaviour
         get => GetSerializedProgress();
         set => Setup(value);
     }
+
     /// <summary>
-    /// Returns a formatted string representing the player's progress on this objective.
+    /// Returns a formatted string representing the progress info.
     /// </summary>
     /// <returns></returns>
     public virtual string formattedProgress => null;
     /// <summary>
-    /// The location of the objective, for setting markers.
+    /// The specified location of the objective, for setting markers.
     /// </summary>
     public abstract Nullable<Vector3> location { get; }
 
@@ -60,10 +71,11 @@ public abstract class Objective : MonoBehaviour
     /// </summary>
     protected abstract string GetSerializedProgress();
 
+    #region
     /// <summary>
     /// Has the player met the requirements to complete the objective?
     /// </summary>
-    protected abstract bool DetermineSuccess();
+    protected abstract bool DetermineSuccess(); // TO DO: add a bit of code to permanently check it off as completed, if it's active and once the conditions are met. So that it doesn't 'uncomplete' itself (unless I enable something for that)
     /// <summary>
     /// Has the player done something that renders the objective unable to be completed?
     /// </summary>
@@ -76,5 +88,5 @@ public abstract class Objective : MonoBehaviour
     /// What needs to happen if the player fails the objective?
     /// </summary>
     public virtual void OnFailed() { }
-
+    #endregion
 }
