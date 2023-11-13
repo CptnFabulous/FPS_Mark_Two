@@ -12,6 +12,7 @@ public class PlayerStateHandler : MonoBehaviour
         Paused,
         InMenus,
         Dead,
+        CompletedLevel,
     }
 
     public Player controlling;
@@ -30,39 +31,60 @@ public class PlayerStateHandler : MonoBehaviour
     
     public PlayerState CurrentState
     {
-        get
-        {
-            return state;
-        }
+        get => state;
         set
         {
             state = value;
             switch (value)
             {
                 case PlayerState.Paused:
-
                     onPause.Invoke();
-                    Time.timeScale = 0;
+                    navigatingMenus = true;
                     SwitchMenu(pauseMenu);
-                    EnterMenu();
 
                     break;
                 case PlayerState.Dead:
 
+                    Debug.Log("Player has died");
                     onDeath.Invoke();
+                    navigatingMenus = true;
                     Time.timeScale = 1;
                     SwitchMenu(gameOverMenu);
-                    EnterMenu();
 
                     break;
-                default: // Resume game
+                case PlayerState.Active: // Resume game
 
+                    Debug.Log("Resuming game");
                     onResume.Invoke();
                     SwitchMenu(headsUpDisplay);
-                    ReturnToGameplay();
+                    navigatingMenus = false;
 
                     break;
+                    /*
+                case PlayerState.InMenus:
+                    navigatingMenus = true;
+                    // TO DO: display appropriate menu
+                    break;
+                    */
+                /*
+                case PlayerState.CompletedLevel:
+                    Time.timeScale = 1;
+                    EnterMenu();
+                    break;
+                    */
             }
+        }
+    }
+    public bool navigatingMenus
+    {
+        get => controlling.controls.currentActionMap.name == menuControls;
+        set
+        {
+            Time.timeScale = value ? 0 : 1;
+            Cursor.lockState = value ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = value;
+            controlling.controls.SwitchCurrentActionMap(value ? menuControls : gameplayControls);
+            headsUpDisplay.gameObject.SetActive(!value);
         }
     }
 
@@ -73,13 +95,20 @@ public class PlayerStateHandler : MonoBehaviour
         CurrentState = CurrentState; // Assigns value to itself to trigger the appropriate code
     }
 
+    /// <summary>
+    /// The InputSystem function for pausing and unpausing the game.
+    /// </summary>
     void OnPause()
     {
-        if (CurrentState == PlayerState.Active)
+        switch (CurrentState)
         {
-            CurrentState = PlayerState.Paused;
+            case PlayerState.Active: CurrentState = PlayerState.Paused; break;
+            case PlayerState.Paused: CurrentState = PlayerState.Active; break;
         }
     }
+    /// <summary>
+    /// The InputSystem function for entering the game's extra menus.
+    /// </summary>
     void OnEnterMenu()
     {
 
@@ -92,18 +121,5 @@ public class PlayerStateHandler : MonoBehaviour
         gameOverMenu.gameObject.SetActive(false);
 
         currentMenu.gameObject.SetActive(true);
-    }
-    void EnterMenu()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        controlling.controls.SwitchCurrentActionMap(menuControls);
-    }
-    void ReturnToGameplay()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        Time.timeScale = 1;
-        controlling.controls.SwitchCurrentActionMap(gameplayControls);
     }
 }
