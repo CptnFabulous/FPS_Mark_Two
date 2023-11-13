@@ -28,6 +28,7 @@ public abstract class WeaponMode : MonoBehaviour
             return _user;
         }
     }
+    public abstract LayerMask attackMask { get; }
 
     public abstract void OnSwitchTo();
     public abstract void OnSwitchFrom();

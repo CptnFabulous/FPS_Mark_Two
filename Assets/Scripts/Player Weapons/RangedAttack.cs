@@ -9,6 +9,7 @@ public class RangedAttack : WeaponMode
     public GunMagazine magazine;
     public GunADS optics;
 
+    public override LayerMask attackMask => stats.projectilePrefab.detection;
     public bool isFiring { get; private set; }
     public int shotsInBurst { get; private set; }
 

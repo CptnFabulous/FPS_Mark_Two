@@ -20,6 +20,7 @@ public class ThrowObject : WeaponMode
     bool currentlyThrowing = false;
     //Coroutine throwCoroutine;
 
+    public override LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(throwablePrefab.gameObject.layer);
     public override bool InAction => currentlyThrowing;
 
 

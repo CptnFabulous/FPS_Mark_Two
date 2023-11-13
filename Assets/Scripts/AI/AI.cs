@@ -20,10 +20,27 @@ public class AI : Character
     [Header("Animations and feedback")]
     public AIStatusIcon statusIcon;
 
+    AIGunAttack _attack;
+
     public override Transform LookTransform => aiming.viewAxis;
     public override Vector3 aimDirection => LookTransform.forward;
-    public override LayerMask lookMask => aiming.Stats.lookDetection;
-    public override LayerMask attackMask => aiming.Stats.lookDetection;
+    public override LayerMask lookMask => targeting.visionCone.viewDetection;
+    public override LayerMask attackMask
+    {
+        get
+        {
+            // If an AIGunAttack is present, get that attack's mask.
+            // If not return nothing
+            // TO DO: make this system less rigid so it works with other kinds of attacks
+            _attack ??= GetComponentInChildren<AIGunAttack>();
+            if (_attack != null)
+            {
+                return _attack.weapon.attackMask;
+            }
+
+            return 0;
+        }
+    }
     public override Vector3 MovementDirection => agent.velocity;
     public override Character target => targeting.target;
 

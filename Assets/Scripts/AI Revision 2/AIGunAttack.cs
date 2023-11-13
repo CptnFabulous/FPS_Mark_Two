@@ -45,13 +45,12 @@ public class AIGunAttack : MonoBehaviour
 
         
 
-        bool canTarget = rootAI.targeting.canSeeTarget == ViewStatus.Visible;
+        bool canSee = rootAI.targeting.canSeeTarget == ViewStatus.Visible;
         currentAimTarget = rootAI.targeting.lastHit.point;
+        bool canShoot = AIAction.LineOfSight(aim.LookOrigin, currentAimTarget, weapon.attackMask, rootAI.colliders, target.colliders);
+        bool canTarget = canSee && canShoot;
         Debug.DrawLine(aim.LookOrigin, currentAimTarget, Color.magenta);
-        /*
-        currentAimTarget = targetPosition;
-        bool canTarget = AIAction.LineOfSight(rootAI.LookTransform.position, currentAimTarget, rootAI.attackMask, rootAI.health.HitboxColliders, target.health.HitboxColliders);
-        */
+
         aim.lookingInDefaultDirection = false;
         if (inAttack)
         {
@@ -74,23 +73,6 @@ public class AIGunAttack : MonoBehaviour
         {
             aim.lookingInDefaultDirection = true; // Look in default direction
         }
-        
-        /*
-        bool aiming = inAttack || AIAction.LineOfSight(rootAI.LookTransform.position, targetPosition, rootAI.attackMask, rootAI.health.HitboxColliders, target.health.HitboxColliders);
-        aim.lookingInDefaultDirection = !aiming;
-        if (aiming)
-        {
-            if (inAttack == false)
-            {
-                currentAimTarget = targetPosition;
-            }
-            aim.RotateLookTowards(currentAimTarget);
-            if (!inAttack && aimIsCorrect)
-            {
-                StartCoroutine(AttackSequence());
-            }
-        }
-        */
     }
 
 

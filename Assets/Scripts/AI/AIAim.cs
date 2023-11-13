@@ -239,7 +239,7 @@ public class AIAim : MonoBehaviour
         public AnimationCurve speedCurve;
         public float swayAngle;
         public float swaySpeed;
-        public LayerMask lookDetection;
+        //public LayerMask lookDetection;
         public float diameterForUnobstructedSight;
         
         public float SpeedBasedOnAngle(Vector3 currentAimDirection, Vector3 desiredDirection)

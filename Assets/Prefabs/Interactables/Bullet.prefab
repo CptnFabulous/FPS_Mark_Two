@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7059086101645604909}
   - component: {fileID: 7059086101645604880}
   - component: {fileID: 7059086101645604911}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,7 +67,7 @@ MonoBehaviour:
   startingVelocity: 300
   detection:
     serializedVersion: 2
-    m_Bits: 503
+    m_Bits: 1527
   damageEffect: {fileID: 7059086101645604880}
   onHit:
     m_PersistentCalls:
@@ -124,9 +124,6 @@ MonoBehaviour:
   stun: 10
   knockback: 15
   type: 0
-  hitDetection:
-    serializedVersion: 2
-    m_Bits: 4294967295
   additionalEffects:
     m_PersistentCalls:
       m_Calls: []

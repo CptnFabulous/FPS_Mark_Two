@@ -12,7 +12,7 @@ public abstract class DamageEffect : MonoBehaviour
     public int stun = 10;
     public float knockback = 15;
     public DamageType type = DamageType.Piercing;
-    public LayerMask hitDetection = ~0;
+    //public LayerMask hitDetection = ~0;
 
     public UnityEvent<Entity> additionalEffects;
 

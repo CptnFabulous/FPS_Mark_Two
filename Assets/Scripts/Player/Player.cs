@@ -11,15 +11,13 @@ public class Player : Character
     {
         get
         {
-            // If no weapon is present, default to some other kind of layer mask
+            // Return the mask of whatever the player is currently holding
             if (weapons.CurrentWeapon == null)
             {
-                // Presently player cannot attack any way other than having a weapon, so return an empty layermask
-                return 0;
+                return weapons.CurrentWeapon.CurrentMode.attackMask;
             }
-
-            // Currently just returns everything. I need to implement code to get the detection of the player's current weapon
-            return ~0;
+            // Presently player cannot attack any way other than having a weapon, so return an empty layermask
+            return 0;
         }
     }
 
