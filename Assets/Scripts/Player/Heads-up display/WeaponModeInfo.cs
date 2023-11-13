@@ -13,14 +13,26 @@ public class WeaponModeInfo : MonoBehaviour
 
     public Image reloadMeter;
 
-    [HideInInspector] public WeaponMode mode;
+    //[HideInInspector] public WeaponMode mode;
+
+    WeaponMode _m;
+    public WeaponMode mode
+    {
+        get => _m;
+        set
+        {
+            //Debug.Log("Setting mode");
+            _m = value;
+
+            bool active = _m != null;
+            enabled = active;
+            gameObject.SetActive(active);
+        }
+    }
 
     private void LateUpdate()
     {
-        bool somethingToShow = mode != null;
-        enabled = somethingToShow;
-        gameObject.SetActive(somethingToShow);
-        if (enabled == false) return;
+        if (mode == null) return;
 
         // Display name and icon
         if (weaponModeName != null) weaponModeName.text = mode.name;
