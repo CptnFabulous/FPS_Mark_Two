@@ -27,7 +27,15 @@ public class GunMagazine : MonoBehaviour
 
     RangedAttack mode;
 
-    AmmunitionInventory inventory => mode.User.ammo;
+    AmmunitionInventory inventory
+    {
+        get
+        {
+            if (mode == null) return null;
+            if (mode.User == null) return null;
+            return mode.User.ammo;
+        }
+    }
     AmmunitionType type => mode.stats.ammoType;
 
     public void Initialise(RangedAttack currentMode)
@@ -37,7 +45,10 @@ public class GunMagazine : MonoBehaviour
     }
     private void OnEnable()
     {
-        ammo.current = Mathf.Min(ammo.current, inventory.GetStock(type));
+        if (inventory != null)
+        {
+            ammo.current = Mathf.Min(ammo.current, inventory.GetStock(type));
+        }
     }
     private void Update()
     {
