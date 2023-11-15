@@ -18,7 +18,6 @@ public class AIStatusIcon : MonoBehaviour
     
     public void TriggerAnimation(Sprite newSprite)
     {
-        Debug.Log($"{this}: switching sprite to {newSprite}");
         if (newSprite != null)
         {
             graphic.sprite = newSprite;
