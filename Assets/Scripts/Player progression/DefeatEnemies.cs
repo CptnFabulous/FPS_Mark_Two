@@ -31,7 +31,7 @@ public class DefeatEnemies : Objective
     {
         if (parentForFindingMoreEnemies != null)
         {
-            IEnumerable<Character> moreEnemies = parentForFindingMoreEnemies.GetComponentsInChildren<Character>(true);
+            IEnumerable<Character> moreEnemies = parentForFindingMoreEnemies.GetComponentsInChildren<Character>();
             moreEnemies = moreEnemies.Where(targetPlayer.IsHostileTowards); // Ignore allies
             moreEnemies = moreEnemies.Where((e) => e.health.IsAlive); // Ignore already-dead enemies
             enemies.AddRange(moreEnemies);
