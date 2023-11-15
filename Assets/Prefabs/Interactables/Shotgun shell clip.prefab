@@ -576,6 +576,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5629499449905699181}
+  - component: {fileID: 3262716940049792986}
   - component: {fileID: 5629499449905699176}
   - component: {fileID: 5629499449905699178}
   - component: {fileID: 5629499449905699180}
@@ -608,6 +609,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3262716940049792986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5629499449905699183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Shotgun shell clip
+  description: A bundle of extra shotgun shells.
+  isUnique: 0
 --- !u!114 &5629499449905699176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -621,6 +637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactable: {fileID: 5629499449905699178}
+  pickupNoise: {fileID: 0}
   type: {fileID: 11400000, guid: d450133976532494a9ca9ecf16dd1804, type: 2}
   amountToRestore: 6
   limitedSupply: 1

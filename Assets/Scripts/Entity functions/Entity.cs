@@ -16,6 +16,11 @@ public class Entity : MonoBehaviour
 
     public virtual IList<Collider> colliders => null;
 
+    protected virtual void Awake()
+    {
+        if (isUnique == false && string.IsNullOrEmpty(properName) == false) gameObject.name = properName;
+    }
+
     /*
     public float timeScale = 1;
     public Vector3 gravity = Physics.gravity;

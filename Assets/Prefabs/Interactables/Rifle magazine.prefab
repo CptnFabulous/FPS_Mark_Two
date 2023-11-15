@@ -171,6 +171,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 486197658178409505}
+  - component: {fileID: -8011908345201020610}
   - component: {fileID: 486197658178409508}
   - component: {fileID: 486197658178409510}
   - component: {fileID: 486197658178409504}
@@ -200,6 +201,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-8011908345201020610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 486197658178409507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Rifle magazine
+  description: A spare rifle magazine.
+  isUnique: 0
 --- !u!114 &486197658178409508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,6 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactable: {fileID: 486197658178409510}
+  pickupNoise: {fileID: 0}
   type: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
   amountToRestore: 30
   limitedSupply: 1

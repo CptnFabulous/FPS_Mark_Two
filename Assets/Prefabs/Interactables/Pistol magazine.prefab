@@ -171,6 +171,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6405586883557918588}
+  - component: {fileID: -5637435999184370279}
   - component: {fileID: 6405586883557918585}
   - component: {fileID: 6405586883557918587}
   - component: {fileID: 6405586883557918589}
@@ -197,6 +198,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-5637435999184370279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405586883557918590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Pistol magazine
+  description: A spare magazine of pistol rounds.
+  isUnique: 0
 --- !u!114 &6405586883557918585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactable: {fileID: 6405586883557918587}
+  pickupNoise: {fileID: 0}
   type: {fileID: 11400000, guid: 3790a818e1c48494c8a1afd8bbfae7e5, type: 2}
   amountToRestore: 15
   limitedSupply: 1
