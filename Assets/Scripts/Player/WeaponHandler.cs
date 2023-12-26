@@ -117,12 +117,6 @@ public class WeaponHandler : MonoBehaviour
         if (!WeaponReady) return;
         CurrentWeapon.CurrentMode.OnTertiaryInput();
     }
-    void OnOffhandAttack(InputValue input)
-    {
-        if (!WeaponReady) return;
-        if (offhand == null) return;
-        offhand.SetPrimaryInput(input.isPressed);
-    }
     void OnSelectWeapon(InputValue input)
     {
         if (input.isPressed && weaponSelector.optionsPresent)
