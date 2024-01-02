@@ -16,6 +16,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     [SerializeField] float range = 2;
     [SerializeField] float angle = 45;
     [SerializeField] LayerMask hitDetection = ~0;
+    [SerializeField] float backupCastRadius = 0.5f;
     [SerializeField] bool snapTowardsTarget;
 
     [Header("Damage")]
@@ -122,7 +123,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
             hitData.AttackObject(target.gameObject, User, point, hitDirection);
             //target.health.Damage(damage, stun, false, damageType, User);
         }
-        else if (Physics.Raycast(origin, direction, out RaycastHit rh, range, hitDetection))
+        else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, hitDetection))
         {
             // Casts a secondary check
             Debug.Log("Hit something that isn't an entity");
