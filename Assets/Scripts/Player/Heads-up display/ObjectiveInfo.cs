@@ -12,25 +12,23 @@ public class ObjectiveInfo : MonoBehaviour
     [SerializeField] string completedMessage = "Completed";
     [SerializeField] string optionalPrefix = "(Optional) ";
 
+
+    [SerializeField] CanvasGroup canvasGroup;
+
     Dictionary<Objective, TMP_Text> displays;
 
     private void Awake()
     {
         displays = new Dictionary<Objective, TMP_Text>();
         objectivePrefab.gameObject.SetActive(false);
-        //ObjectiveHandler.onObjectiveUpdated += (_) => RefreshDisplay();
     }
-    private void OnEnable()
-    {
-        Debug.Log("Initial refresh");
-        //RefreshDisplay();
-    }
-    private void Start()
-    {
-        //RefreshDisplay();
-    }
+    
     private void LateUpdate()
     {
+        bool objectivesToShow = ObjectiveHandler.current != null && ObjectiveHandler.current.allObjectives.Count > 0;
+        canvasGroup.alpha = objectivesToShow ? 1 : 0;
+        if (objectivesToShow == false) return;
+
         RefreshDisplay();
     }
     private void RefreshDisplay()
@@ -52,28 +50,27 @@ public class ObjectiveInfo : MonoBehaviour
                 displays[objective] = newDisplay;
             }
 
-            displays[objective].transform.SetSiblingIndex(i);
-        }
-
-        // Update all objective displays
-        foreach (Objective objective in displays.Keys)
-        {
             TMP_Text display = displays[objective];
+
+            display.transform.SetSiblingIndex(i);
+
+            #region Text
             string task = objective.name;
             string progress = objective.status == ObjectiveStatus.Completed ? completedMessage : objective.formattedProgress;
 
             // Ensure the optional prefix is present if it's optional, and not if it isn't
             bool hasPrefix = task.StartsWith(optionalPrefix);
-            if (objective.optional && hasPrefix == false)
+            if (objective.optional && !hasPrefix)
             {
                 task = optionalPrefix + task;
             }
-            else if (objective.optional == false && hasPrefix)
+            else if (!objective.optional && hasPrefix)
             {
                 task.Remove(0, optionalPrefix.Length);
             }
 
             display.text = (progress == null) ? task : string.Format(progressFormatting, task, progress);
+            #endregion
         }
     }
 }
