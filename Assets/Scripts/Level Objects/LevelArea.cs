@@ -42,7 +42,7 @@ public class LevelArea : MonoBehaviour
         return null;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(bounds.center, bounds.size);
