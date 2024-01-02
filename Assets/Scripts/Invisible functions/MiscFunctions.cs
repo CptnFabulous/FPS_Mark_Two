@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,7 +45,7 @@ public readonly struct MiscFunctions
     {
         for (int i = 0; i < list.Count; i++)
         {
-            int r = Random.Range(0, list.Count - 1);
+            int r = UnityEngine.Random.Range(0, list.Count - 1);
             if (r == i) continue;
             T value = list[i];
             list[i] = list[r];
@@ -85,12 +86,16 @@ public readonly struct MiscFunctions
     {
         List<RaycastHit> list = RaycastAllWithExceptions(origin, direction, distance, layerMask, exceptions);
         bool hit = list.Count > 0;
-        if (hit)
+
+        if (hit == false)
         {
-            list.Sort((a, b) => a.distance.CompareTo(b.distance)); // Sort entries by distance
+            rh = new RaycastHit();
+            return false;
         }
-        rh = hit ? list[0] : new RaycastHit();
-        return hit;
+
+        SortListWithOnePredicate(list, (rh) => rh.distance); // Sort entries by distance
+        rh = list[0];
+        return true;
     }
     public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
     {

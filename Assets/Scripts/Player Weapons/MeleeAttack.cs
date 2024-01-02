@@ -53,14 +53,16 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     IEnumerator AttackSequence()
     {
+        #region Windup
         Debug.Log($"{this}: winding up");
         // Play windup animation
         if (animator != null) animator.SetTrigger(windupTrigger);
         onAttack.Invoke();
         // TO DO: Add a thing here to send an attack message, so enemies can dodge attacks
         yield return new WaitForSeconds(windupTime);
+        #endregion
 
-        // Acquire target
+        #region Acquire target
         Vector3 origin = User.LookTransform.position;
         Vector3 direction = User.aimDirection;
         List<Character> targets = WeaponUtility.MeleeDetectMultiple<Character>(origin, direction, range, angle, hitDetection);
@@ -72,8 +74,9 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         });
         Character target = (targets.Count > 0) ? targets[0] : null;
         Debug.Log($"{this}: commencing attack, target = {target}");
+        #endregion
 
-        // Play swing animation
+        #region Play attack animation
         if (animator != null) animator.SetTrigger(attackTrigger);
 
         // Wait for attack. If target is acquired, shift movement towards target
@@ -97,8 +100,9 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         {
             yield return new WaitForSeconds(attackTime);
         }
+        #endregion
 
-        // Deal damage to target (if acquired)
+        #region Deal damage to target (if the attack hits something)
         if (target != null)
         {
             Debug.Log($"{this}: dealing damage");
@@ -118,11 +122,14 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         {
             Debug.Log($"{this}: missed");
         }
+        #endregion
 
+        #region Cooldown
         Debug.Log($"{this}: cooling down");
         // Play cooldown/return animation
         if (animator != null) animator.SetTrigger(cooldownTrigger);
         yield return new WaitForSeconds(cooldownTime);
+        #endregion
 
         currentAttack = null;
     }
