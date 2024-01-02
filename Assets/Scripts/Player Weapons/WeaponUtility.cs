@@ -65,4 +65,70 @@ public class WeaponUtility : MonoBehaviour
             return infiniteText;
         }
     }
+
+    public static List<T> ExplosionDetect<T>(Vector3 origin, float range, LayerMask hitDetection) where T : Entity
+    {
+        // Check for entities
+        // Get closest points on their hitboxes
+        // Check if those points are within range and angle
+
+        List<T> entities = new List<T>();
+
+        Collider[] hit = Physics.OverlapSphere(origin, range, hitDetection);
+        foreach (Collider c in hit)
+        {
+            // Check if the collider is attached to an entity, that isn't already included
+            T e = c.GetComponentInParent<T>();
+            if (e == null || entities.Contains(e)) continue;
+
+            // Check for blockages between the origin and the hit point
+            Vector3 hitLocation = e.bounds.ClosestPoint(origin);
+            bool lineOfSightCheck = AIAction.LineOfSight(origin, hitLocation, hitDetection, e.colliders);
+            if (lineOfSightCheck == false) continue;
+
+            entities.Add(e);
+        }
+
+        return entities;
+    }
+    public static List<T> MeleeDetectMultiple<T>(Vector3 origin, Vector3 direction, float range, float angle, LayerMask hitDetection) where T : Entity
+    {
+        List<T> entities = ExplosionDetect<T>(origin, range, hitDetection);
+        entities.RemoveAll((e) =>
+        {
+            Vector3 hitLocation = e.bounds.ClosestPoint(origin);
+            float a = Vector3.Angle(direction, hitLocation - origin);
+            return a > angle;
+        });
+        /*
+        MiscFunctions.SortListWithOnePredicate(entities, (e) =>
+        {
+            Vector3 hitLocation = e.bounds.ClosestPoint(origin);
+            return Vector3.Angle(direction, hitLocation - origin);
+        });
+        */
+
+        return entities;
+    }
+    /*
+    public static T MeleeDetectSingle<T>(Vector3 origin, Vector3 direction, float range, float angle, LayerMask hitDetection) where T : Entity
+    {
+        List<T> initialDetection = ExplosionDetect(origin, range, hitDetection);
+
+        MiscFunctions.SortListWithOnePredicate(initialDetection, (e) =>
+        {
+            Vector3 hitLocation = e.bounds.ClosestPoint(origin);
+            return Vector3.Angle(direction, hitLocation - origin);
+        });
+
+        if (initialDetection.Count < 0) return null;
+
+        T e = initialDetection[0];
+        Vector3 hitLocation = e.bounds.ClosestPoint(origin);
+        float a = Vector3.Angle(direction, hitLocation - origin);
+        if (a > angle) return null;
+
+        return e;
+    }
+    */
 }

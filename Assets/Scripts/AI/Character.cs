@@ -38,9 +38,11 @@ public abstract class Character : Entity
 
 
     public abstract Character target { get; }
-    public bool IsHostileTowards(Character other)
+    public bool IsHostileTowards(Entity other)
     {
-        return affiliation.IsHostileTowards(other.affiliation);
+        Character c = other as Character;
+        if (c == null) return true;
+        return affiliation.IsHostileTowards(c.affiliation);
     }
 
     public override void Delete()

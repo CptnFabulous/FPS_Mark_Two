@@ -6,8 +6,8 @@ using UnityEngine.InputSystem;
 public class OffhandAttack : MonoBehaviour
 {
     public WeaponMode attack;
-    [SerializeField] string mapName; // "On foot"
-    [SerializeField] string actionName; // "Melee Attack"
+    [SerializeField] string mapName;
+    [SerializeField] string actionName;
 
     private void Awake()
     {

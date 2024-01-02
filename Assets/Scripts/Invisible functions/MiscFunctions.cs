@@ -51,6 +51,19 @@ public readonly struct MiscFunctions
             list[r] = value;
         }
     }
+    public static void SortListWithOnePredicate<T>(List<T> list, System.Func<T, IComparable> obtainValue, bool reverse = false)
+    {
+        list.Sort((a, b) =>
+        {
+            IComparable _a = obtainValue.Invoke(a);
+            IComparable _b = obtainValue.Invoke(b);
+            return reverse ? _b.CompareTo(_a) : _a.CompareTo(_b);
+        });
+    }
+    public static void SortListWithNoPredicate<T>(List<T> list, bool reverse = false) where T : IComparable
+    {
+        list.Sort((_a, _b) => reverse ? _b.CompareTo(_a) : _a.CompareTo(_b));
+    }
     #endregion
 
     public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit rh, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
