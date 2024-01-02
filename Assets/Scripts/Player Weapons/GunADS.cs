@@ -112,7 +112,7 @@ public class GunADS : MonoBehaviour
             lookControls.worldViewCamera.fieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
         }
 
-        Transform aimAxis = lookControls.aimAxis;
+        Transform aimAxis = userWeaponHandler.aimAxis;
         Transform upperBody = lookControls.upperBody;
         Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, userWeaponHandler.AimDirection, timer);
         upperBody.LookAt(upperBody.position + cameraDirection, aimAxis.up);

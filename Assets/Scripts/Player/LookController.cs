@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class LookController : MonoBehaviour
+public class LookController : MonoBehaviour, ICharacterLookController
 {
+    public static float SignWithZero(float input) => (input != 0) ? Mathf.Sign(input) : 0;
+
     public PlayerInput mainInput;
     public WeaponHandler weaponHandler;
 
@@ -40,92 +42,62 @@ public class LookController : MonoBehaviour
     public float minAngle => -90;
     public float maxAngle => 90;
 
-    Vector2 la;
-    
     public Vector2 rawAimInput { get; private set; }
-    public Vector2 processedAimInput { get; private set; }
     public float aimStartTime { get; private set; }
-    public Vector2 lookAngles
+
+    public Quaternion rotationVelocity
     {
-        get => la;
-        set
+        get
         {
-            la = value;
-            la.y = Mathf.Clamp(la.y, minAngle, maxAngle);
+            Vector2 input = GetProcessedAimInput();
+            return Quaternion.Euler(-input.y, input.x, 0) * transform.rotation;
         }
     }
-    public Quaternion rotationVelocity => Quaternion.Euler(-processedAimInput.y, processedAimInput.x, 0) * transform.rotation;
-
     public bool usingGamepad => mainInput.currentControlScheme.Contains("Gamepad");
 
-    private void Awake()
+    public Vector2 lookAngles
     {
-        worldViewCamera.fieldOfView = fieldOfView;
-    }
-    private void OnEnable()
-    {
-        // Get local rotation of movement controller
-        Vector2 newLookAngles = lookAngles;
-        newLookAngles.x = mainBodyTransform.localEulerAngles.y;
-        lookAngles = newLookAngles;
-    }
-    void Update()
-    {
-        #region Add player input
-        processedAimInput = ProcessAimInput();
-        float magnitude = processedAimInput.magnitude;
-        if (magnitude > 0) lookAngles += processedAimInput * Time.deltaTime;
-        #endregion
-
-        #region Set actual rotation
-        Vector2 totalAngles = lookAngles;
-        if (recoilController != null)
+        get
         {
-            totalAngles += recoilController.recoilValue;
+            Vector2 value = new Vector2(mainBodyTransform.eulerAngles.y, -aimAxis.localEulerAngles.x);
+            while (value.y < -180) value.y += 360;
+            while (value.y > 180) value.y -= 360;
+            return value;
         }
-
-        Vector3 eulerAngles = mainBodyTransform.localEulerAngles;
-        eulerAngles.y = totalAngles.x;
-        mainBodyTransform.localEulerAngles = eulerAngles;
-        aimAxis.localRotation = Quaternion.Euler(-totalAngles.y, 0, 0);
-        #endregion
-    }
-
-
-    #region Private functions for processing direct input
-    void OnLook(InputValue input)
-    {
-        // Register zero if player looking is currently disabled
-        if (!canLook)
+        set
         {
-            rawAimInput = Vector2.zero;
-            return;
+            Vector3 eulerAngles = mainBodyTransform.localEulerAngles;
+            eulerAngles.y = value.x;
+            mainBodyTransform.localEulerAngles = eulerAngles;
+
+            float clampedY = Mathf.Clamp(value.y, minAngle, maxAngle);
+            aimAxis.localRotation = Quaternion.Euler(-clampedY, 0, 0);
         }
-
-        Vector2 newInput = input.Get<Vector2>();
-
-        #region Reset aim time if direction changes
-        // If the player has just started moving their aim horizontally (or switched to aiming in the opposite direction):
-        // Reset aim time for aim acceleration calculations
-        // I had to make a custom sign function because I want to know if the value is zero but Mathf.Sign will only return either 1 or -1.
-        float SignWithZero(float input) => (input != 0) ? Mathf.Sign(input) : 0;
-        if (SignWithZero(newInput.x) != SignWithZero(rawAimInput.x)) aimStartTime = Time.time;
-        /*
-        float prevX = rawAimInput.x;
-        float newX = newInput.x;
-        if ((newX > 0 && prevX <= 0) || (newX < 0 && prevX >= 0))
-        */
-        #endregion
-
-        rawAimInput = newInput; // Update rawAimInput to new value
     }
-    Vector2 ProcessAimInput()
+    public Quaternion lookRotation
+    {
+        get => aimAxis.rotation;
+        set
+        {
+            Vector3 lookDirection = value * Vector3.forward;
+            // Obtains a flattened Vector3 value from lookRotation, to rotate the body on just one axis
+            Vector3 transformDirection = Vector3.ProjectOnPlane(lookDirection, mainBodyTransform.up);
+            mainBodyTransform.rotation = Quaternion.LookRotation(transformDirection, mainBodyTransform.up);
+            // Rotates head to look in the appropriate direction
+            aimAxis.rotation = value;
+        }
+    }
+
+    /// <summary>
+    /// Returns the player's aim input, accounting for sensivity, inverted axes and aim acceleration.
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 GetProcessedAimInput()
     {
         // If value is zero, no need to perform additional processing
-        if (rawAimInput.magnitude <= 0) return rawAimInput;
+        if (rawAimInput.sqrMagnitude <= 0) return rawAimInput;
 
         Vector2 value = rawAimInput; // Get raw input value
-
         bool usingGamepad = this.usingGamepad;
         bool inADS = weaponHandler != null && weaponHandler.IsUsingADS;
 
@@ -161,5 +133,26 @@ public class LookController : MonoBehaviour
 
         return value;
     }
-    #endregion
+
+
+    void OnLook(InputValue input)
+    {
+        #region Register raw input values and aim start time (for aim acceleration)
+        if (!canLook)
+        {
+            rawAimInput = Vector2.zero;
+            return;
+        }
+
+        Vector2 newInput = input.Get<Vector2>();
+
+        // Reset player aim time on start or direction change, for aim acceleration calculations
+        if (SignWithZero(newInput.x) != SignWithZero(rawAimInput.x)) aimStartTime = Time.time;
+
+        rawAimInput = newInput; // Update rawAimInput to new value
+        #endregion
+
+        Vector2 processedAimInput = Time.deltaTime * GetProcessedAimInput();
+        if (processedAimInput.sqrMagnitude > 0) lookAngles += processedAimInput;
+    }
 }

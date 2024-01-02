@@ -23,6 +23,7 @@ public class AI : Character
     AIGunAttack _attack;
 
     public override Transform LookTransform => aiming.viewAxis;
+    public override ICharacterLookController lookController => aiming;
     public override Vector3 aimDirection => LookTransform.forward;
     public override LayerMask lookMask => targeting.visionCone.viewDetection;
     public override LayerMask attackMask

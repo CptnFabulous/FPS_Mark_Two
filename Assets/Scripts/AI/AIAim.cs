@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AIAim : MonoBehaviour
+public class AIAim : MonoBehaviour, ICharacterLookController
 {
     public AI ai;
     public Transform viewAxis;
@@ -38,7 +38,7 @@ public class AIAim : MonoBehaviour
     }
 
     #region Look direction values
-    Quaternion lookRotation
+    public Quaternion lookRotation
     {
         get => viewAxis.rotation;
         set
