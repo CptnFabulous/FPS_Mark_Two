@@ -101,9 +101,8 @@ public class RangedAttack : WeaponMode
     {
         // Transmit telegraph message to AI, if it's the first shot or enough time has passed since the previous message transmission
         if (Time.time - timeOfLastMessage <= controls.messageDelay) return;
-
-        DamageEffect projectileEffect = stats.projectilePrefab.damageEffect;
-        int damage = projectileEffect != null ? projectileEffect.baseDamage : int.MaxValue;
+        
+        int damage = stats.projectilePrefab.damageStats.damage;
         float spread = stats.shotSpread + User.weaponHandler.standingAccuracy;
 
         DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, stats.range, spread, stats.projectilePrefab.detection);

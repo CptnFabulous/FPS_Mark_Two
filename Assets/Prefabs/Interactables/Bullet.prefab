@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7059086101645604910}
   - component: {fileID: 7059086101645604881}
   - component: {fileID: 7059086101645604909}
-  - component: {fileID: 7059086101645604880}
   - component: {fileID: 7059086101645604911}
   m_Layer: 6
   m_Name: Bullet
@@ -68,72 +67,51 @@ MonoBehaviour:
   detection:
     serializedVersion: 2
     m_Bits: 1527
-  damageEffect: {fileID: 7059086101645604880}
-  onHit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7059086101645604909}
-        m_TargetAssemblyTypeName: Projectile, Assembly-CSharp
-        m_MethodName: SpawnObjectForwardOffSurface
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8093613007427399304, guid: 141515667f45add4da5c7e12c7ce8c6c, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: PlayWithoutSource
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 7059086101645604910}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 7059086101645604881}
-        m_TargetAssemblyTypeName: Entity, Assembly-CSharp
-        m_MethodName: Delete
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &7059086101645604880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7059086101645604908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9c53f9d05cb4cd4f883c88f6d47bb24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseDamage: 10
-  stun: 10
-  knockback: 15
-  type: 0
-  additionalEffects:
-    m_PersistentCalls:
-      m_Calls: []
-  criticalMultiplier: 3
-  onDamaged:
-    m_PersistentCalls:
-      m_Calls: []
-  onUndamaged:
-    m_PersistentCalls:
-      m_Calls: []
+  damageStats:
+    damage: 10
+    stun: 10
+    knockback: 15
+    type: 0
+    criticalMultiplier: 3
+    onHit:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 7059086101645604909}
+          m_TargetAssemblyTypeName: Projectile, Assembly-CSharp
+          m_MethodName: SpawnObjectForwardOffSurface
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 8093613007427399304, guid: 141515667f45add4da5c7e12c7ce8c6c, type: 3}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
+          m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
+          m_MethodName: PlayWithoutSource
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 7059086101645604910}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 7059086101645604881}
+          m_TargetAssemblyTypeName: Entity, Assembly-CSharp
+          m_MethodName: Delete
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!96 &7059086101645604911
 TrailRenderer:
   serializedVersion: 2

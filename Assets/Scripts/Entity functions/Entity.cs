@@ -21,6 +21,16 @@ public class Entity : MonoBehaviour
         if (isUnique == false && string.IsNullOrEmpty(properName) == false) gameObject.name = properName;
     }
 
+    public bool IsHostileTowards(Entity target)
+    {
+        Character attackerChar = this as Character;
+        Character targetChar = target as Character;
+
+        if (attackerChar == null || targetChar == null) return true;
+        
+        return attackerChar.affiliation.IsHostileTowards(targetChar.affiliation);
+    }
+
     /*
     public float timeScale = 1;
     public Vector3 gravity = Physics.gravity;

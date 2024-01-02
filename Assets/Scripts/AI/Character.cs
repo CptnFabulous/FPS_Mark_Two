@@ -38,13 +38,14 @@ public abstract class Character : Entity
 
 
     public abstract Character target { get; }
+    /*
     public bool IsHostileTowards(Entity other)
     {
         Character c = other as Character;
         if (c == null) return true;
         return affiliation.IsHostileTowards(c.affiliation);
     }
-
+    */
     public override void Delete()
     {
         health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null);
