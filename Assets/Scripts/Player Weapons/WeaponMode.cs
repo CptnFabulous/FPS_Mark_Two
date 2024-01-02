@@ -32,6 +32,10 @@ public abstract class WeaponMode : MonoBehaviour
 
     public abstract void OnSwitchTo();
     public abstract void OnSwitchFrom();
+
+    public abstract bool CanAttack();
+    public abstract void OnAttack();
+
     protected abstract void OnPrimaryInputChanged(bool held);
     protected abstract void OnSecondaryInputChanged();
     public abstract void OnTertiaryInput();

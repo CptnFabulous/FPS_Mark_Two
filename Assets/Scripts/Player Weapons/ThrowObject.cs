@@ -34,19 +34,22 @@ public class ThrowObject : WeaponMode
     protected override void OnSecondaryInputChanged() { }
     public override void OnTertiaryInput() { }
 
+    public override bool CanAttack() => User.weaponHandler.ammo.GetStock(ammunitionType) > 0;
+    public override void OnAttack() => User.weaponHandler.ammo.Spend(ammunitionType, 1);
+
     protected override void OnPrimaryInputChanged(bool held)
     {
         // Check if input is pressed and not released
         if (PrimaryHeld == false) return;
 
-        if (User.weaponHandler.ammo.GetStock(ammunitionType) <= 0) return;
+        if (CanAttack() == false) return;
 
         Debug.Log($"{this}: throwing");
 
         
         SpawnNewThrowable();
 
-        User.weaponHandler.ammo.Spend(ammunitionType, 1);
+        OnAttack();
 
         // Prep and throw the object, and clear 'readyToThrow'
         Vector3 aimOrigin = User.LookTransform.position;

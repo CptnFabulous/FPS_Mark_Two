@@ -20,13 +20,14 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     [Header("Damage")]
     [SerializeField] DamageDealer hitData;
+    [SerializeField] float staminaConsumption = 1;
 
     [Header("Animations")]
-    public Animator animator;
-    public string windupTrigger = "Windup";
-    public string attackTrigger = "Attack";
-    public string cooldownTrigger = "Cooldown";
-    public string interruptTrigger = "Interrupted";
+    [SerializeField] Animator animator;
+    [SerializeField] string windupTrigger = "Windup";
+    [SerializeField] string attackTrigger = "Attack";
+    [SerializeField] string cooldownTrigger = "Cooldown";
+    [SerializeField] string interruptTrigger = "Interrupted";
 
     Coroutine currentAttack;
 
@@ -49,13 +50,22 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         // Block/parry
     }
 
-    
+    public override bool CanAttack() => User.stamina.values.current > staminaConsumption;
+    public override void OnAttack() => User.stamina.Deplete(staminaConsumption);
 
     IEnumerator AttackSequence()
     {
+        if (CanAttack() == false)
+        {
+            currentAttack = null;
+            yield break;
+        }
+
+        
         #region Windup
         Debug.Log($"{this}: winding up");
         // Play windup animation
+        OnAttack();
         if (animator != null) animator.SetTrigger(windupTrigger);
         onAttack.Invoke();
         // TO DO: Add a thing here to send an attack message, so enemies can dodge attacks

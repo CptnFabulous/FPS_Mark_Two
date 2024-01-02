@@ -350,6 +350,7 @@ GameObject:
   - component: {fileID: 5952785220977946992}
   - component: {fileID: 5952785220977947006}
   - component: {fileID: 3129558233819840828}
+  - component: {fileID: 1612728925117925022}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -392,6 +393,7 @@ MonoBehaviour:
   isUnique: 1
   affiliation: {fileID: 11400000, guid: 4fa3cac1b5d754d4894e40f91efa32fa, type: 2}
   health: {fileID: 745592948619609687}
+  stamina: {fileID: 2602773801818801118}
   characterModel: {fileID: 0}
   controls: {fileID: 3129558233819840828}
   movement: {fileID: 5952785220977947007}
@@ -1028,6 +1030,18 @@ MonoBehaviour:
   m_DefaultActionMap: On foot
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 5952785222629829733}
+--- !u!114 &1612728925117925022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785220977946995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b66b6c168b755ad4abded4bb3bcc543b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5952785221539919871
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,22 +1209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4ccfd7667936ce48b28aa3df0903343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typeValues:
-  - type: {fileID: 11400000, guid: 3790a818e1c48494c8a1afd8bbfae7e5, type: 2}
-    maxValue: 90
-    criticalLevel: 15
-  - type: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
-    maxValue: 90
-    criticalLevel: 30
-  - type: {fileID: 11400000, guid: d450133976532494a9ca9ecf16dd1804, type: 2}
-    maxValue: 18
-    criticalLevel: 6
-  - type: {fileID: 11400000, guid: 8b0633f92a623324d831f46f7a64267d, type: 2}
-    maxValue: 3
-    criticalLevel: 1
-  - type: {fileID: 11400000, guid: 9a328c29f0497934892d7ba2701b66fe, type: 2}
-    maxValue: 3
-    criticalLevel: 1
   startEmpty: 0
   ammunitionTypes:
   - name: 12GA Buckshot
@@ -1669,6 +1667,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  staminaConsumption: 1
   animator: {fileID: 152877896174432203}
   windupTrigger: Windup
   attackTrigger: Attack

@@ -36,88 +36,13 @@ public class RangedAttack : WeaponMode
 
     public bool consumesAmmo => User.ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
-    public bool CanShoot()
-    {
-        // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
-        if (magazine != null)
-        {
-            // If not enough ammunition is in magazine to shoot, or the player is currently reloading
-            if (magazine.ammo.current < stats.ammoPerShot || magazine.ReloadActive)
-            {
-                return false;
-            }
-        }
-
-        // If the weapon consumes ammunition, but there isn't enough to fire
-        if (consumesAmmo && User.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// Continuously fires shots until the burst timer is reached, the gun runs out of ammo, or the player lets go of the trigger.
-    /// </summary>
-    IEnumerator FireBurst()
-    {
-        isFiring = true;
-        shotsInBurst = 0;
-        float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer, to infinity to ensure it always sends a message on the first shot.
-
-        while (PrimaryHeld && controls.CanBurst(shotsInBurst) && CanShoot())
-        {
-            TrySendMessage(ref timeOfLastMessage);
-            // Fire shot and increment burst timer
-            yield return SingleShot();
-        }
-
-        // Wait until the fire button is released, then reset the shot timer
-        yield return new WaitUntil(() => PrimaryHeld == false);
-        shotsInBurst = 0;
-        isFiring = false;
-    }
-    /// <summary>
-    /// Fires a single shot and increments the burst counter.
-    /// </summary>
-    public IEnumerator SingleShot()
-    {
-        if (magazine != null)
-        {
-            magazine.ammo.current -= stats.ammoPerShot;
-        }
-        if (consumesAmmo)
-        {
-            User.ammo.Spend(stats.ammoType, stats.ammoPerShot);
-        }
-
-        stats.Shoot(User);
-
-        shotsInBurst++;
-        yield return new WaitForSeconds(controls.ShotDelay);
-    }
-    void TrySendMessage(ref float timeOfLastMessage)
-    {
-        // Transmit telegraph message to AI, if it's the first shot or enough time has passed since the previous message transmission
-        if (Time.time - timeOfLastMessage <= controls.messageDelay) return;
-        
-        int damage = stats.projectilePrefab.damageStats.damage;
-        float spread = stats.shotSpread + User.weaponHandler.standingAccuracy;
-
-        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, stats.range, spread, stats.projectilePrefab.detection);
-        Notification<AttackMessage>.Transmit(newMessage);
-
-        timeOfLastMessage = Time.time; // Resets time
-    }
-
     public override void OnSwitchTo()
     {
         if (optics != null)
         {
             optics.enabled = true;
         }
-        
+
         magazine.Initialise(this);
     }
     public override void OnSwitchFrom()
@@ -153,4 +78,84 @@ public class RangedAttack : WeaponMode
     {
         throw new System.NotImplementedException();
     }
+
+    /// <summary>
+    /// Continuously fires shots until the burst timer is reached, the gun runs out of ammo, or the player lets go of the trigger.
+    /// </summary>
+    IEnumerator FireBurst()
+    {
+        isFiring = true;
+        shotsInBurst = 0;
+        float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer, to infinity to ensure it always sends a message on the first shot.
+
+        while (PrimaryHeld && CanAttack())
+        {
+            TrySendMessage(ref timeOfLastMessage);
+            // Fire shot and increment burst timer
+            yield return SingleShot();
+        }
+
+        // Wait until the fire button is released, then reset the shot timer
+        yield return new WaitUntil(() => PrimaryHeld == false);
+        shotsInBurst = 0;
+        isFiring = false;
+    }
+    /// <summary>
+    /// Fires a single shot and increments the burst counter.
+    /// </summary>
+    public IEnumerator SingleShot()
+    {
+        stats.Shoot(User);
+        OnAttack();
+        yield return new WaitForSeconds(controls.ShotDelay);
+    }
+    public override bool CanAttack()
+    {
+        if (controls.CanBurst(shotsInBurst) == false) return false;
+        
+        // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
+        if (magazine != null)
+        {
+            // If not enough ammunition is in magazine to shoot, or the player is currently reloading
+            if (magazine.ammo.current < stats.ammoPerShot || magazine.ReloadActive)
+            {
+                return false;
+            }
+        }
+
+        // If the weapon consumes ammunition, but there isn't enough to fire
+        if (consumesAmmo && User.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
+        {
+            return false;
+        }
+
+        return true;
+    }
+    public override void OnAttack()
+    {
+        if (magazine != null)
+        {
+            magazine.ammo.current -= stats.ammoPerShot;
+        }
+        if (consumesAmmo)
+        {
+            User.ammo.Spend(stats.ammoType, stats.ammoPerShot);
+        }
+        shotsInBurst++;
+    }
+    void TrySendMessage(ref float timeOfLastMessage)
+    {
+        // Transmit telegraph message to AI, if it's the first shot or enough time has passed since the previous message transmission
+        if (Time.time - timeOfLastMessage <= controls.messageDelay) return;
+        
+        int damage = stats.projectilePrefab.damageStats.damage;
+        float spread = stats.shotSpread + User.weaponHandler.standingAccuracy;
+
+        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, stats.range, spread, stats.projectilePrefab.detection);
+        Notification<AttackMessage>.Transmit(newMessage);
+
+        timeOfLastMessage = Time.time; // Resets time
+    }
+
+    
 }
