@@ -38,7 +38,7 @@ public class DamageDealer
         Rigidbody rb = target.GetComponentInParent<Rigidbody>();
         if (rb != null)
         {
-            rb.AddForceAtPosition(point, direction.normalized * knockback);
+            rb.AddForceAtPosition(direction.normalized * knockback, point, ForceMode.Impulse);
         }
 
         // Play damage effects on surface (e.g. sound, impacts, etc.)
