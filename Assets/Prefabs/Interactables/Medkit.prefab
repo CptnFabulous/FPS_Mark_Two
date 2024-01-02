@@ -131,8 +131,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  properName: Small medkit
-  description: Heals for 20 health points.
+  properName: Medkit
+  description: Use to recover from injuries.
   isUnique: 0
 --- !u!114 &4544066185653120222
 MonoBehaviour:
@@ -146,10 +146,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1be7aae3274918a4f98a7bcbe0bb1f09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactable: {fileID: 4544066185653120211}
+  pickupNoise: {fileID: 0}
   healthRestored: 50
   deleteOnPickup: 1
   attachedTo: {fileID: 4544066185653120220}
-  interactable: {fileID: 4544066185653120211}
 --- !u!114 &4544066185653120211
 MonoBehaviour:
   m_ObjectHideFlags: 0
