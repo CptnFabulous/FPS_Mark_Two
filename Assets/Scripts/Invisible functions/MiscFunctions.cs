@@ -66,6 +66,21 @@ public readonly struct MiscFunctions
     }
     #endregion
 
+    #region IEnumerators
+    public static IEnumerator WaitOnLerp(float secondsToWait, Action<float> frameAction)
+    {
+        float t = 0;
+        do
+        {
+            t += Time.deltaTime / secondsToWait;
+            t = Mathf.Clamp01(t);
+            frameAction.Invoke(t);
+            yield return null;
+        }
+        while (t < 1);
+    }
+    #endregion
+
     public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit rh, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
     {
         List<RaycastHit> list = RaycastAllWithExceptions(origin, direction, distance, layerMask, exceptions);

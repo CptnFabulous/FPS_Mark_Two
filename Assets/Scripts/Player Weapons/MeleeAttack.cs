@@ -2,24 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MeleeAttack : WeaponMode//, IInterruptableAction
 {
-    [Header("Damage")]
-    [SerializeField] int damage = 15;
-    [SerializeField] int stun = 15;
-    [SerializeField] DamageType damageType = DamageType.Slashing;
-
     [Header("Timing")]
     [SerializeField] float windupTime = 0.25f;
     [SerializeField] float attackTime = 0.25f;
     [SerializeField] float cooldownTime = 0.5f;
+    public UnityEvent onAttack;
 
     [Header("Detection")]
     [SerializeField] float range = 2;
     [SerializeField] float angle = 45;
     [SerializeField] LayerMask hitDetection = ~0;
     [SerializeField] bool snapTowardsTarget;
+
+    [Header("Damage")]
+    [SerializeField] DamageDealer hitData;
 
     [Header("Animations")]
     public Animator animator;
@@ -49,24 +49,14 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         // Block/parry
     }
 
-    public static IEnumerator WaitOnLerp(float secondsToWait, System.Action<float> frameAction)
-    {
-        float t = 0;
-        do
-        {
-            t += Time.deltaTime / secondsToWait;
-            t = Mathf.Clamp01(t);
-            frameAction.Invoke(t);
-            yield return null;
-        }
-        while (t < 1);
-    }
+    
 
     IEnumerator AttackSequence()
     {
         Debug.Log($"{this}: winding up");
         // Play windup animation
         if (animator != null) animator.SetTrigger(windupTrigger);
+        onAttack.Invoke();
         // TO DO: Add a thing here to send an attack message, so enemies can dodge attacks
         yield return new WaitForSeconds(windupTime);
 
@@ -89,19 +79,19 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         // Wait for attack. If target is acquired, shift movement towards target
         if (target != null && snapTowardsTarget)
         {
-            // Shift the character's position/rotation towards the target
+            #region Shift the character's position/rotation towards the target
 
             Quaternion startingRotation = User.lookController.lookRotation;
             AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
             // TO DO: disable standard look controls
-            yield return WaitOnLerp(attackTime, (t) =>
+            yield return MiscFunctions.WaitOnLerp(attackTime, (t) =>
             {
                 Vector3 aimDirection = target.bounds.center - User.LookTransform.position;
                 Quaternion desiredRotation = Quaternion.LookRotation(aimDirection, User.transform.up);
                 User.lookController.lookRotation = Quaternion.Lerp(startingRotation, desiredRotation, curve.Evaluate(t));
             });
             // TO DO: reenable look controls
-
+            #endregion
         }
         else
         {
@@ -112,7 +102,17 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         if (target != null)
         {
             Debug.Log($"{this}: dealing damage");
-            target.health.Damage(damage, stun, false, damageType, User);
+
+            Vector3 point = target.bounds.center;
+            Vector3 hitDirection = point - origin;
+            hitData.AttackObject(target.gameObject, User, point, hitDirection);
+            //target.health.Damage(damage, stun, false, damageType, User);
+        }
+        else if (Physics.Raycast(origin, direction, out RaycastHit rh, range, hitDetection))
+        {
+            // Casts a secondary check
+            Debug.Log("Hit something that isn't an entity");
+            hitData.AttackObject(rh.collider.gameObject, User, rh.point, direction);
         }
         else
         {
