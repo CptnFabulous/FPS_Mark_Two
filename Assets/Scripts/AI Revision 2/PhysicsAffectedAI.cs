@@ -8,6 +8,20 @@ public class PhysicsAffectedAI : MonoBehaviour
     [SerializeField] NavMeshAgent navMeshAgent;
     [SerializeField] Rigidbody rigidbody;
 
+#if UNITY_EDITOR
+    [SerializeField] GameObject target;
+
+    private void Start()
+    {
+        navMeshAgent.destination = target.transform.position;
+    }
+    [ContextMenu("Reassign position")]
+    void ReassignPosition()
+    {
+        navMeshAgent.destination = target.transform.position;
+    }
+#endif
+
     private void OnEnable()
     {
         navMeshAgent.updatePosition = false;
