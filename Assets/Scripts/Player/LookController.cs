@@ -134,10 +134,12 @@ public class LookController : MonoBehaviour, ICharacterLookController
         return value;
     }
 
-
+    /// <summary>
+    /// Register raw input values and aim start time (for aim acceleration)
+    /// </summary>
+    /// <param name="input"></param>
     void OnLook(InputValue input)
     {
-        #region Register raw input values and aim start time (for aim acceleration)
         if (!canLook)
         {
             rawAimInput = Vector2.zero;
@@ -150,9 +152,15 @@ public class LookController : MonoBehaviour, ICharacterLookController
         if (SignWithZero(newInput.x) != SignWithZero(rawAimInput.x)) aimStartTime = Time.time;
 
         rawAimInput = newInput; // Update rawAimInput to new value
-        #endregion
+    }
 
-        Vector2 processedAimInput = Time.deltaTime * GetProcessedAimInput();
-        if (processedAimInput.sqrMagnitude > 0) lookAngles += processedAimInput;
+    void Update()
+    {
+        Vector2 delta = GetProcessedAimInput();
+        if (delta.sqrMagnitude > 0)
+        {
+            delta *= Time.deltaTime;
+            lookAngles += delta;
+        }
     }
 }
