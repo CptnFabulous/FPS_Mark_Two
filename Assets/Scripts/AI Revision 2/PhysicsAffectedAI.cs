@@ -13,11 +13,12 @@ public class PhysicsAffectedAI : MonoBehaviour
 
     private void Start()
     {
-        navMeshAgent.destination = target.transform.position;
+        ReassignPosition();
     }
     [ContextMenu("Reassign position")]
     void ReassignPosition()
     {
+        if (target == null) return;
         navMeshAgent.destination = target.transform.position;
     }
 #endif
