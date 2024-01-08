@@ -26,9 +26,9 @@ public class Health : MonoBehaviour
 {
     public Resource data = new Resource(100, 100, 20);
     
-    public UnityEvent onDamage;
-    public UnityEvent onHeal;
-    public UnityEvent onDeath;
+    public UnityEvent<DamageMessage> onDamage;
+    public UnityEvent<DamageMessage> onHeal;
+    public UnityEvent<KillMessage> onDeath;
     public bool allowPosthumousDamage;
     public bool IsAlive => data.current > 0;
 
@@ -77,27 +77,20 @@ public class Health : MonoBehaviour
     {
         if (IsAlive == false && allowPosthumousDamage == false) return;
 
+        bool isHealing = damage < 0;
+        if (isHealing) type = DamageType.Healing;
+
         data.Increment(-damage);
 
-        if (damage < 0)
-        {
-            type = DamageType.Healing;
-            onHeal.Invoke();
-        }
-        else
-        {
-            onDamage.Invoke();
-
-        }
-
         DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
+        (isHealing ? onHeal : onDamage).Invoke(damageMessage);
         Notification<DamageMessage>.Transmit(damageMessage);
 
         if (data.current <= 0)
         {
-            onDeath.Invoke();
             KillMessage killMessage = new KillMessage(attacker, this, type);
             Notification<KillMessage>.Transmit(killMessage);
+            onDeath.Invoke(killMessage);
         }
     }
     public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer);
@@ -115,7 +108,7 @@ public class Health : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         data.current = data.max;
-        onHeal.Invoke();
+        onHeal.Invoke(null);
     }
     #endregion
 }
