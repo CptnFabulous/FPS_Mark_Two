@@ -38,11 +38,6 @@ public class Player : Character
     {
         base.Die();
 
-        if (health != null && health.stunData != null)
-        {
-            health.stunData.enabled = false;
-        }
-
         //movement.enabled = false;
         //weapons.enabled = false;
         movement.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;

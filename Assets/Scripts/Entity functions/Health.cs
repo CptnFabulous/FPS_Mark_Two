@@ -30,7 +30,6 @@ public class Health : MonoBehaviour
     public UnityEvent onHeal;
     public UnityEvent onDeath;
     public bool allowPosthumousDamage;
-    public Stamina stunData;
     public bool IsAlive => data.current > 0;
 
     public Hitbox[] hitboxes
@@ -89,10 +88,6 @@ public class Health : MonoBehaviour
         {
             onDamage.Invoke();
 
-            if (stun > 0 && stunData != null && stunData.enabled)
-            {
-                stunData.WearDown(stun);
-            }
         }
 
         DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
