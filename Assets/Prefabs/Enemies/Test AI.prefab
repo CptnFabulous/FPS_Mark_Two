@@ -300,8 +300,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2153607426591022829}
+  - component: {fileID: 780700435301158838}
+  - component: {fileID: 6663861431420764691}
   m_Layer: 6
-  m_Name: Stunned
+  m_Name: Stun Handler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -321,6 +323,68 @@ Transform:
   m_Father: {fileID: 7555169701559161299}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &780700435301158838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3234575642437474674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e22230cfd2a07ba478865dea2b5404df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poise:
+    name: New Resource
+    max: 10
+    current: 10
+    criticalLevel: 2
+  restoreTime: 3
+  health: {fileID: 7555169701559161295}
+  stateController: {fileID: 4300564472772752741}
+  stunState: {fileID: 6663861431420764691}
+--- !u!114 &6663861431420764691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3234575642437474674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd06b7d5d2adffb4cb865db50cb9cf3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: -3171215574586982828, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
+  soundBytes: {fileID: 0}
+  staggerSpeedMultiplier: 0.5
+  moveShiftSpeed: 1
+  staggerTime: 3
+  staggerCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &4523392251199138075
 GameObject:
   m_ObjectHideFlags: 0
@@ -833,7 +897,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7555169703030807958}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e6ee4169a9384b44a937244a72aa83ed, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -1012,11 +1076,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
---- !u!4 &7012099513412501397 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8446451415489526675, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
-  m_PrefabInstance: {fileID: 1474974596724491270}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5413707382805136003 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6870649952528205445, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
@@ -1028,6 +1087,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88cc107c241dcaa41b708fa8a4674f32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &7012099513412501397 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8446451415489526675, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
+  m_PrefabInstance: {fileID: 1474974596724491270}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4248112168266135459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1126,7 +1190,7 @@ PrefabInstance:
     - target: {fileID: 7778758533985661154, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1660126055874503159, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
+      objectReference: {fileID: -3171215574586982828, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
 --- !u!224 &6576444739976557574 stripped
