@@ -11,12 +11,14 @@ public class StateController : MonoBehaviour
         get => current;
         set => SwitchToState(value);
     }
+    public StateFunction previousState { get; private set; }
+
     public void SwitchToState(StateFunction newState)
     {
-        Debug.Log($"{this}: switching from {current} to {newState}");
         if (newState != null && newState.transform.IsChildOf(transform) == false) return;
 
         current.enabled = false;
+        previousState = current;
         current = newState;
         current.enabled = true;
     }
