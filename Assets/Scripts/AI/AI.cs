@@ -47,8 +47,9 @@ public class AI : Character
 
     public bool reachedDestination => agent.remainingDistance < destinationThreshold;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         agent.speed = baseMovementSpeed;
     }
 
