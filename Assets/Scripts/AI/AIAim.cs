@@ -158,7 +158,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
         float distance = 5; // I'm pretty sure this could be anything
 
-        int count = Mathf.CeilToInt(360 / ai.targeting.visionCone.viewingAngles.y);
+        int count = Mathf.CeilToInt(360 / ai.visionCone.viewingAngles.y);
         float angleSegment = 180 / (count - 1);
 
         Vector3 eulerAngles = Vector3.zero;

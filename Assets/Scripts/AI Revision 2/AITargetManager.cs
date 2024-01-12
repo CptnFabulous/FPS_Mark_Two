@@ -8,13 +8,11 @@ public class AITargetManager : MonoBehaviour
 
     [Header("AI data")]
     public AI controlling;
-    public FieldOfView visionCone;
 
     public ViewStatus canSeeTarget { get; private set; }
     public RaycastHit lastHit { get; private set; }
     public Vector3 lastKnownPosition { get; private set; }
 
-    AIAim aim => controlling.aiming;
     public bool targetExists => target != null && target.health.IsAlive;
 
     void Update()
@@ -25,7 +23,7 @@ public class AITargetManager : MonoBehaviour
             return;
         }
 
-        canSeeTarget = visionCone.VisionConeCheck(target.colliders, out RaycastHit hit);
+        canSeeTarget = controlling.visionCone.VisionConeCheck(target.colliders, out RaycastHit hit);
         if (canSeeTarget == ViewStatus.Visible)
         {
             lastHit = hit;

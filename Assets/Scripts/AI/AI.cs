@@ -8,6 +8,10 @@ public class AI : Character
     [Header("Behaviour")]
     public ActionExecutor actions;
 
+    [Header("Sensing and reaction")]
+    public FieldOfView visionCone;
+    public DiegeticAudioListener hearing;
+
     [Header("Movement and pathing")]
     public NavMeshAgent agent;
     public float baseMovementSpeed = 5;
@@ -25,7 +29,7 @@ public class AI : Character
     public override Transform LookTransform => aiming.viewAxis;
     public override ICharacterLookController lookController => aiming;
     public override Vector3 aimDirection => LookTransform.forward;
-    public override LayerMask lookMask => targeting.visionCone.viewDetection;
+    public override LayerMask lookMask => visionCone.viewDetection;
     public override LayerMask attackMask
     {
         get
