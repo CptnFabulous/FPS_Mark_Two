@@ -1,60 +1,57 @@
-﻿using System.Collections;
+﻿//using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
+using UnityEngine.Audio;
 
-[CreateAssetMenu(fileName = "New Random Sound Player", menuName = "ScriptableObjects/Random Sound Player", order = 0)]
+[CreateAssetMenu(fileName = "New Diegetic Sound", menuName = "ScriptableObjects/Diegetic Sound", order = 1)]
 public class DiegeticSound : ScriptableObject
 {
-    public AudioClip[] sounds;
-    [Range(-3, 3)]
-    public float minPitchVariance = 1;
-    [Range(-3, 3)]
-    public float maxPitchVariance = 1;
-    [Range(0, 1)]
-    public float minVolumeVariance = 1;
-    [Range(0, 1)]
-    public float maxVolumeVariance = 1;
-    public float delay;
+    [SerializeField] AudioClip[] sounds;
+    //[SerializeField] AudioMixerGroup mixerGroup;
+    [SerializeField] float decibels = 80;
+    [SerializeField, Range(-3, 3)] float minPitchVariance = 1;
+    [SerializeField, Range(-3, 3)] float maxPitchVariance = 1;
+    /*
+    [SerializeField, Range(0, 1)] float minVolumeVariance = 1;
+    [SerializeField, Range(0, 1)] float maxVolumeVariance = 1;
+    [SerializeField] float delay;
+    */
 
     public void Play(AudioSource source)
     {
-        if (delay <= 0)
+        Play(source.transform.position, source.GetComponentInParent<Entity>(), source, 1);
+    }
+    public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1)
+    {
+        Play(point, sourceEntity, sourceEntity.GetComponentInChildren<AudioSource>(), multiplier);
+    }
+
+
+
+
+
+    public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1)
+    {
+        AudioClip clip = sounds[Random.Range(0, sounds.Length)];
+        float totalMultiplier = /*Random.Range(minVolumeVariance, maxVolumeVariance) * */multiplier;
+
+        if (source != null)
         {
-            PlayWithoutDelay(source);
-            return;
+            source.pitch = Random.Range(minPitchVariance, maxPitchVariance);
+            source.volume = totalMultiplier;
+            source.PlayOneShot(clip);
         }
-        MonoBehaviour behaviourToRunFrom = source.GetComponent<MonoBehaviour>();
-        behaviourToRunFrom.StartCoroutine(DelayPlay(source));
-    }
+        else
+        {
+            AudioSource.PlayClipAtPoint(clip, point, totalMultiplier);
+        }
 
-    public void PlayWithoutDelay(AudioSource source)
-    {
-        source.pitch = Random.Range(minPitchVariance, maxPitchVariance);
-        source.volume = Random.Range(minVolumeVariance, maxVolumeVariance);
+        // TO DO: play text in subtitles, if close enough for the player to hear
 
-        int index = Random.Range(0, sounds.Length - 1);
+        // Play diegetic code
+        DiegeticAudioListener.DiegeticCheck(this, decibels * multiplier, sourceEntity);
 
-        //Debug.Log("Playing sound clip " + sounds[index].name);
-        source.PlayOneShot(sounds[index]);
-    }
-
-    public void PlayWithoutSource(Transform positionTransform)
-    {
-        PlayWithoutSource(positionTransform.position, 1);
-    }
-    public void PlayWithoutSource(Vector3 origin, float playerVolume)
-    {
-        int index = Random.Range(0, sounds.Length);
-        float volume = Random.Range(minVolumeVariance, maxVolumeVariance) * playerVolume;
-        AudioSource.PlayClipAtPoint(sounds[index], origin, volume);
-    }
-
-
-    
-
-    IEnumerator DelayPlay(AudioSource source)
-    {
-        yield return new WaitForSeconds(delay);
-        PlayWithoutDelay(source);
     }
 }

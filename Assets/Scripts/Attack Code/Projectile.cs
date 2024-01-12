@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
+    public Entity entity;
     public Entity spawnedBy;
 
     [Header("Ballistics")]
@@ -15,7 +16,6 @@ public class Projectile : MonoBehaviour
 
     [Header("Impact")]
     public DamageDealer damageStats;
-    //public UnityEvent<RaycastHit> onHit;
 
     public RaycastHit surfaceHit;
     Vector3 velocity;
@@ -41,8 +41,7 @@ public class Projectile : MonoBehaviour
     public void OnHit(RaycastHit thingHit)
     {
         surfaceHit = thingHit;
-        damageStats.AttackObject(thingHit.collider.gameObject, spawnedBy, thingHit.point, velocity);
-        //onHit.Invoke(surfaceHit);
+        damageStats.AttackObject(thingHit.collider.gameObject, spawnedBy, entity, thingHit.point, velocity, thingHit.normal);
     }
 
     #region Additional functions

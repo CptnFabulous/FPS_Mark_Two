@@ -7,40 +7,47 @@ using UnityEngine.Events;
 
 public class DiegeticAudioListener : MonoBehaviour
 {
-    public float minVolumeToHear = 10;
+    static List<DiegeticAudioListener> active = new List<DiegeticAudioListener>();
+
+    [SerializeField] float minVolumeToHear = 10;
     public UnityEvent<DiegeticSound, Entity, Vector3, float> onSoundHeard;
 
-    private void OnEnable() => _active.Add(this);
-    private void OnDisable() => _active.Remove(this);
-
-    public static IReadOnlyCollection<DiegeticAudioListener> active => _active;
-    static List<DiegeticAudioListener> _active;
+    /*
     static int soundLayerMask = ~0; // I need to change this at some point so that the sound can travel through smoke
     static int soundNavMeshMask = ~0;
     static NavMeshPath reverbPath;
+    */
 
-    // TO DO: make the following curve logarithmic, and figure out where the sound should max out
-    public static AnimationCurve volumeCurve = AnimationCurve.Linear(0, 0, 100, 1);
+    private void OnEnable() => active.Add(this);
+    private void OnDisable() => active.Remove(this);
 
-    public static void PlaySound(DiegeticSound sound, Entity source, Vector3 position, float diegeticVolume)
+    public static void DiegeticCheck(DiegeticSound sound, float decibels, Entity source)
     {
-        float playerVolume = volumeCurve.Evaluate(diegeticVolume);
-        sound.PlayWithoutSource(position, playerVolume);
-
-        // Check all active listeners
-        //Vector3 origin = transform.position;
-        foreach (DiegeticAudioListener listener in active)
+        // For the sake of simplifying the AI work, the sound 'plays' at the exact position as the entity that caused it.
+        Vector3 origin = source.transform.position;
+        foreach (DiegeticAudioListener listener in DiegeticAudioListener.active)
         {
-            CheckIfListenerCanHearSound(listener, sound, source, diegeticVolume);
+            // Check if the listener can hear the sound
+            if (listener.CheckIfListenerCanHearSound(origin, decibels, out float heardDecibels) == false) continue;
+
+            // TO DO: check if the sound is not being drowned out by other sounds the entity is currently hearing
+
+            // If it's above the threshold for being heard, play its onHeard event.
+            Debug.Log($"{listener} heard {sound} from {source}, at {heardDecibels}dB, on frame {Time.frameCount}");
+            listener.onSoundHeard.Invoke(sound, source, origin, heardDecibels);
         }
     }
-    static void CheckIfListenerCanHearSound(DiegeticAudioListener listener, DiegeticSound sound, Entity source, float volume)
-    {
-        Vector3 origin = source.transform.position; // For the sake of simplifying the AI work, the sound 'plays' at the exact position as the entity that caused it.
-        Vector3 destination = listener.transform.position;
 
-        // Calculate a distance/clear path check
+    bool CheckIfListenerCanHearSound(Vector3 origin, float decibels, out float heardDecibels)
+    {
+        // For each active listener, calculate the volume at that distance.
+
+        Vector3 destination = transform.position;
+
+        // Check how far it takes the sound to travel
         float travelDistance = Vector3.Distance(origin, destination);
+        /*
+        // TO DO AT SOME POINT: add more accurate checks that simulate bouncing and hitting walls
         if (Physics.Raycast(origin, destination, out _, travelDistance, soundLayerMask))
         {
             // If not, check if the sound bounces around corners.
@@ -51,11 +58,11 @@ public class DiegeticAudioListener : MonoBehaviour
             // Update distance to reflect path corners
             travelDistance = AIAction.NavMeshPathDistance(reverbPath);
         }
+        */
 
         // Check if the sound is loud enough for the listener to hear it. If not, cancel
-        float volumeAtLocation = MiscFunctions.InverseSquareValue(volume, travelDistance);
-        if (volumeAtLocation < listener.minVolumeToHear) return;
-        // Invoke the event
-        listener.onSoundHeard.Invoke(sound, source, origin, volumeAtLocation);
+        heardDecibels = MiscFunctions.InverseSquareValue(decibels, travelDistance);
+        return heardDecibels >= minVolumeToHear;
     }
+
 }

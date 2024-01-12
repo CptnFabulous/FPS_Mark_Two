@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6746fa0245d2f304095e956384af5d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entity: {fileID: 7059086101645604881}
   spawnedBy: {fileID: 0}
   weight: 1
   diameter: 0.05
@@ -73,33 +74,10 @@ MonoBehaviour:
     knockback: 2
     type: 0
     criticalMultiplier: 3
+    impactEffect: {fileID: 11400000, guid: d2aefc00e1a6a564ebbdcb7e952efaf8, type: 2}
     onHit:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 7059086101645604909}
-          m_TargetAssemblyTypeName: Projectile, Assembly-CSharp
-          m_MethodName: SpawnObjectForwardOffSurface
-          m_Mode: 2
-          m_Arguments:
-            m_ObjectArgument: {fileID: 8093613007427399304, guid: 141515667f45add4da5c7e12c7ce8c6c, type: 3}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-        - m_Target: {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
-          m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-          m_MethodName: PlayWithoutSource
-          m_Mode: 2
-          m_Arguments:
-            m_ObjectArgument: {fileID: 7059086101645604910}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
         - m_Target: {fileID: 7059086101645604881}
           m_TargetAssemblyTypeName: Entity, Assembly-CSharp
           m_MethodName: Delete

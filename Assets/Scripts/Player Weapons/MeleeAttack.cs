@@ -120,14 +120,14 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
             Vector3 point = target.bounds.center;
             Vector3 hitDirection = point - origin;
-            hitData.AttackObject(target.gameObject, User, point, hitDirection);
+            hitData.AttackObject(target.gameObject, User, User, point, hitDirection, -hitDirection);
             //target.health.Damage(damage, stun, false, damageType, User);
         }
         else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, hitDetection))
         {
             // Casts a secondary check
             Debug.Log("Hit something that isn't an entity");
-            hitData.AttackObject(rh.collider.gameObject, User, rh.point, direction);
+            hitData.AttackObject(rh.collider.gameObject, User, User, rh.point, direction, rh.normal);
         }
         else
         {
