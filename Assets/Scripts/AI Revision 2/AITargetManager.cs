@@ -13,6 +13,7 @@ public class AITargetManager : MonoBehaviour
     public ViewStatus canSeeTarget { get; private set; }
     public RaycastHit lastHit { get; private set; }
     public Vector3 lastKnownPosition { get; private set; }
+    public float lastTimeSeenTarget { get; private set; }
 
     public bool targetExists => target != null && target.health.IsAlive;
 
@@ -41,6 +42,7 @@ public class AITargetManager : MonoBehaviour
         {
             lastHit = hit;
             lastKnownPosition = target.transform.position;
+            lastTimeSeenTarget = Time.time;
         }
         #endregion
     }
