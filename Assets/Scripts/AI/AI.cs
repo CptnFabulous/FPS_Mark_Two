@@ -7,6 +7,7 @@ public class AI : Character
 {
     [Header("Behaviour")]
     public ActionExecutor actions;
+    public StateController stateController;
 
     [Header("Sensing and reaction")]
     public FieldOfView visionCone;

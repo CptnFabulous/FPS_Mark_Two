@@ -524,6 +524,7 @@ MonoBehaviour:
   stamina: {fileID: 0}
   characterModel: {fileID: 0}
   actions: {fileID: 0}
+  stateController: {fileID: 4300564472772752741}
   visionCone: {fileID: 3071744553832184711}
   hearing: {fileID: 5217320388601188730}
   agent: {fileID: 7555169701559161297}
@@ -546,6 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   controlling: {fileID: 7555169701559161296}
+  onTargetFound: {fileID: 8339017120048449204}
 --- !u!114 &7555169701559161295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -705,6 +707,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1015
   raycastSpacing: 0.25
+  onThingSeen:
+    m_PersistentCalls:
+      m_Calls: []
+  onSightLost:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5217320388601188730
 MonoBehaviour:
   m_ObjectHideFlags: 0

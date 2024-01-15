@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class PatrolArea : AIStateFunction
 {
-    public AIStateFunction ifTargetFound;
-    // Move around an area until the AI detects a hostile.
-    // If so, switch to attack mode.
-
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -19,14 +15,6 @@ public class PatrolArea : AIStateFunction
     }
     private void Update()
     {
-        // If a target is found, switch to the appropriate state.
-        if (targetManager.targetExists)
-        {
-            SwitchToState(ifTargetFound);
-            return;
-        }
-
-        // Look for a target
-        targetManager.target = visionCone.FindObjectInFieldOfView<Character>(rootAI.IsHostileTowards, out _);
+        // TO DO: get rid of the navmeshagent stopping bits and have the AI move around an area based on a defined path.
     }
 }

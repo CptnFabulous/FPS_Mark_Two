@@ -8,6 +8,7 @@ public class AITargetManager : MonoBehaviour
 
     [Header("AI data")]
     public AI controlling;
+    public AIStateFunction onTargetFound;
 
     public ViewStatus canSeeTarget { get; private set; }
     public RaycastHit lastHit { get; private set; }
@@ -17,17 +18,30 @@ public class AITargetManager : MonoBehaviour
 
     void Update()
     {
-        if (target == null)
+        #region If no target is assigned, look for one
+        if (targetExists == false)
         {
-            canSeeTarget = ViewStatus.NotPresent;
-            return;
+            target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, out _);
+            if (targetExists)
+            {
+                // If a new target has been found, switch to the appropriate AI state
+                controlling.stateController.SwitchToState(onTargetFound);
+            }
+            else // No target has been found, cancel function
+            {
+                canSeeTarget = ViewStatus.NotPresent;
+                return;
+            }
         }
+        #endregion
 
-        canSeeTarget = controlling.visionCone.VisionConeCheck(target.colliders, out RaycastHit hit);
+        #region Update info on current target
+        canSeeTarget = controlling.visionCone.VisionConeCheck(target, out RaycastHit hit);
         if (canSeeTarget == ViewStatus.Visible)
         {
             lastHit = hit;
             lastKnownPosition = target.transform.position;
         }
+        #endregion
     }
 }
