@@ -32,6 +32,7 @@ public class Health : MonoBehaviour
     public bool allowPosthumousDamage;
     public bool IsAlive => data.current > 0;
 
+    public Character attachedTo => c ??= GetComponentInParent<Character>();
     public Hitbox[] hitboxes
     {
         get
@@ -47,7 +48,6 @@ public class Health : MonoBehaviour
             return hb;
         }
     }
-    public Bounds HitboxBounds => MiscFunctions.CombinedBounds(hitboxes);
     public Collider[] HitboxColliders
     {
         get
@@ -64,6 +64,7 @@ public class Health : MonoBehaviour
         }
     }
 
+    Character c;
     Hitbox[] hb;
     Collider[] hitboxColliders;
 

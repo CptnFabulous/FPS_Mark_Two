@@ -10,7 +10,7 @@ public abstract class Character : Entity
     public RegeneratingResource stamina;
     public Ragdoll characterModel;
 
-    public override Bounds bounds => health.HitboxBounds;
+    public override IList<Collider> colliders => health.HitboxColliders;
     public Vector3 RelativeCentreOfMass(Vector3 hypotheticalTransformPosition)
     {
         Vector3 offset = CentreOfMass - transform.position;
@@ -31,7 +31,6 @@ public abstract class Character : Entity
     public abstract Vector3 MovementDirection { get; }
     public Vector3 LocalMovementDirection => transform.InverseTransformDirection(MovementDirection);
 
-    public override IList<Collider> colliders => health.HitboxColliders;
 
 
     public WeaponHandler weaponHandler => (this as Player) != null ? (this as Player).weapons : null;

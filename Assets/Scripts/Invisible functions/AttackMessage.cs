@@ -32,7 +32,7 @@ public abstract class AttackMessage
     {
         // Checks if character's hitbox bounds are inside attack zone
         // Uses offset between bounds centre and transform position to shift bounds to a hypothetical different position
-        Bounds characterBounds = c.health.HitboxBounds;
+        Bounds characterBounds = c.bounds;
         characterBounds.center -= c.transform.position;
         characterBounds.center += transformPosition;
         return PositionAtRisk(characterBounds, c.health.HitboxColliders, cautionMultiplier, out potentialDamage) && potentialDamage > damageThresholdToAvoid;

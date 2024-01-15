@@ -49,7 +49,7 @@ public class AIRangedAttack : AIAttackBehaviour
 
     public virtual Vector3 GetTargetLocation()
     {
-        return actionRunning.CombatAI.target.health.HitboxBounds.center;
+        return actionRunning.CombatAI.target.bounds.center;
     }
     public override bool CanAttackTarget()
     {
@@ -64,7 +64,7 @@ public class AIRangedAttack : AIAttackBehaviour
         if (distanceToTarget < minRange || distanceToTarget > maxRange) return false;
 
         // Check if aim is on target
-        Vector3 boundsExtents = actionRunning.CombatAI.target.health.HitboxBounds.extents;
+        Vector3 boundsExtents = actionRunning.CombatAI.target.bounds.extents;
         float aimThreshold = MiscFunctions.Min(boundsExtents.x, boundsExtents.y, boundsExtents.z);
         if (aimAlreadyLocked) aimThreshold += aimBreakThreshold;
         aimAlreadyLocked = actionRunning.Aim.LookCheckDistance(targetLocation, aimThreshold, true);

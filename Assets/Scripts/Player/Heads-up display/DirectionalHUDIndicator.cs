@@ -31,7 +31,7 @@ public class DirectionalHUDIndicator : MonoBehaviour
         {
             if (targetCharacter != null)
             {
-                return targetCharacter.health.HitboxBounds.center;
+                return targetCharacter.bounds.center;
             }
             else if (targetTransform != null)
             {

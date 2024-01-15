@@ -17,13 +17,11 @@ public class Hitbox : MonoBehaviour
     Collider c;
 
     public Collider collider => c ??= GetComponent<Collider>();
+    public Character attachedTo => sourceHealth.attachedTo;
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, bool critical = false)
     {
-        if (sourceHealth == null)
-        {
-            return;
-        }
+        if (sourceHealth == null) return;
         sourceHealth.Damage(damage, stun, critical, type, attacker);
     }
 
@@ -32,6 +30,7 @@ public class Hitbox : MonoBehaviour
         if (isCritical)
         {
             damage = Mathf.RoundToInt(damage * criticalMultiplier);
+            stun = Mathf.RoundToInt(stun * criticalMultiplier);
         }
         Damage(damage, stun, type, attacker, isCritical);
     }

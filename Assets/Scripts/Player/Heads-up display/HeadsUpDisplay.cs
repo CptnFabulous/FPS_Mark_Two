@@ -33,11 +33,9 @@ public class HeadsUpDisplay : MonoBehaviour
 
     [Header("Enemy Health")]
     public ResourceMeter enemyHealthMeter;
-    Health observedEnemyHealth;
     public void CheckIfLookingAtDamageableEntity()
     {
-        observedEnemyHealth = null;
-
+        
         float detectionRange = observationRange;
         if (controller.weapons.CurrentWeapon != null)
         {
@@ -48,26 +46,26 @@ public class HeadsUpDisplay : MonoBehaviour
             }
         }
 
+        Character observedEnemy = null;
         if (RelevantThingObserved(detectionRange, out RaycastHit observedObject))
         {
             Hitbox h = observedObject.collider.GetComponent<Hitbox>();
             if (h != null)
             {
-                observedEnemyHealth = h.sourceHealth;
+                observedEnemy = h.attachedTo;
             }
         }
 
-        ShowEnemyHealthMeter(observedEnemyHealth);
+        ShowEnemyHealthMeter(observedEnemy);
     }
-    public void ShowEnemyHealthMeter(Health enemyHealth)
+    public void ShowEnemyHealthMeter(Character enemy)
     {
-        enemyHealthMeter.gameObject.SetActive(false);
-        if (enemyHealth == null || enemyHealth.IsAlive == false)
-        {
-            return;
-        }
+        bool shouldShow = enemy != null && enemy.health.IsAlive;
+        enemyHealthMeter.gameObject.SetActive(shouldShow);
+        if (shouldShow == false) return;
 
-        Bounds entityBounds = enemyHealth.HitboxBounds;
+        Health enemyHealth = enemy.health;
+        Bounds entityBounds = enemy.bounds;
         Vector3 meterPosition = entityBounds.center + (camera.transform.up * entityBounds.extents.magnitude);
 
         Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
