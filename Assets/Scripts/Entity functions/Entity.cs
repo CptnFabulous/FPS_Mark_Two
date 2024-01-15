@@ -11,7 +11,14 @@ public class Entity : MonoBehaviour
     /// <summary>
     /// The bounds. I might need to make this abstract, once I figure out what type of entity to make the bullets.
     /// </summary>
-    public Bounds bounds => MiscFunctions.CombinedBounds(colliders);
+    public Bounds bounds
+    {
+        get
+        {
+            if (colliders != null) return MiscFunctions.CombinedBounds(colliders);
+            return new Bounds(transform.position, Vector3.zero);
+        }
+    }
     public Vector3 CentreOfMass => bounds.center;
 
     public virtual IList<Collider> colliders => null;

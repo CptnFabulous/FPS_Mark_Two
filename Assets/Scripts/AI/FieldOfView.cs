@@ -23,20 +23,14 @@ public class FieldOfView : MonoBehaviour
 
     public AI rootAI => _root ??= GetComponentInParent<AI>();
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawFrustum(Vector3.zero, viewingAngles.y, viewRange, 0, viewingAngles.x / viewingAngles.y);
-    }
-
     public T FindObjectInFieldOfView<T>(System.Predicate<T> criteria, out RaycastHit hit) where T : Entity
     {
         foreach (T e in FindObjectsOfType<T>())
         {
             // Ignore if not meeting the criteria
-            if (criteria.Invoke(e) == false) continue;
+            if (criteria != null && criteria.Invoke(e) == false) continue;
             // If it is a relevant object, check if the AI can actually see it.
-            if (VisionConeCheck(e.colliders, out hit) != ViewStatus.Visible) continue;
+            if (VisionConeCheck(e, out hit) != ViewStatus.Visible) continue;
             // We've found one!
             return e;
         }
@@ -48,8 +42,8 @@ public class FieldOfView : MonoBehaviour
         List<T> entities = new List<T>(FindObjectsOfType<T>());
         entities.RemoveAll((e) =>
         {
-            if (criteria.Invoke(e) == false) return true;
-            if (VisionConeCheck(e.colliders, out _) != ViewStatus.Visible) return true;
+            if (criteria != null && criteria.Invoke(e) == false) return true;
+            if (VisionConeCheck(e, out _) != ViewStatus.Visible) return true;
             return false;
         });
         return entities;
@@ -66,19 +60,21 @@ public class FieldOfView : MonoBehaviour
         bool seen = AIAction.LineOfSight(transform.position, position, viewDetection, rootAI.colliders);
         return seen ? ViewStatus.Visible : ViewStatus.BehindCover;
     }
-    public ViewStatus VisionConeCheck(IList<Collider> targetColliders, out RaycastHit hit)
-    {
-        return VisionConeCheck(targetColliders, transform, viewingAngles, viewRange, out hit, viewDetection, raycastSpacing);
-    }
-
     /// <summary>
     /// Calculates and runs a sweep of raycasts to check a cone-shaped area for colliders. This check will also detect partially-hidden colliders, but is performance-intensive and should not be run regularly.
     /// </summary>
-    public static ViewStatus VisionConeCheck(IList<Collider> targetColliders, Transform origin, Vector2 angles, float range, out RaycastHit hit, LayerMask viewDetection, float raycastSpacing = 0.25f)
+    public ViewStatus VisionConeCheck(Entity targetEntity, out RaycastHit hit)
     {
-        Bounds b = MiscFunctions.CombinedBounds(targetColliders);
+        IList<Collider> targetColliders = targetEntity.colliders;
+        if (targetColliders == null || targetColliders.Count <= 0)
+        {
+            // No colliders are present, do a simple bounds check
+            hit = new RaycastHit();
+            return VisionConeCheck(targetEntity.CentreOfMass);
+        }
 
         #region Calculate grid to check
+        Bounds b = targetEntity.bounds;
         // Calculate the sizes of the zone to calculate in 
         float maxExtent = MiscFunctions.Max(b.extents.x, b.extents.y, b.extents.z);
         // Width and height are the same presently but I might make it more precise in the future
@@ -93,7 +89,7 @@ public class FieldOfView : MonoBehaviour
         float spacingY = zoneHeight / grid.y;
         // Calculate grid start
         Vector3 centre = b.center;
-        Quaternion targetDirection = Quaternion.LookRotation(centre - origin.position);
+        Quaternion targetDirection = Quaternion.LookRotation(centre - transform.position);
         Vector3 targetUp = targetDirection * Vector3.up;
         Vector3 targetRight = targetDirection * Vector3.right;
         Vector3 gridStartCorner = centre + (-targetRight * zoneWidth / 2) + (-targetUp * zoneHeight / 2);
@@ -127,28 +123,27 @@ public class FieldOfView : MonoBehaviour
         {
             // Calculates raycast point to aim for
             Vector3 raycastHitDestination = gridStartCorner + (targetRight * spacingX * point.x) + (targetUp * spacingY * point.y);
-            Vector3 raycastDirection = raycastHitDestination - origin.position;
-            // If raycast hits within range and is inside the valid detection angle
+            Ray ray = new Ray(transform.position, raycastHitDestination - transform.position);
 
             // Check if this cast is inside the AI's peripheral vision
-            if (AngleCheck(raycastDirection, origin, angles) == false)
-            //if (Vector3.Angle(origin.forward, raycastDirection) >= angle)
+            if (AngleCheck(ray.direction, transform, viewingAngles) == false)
             {
                 //outOfViewAngle++;
                 continue;
             }
-            // Check that something is hit
-            if (Physics.Raycast(origin.position, raycastDirection, out hit, range, viewDetection) == false)
-            {
-                continue;
-            }
+            
+            // Check that the raycast hits something within range
+            if (Physics.Raycast(ray, out hit, viewRange, viewDetection) == false) continue;
+
             // Check that the hit object was part of the target
+            // If the collider matches one in the array, it was
             if (MiscFunctions.ArrayContains(targetColliders, hit.collider) == false)
             {
                 blocked++;
                 continue;
             }
 
+            // A raycast hit a collider that's part of the target, that means the AI can see it!
             return ViewStatus.Visible;
         }
         #endregion
