@@ -26,7 +26,7 @@ public class MovementController : MonoBehaviour
 
     public void OnMove(InputValue input) => movementInput = canMove ? input.Get<Vector2>() : Vector2.zero;
 
-    float CurrentMoveSpeed
+    public float CurrentMoveSpeed
     {
         get
         {
@@ -45,7 +45,7 @@ public class MovementController : MonoBehaviour
             return speed;
         }
     }
-    Vector3 TotalVelocity => rb.velocity + movementVelocity;
+    public Vector3 TotalVelocity => rb.velocity + movementVelocity;
     public bool isGrounded => groundingData.collider != null;
     #endregion
 
@@ -93,102 +93,6 @@ public class MovementController : MonoBehaviour
     }
     #endregion
     
-    #region Cosmetics
-    [Header("Cosmetics")]
-    public Transform upperBodyAnimationTransform;
-    [Header("Walk Cycle")]
-    public float strideLength = 1;
-    public int stepsPerCycle = 2;
-    public UnityEvent<RaycastHit> onStep;
-    public Vector2 bobExtents = new Vector2(0.2f, 0.1f);
-    public AnimationCurve walkBobX;
-    public AnimationCurve walkBobY;
-    float walkCycleTimer;
-    float stepTimer;
-    [Header("Drag")] // Torso lingering/dragging when moving
-    public float upperBodyDragDistance = 0.2f;
-    public float speedForMaxDrag = 20;
-    [Header("Tilt")] // Torso leaning/tilting when moving
-    public float upperBodyTiltAngle = 10;
-    public float speedForMaxTilt = 20;
-    [Header("Sway")] // Torso swaying/dragging when looking around
-    public float lookSwayDegrees = 5;
-    public float speedForMaxSway = 10;
-    [Header("Return")] // Return to default position and rotation
-    public float torsoPositionUpdateTime = 0.1f;
-    public float torsoRotationUpdateTime = 0.1f;
-
-    Vector3 torsoPosition;
-    Quaternion torsoRotation;
-    Vector3 torsoMovementVelocity;
-    float torsoAngularVelocityTimer;
-
-    /// <summary>
-    /// Implements bobbing animations for player walk cycle, and cosmetic effects whenever they take a step.
-    /// </summary>
-    void WalkCycle()
-    {
-        // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
-        if (groundingData.collider != null && (movementInput.magnitude > 0 || walkCycleTimer != 0))
-        {
-            float walkCycleLength = strideLength * stepsPerCycle / CurrentMoveSpeed;
-            float amountToIncrement = Time.deltaTime / walkCycleLength;
-            walkCycleTimer += amountToIncrement;
-            stepTimer += amountToIncrement;
-            if (walkCycleTimer >= 1)
-            {
-                walkCycleTimer = 0;
-            }
-            if (stepTimer >= walkCycleLength / stepsPerCycle)
-            {
-                onStep.Invoke(groundingData);
-                stepTimer = 0;
-            }
-
-            // Add bobbing animations
-            float bobX = walkBobX.Evaluate(walkCycleTimer) * bobExtents.x;
-            float bobY = walkBobY.Evaluate(walkCycleTimer) * bobExtents.y;
-            torsoPosition += new Vector3(bobY, bobX, 0);
-        }
-        else
-        {
-            walkCycleTimer = 0;
-            stepTimer = 0;
-        }
-    }
-    /// <summary>
-    /// Adds a cosmetic momentum drag to the player's hands when they are moving.
-    /// </summary>
-    void TorsoDrag()
-    {
-        float dragIntensity = Mathf.Clamp01(TotalVelocity.magnitude / speedForMaxDrag);
-        Vector3 dragOffset = -upperBodyDragDistance * dragIntensity * TotalVelocity.normalized;
-        //Vector3 dragOffset = Vector3.Lerp(Vector3.zero, -upperBodyDragDistance * TotalVelocity.normalized, dragIntensity);
-        torsoPosition += lookControls.aimAxis.InverseTransformDirection(dragOffset);
-    }
-    /// <summary>
-    /// Adds cosmetic tilt to the player's hands when they move around.
-    /// </summary>
-    void TorsoTilt()
-    {
-        Vector3 localDirection = transform.InverseTransformDirection(TotalVelocity).normalized;
-        Quaternion tilt = Quaternion.Euler(localDirection.z * upperBodyTiltAngle, 0, -localDirection.x * upperBodyTiltAngle);
-        float tiltIntensity = Mathf.Clamp01(TotalVelocity.magnitude / speedForMaxTilt);
-        torsoRotation = Quaternion.Lerp(torsoRotation, torsoRotation * tilt, tiltIntensity);
-    }
-    /// <summary>
-    /// Adds cosmetic sway to the player's hands and held items when they turn and shift their aim.
-    /// </summary>
-    void TorsoSway()
-    {
-        Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(lookControls.rotationVelocity, transform);
-        float intensity = Mathf.Clamp01(localRotationVelocity.eulerAngles.magnitude / speedForMaxSway);
-        Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0);
-        swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);
-        torsoRotation *= Quaternion.Euler(swayAxes);
-    }
-    #endregion
-
     private void Awake()
     {
         collider = GetComponent<CapsuleCollider>();
@@ -232,21 +136,6 @@ public class MovementController : MonoBehaviour
         // Adjust velocity in desired direction
         rb.AddRelativeForce(accelerationVector, ForceMode.VelocityChange);
 
-        Debug.Log($"{desired}, {current}, {accelerationVector}");
-    }
-
-    private void LateUpdate()
-    {
-        torsoPosition = Vector3.zero;
-        torsoRotation = Quaternion.identity;
-
-        WalkCycle();
-        TorsoDrag();
-        TorsoTilt();
-        TorsoSway();
-
-        upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
-        float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
-        upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
+        //Debug.Log($"{desired}, {current}, {accelerationVector}");
     }
 }
