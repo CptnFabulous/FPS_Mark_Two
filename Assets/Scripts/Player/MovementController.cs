@@ -15,6 +15,9 @@ public class MovementController : MonoBehaviour
     [Header("Movement")]
     public bool canMove = true;
     public float defaultSpeed = 5;
+    public float acceleration = 50;
+    public PhysicMaterial standingMaterial;
+    public PhysicMaterial movingMaterial;
     new CapsuleCollider collider;
     Rigidbody rb;
 
@@ -196,6 +199,7 @@ public class MovementController : MonoBehaviour
     {
         SetGroundingData();
 
+        /*
         if (movementInput.sqrMagnitude > 0)
         {
             Vector3 movement = new Vector3(movementInput.x, 0, movementInput.y);
@@ -207,8 +211,30 @@ public class MovementController : MonoBehaviour
 
             rb.MovePosition(transform.position + (movementVelocity * Time.fixedDeltaTime));
         }
-        
+        */
+
+        Vector3 currentVelocity = rb.transform.InverseTransformDirection(rb.velocity);
+        Vector3 desiredVelocity = new Vector3(movementInput.x, 0, movementInput.y) * CurrentMoveSpeed;
+        desiredVelocity.y = currentVelocity.y;
+        ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration);
     }
+    
+    void ShiftCharacterVelocityTowards(Vector3 desired, Vector3 current, float acceleration)
+    {
+        // Swap out the player collider's material for moving versus standing still.
+        // And cancel if the player doesn't want to move in a specific direction.
+        bool wantsToMove = desired.sqrMagnitude > 0;
+        collider.material = wantsToMove ? movingMaterial : standingMaterial;
+        if (!wantsToMove) return;
+
+        // Calculate the direction the velocity needs to shift in in order to reach the desired value (accounting for delta time)
+        Vector3 accelerationVector = Vector3.MoveTowards(current, desired, acceleration * Time.fixedDeltaTime) - current;
+        // Adjust velocity in desired direction
+        rb.AddRelativeForce(accelerationVector, ForceMode.VelocityChange);
+
+        Debug.Log($"{desired}, {current}, {accelerationVector}");
+    }
+
     private void LateUpdate()
     {
         torsoPosition = Vector3.zero;
