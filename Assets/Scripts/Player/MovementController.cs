@@ -18,13 +18,16 @@ public class MovementController : MonoBehaviour
     public float acceleration = 50;
     public PhysicMaterial standingMaterial;
     public PhysicMaterial movingMaterial;
+
+    [Header("Additional movement classes")]
+    public LookController lookControls;
+    public CrouchController crouchController;
+    public SprintController sprintController;
+
     new CapsuleCollider collider;
     Rigidbody rb;
-
     public Vector2 movementInput { get; private set; }
     public Vector3 movementVelocity { get; private set; }
-
-    public void OnMove(InputValue input) => movementInput = canMove ? input.Get<Vector2>() : Vector2.zero;
 
     public float CurrentMoveSpeed
     {
@@ -47,10 +50,6 @@ public class MovementController : MonoBehaviour
     }
     public bool isGrounded => groundingData.collider != null;
     #endregion
-
-    public LookController lookControls;
-    public CrouchController crouchController;
-    public SprintController sprintController;
 
     #region Jumping
     [Header("Jumping")]
@@ -91,7 +90,8 @@ public class MovementController : MonoBehaviour
         groundingData = newGroundingData; // Update grounding data
     }
     #endregion
-    
+
+    public void OnMove(InputValue input) => movementInput = canMove ? input.Get<Vector2>() : Vector2.zero;
     private void Awake()
     {
         collider = GetComponent<CapsuleCollider>();
@@ -122,7 +122,6 @@ public class MovementController : MonoBehaviour
         desiredVelocity.y = currentVelocity.y;
         ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration);
     }
-    
     void ShiftCharacterVelocityTowards(Vector3 desired, Vector3 current, float acceleration)
     {
         // Swap out the player collider's material for moving versus standing still.
