@@ -19,18 +19,15 @@ public class DiegeticSound : ScriptableObject
     [SerializeField] float delay;
     */
 
-    public void Play(AudioSource source)
+    public void Play(AudioSource source) => Play(source, 1);
+    public void Play(AudioSource source, float multiplier)
     {
-        Play(source.transform.position, source.GetComponentInParent<Entity>(), source, 1);
+        Play(source.transform.position, source.GetComponentInParent<Entity>(), source, multiplier);
     }
     public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1)
     {
         Play(point, sourceEntity, sourceEntity.GetComponentInChildren<AudioSource>(), multiplier);
     }
-
-
-
-
 
     public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1)
     {

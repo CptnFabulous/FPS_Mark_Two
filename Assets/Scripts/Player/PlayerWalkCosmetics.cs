@@ -18,12 +18,8 @@ public class PlayerWalkCosmetics : MonoBehaviour
     float stepTimer;
 
     [Header("Steps")]
-    //public DiegeticAudioSource footsteps;
-    //public float walkDecibels;
-    //public float crouchDecibels;
-    //public float sprintDecibels;
+    public ImpactEffect footsteps;
     public UnityEvent<RaycastHit> onStep;
-
 
     [Header("Drag")] // Torso lingering/dragging when moving
     public float upperBodyDragDistance = 0.2f;
@@ -54,7 +50,8 @@ public class PlayerWalkCosmetics : MonoBehaviour
         // Implements bobbing animations for player walk cycle, and cosmetic effects whenever they take a step.
 
         // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
-        if (controller.groundingData.collider != null && (controller.movementInput.magnitude > 0 || walkCycleTimer != 0))
+        RaycastHit ground = controller.groundingData;
+        if (ground.collider != null && (controller.movementInput.magnitude > 0 || walkCycleTimer != 0))
         {
             float walkCycleLength = strideLength * stepsPerCycle / controller.CurrentMoveSpeed;
             float amountToIncrement = Time.deltaTime / walkCycleLength;
@@ -66,8 +63,19 @@ public class PlayerWalkCosmetics : MonoBehaviour
             }
             if (stepTimer >= walkCycleLength / stepsPerCycle)
             {
+                #region Play footstep
+                float volume = 1;
+
+                CrouchController cc = controller.crouchController;
+                if (cc.isCrouching) volume *= cc.footstepVolumeMultiplier;
+
+                SprintController sc = controller.sprintController;
+                if (sc.isSprinting) volume *= sc.footstepVolumeMultiplier;
+
+                footsteps.Play(ground.collider.gameObject, controller.controlling, ground.point, ground.normal, volume);
                 onStep.Invoke(controller.groundingData);
                 stepTimer = 0;
+                #endregion
             }
 
             // Add bobbing animations
@@ -118,5 +126,4 @@ public class PlayerWalkCosmetics : MonoBehaviour
         float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
     }
-
 }

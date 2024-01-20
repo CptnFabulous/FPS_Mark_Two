@@ -19,12 +19,15 @@ public class ImpactEffect : ScriptableObject
         ParticleSystem desiredEffect = defaultImpactEffect;
         DiegeticSound desiredSound = defaultSound;
 
-        // Instantiate impact effect at surface
-        ParticleSystem effect = Instantiate(desiredEffect);
-        StickObjectToSurface(effect.transform, surfaceCollider.transform, point, normal, Vector3.forward);
-        // TO DO: use intensity to determine size of particles
-        effect.Play();
-
+        if (desiredEffect != null)
+        {
+            // Instantiate impact effect at surface
+            ParticleSystem effect = Instantiate(desiredEffect);
+            StickObjectToSurface(effect.transform, surfaceCollider.transform, point, normal, Vector3.forward);
+            // TO DO: use intensity to determine size of particles
+            effect.Play();
+        }
+        
         // Play sound effect at point
         desiredSound.Play(point, sourceEntity, intensity);
     }

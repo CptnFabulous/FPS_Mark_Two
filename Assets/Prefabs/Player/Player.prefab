@@ -201,21 +201,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  footsteps: {fileID: 11400000, guid: f80ca042d0d0cef4e946fbd1e42f587d, type: 2}
   onStep:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 9b099937e029c8a4c8a96a55539d9517, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 5952785220977947006}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   upperBodyDragDistance: 0.2
   speedForMaxDrag: 20
   upperBodyTiltAngle: 10
@@ -657,135 +646,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  upperBodyAnimationTransform: {fileID: 5952785222623807978}
-  strideLength: 2
-  stepsPerCycle: 2
-  bobExtents: {x: 0.02, y: 0.01}
-  walkBobX:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.125
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.375
-      value: -1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.625
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.875
-      value: -1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  walkBobY:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.25
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.75
-      value: -1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  onStep:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 9b099937e029c8a4c8a96a55539d9517, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 5952785220977947006}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  upperBodyDragDistance: 0.2
-  speedForMaxDrag: 20
-  upperBodyTiltAngle: 10
-  speedForMaxTilt: 10
-  lookSwayDegrees: 5
-  speedForMaxSway: 10
-  torsoPositionUpdateTime: 0.1
-  torsoRotationUpdateTime: 0.2
 --- !u!114 &8691069559276216019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,6 +660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedMultiplier: 2
   staminaPerSecond: 1
+  footstepVolumeMultiplier: 2
   toggleInput: 1
   timeStillBeforeCancel: 0
   movementController: {fileID: 5952785220977947007}
@@ -822,12 +683,6 @@ MonoBehaviour:
   movementController: {fileID: 5952785220977947007}
   collider: {fileID: 5952785220977946993}
   lookControls: {fileID: 2286233210308183897}
-  toggleCrouch: 1
-  standHeight: 1.7
-  crouchHeight: 1
-  headDistanceFromTop: 0.2
-  crouchSpeedMultiplier: 0.5
-  crouchTransitionTime: 0.2
   onCrouch:
     m_PersistentCalls:
       m_Calls:
@@ -858,6 +713,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  toggleCrouch: 1
+  crouchTransitionTime: 0.2
+  standHeight: 1.7
+  crouchHeight: 1
+  headDistanceFromTop: 0.2
+  crouchSpeedMultiplier: 0.5
+  footstepVolumeMultiplier: 0.2
 --- !u!114 &2286233210308183897
 MonoBehaviour:
   m_ObjectHideFlags: 0

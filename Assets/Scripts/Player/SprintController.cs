@@ -9,6 +9,7 @@ public class SprintController : MonoBehaviour
 {
     public float speedMultiplier = 2;
     public float staminaPerSecond = 1;
+    public float footstepVolumeMultiplier = 2;
 
     [Header("Utility")]
     public bool toggleInput;

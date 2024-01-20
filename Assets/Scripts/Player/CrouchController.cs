@@ -9,16 +9,21 @@ public class CrouchController : MonoBehaviour
     public MovementController movementController;
     public CapsuleCollider collider;
     public LookController lookControls;
+    public UnityEvent onCrouch;
+    public UnityEvent onStand;
 
-    [Header("Crouching")]
+    [Header("Input")]
     public bool toggleCrouch;
+    public float crouchTransitionTime = 0.5f;
+
+    [Header("Size")]
     public float standHeight = 2;
     public float crouchHeight = 1;
     public float headDistanceFromTop = 0.2f;
+
+    [Header("Movement")]
     public float crouchSpeedMultiplier = 0.5f;
-    public float crouchTransitionTime = 0.5f;
-    public UnityEvent onCrouch;
-    public UnityEvent onStand;
+    public float footstepVolumeMultiplier = 0.2f;
 
     bool crouched;
     public float crouchTimer { get; private set; }
