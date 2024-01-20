@@ -45,7 +45,6 @@ public class MovementController : MonoBehaviour
             return speed;
         }
     }
-    public Vector3 TotalVelocity => rb.velocity + movementVelocity;
     public bool isGrounded => groundingData.collider != null;
     #endregion
 

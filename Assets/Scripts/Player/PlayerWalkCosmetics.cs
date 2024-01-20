@@ -43,6 +43,8 @@ public class PlayerWalkCosmetics : MonoBehaviour
     Vector3 torsoMovementVelocity;
     float torsoAngularVelocityTimer;
 
+    Vector3 movementVelocity => /*controller.rigidbody.velocity*/controller.movementVelocity;
+
     private void LateUpdate()
     {
         torsoPosition = Vector3.zero;
@@ -84,8 +86,8 @@ public class PlayerWalkCosmetics : MonoBehaviour
         #region Torso drag
         // Adds a cosmetic momentum drag to the player's hands when they are moving.
 
-        float dragIntensity = Mathf.Clamp01(controller.TotalVelocity.magnitude / speedForMaxDrag);
-        Vector3 dragOffset = -upperBodyDragDistance * dragIntensity * controller.TotalVelocity.normalized;
+        float dragIntensity = Mathf.Clamp01(movementVelocity.magnitude / speedForMaxDrag);
+        Vector3 dragOffset = -upperBodyDragDistance * dragIntensity * movementVelocity.normalized;
         //Vector3 dragOffset = Vector3.Lerp(Vector3.zero, -upperBodyDragDistance * TotalVelocity.normalized, dragIntensity);
         torsoPosition += controller.lookControls.aimAxis.InverseTransformDirection(dragOffset);
 
@@ -94,9 +96,9 @@ public class PlayerWalkCosmetics : MonoBehaviour
         #region Torso tilt
         // Adds cosmetic tilt to the player's hands when they move around.
 
-        Vector3 localDirection = controller.transform.InverseTransformDirection(controller.TotalVelocity).normalized;
+        Vector3 localDirection = controller.transform.InverseTransformDirection(movementVelocity).normalized;
         Quaternion tilt = Quaternion.Euler(localDirection.z * upperBodyTiltAngle, 0, -localDirection.x * upperBodyTiltAngle);
-        float tiltIntensity = Mathf.Clamp01(controller.TotalVelocity.magnitude / speedForMaxTilt);
+        float tiltIntensity = Mathf.Clamp01(movementVelocity.magnitude / speedForMaxTilt);
         torsoRotation = Quaternion.Lerp(torsoRotation, torsoRotation * tilt, tiltIntensity);
 
         #endregion
