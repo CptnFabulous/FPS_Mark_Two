@@ -118,6 +118,7 @@ public class MovementController : MonoBehaviour
 
         Vector3 currentVelocity = rb.transform.InverseTransformDirection(rb.velocity);
         Vector3 desiredVelocity = new Vector3(movementInput.x, 0, movementInput.y) * CurrentMoveSpeed;
+        movementVelocity = transform.TransformDirection(desiredVelocity);
         desiredVelocity.y = currentVelocity.y;
         ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration);
     }
