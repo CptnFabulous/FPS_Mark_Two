@@ -83,6 +83,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     public void RotateLookTowards(Vector3 position)
     {
+        lookingInDefaultDirection = false;
         float degreesPerSecond = Stats.SpeedBasedOnAngle(LookDirection, position - LookOrigin);
         RotateLookTowards(position, degreesPerSecond);
     }
@@ -91,7 +92,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     /// </summary>
     /// <param name="position"></param>
     /// <param name="degreesPerSecond"></param>
-    public void RotateLookTowards(Vector3 position, float degreesPerSecond)
+    void RotateLookTowards(Vector3 position, float degreesPerSecond)
     {
         /*
         // An experimental version that should ensure the position doesn't snap when switching between rotate and shift based look functions
@@ -107,6 +108,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     public void ShiftLookTowards(Vector3 position, float distancePerSecond)
     {
+        lookingInDefaultDirection = false;
         lookingTowards = Vector3.MoveTowards(lookingTowards, position, distancePerSecond * Time.deltaTime);
         lookRotation = Quaternion.LookRotation(lookingTowards - LookOrigin, ai.transform.up);
     }
