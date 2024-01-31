@@ -173,7 +173,10 @@ public readonly struct MiscFunctions
     }
     public static bool WithinRange(float value, float min, float max) => value >= min && value <= max;
     public static bool WithinArray(int index, int arrayLength) => WithinRange(index, 0, arrayLength - 1);
-    public static float InverseSquareValue(float startingValue, float distance) => startingValue / (distance * distance);
+    /// <summary>
+    /// Multiply a base value by the return value to figure out how it falls off over distance.
+    /// </summary>
+    public static float InverseSquareValueMultiplier(float distance) => distance > 0 ? 1 / (distance * distance) : 1;
     public static float RoundToDecimalPlaces(float value, int decimalPlaces)
     {
         decimalPlaces = Mathf.Max(decimalPlaces, 0); // Ensure it's not less than zero

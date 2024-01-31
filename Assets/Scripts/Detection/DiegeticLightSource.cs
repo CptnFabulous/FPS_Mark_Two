@@ -50,8 +50,7 @@ public class DiegeticLightSource : MonoBehaviour
         //bool lightReachesTarget = Physics.Raycast(origin, direction, out RaycastHit rh, range, lightSource.cullingMask) && rh.collider.GetComponentInParent<Entity>() == targetEntity;
         if (lightReachesTarget == false) return 0;
 
-        return MiscFunctions.InverseSquareValue(lightSource.intensity, direction.magnitude);
-        //return lightSource.intensity * (1 - (rh.distance / range));
+        return lightSource.intensity * MiscFunctions.InverseSquareValueMultiplier(direction.magnitude);
     }
     public static float EntityIllumination(Entity targetEntity)
     {

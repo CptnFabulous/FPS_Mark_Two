@@ -61,7 +61,7 @@ public class DiegeticAudioListener : MonoBehaviour
         */
 
         // Check if the sound is loud enough for the listener to hear it. If not, cancel
-        heardDecibels = MiscFunctions.InverseSquareValue(decibels, travelDistance);
+        heardDecibels = decibels * MiscFunctions.InverseSquareValueMultiplier(travelDistance);
         return heardDecibels >= minVolumeToHear;
     }
 
