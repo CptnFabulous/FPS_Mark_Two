@@ -26,8 +26,8 @@ public class DiegeticAudioListener : MonoBehaviour
 {
     static List<DiegeticAudioListener> active = new List<DiegeticAudioListener>();
 
-    [SerializeField] float minVolumeToHear = 10;
-    public UnityEvent<DiegeticSound, Entity, Vector3, float> onSoundHeard;
+    [SerializeField] float minVolumeToHear = 1;
+    public UnityEvent<HeardSound> onSoundHeard;
 
     /*
     static int soundLayerMask = ~0; // I need to change this at some point so that the sound can travel through smoke
