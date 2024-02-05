@@ -41,11 +41,12 @@ public class DiegeticAudioListener : MonoBehaviour
     public static void DiegeticCheck(DiegeticSound sound, float decibels, Entity source)
     {
         // For the sake of simplifying the AI work, the sound 'plays' at the exact position as the entity that caused it.
-        Vector3 origin = source.transform.position;
-        foreach (DiegeticAudioListener listener in DiegeticAudioListener.active)
+        Vector3 origin = source.CentreOfMass;
+        foreach (DiegeticAudioListener listener in active)
         {
             // Check if the listener can hear the sound
-            if (listener.CheckIfListenerCanHearSound(origin, decibels, out float heardDecibels) == false) continue;
+            Debug.Log($"{listener.rootEntity}: checking {sound} on frame {Time.frameCount}");
+            if (listener.CheckIfListenerCanHearSound(source, decibels, out float heardDecibels) == false) continue;
 
             // TO DO: check if the sound is not being drowned out by other sounds the entity is currently hearing
 
@@ -55,10 +56,10 @@ public class DiegeticAudioListener : MonoBehaviour
         }
     }
 
-    bool CheckIfListenerCanHearSound(Vector3 origin, float decibels, out float heardDecibels)
+    bool CheckIfListenerCanHearSound(Entity source, float decibels, out float heardDecibels)
     {
         // For each active listener, calculate the volume at that distance.
-
+        Vector3 origin = source.CentreOfMass;
         Vector3 destination = transform.position;
 
         // Check how far it takes the sound to travel
