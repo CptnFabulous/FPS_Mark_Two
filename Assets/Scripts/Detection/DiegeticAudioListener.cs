@@ -5,6 +5,23 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
+public struct HeardSound
+{
+    public DiegeticSound sound { get; private set; }
+    public float decibels { get; private set; }
+    public Entity source { get; private set; }
+    public Vector3 originPoint { get; private set; }
+    public float timeHeard { get; private set; }
+
+    public HeardSound(DiegeticSound sound, float decibels, Entity source, Vector3 originPoint, float timeHeard)
+    {
+        this.sound = sound;
+        this.decibels = decibels;
+        this.source = source;
+        this.originPoint = originPoint;
+        this.timeHeard = timeHeard;
+    }
+}
 public class DiegeticAudioListener : MonoBehaviour
 {
     static List<DiegeticAudioListener> active = new List<DiegeticAudioListener>();
@@ -33,8 +50,8 @@ public class DiegeticAudioListener : MonoBehaviour
             // TO DO: check if the sound is not being drowned out by other sounds the entity is currently hearing
 
             // If it's above the threshold for being heard, play its onHeard event.
-            Debug.Log($"{listener} heard {sound} from {source}, at {heardDecibels}dB, on frame {Time.frameCount}");
-            listener.onSoundHeard.Invoke(sound, source, origin, heardDecibels);
+            Debug.Log($"Success!");
+            listener.onSoundHeard.Invoke(new HeardSound(sound, heardDecibels, source, origin, Time.time));
         }
     }
 
