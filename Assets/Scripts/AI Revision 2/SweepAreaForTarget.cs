@@ -19,14 +19,18 @@ public class SweepAreaForTarget : AIStateFunction
     protected override void OnEnable()
     {
         base.OnEnable();
-        Debug.Log($"{rootAI}: starting search");
+        //Debug.Log($"{rootAI}: starting search");
         //if (pointsToCheck == null) GetPoints();
         StartNewSearch();
+    }
+    private void OnDisable()
+    {
+        pointsToCheck = null;
     }
     void Update()
     {
         aim.LookInNeutralDirection();
-        
+        /*
         // If the AI can see their target, switch to the success state.
         if (targetManager.canSeeTarget == ViewStatus.Visible)
         {
@@ -35,6 +39,7 @@ public class SweepAreaForTarget : AIStateFunction
             pointsToCheck = null;
             return;
         }
+        */
 
         // Clear points the AI can see (and therefore no longer needs to check)
         pointsToCheck.RemoveAll((point) => visionCone.VisionConeCheck(point.position) == ViewStatus.Visible);
@@ -73,7 +78,7 @@ public class SweepAreaForTarget : AIStateFunction
     {
         // Get a copy of the cached grid points
         LevelArea areaToSearch = LevelArea.FindAreaOfPosition(targetManager.lastKnownPosition);
-        Debug.Log($"{this}: area to search = " + areaToSearch);
+        //Debug.Log($"{this}: area to search = " + areaToSearch);
         if (areaToSearch != null)
         {
             pointsToCheck = AIGridPoints.Current.GetGridPointsInArea(areaToSearch);

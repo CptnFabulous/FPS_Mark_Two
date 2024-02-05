@@ -15,7 +15,15 @@ public class StateController : MonoBehaviour
 
     public void SwitchToState(StateFunction newState)
     {
-        if (newState != null && newState.transform.IsChildOf(transform) == false) return;
+        // Do nothing if already in the current state
+        if (newState == currentState) return;
+
+        // Do nothing if state is not part of the state machine
+        if (newState != null && newState.transform.IsChildOf(transform) == false)
+        {
+            Debug.LogError($"{this}: cannot switch to {newState} because it's not part of this state machine!");
+            return;
+        }
 
         current.enabled = false;
         previousState = current;

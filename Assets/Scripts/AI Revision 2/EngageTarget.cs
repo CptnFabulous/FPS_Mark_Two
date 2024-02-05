@@ -76,10 +76,10 @@ public class EngageTarget : TravelToDestination
             NavMeshPath p = AIPathing.CalculatePath(rootAI, position, maxMoveDistance);
             if (p == null) continue;
 
-            Debug.Log($"Selected {i + 1}/{count}");
+            //Debug.Log($"Selected {i + 1}/{count}");
             return p; // Return the first point that meets the criteria
         }
-        Debug.Log($"None of the {count} checked points were valid");
+        //Debug.Log($"None of the {count} checked points were valid");
 
         //destination = new AIGridPoints.GridPoint();
         return null;

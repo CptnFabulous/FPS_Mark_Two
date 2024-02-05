@@ -44,10 +44,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 690883873600460605, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
-  soundBytes: {fileID: 0}
+  indicatorNoise: {fileID: 0}
   timeToWaitBeforeReacquiringTarget: 5
-  onSuccess: {fileID: 8339017120048449204}
   onFail: {fileID: 2618743024015922463}
+  investigateState: {fileID: 414535660375231210}
 --- !u!1 &561253031028663283
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 514770500111043204, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
-  soundBytes: {fileID: 0}
+  indicatorNoise: {fileID: 0}
   maxSearchDistance: 50
   positionUpdateInterval: 2
   distanceForInstinctCheck: 2
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: -3171215574586982828, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
-  soundBytes: {fileID: 0}
+  indicatorNoise: {fileID: 0}
   staggerTime: 3
 --- !u!1 &4523392251199138075
 GameObject:
@@ -403,7 +403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 1660126055874503159, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
-  soundBytes: {fileID: 0}
+  indicatorNoise: {fileID: 0}
   destinationThreshold: 0.5
   endStateOnceDestinationReached: 1
   currentAttack: {fileID: 1904696813103451037}
@@ -457,8 +457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 514770500111043204, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
-  soundBytes: {fileID: 0}
-  ifTargetFound: {fileID: 8339017120048449204}
+  indicatorNoise: {fileID: 0}
 --- !u!1 &7555169701559161300
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,6 +500,7 @@ Transform:
   - {fileID: 2324363274852508006}
   - {fileID: 7269599322796750088}
   - {fileID: 2153607426591022829}
+  - {fileID: 5231975620577196877}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -707,12 +707,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1015
   raycastSpacing: 0.25
-  onThingSeen:
-    m_PersistentCalls:
-      m_Calls: []
-  onSightLost:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &5217320388601188730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -726,6 +720,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minVolumeToHear: 1
+  soundLayerMask:
+    serializedVersion: 2
+    m_Bits: 1527
+  soundNavMeshMask: -1
   onSoundHeard:
     m_PersistentCalls:
       m_Calls: []
@@ -919,6 +917,73 @@ MonoBehaviour:
   damageMultiplier: 1
   isCritical: 0
   sourceHealth: {fileID: 7555169701559161295}
+--- !u!1 &7685294011415289058
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5231975620577196877}
+  - component: {fileID: 414535660375231210}
+  - component: {fileID: 746362184616756710}
+  m_Layer: 0
+  m_Name: Investigate suspicious things
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5231975620577196877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7685294011415289058}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7555169701559161299}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &414535660375231210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7685294011415289058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875cc48290d1a214485006135946b561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: -7743096449829439135, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
+  indicatorNoise: {fileID: 0}
+  delayBetweenChangingTargetLocation: 10
+--- !u!114 &746362184616756710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7685294011415289058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a147c50138204e4f956b24b43403349, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  locationSearchState: {fileID: 414535660375231210}
+  onSearchUnsuccessful: {fileID: 1998196516955973173}
+  suspiciousNoises:
+  - {fileID: 11400000, guid: 9b099937e029c8a4c8a96a55539d9517, type: 2}
+  - {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
+  - {fileID: 11400000, guid: e91dac1c0072e114093296c03705eb64, type: 2}
+  - {fileID: 11400000, guid: 7a58ef69d604c7246be1a03933b38350, type: 2}
+  - {fileID: 11400000, guid: ad3e0b55282b0d3409685ab865dc29d3, type: 2}
 --- !u!1001 &1474974596724491270
 PrefabInstance:
   m_ObjectHideFlags: 0

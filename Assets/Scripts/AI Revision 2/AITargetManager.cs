@@ -19,7 +19,9 @@ public class AITargetManager : MonoBehaviour
 
     void Update()
     {
-        #region If no target is assigned, look for one
+        ViewStatus viewStatusLastFrame = canSeeTarget;
+
+        // If no target is assigned, look for one
         if (targetExists == false)
         {
             target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, out _);
@@ -34,16 +36,22 @@ public class AITargetManager : MonoBehaviour
                 return;
             }
         }
-        #endregion
 
-        #region Update info on current target
-        canSeeTarget = controlling.visionCone.VisionConeCheck(target, out RaycastHit hit);
-        if (canSeeTarget == ViewStatus.Visible)
+        // Update info on current target
+        if (targetExists)
         {
-            lastHit = hit;
-            lastKnownPosition = target.transform.position;
-            lastTimeSeenTarget = Time.time;
+            canSeeTarget = controlling.visionCone.VisionConeCheck(target, out RaycastHit hit);
+            if (canSeeTarget == ViewStatus.Visible)
+            {
+                lastHit = hit;
+                lastKnownPosition = target.transform.position;
+                lastTimeSeenTarget = Time.time;
+
+                if (canSeeTarget != viewStatusLastFrame)
+                {
+                    controlling.stateController.SwitchToState(onTargetFound);
+                }
+            }
         }
-        #endregion
     }
 }

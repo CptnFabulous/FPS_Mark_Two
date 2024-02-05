@@ -68,4 +68,15 @@ public class AI : Character
 
         gameObject.SetActive(false);
     }
+
+    public IEnumerator TravelToDestination(Vector3 position)
+    {
+        Debug.DrawLine(transform.position, position, Color.cyan, 5);
+        agent.SetDestination(position);
+        aiming.lookingInDefaultDirection = true;
+        
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitUntil(() => reachedDestination);
+    }
 }
