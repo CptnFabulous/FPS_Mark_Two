@@ -17,7 +17,7 @@ public class Hitbox : MonoBehaviour
     Collider c;
 
     public Collider collider => c ??= GetComponent<Collider>();
-    public Character attachedTo => sourceHealth.attachedTo;
+    public Character attachedTo => (sourceHealth != null) ? sourceHealth.attachedTo : null;
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, bool critical = false)
     {
