@@ -68,11 +68,16 @@ public class WeaponHandler : MonoBehaviour
     {
         get
         {
+            if (!enabled) return false;
             // If player is not in the middle of switching weapons
+            if (isSwitching) return false;
             // If player has a weapon equipped
+            if (CurrentWeapon == null) return false;
             // If player is not in the middle of switching firing modes
+            if (CurrentWeapon.isSwitching) return false;
             // If player is not in weapon wheel
-            return enabled && isSwitching == false && CurrentWeapon != null && CurrentWeapon.isSwitching == false/* && weaponSelector.active == false*/;
+            //if (weaponSelector.active) return false;
+            return true;
         }
     }
 

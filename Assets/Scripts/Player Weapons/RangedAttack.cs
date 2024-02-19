@@ -52,10 +52,11 @@ public class RangedAttack : WeaponMode
     }
     protected override void OnPrimaryInputChanged(bool held)
     {
-        if (held && isFiring == false && NotReloading)
-        {
-            StartCoroutine(FireBurst());
-        }
+        if (held == false) return;
+        if (isFiring) return;
+        if (NotReloading == false) return;
+
+        StartCoroutine(FireBurst());
     }
     protected override void OnSecondaryInputChanged()
     {

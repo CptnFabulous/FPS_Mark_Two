@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
-
-
 
 public class GunMagazine : MonoBehaviour
 {
@@ -90,16 +87,7 @@ public class GunMagazine : MonoBehaviour
     /// <summary>
     /// Is the player able to reload their weapon (if not, magazine is full or there is no more ammo to reload with)
     /// </summary>
-    public bool CanReload
-    {
-        get
-        {
-            // If player's magazine is not empty
-            // AND
-            // If enough ammunition is remaining to reload weapon with
-            return ammo.current < ammo.max && ReservedAmmo(type) > 0;
-        }
-    }
+    public bool CanReload => ammo.current < ammo.max && ReservedAmmo(type) > 0;
     public int ReservedAmmo(AmmunitionType type)
     {
         if (inventory != null)
@@ -159,28 +147,3 @@ public class GunMagazine : MonoBehaviour
         currentSequence = null;
     }
 }
-
-/*
-[System.Serializable]
-public struct ButtonPromptSequence
-{
-    [System.Serializable]
-    public struct Prompt
-    {
-        public KeyCode keyToPress;
-        public float time;
-    }
-
-    public Prompt[] prompts;
-    int index;
-
-    IEnumerator Sequence(Prompt[] prompts)
-    {
-        for (index = 0; index < prompts.Length; index++)
-        {
-            yield return new WaitUntil(() => Input.GetKeyDown(prompts[index].keyToPress));
-            yield return new WaitForSeconds(prompts[index].time);
-        }
-    }
-}
-*/

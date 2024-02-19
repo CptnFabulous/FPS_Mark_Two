@@ -24,8 +24,6 @@ public static class WeaponUtility
     }
     public static void CalculateObjectLaunch(Vector3 aimOrigin, Vector3 launchOrigin, Vector3 direction, float range, LayerMask detection, IList<Collider> exceptions, out Vector3 launchDirection, out Vector3 castHitPoint, out RaycastHit rh, out bool hitPointIsBehindMuzzle)
     {
-        Debug.DrawRay(aimOrigin, direction * range, Color.magenta, 5);
-
         bool successfulCast = MiscFunctions.RaycastWithExceptions(aimOrigin, direction, out rh, range, detection, exceptions);
         // Calculate where the projectile needs to go
         castHitPoint = successfulCast ? rh.point : aimOrigin + (direction * range);
@@ -33,9 +31,6 @@ public static class WeaponUtility
         launchDirection = castHitPoint - launchOrigin;
         // Check the dot product in case the hit point is behind the muzzle (e.g. if the player is shooting into a wall)
         hitPointIsBehindMuzzle = successfulCast && Vector3.Dot(launchDirection, direction) < 0;
-
-        Debug.DrawLine(launchOrigin, castHitPoint, Color.blue, 5);
-        //Debug.DrawRay(launchOrigin, launchDirection * range, Color.blue, 5);
     }
     public static string AmmoCounterHUDDisplay(RangedAttack rangedAttack, string infiniteText = "")
     {
