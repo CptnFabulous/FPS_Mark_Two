@@ -118,6 +118,22 @@ public readonly struct MiscFunctions
         return finalMask;
     }
 
+    public static T GetComponentInParentThatMeetsCriteria<T>(Transform target, Func<T, bool> criteria) where T : Component
+    {
+        while (target != null)
+        {
+            // Check for a component, cancel if one isn't found
+            T component = target.GetComponentInParent<T>();
+            if (component == null) break;
+            // Return if it meets the criteria
+            if (criteria.Invoke(component)) return component;
+            // Updates the parent, to check even further up in the next loop
+            target = component.transform.parent;
+        }
+
+        return null;
+    }
+
     #region Math
     public static float Min(params float[] values)
     {

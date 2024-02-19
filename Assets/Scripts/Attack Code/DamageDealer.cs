@@ -28,6 +28,13 @@ public class DamageDealer
         int d = Mathf.RoundToInt(damage * multiplier);
         int s = Mathf.RoundToInt(stun * multiplier);
 
+        // Apply knockback to the closest rigidbody
+        Rigidbody rb = MiscFunctions.GetComponentInParentThatMeetsCriteria<Rigidbody>(target.transform, (rb) => rb.isKinematic == false);
+        if (rb != null)
+        {
+            rb.AddForceAtPosition(knockback * multiplier * direction.normalized, point, ForceMode.Impulse);
+        }
+
         // Apply damage and stun to either the hitbox or the health script, if there is one
         Hitbox hb = target.GetComponentInParent<Hitbox>();
         if (hb != null)
@@ -41,13 +48,6 @@ public class DamageDealer
             {
                 h.Damage(d, s, false, type, attacker);
             }
-        }
-
-        // Apply knockback to the closest rigidbody
-        Rigidbody rb = target.GetComponentInParent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.AddForceAtPosition(knockback * multiplier * direction.normalized, point, ForceMode.Impulse);
         }
 
         // Play damage effects on surface (e.g. sound, impacts, etc.)
