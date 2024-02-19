@@ -44,7 +44,7 @@ public class FieldOfView : MonoBehaviour
         {
             if (criteria != null && criteria.Invoke(e) == false) return true;
             if (VisionConeCheck(e, out _) != ViewStatus.Visible) return true;
-            return false;
+            return false; // Entry is detected and shouldn't be removed
         });
         return entities;
     }
@@ -123,7 +123,8 @@ public class FieldOfView : MonoBehaviour
         {
             // Calculates raycast point to aim for
             Vector3 raycastHitDestination = gridStartCorner + (targetRight * spacingX * point.x) + (targetUp * spacingY * point.y);
-            Ray ray = new Ray(transform.position, raycastHitDestination - transform.position);
+            Vector3 direction = raycastHitDestination - transform.position;
+            Ray ray = new Ray(transform.position, direction);
 
             // Check if this cast is inside the AI's peripheral vision
             if (AngleCheck(ray.direction, transform, viewingAngles) == false)
@@ -131,20 +132,19 @@ public class FieldOfView : MonoBehaviour
                 //outOfViewAngle++;
                 continue;
             }
-            
-            // Check that the raycast hits something within range
-            if (Physics.Raycast(ray, out hit, viewRange, viewDetection) == false) continue;
 
-            // Check that the hit object was part of the target
-            // If the collider matches one in the array, it was
-            if (MiscFunctions.ArrayContains(targetColliders, hit.collider) == false)
+            // Run a line of sight check to the target colliders
+            float distance = Mathf.Min(direction.magnitude, viewRange);
+            if (AIAction.LineOfSightToTarget(ray, out hit, distance, viewDetection, targetColliders, rootAI.colliders))
             {
-                blocked++;
-                continue;
+                // A raycast hit a collider that's part of the target, that means the AI can see it!
+                return ViewStatus.Visible;
             }
 
-            // A raycast hit a collider that's part of the target, that means the AI can see it!
-            return ViewStatus.Visible;
+            // Raycast did not find target.
+            // If it did hit something else, register as an obstruction
+            if (hit.collider != null) blocked++;
+            // Proceed to next check
         }
         #endregion
 

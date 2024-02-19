@@ -60,24 +60,40 @@ public abstract class AIAction : Action
         // Run RaycastAll to get all colliders in the path of the object
         List<RaycastHit> results = new List<RaycastHit>(Physics.RaycastAll(from, direction, direction.magnitude, detection));
         // Remove all results that are mentioned in the exceptions arrays
-        
+        results.RemoveAll((rh) => IsExceptionCollider(rh.collider, exceptionLists));
+
+        // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
+        bool nothingBlocking = results.Count <= 0;
+        Debug.DrawLine(from, to, nothingBlocking ? Color.green : Color.red);
+        return nothingBlocking;
+    }
+    public static bool LineOfSightToTarget(Ray ray, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, params IEnumerable<Collider>[] exceptionLists)
+    {
+        RaycastHit[] hits = Physics.RaycastAll(ray, viewRange, viewDetection);
+        foreach (RaycastHit rh in hits)
+        {
+            hit = rh;
+            // If it hit one of the desired colliders, return true
+            if (MiscFunctions.ArrayContains(targetColliders, rh.collider)) return true;
+            // If it's neither a target nor an exception, line of sight is blocked.
+            if (IsExceptionCollider(rh.collider, exceptionLists) == false) return false;
+            // If the collider was one of the exceptions, ignore and proceed to the next value
+        }
+
+        hit = new RaycastHit();
+        return false;
+    }
+    static bool IsExceptionCollider(Collider toCheck, params IEnumerable<Collider>[] exceptionLists)
+    {
         foreach (IEnumerable<Collider> exceptions in exceptionLists)
         {
             if (exceptions == null) continue;
-
-            foreach (Collider exception in exceptions)
-            {
-                results.RemoveAll(rh => rh.collider == exception);
-            }
+            if (MiscFunctions.ArrayContains(exceptions, toCheck)) return true;
         }
-        // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
-        
-        bool nothingBlocking = results.Count <= 0;
-
-        Debug.DrawLine(from, to, nothingBlocking ? Color.green : Color.red);
-
-        return nothingBlocking;
+        return false;
     }
+
+
     public static Vector3 HypotheticalLookOrigin(AI ai, Vector3 positionToLookFrom)
     {
         Vector3 offset = ai.LookTransform.position - ai.transform.position;
