@@ -1,20 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
 public class GunReticle : MonoBehaviour
 {
     [SerializeField] WeaponHandler handler;
-    [SerializeField] float referenceDistance = 50;
+    [SerializeField] float targetRadius = 0.5f;
+    [SerializeField] RectTransform centreDot;
     [SerializeField] RectTransform[] reticleBlades;
-    [SerializeField] AnimationCurve opacityCurveForADS = AnimationCurve.EaseInOut(0, 1, 1, 0);
+    [SerializeField] AnimationCurve animationCurveForADS = AnimationCurve.EaseInOut(0, 1, 1, 0);
 
     RectTransform rt;
     CanvasGroup cg;
+    Canvas rootCanvas;
     Vector2[] originalDirections;
+
+    float currentAngle = float.MinValue;
 
     Camera playerCamera => handler.controller.movement.lookControls.worldViewCamera;
     RangedAttack mode
@@ -37,7 +39,7 @@ public class GunReticle : MonoBehaviour
     private void Awake()
     {
         rt = GetComponent<RectTransform>();
-
+        rootCanvas = GetComponentInParent<Canvas>();
         cg = GetComponent<CanvasGroup>();
         cg.interactable = false;
         cg.blocksRaycasts = false;
@@ -48,62 +50,68 @@ public class GunReticle : MonoBehaviour
             originalDirections[i] = reticleBlades[i].anchoredPosition.normalized;
         }
     }
-    /*
-    private void OnDisable()
-    {
-        SetVisibility(false);
-    }
-    */
     private void LateUpdate()
     {
-        #region Check that a reticle is present
-        if (mode == null) // If not, hide the reticle and end the function early since there's nothing to render
+        // Check that a reticle is present
+        if (mode == null)
         {
-            //enabled = false;
+            // If not, hide the reticle and end the function early since there's nothing to render
             opacity = 0;
             return;
         }
-        #endregion
 
-        #region Visibility
         // Set visibility based on various factors specified in reticle opacity
         opacity = ReticleOpacity();
         // If reticle is not visible, don't bother updating other elements
         if (opacity <= 0) return;
-        #endregion
 
         float angle = ReticleAngle();
+        //if (angle == currentAngle) return;
+        currentAngle = angle;
 
-        #region Update reticle size
-        Quaternion offsetRotation = handler.aimAxis.rotation * Quaternion.Euler(angle, 0, 0);
+        centreDot.gameObject.SetActive(angle > 0);
 
-        // Calculate direction and distance
-        Vector3 centre = referenceDistance * handler.aimAxis.forward; // Straight forward
-        Vector3 offset = referenceDistance * (offsetRotation * Vector3.forward); // Offset by the sway angle
-        // Add onto the aim axis position to get the world space positions
-        centre = handler.aimAxis.position + centre;
-        offset = handler.aimAxis.position + offset;
-        //Debug.DrawLine(handler.aimAxis.position, centre, Color.green);
-        //Debug.DrawLine(handler.aimAxis.position, offset, Color.red);
+        Vector3 origin = handler.aimAxis.position;
 
-        // Identify where they are on the screen and calculate the distance between them
-        centre = playerCamera.WorldToScreenPoint(centre);
-        offset = playerCamera.WorldToScreenPoint(offset);
+        // Use the spread angle and ideal target width to calculate a triangle
+        // This tells us how close the target needs to be to fill the cone of fire
+        // I used this calculator: https://www.omnicalculator.com/math/hypotenuse
+        float hypotenuse = targetRadius / Mathf.Sin(angle * Mathf.Deg2Rad);
+        float adjacent = hypotenuse * Mathf.Sin((90 - angle) * Mathf.Deg2Rad);
+        Vector3 forwardStraight = handler.aimAxis.forward;
+        Vector3 forwardAngled = handler.aimAxis.rotation * Quaternion.Euler(0, angle, 0) * Vector3.forward;
+        Vector3 centreAtDistance = (adjacent * forwardStraight) + origin;
+        Vector3 offsetAtDistance = (hypotenuse * forwardAngled) + origin;
 
-        float screenDistance = Vector2.Distance(centre, offset);
+        Debug.DrawLine(origin, centreAtDistance, Color.green);
+        Debug.DrawLine(origin, offsetAtDistance, Color.red);
+        Debug.DrawRay(centreAtDistance, targetRadius * handler.aimAxis.right, Color.blue);
+        Debug.DrawLine(centreAtDistance + (targetRadius * handler.aimAxis.right), Vector3.zero, Color.magenta);
+
+        // Gain the screen positions of the centre and offset point
+        Vector2 screenPosCentre = playerCamera.WorldToScreenPoint(centreAtDistance);
+        Vector2 screenPosOffset = playerCamera.WorldToScreenPoint(offsetAtDistance);
+
         /*
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, centre, playerCamera, out Vector2 centrePosition);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, offset, playerCamera, out Vector2 offsetPosition);
-        float canvasDistance = Vector2.Distance(centrePosition, offsetPosition);
+        // TO DO: figure out a way to do this that doesn't involve RectTransformUtility.ScreenPointToLocalPointInRectangle()
+        // E.g. directly converting based on the canvas and screen sizes
+        // Figure out size of canvas during runtime compared to screen size, so you can ensure the values aren't warped
+        // Figure out a conversion algorithm and call it something like ScreenToCanvasPoint
         */
-        // TO DO: Ensure the anchored positions scale with different screen sizes. I'm pretty sure the way they're set up the positions don't account for how the canvas size can be different from the screen size.
+        // Convert screen positions to the local space of the RectTransform
+        Camera cam = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : playerCamera;
+        bool centreSuccess = RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, screenPosCentre, cam, out screenPosCentre);
+        bool offsetSuccess = RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, screenPosOffset, cam, out screenPosOffset);
+        //Debug.Log($"Centre = {centreSuccess}, {screenPosCentre}, offset = {offsetSuccess}, {screenPosOffset}");
+        
+        // Then calculate the distance and position reticle blades accordingly
+        float screenDistance = Vector2.Distance(screenPosCentre, screenPosOffset);
         for (int i = 0; i < reticleBlades.Length; i++)
         {
-            //reticleBlades[i].anchoredPosition = originalDirections[i] * canvasDistance;
             reticleBlades[i].anchoredPosition = originalDirections[i] * screenDistance;
         }
-        #endregion
     }
+
 
     float ReticleOpacity()
     {
@@ -112,14 +120,10 @@ public class GunReticle : MonoBehaviour
 
         if (ads != null)
         {
-            if (ads.hideMainReticle) // If the reticle is never meant to be visible, show nothing
-            {
-                return 0;
-            }
-            else // If ADS does show reticle normally, have it lerp in visibility based on the ADS value.
-            {
-                return opacityCurveForADS.Evaluate(ads.timer);
-            }
+            // If the reticle is never meant to be visible, show nothing
+            if (ads.hideMainReticle) return 0;
+            // If ADS does show reticle normally, have it lerp in visibility based on the ADS value.
+            return Mathf.Lerp(0, 1, animationCurveForADS.Evaluate(ads.timer));
         }
 
         return 1; // Make the reticle fully visible.
@@ -128,11 +132,9 @@ public class GunReticle : MonoBehaviour
     {
         float angle = handler.aimSwayAngle + mode.stats.shotSpread;
 
-        if (ads != null)
-        {
-            angle = Mathf.Lerp(angle, 0, ads.timer);
-        }
-        
+        //if (ads != null) angle = Mathf.Lerp(angle, 0, ads.timer);
+        if (ads != null) angle = Mathf.Lerp(0, angle, animationCurveForADS.Evaluate(ads.timer));
+
         return angle;
     }
 }

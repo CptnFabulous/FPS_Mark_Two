@@ -557,7 +557,6 @@ MonoBehaviour:
   affiliation: {fileID: 11400000, guid: 4fa3cac1b5d754d4894e40f91efa32fa, type: 2}
   health: {fileID: 745592948619609687}
   stamina: {fileID: 2602773801818801118}
-  characterModel: {fileID: 0}
   controls: {fileID: 3129558233819840828}
   movement: {fileID: 5952785220977947007}
   stateHandler: {fileID: 5952785220977947005}
@@ -883,19 +882,7 @@ MonoBehaviour:
       m_Calls: []
   onDeath:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5952785220977947003}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: Die
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   allowPosthumousDamage: 0
 --- !u!114 &317139347150765821
 MonoBehaviour:
@@ -2352,7 +2339,7 @@ PrefabInstance:
     - target: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_Camera
       value: 
-      objectReference: {fileID: 5952785222629829733}
+      objectReference: {fileID: 977941391282855979}
     - target: {fileID: 4122616872743097397, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_Name
       value: Heads-up display
@@ -2395,6 +2382,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
