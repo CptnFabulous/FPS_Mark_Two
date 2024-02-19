@@ -43,6 +43,15 @@ public abstract class AIAction : Action
         }
         return distance;
     }
+    public static void DebugDrawNavMeshPath(NavMeshPath path, Color colour, float time = 0)
+    {
+        if (path.corners.Length <= 1) return;
+        for (int i = 1; i < path.corners.Length; i++)
+        {
+            Debug.DrawLine(path.corners[i - 1], path.corners[i], colour, time);
+        }
+    }
+
     public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, params IEnumerable<Collider>[] exceptionLists)
     {
         // Calculate direction and use magnitude for distance
