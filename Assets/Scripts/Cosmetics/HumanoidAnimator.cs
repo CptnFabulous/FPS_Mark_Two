@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class HumanoidAnimator : MonoBehaviour
 {
-    public Animator animator;
     public Character character;
 
-    [Header("Variables")]
-    public Transform[] spineBones;
+    [Header("Anatomy")]
+    [SerializeField] Animator animator;
+    [SerializeField] Ragdoll ragdoll;
+    [SerializeField] Transform[] spineBones;
 
-    public string walkXValue;
-    public string walkZValue;
+    [Header("Animator values")]
+    [SerializeField] string walkXValue;
+    [SerializeField] string walkZValue;
     
-    // Start is called before the first frame update
+    /*
     void Start()
     {
         // Add listeners for other functions e.g. stagger animations
     }
-
+    */
     private void Update()
     {
+        if (ragdoll.enabled) return;
+
         // Update walk direction values
         Vector3 walkValues = character.LocalMovementDirection;
         animator.SetFloat(walkXValue, walkValues.x);
@@ -29,6 +33,8 @@ public class HumanoidAnimator : MonoBehaviour
 
     void LateUpdate()
     {
+        if (ragdoll.enabled) return;
+        
         // Set up appropriate aiming rotation of upper body
         // I used this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
 

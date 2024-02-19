@@ -15,6 +15,7 @@ public class AI : Character
 
     [Header("Movement and pathing")]
     public NavMeshAgent agent;
+    public PhysicsAffectedAI physicsHandler;
     public float baseMovementSpeed = 5;
     public float destinationThreshold = 1;
 
@@ -66,7 +67,11 @@ public class AI : Character
 
         base.Die();
 
-        gameObject.SetActive(false);
+        stateController.enabled = false;
+        aiming.enabled = false;
+        targeting.enabled = false;
+        physicsHandler.ragdollActive = true;
+        //gameObject.SetActive(false);
     }
 
     public IEnumerator TravelToDestination(Vector3 position)
