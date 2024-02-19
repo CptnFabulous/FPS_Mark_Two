@@ -59,7 +59,13 @@ public class AI : Character
         agent.speed = baseMovementSpeed;
     }
 
-    public override void Die()
+    public override void Delete()
+    {
+        // Pre-emptively kills AI to ensure 'on death' events occur properly
+        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null);
+        base.Delete();
+    }
+    protected override void Die()
     {
         //agent.enabled = false;
         //aiming.enabled = false;

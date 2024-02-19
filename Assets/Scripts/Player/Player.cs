@@ -33,8 +33,12 @@ public class Player : Character
     public PlayerStateHandler stateHandler;
     public WeaponHandler weapons;
     public HeadsUpDisplay headsUpDisplay;
-    
-    public override void Die()
+
+    public override void Delete()
+    {
+        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null);
+    }
+    protected override void Die()
     {
         base.Die();
 
@@ -42,7 +46,5 @@ public class Player : Character
         //weapons.enabled = false;
         movement.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
-
-        
     }
 }

@@ -90,8 +90,8 @@ public class Health : MonoBehaviour
         if (data.current <= 0)
         {
             KillMessage killMessage = new KillMessage(attacker, this, type);
-            Notification<KillMessage>.Transmit(killMessage);
             onDeath.Invoke(killMessage);
+            Notification<KillMessage>.Transmit(killMessage);
         }
     }
     public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer);

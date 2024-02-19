@@ -8,7 +8,6 @@ public abstract class Character : Entity
     public Faction affiliation;
     public Health health;
     public RegeneratingResource stamina;
-    public Ragdoll characterModel;
 
     public override IList<Collider> colliders => health.HitboxColliders;
     public Vector3 RelativeCentreOfMass(Vector3 hypotheticalTransformPosition)
@@ -38,25 +37,15 @@ public abstract class Character : Entity
 
 
     public abstract Character target { get; }
-    /*
-    public bool IsHostileTowards(Entity other)
+
+    protected override void Awake()
     {
-        Character c = other as Character;
-        if (c == null) return true;
-        return affiliation.IsHostileTowards(c.affiliation);
-    }
-    */
-    public override void Delete()
-    {
-        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null);
+        base.Awake();
+        health.onDeath.AddListener((_) => Die());
     }
 
-    public virtual void Die()
+    protected virtual void Die()
     {
-        if (characterModel != null)
-        {
-            characterModel.transform.SetParent(null);
-            characterModel.enabled = true;
-        }
+        Debug.Log($"{this} is now dying");
     }
 }

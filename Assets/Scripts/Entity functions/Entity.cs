@@ -47,9 +47,5 @@ public class Entity : MonoBehaviour
     public float DeltaTime => Time.deltaTime * timeScale;
     public float FixedDeltaTime => Time.fixedDeltaTime * timeScale;
     */
-    public virtual void Delete()
-    {
-        //Debug.Log("Destroying " + name + " on frame " + Time.frameCount);
-        Destroy(gameObject);
-    }
+    public virtual void Delete() => Destroy(gameObject);
 }
