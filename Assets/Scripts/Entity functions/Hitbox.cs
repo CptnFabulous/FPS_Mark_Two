@@ -37,14 +37,20 @@ public class Hitbox : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Figure out velocity and deal impact damage accordingly
+        // Figure out velocity
         float force = collision.relativeVelocity.magnitude;
-        if (force > minimumCollisionForceToDamage)
-        {
-            float damage = (force - minimumCollisionForceToDamage) * damagePerCollisionForceUnit;
-            float stun = (force - minimumCollisionForceToDamage) * stunPerCollisionForceUnit;
-            Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponent<Entity>();
-            Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.Impact, thingThatDamagedThisHitbox);
-        }
+        // If a rigidbody is present, multiply the mass accordingly
+        Rigidbody rb = collision.rigidbody;
+        if (rb != null) force *= rb.mass;
+
+        // If the force isn't enough to register, cancel
+        if (force <= minimumCollisionForceToDamage) return;
+        force -= minimumCollisionForceToDamage;
+
+        // Calculate damage and stun accordingly
+        float damage = force * damagePerCollisionForceUnit;
+        float stun = force * stunPerCollisionForceUnit;
+        Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponent<Entity>();
+        Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.Impact, thingThatDamagedThisHitbox);
     }
 }
