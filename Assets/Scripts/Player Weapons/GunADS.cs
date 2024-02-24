@@ -59,7 +59,7 @@ public class GunADS : MonoBehaviour
     float TargetValue => IsAiming ? 1 : 0;
     bool IsScope => viewingCamera != null && sightPicture != null;
     public LookController lookControls => player.movement.lookControls;
-    bool notSetupProperly => user == null || userWeaponHandler == null || player == null;
+    bool notSetupProperly => attachedWeapon == null || user == null || userWeaponHandler == null || player == null;
 
     private void Awake()
     {

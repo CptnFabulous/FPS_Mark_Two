@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6078630006227807770
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1522426181824982050, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430196, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3127231647762430199, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_Name
+      value: Dropped Rifle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6145700803249881395, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473494366831382301, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473494366831382301, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: viewingCamera
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4357044777459187164, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+--- !u!1 &9168635416792798957 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3127231647762430199, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+  m_PrefabInstance: {fileID: 6078630006227807770}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &739679046312288136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168635416792798957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Dropped Rifle
+  description: A rifle dropped by the enemy. Pick it up to restore ammo.
+  isUnique: 0
+--- !u!54 &1865420290
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168635416792798957}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1865420288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168635416792798957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 449a4007d55b2664b88fcf02918e9f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 1
+  activateOnCollision: 0
+  promptMessage: Restore ammo
+  inProgressMessage: Picking up
+  disabledMessage: Ammo full
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1865420289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168635416792798957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 612ff3cc32dd7884c96f026152f7c369, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactable: {fileID: 1865420288}
+  pickupNoise: {fileID: 0}
+  type: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
+  amountToRestore: 10
+  limitedSupply: 1
