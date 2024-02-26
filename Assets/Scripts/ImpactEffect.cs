@@ -12,6 +12,9 @@ public class ImpactEffect : ScriptableObject
 
     public DiegeticSound defaultSound;
     public ParticleSystem defaultImpactEffect;
+    public Sprite defaultDecal;
+
+    static SpriteRenderer decalPrefab;
     static int maxNumberOfSpawnedEffects = 100;
 
     public void Play(GameObject surfaceCollider, Entity sourceEntity, Vector3 point, Vector3 normal, float intensity = 1)
@@ -19,6 +22,7 @@ public class ImpactEffect : ScriptableObject
         // Determine effects based on surface (currently doesn't have support for multiple sound types)
         ParticleSystem effect = defaultImpactEffect;
         DiegeticSound sound = defaultSound;
+        Sprite decal = defaultDecal;
 
         // Instantiate impact effect at surface
         if (effect != null)
@@ -33,6 +37,23 @@ public class ImpactEffect : ScriptableObject
         if (sound != null)
         {
             sound.Play(point, sourceEntity, intensity);
+        }
+
+        // Stick decal
+        if (decal != null)
+        {
+            if (decalPrefab == null)
+            {
+                decalPrefab = new GameObject($"Decal Renderer").AddComponent<SpriteRenderer>();
+                decalPrefab.gameObject.SetActive(false);
+            }
+            
+            SpriteRenderer sr = ObjectPool.RequestObject(decalPrefab, true, maxNumberOfSpawnedEffects);
+            sr.sprite = decal;
+            sr.name = $"Decal ({name})";
+
+            Vector3 pointToStickDecal = point + (normal.normalized * 0.01f);
+            StickObjectToSurface(sr.transform, surfaceCollider.transform, pointToStickDecal, normal, Vector3.forward);
         }
     }
 
