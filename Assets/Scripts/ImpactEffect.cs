@@ -12,24 +12,28 @@ public class ImpactEffect : ScriptableObject
 
     public DiegeticSound defaultSound;
     public ParticleSystem defaultImpactEffect;
+    static int maxNumberOfSpawnedEffects = 100;
 
     public void Play(GameObject surfaceCollider, Entity sourceEntity, Vector3 point, Vector3 normal, float intensity = 1)
     {
         // Determine effects based on surface (currently doesn't have support for multiple sound types)
-        ParticleSystem desiredEffect = defaultImpactEffect;
-        DiegeticSound desiredSound = defaultSound;
+        ParticleSystem effect = defaultImpactEffect;
+        DiegeticSound sound = defaultSound;
 
-        if (desiredEffect != null)
+        // Instantiate impact effect at surface
+        if (effect != null)
         {
-            // Instantiate impact effect at surface
-            ParticleSystem effect = Instantiate(desiredEffect);
-            StickObjectToSurface(effect.transform, surfaceCollider.transform, point, normal, Vector3.forward);
+            ParticleSystem effectToSpawn = ObjectPool.RequestObject(effect, true, maxNumberOfSpawnedEffects);
+            StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, normal, Vector3.forward);
             // TO DO: use intensity to determine size of particles
-            effect.Play();
+            effectToSpawn.Play();
         }
-        
+
         // Play sound effect at point
-        desiredSound.Play(point, sourceEntity, intensity);
+        if (sound != null)
+        {
+            sound.Play(point, sourceEntity, intensity);
+        }
     }
 
     public static void StickObjectToSurface(Transform objectToStick, RaycastHit surface, Vector3 rotationAxis, float distanceOffSurface = 0)
