@@ -508,6 +508,7 @@ GameObject:
   - component: {fileID: 8390498992792282787}
   - component: {fileID: 8696560492139060213}
   - component: {fileID: 8883986625901552865}
+  - component: {fileID: 2595027160604061477}
   m_Layer: 0
   m_Name: Rifle Ammo Box
   m_TagString: Untagged
@@ -809,6 +810,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2595027160604061477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8696560492139060212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactEffect: {fileID: 11400000, guid: 16f4d5a2627a7824a83c6dda7700d914, type: 2}
 --- !u!1 &8954002482177228093
 GameObject:
   m_ObjectHideFlags: 0

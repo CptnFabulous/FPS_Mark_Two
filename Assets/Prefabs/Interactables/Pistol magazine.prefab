@@ -176,6 +176,7 @@ GameObject:
   - component: {fileID: 6405586883557918587}
   - component: {fileID: 6405586883557918589}
   - component: {fileID: 6405586883557918586}
+  - component: {fileID: 1986765131949471092}
   m_Layer: 0
   m_Name: Pistol magazine
   m_TagString: Untagged
@@ -279,6 +280,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1986765131949471092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405586883557918590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactEffect: {fileID: 11400000, guid: 16f4d5a2627a7824a83c6dda7700d914, type: 2}
 --- !u!1 &6887630092556939681
 GameObject:
   m_ObjectHideFlags: 0
