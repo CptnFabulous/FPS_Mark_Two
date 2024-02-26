@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 8131454595356754263}
   - component: {fileID: 8131454595356754262}
   - component: {fileID: 5499614498537676256}
+  - component: {fileID: 7897498145491450672}
   m_Layer: 6
   m_Name: Table
   m_TagString: Untagged
@@ -452,6 +453,19 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &7897498145491450672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8131454595356754261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactEffect: {fileID: 11400000, guid: 5eb6b24353b04c449a65e4980f1c5590, type: 2}
 --- !u!1 &8131454596129516210
 GameObject:
   m_ObjectHideFlags: 0

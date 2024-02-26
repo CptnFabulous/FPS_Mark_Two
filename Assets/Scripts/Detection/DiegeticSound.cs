@@ -26,7 +26,12 @@ public class DiegeticSound : ScriptableObject
     }
     public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1)
     {
-        Play(point, sourceEntity, sourceEntity.GetComponentInChildren<AudioSource>(), multiplier);
+        AudioSource source = null;
+        if (sourceEntity != null)
+        {
+            source = sourceEntity.GetComponentInChildren<AudioSource>();
+        }
+        Play(point, sourceEntity, source, multiplier);
     }
 
     public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1)
@@ -47,7 +52,8 @@ public class DiegeticSound : ScriptableObject
 
         // TO DO: play text in subtitles, if close enough for the player to hear
 
-        // Play diegetic code
+        // Play diegetic code (assuming there's an entity to check against)
+        if (sourceEntity == null) return;
         DiegeticAudioListener.DiegeticCheck(this, decibels * multiplier, sourceEntity);
 
     }
