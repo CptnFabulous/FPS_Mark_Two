@@ -154,6 +154,10 @@ public class LookController : MonoBehaviour, ICharacterLookController
         rawAimInput = newInput; // Update rawAimInput to new value
     }
 
+    void Start()
+    {
+        worldViewCamera.fieldOfView = fieldOfView;
+    }
     void Update()
     {
         Vector2 delta = GetProcessedAimInput();
