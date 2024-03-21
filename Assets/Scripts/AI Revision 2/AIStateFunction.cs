@@ -20,9 +20,7 @@ public abstract class AIStateFunction : StateFunction
     protected virtual void OnEnable()
     {
         // Play effects to indicate the AI has switched to a new action
-        rootAI.statusIcon.TriggerAnimation(icon);
-        // Include a thing here that plays the sound effect
-        soundCue?.Play(rootAI.transform.position, rootAI);
-
+        if (icon != null) rootAI.statusIcon.TriggerAnimation(icon);
+        if (soundCue != null) soundCue.Play(rootAI.transform.position, rootAI);
     }
 }
