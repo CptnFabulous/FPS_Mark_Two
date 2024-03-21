@@ -6,10 +6,8 @@ public abstract class Character : Entity
 {
     [Header("Character data")]
     public Faction affiliation;
-    public Health health;
     public RegeneratingResource stamina;
 
-    public override IList<Collider> colliders => health.HitboxColliders;
     public Vector3 RelativeCentreOfMass(Vector3 hypotheticalTransformPosition)
     {
         Vector3 offset = CentreOfMass - transform.position;

@@ -113,7 +113,7 @@ public class EngageTarget : TravelToDestination
         Vector3 lookOrigin = AIAction.HypotheticalLookOrigin(ai, position);
         Debug.DrawLine(target.transform.position, targetBounds.center, Color.cyan);
         Debug.DrawLine(lookOrigin, targetBounds.center, Color.cyan);
-        bool lineOfSight = AIAction.LineOfSight(lookOrigin, targetBounds.center, ai.attackMask, ai.health.HitboxColliders, target.health.HitboxColliders);
+        bool lineOfSight = AIAction.LineOfSight(lookOrigin, targetBounds.center, ai.attackMask, ai.colliders, target.colliders);
         if (lineOfSight == false)
         {
             //Debug.Log("Line of sight is broken");

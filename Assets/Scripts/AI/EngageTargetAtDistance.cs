@@ -37,7 +37,7 @@ public class EngageTargetAtDistance : MoveToDestination
         }
 
         // Check if line of sight between destination and target is not compromised
-        bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(position), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
+        bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(position), target.CentreOfMass, AI.attackMask, AI.colliders, target.colliders);
         //LineOfSightCheck(AI.RelativeLookOrigin(destination), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
         if (lineOfSight == false)
         {
@@ -58,7 +58,7 @@ public class EngageTargetAtDistance : MoveToDestination
             #region Check that position is viable
             Vector3 samplePosition = samples[i].position;
             // Check if the sample is not blocked by cover, so line of sight is established
-            bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(samplePosition), target.CentreOfMass, AI.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders);
+            bool lineOfSight = LineOfSight(AI.RelativeLookOrigin(samplePosition), target.CentreOfMass, AI.attackMask, AI.colliders, target.colliders);
             //LineOfSightCheck(AI.RelativeLookOrigin(samplePosition), target.health.HitboxColliders, AI.aiming.Stats.lookDetection, AI.aiming.Stats.diameterForUnobstructedSight, AI.health.HitboxColliders);
             if (lineOfSight == false)
             {
@@ -93,7 +93,7 @@ public class EngageTargetAtDistance : MoveToDestination
                     // If a cover point is safe from the player's current position (e.g. if a line of sight check fails)
                     Vector3 from = target.LookTransform.position;
                     Vector3 to = AI.RelativeCentreOfMass(nearbyCoverPoints[c].position);
-                    if (LineOfSight(from, to, target.attackMask, AI.health.HitboxColliders, target.health.HitboxColliders) == false)
+                    if (LineOfSight(from, to, target.attackMask, AI.colliders, target.colliders) == false)
                     {
                         // If the line of sight check fails, the position is a safe cover point from the player
                         newPositionIsNearCover = true;

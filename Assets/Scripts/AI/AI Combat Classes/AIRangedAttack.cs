@@ -35,7 +35,7 @@ public class AIRangedAttack : AIAttackBehaviour
     public override void AcquireTarget()
     {
         targetLocation = GetTargetLocation();
-        lineOfSightEstablished = AIAction.LineOfSight(actionRunning.Aim.LookOrigin, targetLocation, actionRunning.AI.attackMask, actionRunning.AI.health.HitboxColliders, actionRunning.CombatAI.target.health.HitboxColliders);
+        lineOfSightEstablished = AIAction.LineOfSight(actionRunning.Aim.LookOrigin, targetLocation, actionRunning.AI.attackMask, actionRunning.AI.colliders, actionRunning.CombatAI.target.colliders);
         
         if (lineOfSightEstablished) // If AI has a line of sight to attack the target, shift aim towards target
         {

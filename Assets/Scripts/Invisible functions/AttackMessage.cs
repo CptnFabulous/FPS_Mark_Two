@@ -35,7 +35,7 @@ public abstract class AttackMessage
         Bounds characterBounds = c.bounds;
         characterBounds.center -= c.transform.position;
         characterBounds.center += transformPosition;
-        return PositionAtRisk(characterBounds, c.health.HitboxColliders, cautionMultiplier, out potentialDamage) && potentialDamage > damageThresholdToAvoid;
+        return PositionAtRisk(characterBounds, c.colliders, cautionMultiplier, out potentialDamage) && potentialDamage > damageThresholdToAvoid;
     }
     /// <summary>
     /// Is a bounds in the path of an attack, and how much damage will they take?
@@ -44,7 +44,7 @@ public abstract class AttackMessage
     /// <param name="characterHitboxes"></param>
     /// <param name="potentialDamage"></param>
     /// <returns></returns>
-    public abstract bool PositionAtRisk(Bounds characterBounds, Collider[] characterHitboxes, float cautionMultiplier, out int potentialDamage);
+    public abstract bool PositionAtRisk(Bounds characterBounds, IList<Collider> characterHitboxes, float cautionMultiplier, out int potentialDamage);
 }
 public class DirectionalAttackMessage : AttackMessage
 {
@@ -66,7 +66,7 @@ public class DirectionalAttackMessage : AttackMessage
     public float spread;
     //public AnimationCurve damageFalloff;
 
-    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes, float cautionMultiplier, out int potentialDamage)
+    public override bool PositionAtRisk(Bounds bounds, IList<Collider> characterHitboxes, float cautionMultiplier, out int potentialDamage)
     {
         float perceivedRange = range * cautionMultiplier;
         float perceivedSpread = spread * cautionMultiplier;
@@ -84,7 +84,7 @@ public class DirectionalAttackMessage : AttackMessage
         if (targetAngle >= perceivedSpread) return false;
 
         // Check if an unobstructed linear path is available between the origin and target point
-        if (AIAction.LineOfSight(originPoint, closestPointInsideAngle, hitDetection, origin.health.HitboxColliders, characterHitboxes) == false)
+        if (AIAction.LineOfSight(originPoint, closestPointInsideAngle, hitDetection, origin.colliders, characterHitboxes) == false)
         {
             return false;
         }
@@ -108,7 +108,7 @@ public class AOEAttackMessage : AttackMessage
     public float radius;
     public AnimationCurve damageFalloff;
 
-    public override bool PositionAtRisk(Bounds bounds, Collider[] characterHitboxes, float cautionMultiplier, out int potentialDamage)
+    public override bool PositionAtRisk(Bounds bounds, IList<Collider> characterHitboxes, float cautionMultiplier, out int potentialDamage)
     {
         float perceivedRadius = radius * cautionMultiplier;
 
@@ -120,7 +120,7 @@ public class AOEAttackMessage : AttackMessage
         if (distanceToTarget >= perceivedRadius) return false;
 
         // Check if an unobstructed linear path is available between the origin and target point
-        if (AIAction.LineOfSight(centre, closestPoint, hitDetection, origin.health.HitboxColliders, characterHitboxes) == false)
+        if (AIAction.LineOfSight(centre, closestPoint, hitDetection, origin.colliders, characterHitboxes) == false)
         {
             return false;
         }

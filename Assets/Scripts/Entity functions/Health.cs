@@ -48,25 +48,9 @@ public class Health : MonoBehaviour
             return hb;
         }
     }
-    public Collider[] HitboxColliders
-    {
-        get
-        {
-            if (hitboxColliders == null)
-            {
-                hitboxColliders = new Collider[hitboxes.Length];
-                for (int i = 0; i < hitboxColliders.Length; i++)
-                {
-                    hitboxColliders[i] = hitboxes[i].collider;
-                }
-            }
-            return hitboxColliders;
-        }
-    }
 
     Character c;
     Hitbox[] hb;
-    Collider[] hitboxColliders;
 
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.

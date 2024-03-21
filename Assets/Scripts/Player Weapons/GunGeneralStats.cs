@@ -47,7 +47,7 @@ public class GunGeneralStats : MonoBehaviour
             Vector3 spreadAngles = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * shotSpread;
             Vector3 castDirection = Quaternion.LookRotation(aimDirection, worldUp) * Quaternion.Euler(spreadAngles) * Vector3.forward;
 
-            WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, newProjectile.detection, user.health.HitboxColliders, out _, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
+            WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, newProjectile.detection, user.colliders, out _, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
             if (behindMuzzle)
             {
                 // If muzzle is close enough, projectile has no distance to move. Activate OnHit immediately and proceed to next projectile
