@@ -45,9 +45,12 @@ public class WeaponHandler : MonoBehaviour
         get
         {
             float totalSway = standingAccuracy;
-            if (CurrentWeapon.CurrentMode is RangedAttack ra)
+            if (CurrentWeapon != null)
             {
-                totalSway += ra.stats.sway;
+                if (CurrentWeapon.CurrentMode is RangedAttack ra)
+                {
+                    totalSway += ra.stats.sway;
+                }
             }
             return totalSway;
         }

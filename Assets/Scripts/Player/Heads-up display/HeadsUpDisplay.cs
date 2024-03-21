@@ -50,22 +50,15 @@ public class HeadsUpDisplay : MonoBehaviour
         if (RelevantThingObserved(detectionRange, out RaycastHit observedObject))
         {
             Hitbox h = observedObject.collider.GetComponent<Hitbox>();
-            if (h != null)
-            {
-                observedEnemy = h.attachedTo;
-            }
+            if (h != null) observedEnemy = h.attachedTo;
         }
 
-        ShowEnemyHealthMeter(observedEnemy);
-    }
-    public void ShowEnemyHealthMeter(Character enemy)
-    {
-        bool shouldShow = enemy != null && enemy.health.IsAlive;
+        bool shouldShow = observedEnemy != null && observedEnemy.health.IsAlive;
         enemyHealthMeter.gameObject.SetActive(shouldShow);
         if (shouldShow == false) return;
 
-        Health enemyHealth = enemy.health;
-        Bounds entityBounds = enemy.bounds;
+        Health enemyHealth = observedEnemy.health;
+        Bounds entityBounds = observedEnemy.bounds;
         Vector3 meterPosition = entityBounds.center + (camera.transform.up * entityBounds.extents.magnitude);
 
         Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
