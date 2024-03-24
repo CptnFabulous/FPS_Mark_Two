@@ -35,7 +35,7 @@ public class Combatant : MonoBehaviour
         mainController.AddAction(outOfCombat, null);
         mainController.defaultAction = idleState;
 
-        controlling.actions.SetBaseAction(mainController);
+        //controlling.actions.SetBaseAction(mainController);
     }
 
     /// <summary>
