@@ -14,50 +14,62 @@ public class PhysicsAffectedAI : MonoBehaviour
     public bool ragdollActive
     {
         get => ragdoll != null && ragdoll.enabled;
-        set
-        {
-            if (ragdoll == null)
-            {
-                collider.enabled = true;
-                rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-                return;
-            }
-
-            collider.enabled = !value;
-            navMeshAgent.enabled = !value;
-            ragdoll.enabled = value;
-            // Freeze rotation when un-ragdolled to ensure the agent isn't constantly falling over
-            rigidbody.constraints = !value ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.None;
-            // Perform unique functions upon ragdollising or returning to normal
-            if (value)
-            {
-                // Unparent the ragdoll from the AI itself so the physics don't get wacky
-                ragdoll.transform.SetParent(null);
-                // Add navmeshagent velocity onto rigidbody velocity to preserve existing momentum
-                rigidbody.velocity += navMeshAgent.velocity;
-                navMeshAgent.velocity = Vector3.zero;
-                // Update ragdoll velocity to inherit base rigidbody velocity
-                Debug.Log($"Rigidbody velocity = {rigidbody.velocity}, angular velocity = {rigidbody.angularVelocity}");
-                foreach (Rigidbody rb in ragdoll.rigidbodies)
-                {
-                    rb.velocity += rigidbody.velocity;
-                    rb.angularVelocity += rigidbody.angularVelocity;
-                }
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.angularVelocity = Vector3.zero;
-                Debug.Log($"Rigidbody velocity = {ragdoll.rootRigidbody.velocity}, angular velocity = {ragdoll.rootRigidbody.angularVelocity}");
-            }
-            else
-            {
-                // Secretly update the real AI's orientation to match the ragdoll's, then re-parent them.
-                // This should hide that the AI and ragdoll were ever separated.
-                rootAI.transform.position = ragdoll.transform.position;
-                rootAI.transform.rotation = ragdoll.transform.rotation;
-                ragdoll.transform.SetParent(transform);
-            }
-            rootAI.gameObject.SetActive(!value);
-        }
+        set => StartCoroutine(SetRagdollActiveState(value));
     }
+
+    public IEnumerator SetRagdollActiveState(bool value)
+    {
+        // Don't bother setting everything up if there isn't a ragdoll, just set it to the regular active state
+        if (ragdoll == null)
+        {
+            collider.enabled = true;
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            yield break;
+        }
+        
+        // Wait for the next fixed update call, so that all physics changes have occurred properly
+        yield return new WaitForFixedUpdate();
+
+        // Set active states of appropriate scripts
+        collider.enabled = !value;
+        navMeshAgent.enabled = !value;
+        ragdoll.enabled = value;
+        // Freeze rotation when un-ragdolled to ensure the agent isn't constantly falling over
+        rigidbody.constraints = !value ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.None;
+        // Perform unique functions upon ragdollising or returning to normal
+        if (value)
+        {
+            // Unparent the ragdoll from the AI itself so the physics don't get wacky
+            ragdoll.transform.SetParent(null);
+            // Add navmeshagent velocity onto rigidbody velocity to preserve existing momentum
+            rigidbody.velocity += navMeshAgent.velocity;
+            navMeshAgent.velocity = Vector3.zero;
+
+            // Update ragdoll velocity to inherit base rigidbody velocity
+            Debug.Log($"Ragdoll activating, initial rigidbody force = {rigidbody.velocity}, torque = {rigidbody.angularVelocity}");
+            ragdoll.totalVelocity += rigidbody.velocity;
+            ragdoll.totalAngularVelocity += rigidbody.angularVelocity;
+            rigidbody.velocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
+            Debug.Log($"Ragdoll force = {ragdoll.totalVelocity}, torque = {ragdoll.totalAngularVelocity}");
+        }
+        else
+        {
+            // Secretly update the real AI's orientation to match the ragdoll's, then re-parent them.
+            // This should hide that the AI and ragdoll were ever separated.
+            rootAI.transform.position = ragdoll.transform.position;
+            rootAI.transform.rotation = ragdoll.transform.rotation;
+            // Transfer the ragdoll velocity back to the base rigidbody
+            rigidbody.velocity = ragdoll.totalVelocity;
+            rigidbody.angularVelocity = ragdoll.totalAngularVelocity;
+            ragdoll.totalVelocity = Vector3.zero;
+            ragdoll.totalAngularVelocity = Vector3.zero;
+            // Re-assign parent
+            ragdoll.transform.SetParent(transform);
+        }
+        rootAI.gameObject.SetActive(!value);
+    }
+
     private void OnEnable()
     {
         // Ensures the various functional elements are active
