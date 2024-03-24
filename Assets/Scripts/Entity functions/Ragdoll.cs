@@ -7,7 +7,6 @@ public class Ragdoll : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
 
-    
     Rigidbody[] _rb;
 
     public Rigidbody[] rigidbodies => _rb ??= GetComponentsInChildren<Rigidbody>();
@@ -26,8 +25,37 @@ public class Ragdoll : MonoBehaviour
             foreach (Rigidbody rb in rigidbodies) rb.mass = divided;
         }
     }
+
+    public Vector3 totalVelocity
+    {
+        get
+        {
+            Vector3 value = Vector3.zero;
+            foreach (Rigidbody rb in rigidbodies) value += rb.velocity;
+            return value / rigidbodies.Length;
+        }
+        set
+        {
+            foreach (Rigidbody rb in rigidbodies) rb.velocity = value;
+        }
+    }
+    public Vector3 totalAngularVelocity
+    {
+        get
+        {
+            Vector3 value = Vector3.zero;
+            foreach (Rigidbody rb in rigidbodies) value += rb.angularVelocity;
+            return value / rigidbodies.Length;
+        }
+        set
+        {
+            foreach (Rigidbody rb in rigidbodies) rb.angularVelocity = value;
+        }
+    }
+
     private void Awake()
     {
+        combinedMass = rootRigidbody.mass;
         SetActive(enabled);
     }
     private void OnEnable() => SetActive(true);
