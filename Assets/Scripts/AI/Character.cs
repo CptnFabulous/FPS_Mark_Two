@@ -36,6 +36,7 @@ public abstract class Character : Entity
 
     public abstract Character target { get; }
 
+    /*
     protected override void Awake()
     {
         base.Awake();
@@ -46,4 +47,5 @@ public abstract class Character : Entity
     {
         Debug.Log($"{this} is now dying");
     }
+    */
 }

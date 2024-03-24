@@ -56,6 +56,13 @@ public class Entity : MonoBehaviour
     protected virtual void Awake()
     {
         if (!isUnique && !string.IsNullOrEmpty(properName)) gameObject.name = properName;
+        if (health != null) health.onDeath.AddListener((_) => Die());
+    }
+
+
+    protected virtual void Die()
+    {
+        Debug.Log($"{this} is now dying");
     }
 
     public bool IsHostileTowards(Entity target)
