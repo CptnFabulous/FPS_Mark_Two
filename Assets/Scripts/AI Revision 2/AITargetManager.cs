@@ -21,37 +21,27 @@ public class AITargetManager : MonoBehaviour
     {
         ViewStatus viewStatusLastFrame = canSeeTarget;
 
-        // If no target is assigned, look for one
+        // Update hit data of target (and look for one if one isn't assigned)
+        RaycastHit hit;
         if (targetExists == false)
         {
-            target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, out _);
-            if (targetExists)
-            {
-                // If a new target has been found, switch to the appropriate AI state
-                controlling.stateController.SwitchToState(onTargetFound);
-            }
-            else // No target has been found, cancel function
-            {
-                canSeeTarget = ViewStatus.NotPresent;
-                return;
-            }
+            target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, out hit);
+            canSeeTarget = targetExists ? ViewStatus.Visible : ViewStatus.NotPresent;
         }
-
-        // Update info on current target
-        if (targetExists)
+        else
         {
-            canSeeTarget = controlling.visionCone.VisionConeCheck(target, out RaycastHit hit);
-            if (canSeeTarget == ViewStatus.Visible)
-            {
-                lastHit = hit;
-                lastKnownPosition = target.transform.position;
-                lastTimeSeenTarget = Time.time;
-
-                if (canSeeTarget != viewStatusLastFrame)
-                {
-                    controlling.stateController.SwitchToState(onTargetFound);
-                }
-            }
+            canSeeTarget = controlling.visionCone.VisionConeCheck(target, out hit);
         }
+
+        // If no target is visible, no need to proceed
+        if (canSeeTarget != ViewStatus.Visible) return;
+
+        // Update info on target
+        lastHit = hit;
+        lastKnownPosition = target.transform.position;
+        lastTimeSeenTarget = Time.time;
+
+        // If the target was null or not visible last frame (and so a change has occurred), switch to the appropriate AI state
+        if (canSeeTarget != viewStatusLastFrame) controlling.stateController.SwitchToState(onTargetFound);
     }
 }
