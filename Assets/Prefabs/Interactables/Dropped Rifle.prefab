@@ -94,7 +94,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &1865420288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   properName: Dropped Rifle
   description: A rifle dropped by the enemy. Pick it up to restore ammo.
   isUnique: 0
+  health: {fileID: 0}
 --- !u!114 &1771706648547819809
 MonoBehaviour:
   m_ObjectHideFlags: 0
