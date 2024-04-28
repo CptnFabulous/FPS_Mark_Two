@@ -122,6 +122,10 @@ public class MovementController : MonoBehaviour
         desiredVelocity.y = currentVelocity.y;
         ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration);
     }
+    private void OnDisable()
+    {
+        collider.material = standingMaterial;
+    }
     void ShiftCharacterVelocityTowards(Vector3 desired, Vector3 current, float acceleration)
     {
         // Swap out the player collider's material for moving versus standing still.
