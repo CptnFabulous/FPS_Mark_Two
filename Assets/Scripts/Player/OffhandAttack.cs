@@ -6,15 +6,11 @@ using UnityEngine.InputSystem;
 public class OffhandAttack : MonoBehaviour
 {
     public WeaponMode attack;
-    [SerializeField] string mapName;
-    [SerializeField] string actionName;
+    public SingleInput input;
 
     private void Awake()
     {
-        PlayerInput p = GetComponentInParent<PlayerInput>();
-        InputActionMap map = p.actions.FindActionMap(mapName);
-        InputAction action = map.FindAction(actionName);
-        action.performed += OnAttack;
+        input.onActionPerformed.AddListener(OnAttack);
     }
 
     void OnAttack(InputAction.CallbackContext context)
