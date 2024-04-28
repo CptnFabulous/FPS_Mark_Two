@@ -74,7 +74,6 @@ public class GunADS : MonoBehaviour
             sightPicture.material = scopeMaterial;
         }
     }
-    
     private void OnEnable()
     {
         if (notSetupProperly)
@@ -86,7 +85,16 @@ public class GunADS : MonoBehaviour
 
         if (IsScope)
         {
+            //Debug.Log($"{this}: enabling camera");
+            viewingCamera.gameObject.SetActive(true);
             viewingCamera.fieldOfView = lookControls.fieldOfView / magnification;
+        }
+    }
+    void OnDisable()
+    {
+        if (IsScope)
+        {
+            viewingCamera.gameObject.SetActive(false);
         }
     }
     private void Update()
@@ -96,7 +104,6 @@ public class GunADS : MonoBehaviour
             enabled = false;
             return;
         }
-        //Debug.Log($"{this}: running Update()");
 
         // If timer is different from desired value, lerp and update it
         if (IsTransitioning)
