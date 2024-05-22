@@ -6,6 +6,9 @@ using UnityEngine.InputSystem;
 
 public class GUIButtonPrompt : MonoBehaviour
 {
+    [SerializeField] bool _inputDisabled;
+
+    [Header("GUI elements")]
     [SerializeField] Image graphic;
     [SerializeField] Text keyName;
 
@@ -16,6 +19,7 @@ public class GUIButtonPrompt : MonoBehaviour
     [SerializeField] Sprite mouseMiddle;
     [SerializeField] Sprite mouseMove;
     [SerializeField] Sprite mouseScrollWheel;
+
     [Header("Sprites - Gamepad")]
     [SerializeField] Sprite leftStickMove;
     [SerializeField] Sprite rightStickMove;
@@ -36,8 +40,11 @@ public class GUIButtonPrompt : MonoBehaviour
     [SerializeField] Sprite start;
     [SerializeField] Sprite select;
 
+    [Header("Sprites - Other")]
+    [SerializeField] Sprite undefined;
+    [SerializeField] Sprite disabled;
+
     InputAction assignedInput;
-    InputBinding assignedBinding;
     PlayerInput player;
     Dictionary<string, Sprite> _dictionary;
 
@@ -72,8 +79,23 @@ public class GUIButtonPrompt : MonoBehaviour
         {"<Gamepad>/start", start },
         {"<Gamepad>/select", select },
     };
+    public bool inputDisabled
+    {
+        get => _inputDisabled;
+        set
+        {
+            _inputDisabled = value;
+            //DetermineCurrentBinding(player);
+        }
+    }
+
+    //private void OnEnable() => player.onControlsChanged += DetermineCurrentBinding;
+    //private void OnDisable() => player.onControlsChanged -= DetermineCurrentBinding;
 
     private void Update() => DetermineCurrentBinding(player);
+
+
+
 
     public void AssignAction(InputAction newInput, PlayerInput newPlayer)
     {
@@ -89,29 +111,45 @@ public class GUIButtonPrompt : MonoBehaviour
 
     void DetermineCurrentBinding(PlayerInput player)
     {
+        if (inputDisabled)
+        {
+            graphic.sprite = disabled;
+            keyName.text = "";
+            return;
+        }
+
         string currentPlayerInputScheme = player.currentControlScheme;
         foreach (InputBinding b in assignedInput.bindings)
         {
             // Check if an available binding matches the current control scheme
-            if (assignedBinding != b && b.groups.Contains(currentPlayerInputScheme))
-            {
-                assignedBinding = b;
-                Refresh(assignedBinding);
-                return;
-            }
+            bool match = b.groups.Contains(currentPlayerInputScheme);
+            if (match == false) continue;
+
+            Refresh(b);
+            return;
         }
-        // Disable button prompt because a binding was not found
-        gameObject.SetActive(false);
+
+        // Show that a binding was not found
+        Refresh(null);
     }
     public void Refresh(InputBinding binding) => Refresh(binding.effectivePath);
     public void Refresh(string path)
     {
+        // If a binding wasn't found, display the appropriate text
+        if (path == null)
+        {
+            graphic.sprite = undefined;
+            keyName.text = "";
+            return;
+        }
+        
+        // Check for a valid icon
         if (iconDictionary.TryGetValue(path, out Sprite sprite))
         {
             graphic.sprite = sprite;
             keyName.text = ""; // Don't show text because the icon explains it
         }
-        else // Default to key graphic
+        else // Otherwise default to key graphic
         {
             graphic.sprite = keyboardKey;
             keyName.text = MiscFunctions.FormatNameForPresentation(path);
