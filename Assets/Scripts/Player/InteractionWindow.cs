@@ -20,7 +20,7 @@ public class InteractionWindow : MonoBehaviour
     public string pickupText = "Pick up";
     public string deniedText = "Too heavy";
 
-    //public PropCarryingHandler objectCarrier => following.objectCarrier;
+    public PropCarryingHandler objectCarrier => following.objectCarrier;
 
     private void Awake()
     {
@@ -34,8 +34,8 @@ public class InteractionWindow : MonoBehaviour
     private void LateUpdate()
     {
         bool somethingToInteractWith = following.targetedInteractable != null;
-        //bool somethingToPickUp = objectCarrier != null && following.targetedPhysicsProp != null;
-        bool somethingPresent = somethingToInteractWith/* || somethingToPickUp*/;
+        bool somethingToPickUp = objectCarrier != null && following.targetedPhysicsProp != null;
+        bool somethingPresent = somethingToInteractWith || somethingToPickUp;
         canvasGroup.alpha = somethingPresent ? 1 : 0;
         if (!somethingPresent) return;
         
@@ -47,12 +47,10 @@ public class InteractionWindow : MonoBehaviour
         {
             DisplayInteractable(following.targetedInteractable);
         }
-        /*
         else if (somethingToPickUp)
         {
             DisplayPhysicsProp(following.targetedPhysicsProp);
         }
-        */
     }
 
 
@@ -75,7 +73,6 @@ public class InteractionWindow : MonoBehaviour
             action.text = canInteract ? target.promptMessage : target.disabledMessage;
         }
     }
-    /*
     void DisplayPhysicsProp(Rigidbody target)
     {
         // Set values
@@ -84,7 +81,6 @@ public class InteractionWindow : MonoBehaviour
         progressBar.fillAmount = 0;
         action.text = "Pick up";
     }
-    */
 
 
     void SetInteractability(bool canInteract)

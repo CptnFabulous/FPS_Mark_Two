@@ -18,7 +18,7 @@ public class InteractionHandler : MonoBehaviour
     [Header("Interaction")]
     public UnityEvent<Player, Interactable> onInteract;
     public UnityEvent<Player, Interactable> onInteractFailed;
-    //public PropCarryingHandler objectCarrier;
+    public PropCarryingHandler objectCarrier;
 
     List<Collider> collidersChecked = new List<Collider>();
 
@@ -41,12 +41,12 @@ public class InteractionHandler : MonoBehaviour
         hitData = new RaycastHit();
         collidersChecked.Clear();
 
+        #region Obtain and sort colliders
+
         // Obtain initial colliders
         collidersChecked.AddRange(Physics.OverlapSphere(aimOrigin, interactionRange, detectionMask));
-
-        #region Sort by which is closest to the centre of the camera
-
-        // By sorting first we don't need to fully check every single option, only until we find a valid one
+        // Sort the list first, by which is closest to the centre of the camera
+        // This way we don't have to check the whole list, only until we find one valid option
         Vector2 aimScreenPoint = referenceCamera.WorldToScreenPoint(aimOrigin + aimDirection);
         MiscFunctions.SortListWithOnePredicate(collidersChecked, (c) =>
         {
@@ -58,19 +58,16 @@ public class InteractionHandler : MonoBehaviour
 
         #endregion
 
-        #region Get first entry that meets the criteria
-
+        // Get first entry that meets the criteria
         foreach (Collider c in collidersChecked)
         {
             // Check for either an Interactable or Rigidbody, ignore if not found
             Interactable i = c.GetComponentInParent<Interactable>();
             Rigidbody rb = null;
-            /*
             if (objectCarrier != null)
             {
-                rb = MiscFunctions.GetComponentInParentThatMeetsCriteria<Rigidbody>(c.transform, objectCarrier.CanPickUpObject);
+                rb = MiscFunctions.GetComponentInParentWhere<Rigidbody>(c.transform, objectCarrier.CanPickUpObject);
             }
-            */
             if (i == null && rb == null) continue;
 
             // Check if within field of view, ignore if not
@@ -87,15 +84,7 @@ public class InteractionHandler : MonoBehaviour
             hitData = rh;
             break;
         }
-
-        #endregion
-
-        // Do stuff with highlighted interactable
-        //Debug.Log($"Targeted = {targetedInteractable}, {targetedPhysicsProp}");
     }
-
-
-
 
     protected virtual void AttemptInteraction()
     {
@@ -103,34 +92,34 @@ public class InteractionHandler : MonoBehaviour
         {
             ContextInteractionCheck(targetedInteractable);
         }
-        /*
         else if (targetedPhysicsProp != null)
         {
             PhysicsPropInteractionCheck(targetedPhysicsProp);
         }
-        */
-        // TO DO: do ContextInteractionCheck if a context interactable is present, otherwise try PhysicsPropInteractionCheck
     }
     void ContextInteractionCheck(Interactable target)
     {
         if (target.CanInteract(player))
         {
-            Debug.Log($"Interacting with {target}");
             target.OnInteract(player);
             onInteract.Invoke(player, target);
         }
         else
         {
-            // Display some kind of 'on failed interaction' message (e.g. a noise)
-            Debug.Log($"Cannot interact with {target}");
             onInteractFailed.Invoke(player, target);
         }
     }
-    /*
     void PhysicsPropInteractionCheck(Rigidbody target)
     {
-
+        if (objectCarrier.CanPickUpObject(target))
+        {
+            objectCarrier.Pickup(target);
+            objectCarrier.onPickup.Invoke(target);
+        }
+        else
+        {
+            objectCarrier.onPickupFailed.Invoke(target);
+        }
     }
-    */
 
 }

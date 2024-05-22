@@ -23,9 +23,10 @@ public class WeaponHandler : MonoBehaviour
     public bool toggleADS;
     public bool quickSwitchModes = true;
 
-    [Header("Other")]
+    [Header("Events")]
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
+    public UnityEvent<Weapon> onSwitchWeapon;
 
     int equippedWeaponIndex = 0;
 
@@ -226,6 +227,7 @@ public class WeaponHandler : MonoBehaviour
         }
 
         isSwitching = true;
+        onSwitchWeapon.Invoke(equippedWeapons[newIndex]);
 
         // Wait for the current weapon to be holstered
         if (weaponDrawn) yield return Holster();

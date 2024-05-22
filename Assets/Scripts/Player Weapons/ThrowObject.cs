@@ -5,29 +5,25 @@ using UnityEngine;
 public class ThrowObject : WeaponMode
 {
     public AmmunitionType ammunitionType;
+    public ThrowHandler throwHandler;
+
+    [Header("Stats")]
     public Throwable throwablePrefab;
-    [SerializeField] float startingVelocity = 50;
-    [SerializeField] float range = 50;
-
-    [SerializeField] float delayBeforeLaunch = 0.25f;
-    [SerializeField] float cooldown = 0.5f;
-
-    public Transform hand;
+    //[SerializeField] float startingVelocity = 50;
+    //[SerializeField] float range = 50;
+    //[SerializeField] float delayBeforeLaunch = 0.25f;
+    //[SerializeField] float cooldown = 0.5f;
 
     Throwable readyToThrow;
-    bool currentlyThrowing = false;
-    //Coroutine throwCoroutine;
 
-    public override LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(throwablePrefab.gameObject.layer);
-    public override bool InAction => currentlyThrowing;
-
+    public override LayerMask attackMask => throwHandler.attackMask;
+    public override bool InAction => throwHandler.currentlyThrowing;
 
     void Awake()
     {
         throwablePrefab.enabled = false;
         throwablePrefab.gameObject.SetActive(false);
     }
-
 
     protected override void OnSecondaryInputChanged() { }
     public override void OnTertiaryInput() { }
@@ -37,27 +33,22 @@ public class ThrowObject : WeaponMode
 
     protected override void OnPrimaryInputChanged(bool held)
     {
-        // Check if input is pressed and not released
+        // Check if the player made a new input and didn't just release the last one
         if (PrimaryHeld == false) return;
-
+        // Check if there's something to throw
         if (CanAttack() == false) return;
 
-        Debug.Log($"{this}: throwing");
-
-        
         SpawnNewThrowable();
 
-        OnAttack();
 
+
+        Debug.Log($"{this}: throwing");
         // Prep and throw the object, and clear 'readyToThrow'
-        Vector3 aimOrigin = User.LookTransform.position;
-        Vector3 aimDirection = User.LookTransform.forward;
-        Vector3 throwOrigin = readyToThrow.transform.position;
-        int collisionMask = MiscFunctions.GetPhysicsLayerMask(readyToThrow.collider.gameObject.layer);
-        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, collisionMask, User.colliders, out Vector3 throwDirection, out _, out _, out _);
-        Debug.DrawRay(throwOrigin, throwDirection * range, Color.blue, 5);
-        readyToThrow.TriggerThrow(throwDirection * startingVelocity);
+        readyToThrow.enabled = true;
+        throwHandler.Throw();
+        readyToThrow.OnThrow();
         readyToThrow = null;
+        OnAttack();
 
         //SpawnNewThrowable();
     }
@@ -75,9 +66,8 @@ public class ThrowObject : WeaponMode
         // Assign an object in 'readyToThrow' if ammunition is present (disable otherwise)
         if (readyToThrow == null)
         {
-            readyToThrow = Instantiate(throwablePrefab, hand);
-            readyToThrow.transform.localPosition = Vector3.zero;
-            readyToThrow.transform.localRotation = Quaternion.identity;
+            readyToThrow = Instantiate(throwablePrefab, throwHandler.hand);
+            throwHandler.Pickup(readyToThrow.rb);
         }
         readyToThrow.enabled = false;
         readyToThrow.gameObject.SetActive(true);

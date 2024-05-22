@@ -10,20 +10,6 @@ public abstract class Throwable : MonoBehaviour
     public Collider collider => _collider;
     public Rigidbody rb => _rigidbody;
 
-    private void Awake()
-    {
-        rb.isKinematic = true;
-        collider.enabled = false;
-    }
-    public void TriggerThrow(Vector3 throwForce)
-    {
-        enabled = true;
-        transform.SetParent(null, true);
-        rb.isKinematic = false;
-        collider.enabled = true;
-        rb.AddForce(throwForce, ForceMode.Impulse);
-        OnThrow();
-    }
     public abstract void OnThrow();
 
     public void OnDrawGizmos()
