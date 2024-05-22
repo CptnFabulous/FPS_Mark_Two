@@ -118,7 +118,7 @@ public readonly struct MiscFunctions
         return finalMask;
     }
 
-    public static T GetComponentInParentThatMeetsCriteria<T>(Transform target, Func<T, bool> criteria) where T : Component
+    public static T GetComponentInParentWhere<T>(Transform target, Func<T, bool> criteria) where T : Component
     {
         while (target != null)
         {
