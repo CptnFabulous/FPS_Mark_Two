@@ -10,11 +10,14 @@ public class SingleInput : MonoBehaviour
     [SerializeField] string actionName;
     public UnityEvent<InputAction.CallbackContext> onActionPerformed;
 
+    public InputAction action { get; private set; }
+    public InputActionMap map { get; private set; }
+
     private void Awake()
     {
         PlayerInput p = GetComponentInParent<PlayerInput>();
-        InputActionMap map = p.actions.FindActionMap(mapName);
-        InputAction action = map.FindAction(actionName);
+        map = p.actions.FindActionMap(mapName);
+        action = map.FindAction(actionName);
         action.performed += onActionPerformed.Invoke;
     }
 }
