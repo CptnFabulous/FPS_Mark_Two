@@ -10,9 +10,7 @@ public class WeaponHandler : MonoBehaviour
 
     [Header("Weapons")]
     public Weapon[] equippedWeapons;
-
     public WeaponMode offhand;
-
     public Transform holdingSocket;
     public AmmunitionInventory ammo;
     public RadialMenu weaponSelector;
@@ -55,6 +53,11 @@ public class WeaponHandler : MonoBehaviour
             return totalSway;
         }
     }
+    public bool weaponDrawn
+    {
+        get => CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true;
+        set => SetCurrentWeaponActive(value);
+    }
     /// <summary>
     /// Is the player currently in ADS on a particular weapon?
     /// </summary>
@@ -78,8 +81,6 @@ public class WeaponHandler : MonoBehaviour
             if (CurrentWeapon == null) return false;
             // If player is not in the middle of switching firing modes
             if (CurrentWeapon.isSwitching) return false;
-            // If player is not in weapon wheel
-            //if (weaponSelector.active) return false;
             return true;
         }
     }
@@ -96,7 +97,6 @@ public class WeaponHandler : MonoBehaviour
     {
         UpdateAvailableWeapons();
     }
-    
     private void Update()
     {
         if (weaponSelector.menuIsOpen == false && NumberKeySelector.NumKeyPressed(out int index, true))
@@ -190,6 +190,27 @@ public class WeaponHandler : MonoBehaviour
             StartCoroutine(SwitchWeapon(equippedWeaponIndex));
         }
     }
+    public void SetCurrentWeaponActive(bool drawn)
+    {
+        // If the desired state is already met, do nothing
+        if (weaponDrawn == drawn) return;
+        // If there's no weapon to draw, do nothing
+        if (drawn == true && CurrentWeapon == null) return;
+        // If a weapon is active, holster it
+        // If a current weapon is selected but not active, draw it
+        StartCoroutine(drawn ? Draw() : Holster());
+    }
+    IEnumerator Holster()
+    {
+        onHolster.Invoke(CurrentWeapon);
+        yield return CurrentWeapon.Holster();
+    }
+    IEnumerator Draw()
+    {
+        // Switch index to the new weapon and draw it
+        onDraw.Invoke(CurrentWeapon);
+        yield return CurrentWeapon.Draw();
+    }
     IEnumerator SwitchWeapon(int newIndex)
     {
         if (equippedWeapons.Length <= 0) yield break;
@@ -197,35 +218,21 @@ public class WeaponHandler : MonoBehaviour
 
         newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Length - 1);
 
-        bool weaponIsActive = CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true;
-        if (weaponIsActive)
+        if (weaponDrawn)
         {
-            if (equippedWeapons[newIndex] == CurrentWeapon)
-            {
-                // If selected weapon is already active, no need to run any other code
-                yield break;
-            }
-            else if (CurrentWeapon.InAction)
-            {
-                // If weapon is currently doing something, end this function
-                yield break;
-            }
+            // Do nothing if the desired weapon is already active, or the current weapon is in the middle of another task
+            if (equippedWeapons[newIndex] == CurrentWeapon) yield break;
+            if (CurrentWeapon.InAction) yield break;
         }
 
         isSwitching = true;
 
-        if (weaponIsActive)
-        {
-            // Wait for the current weapon to be holstered
-            onHolster.Invoke(CurrentWeapon);
-            StartCoroutine(CurrentWeapon.Holster());
-            yield return new WaitUntil(() => CurrentWeapon.InAction == false);
-        }
-
-        // Switch index to the new weapon and draw it
+        // Wait for the current weapon to be holstered
+        if (weaponDrawn) yield return Holster();
+        // Switch index to the new weapon
         equippedWeaponIndex = newIndex;
-        onDraw.Invoke(CurrentWeapon);
-        yield return CurrentWeapon.Draw();
+        // Wait while new weapon draws
+        yield return Draw();
 
         isSwitching = false;
     }
