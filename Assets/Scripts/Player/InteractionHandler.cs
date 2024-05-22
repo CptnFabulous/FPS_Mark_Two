@@ -18,7 +18,7 @@ public class InteractionHandler : MonoBehaviour
     [Header("Interaction")]
     public UnityEvent<Player, Interactable> onInteract;
     public UnityEvent<Player, Interactable> onInteractFailed;
-    public PropCarryingHandler objectCarrier;
+    //public PropCarryingHandler objectCarrier;
 
     List<Collider> collidersChecked = new List<Collider>();
 
@@ -65,10 +65,12 @@ public class InteractionHandler : MonoBehaviour
             // Check for either an Interactable or Rigidbody, ignore if not found
             Interactable i = c.GetComponentInParent<Interactable>();
             Rigidbody rb = null;
+            /*
             if (objectCarrier != null)
             {
                 rb = MiscFunctions.GetComponentInParentThatMeetsCriteria<Rigidbody>(c.transform, objectCarrier.CanPickUpObject);
             }
+            */
             if (i == null && rb == null) continue;
 
             // Check if within field of view, ignore if not

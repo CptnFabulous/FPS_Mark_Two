@@ -20,7 +20,7 @@ public class InteractionWindow : MonoBehaviour
     public string pickupText = "Pick up";
     public string deniedText = "Too heavy";
 
-    public PropCarryingHandler objectCarrier => following.objectCarrier;
+    //public PropCarryingHandler objectCarrier => following.objectCarrier;
 
     private void Awake()
     {
