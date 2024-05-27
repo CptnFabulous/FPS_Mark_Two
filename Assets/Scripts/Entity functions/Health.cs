@@ -34,6 +34,12 @@ public class Health : MonoBehaviour
 
     Character c;
     Hitbox[] hb;
+    Dictionary<GameObject, float> recentPhysicsCollisions = new Dictionary<GameObject, float>();
+
+    static float minimumCollisionForceToDamage = 10;
+    static float damagePerCollisionForceUnit = 1f;
+    static float stunPerCollisionForceUnit = 1f;
+    static float minTimeBetweenCollisions = 0.2f;
 
     public bool IsAlive => data.current > 0;
     public Character attachedTo => c ??= GetComponentInParent<Character>();
@@ -75,6 +81,7 @@ public class Health : MonoBehaviour
             stun = 0;
         }
 
+        Debug.Log($"{this} ({data.current} health) took{(isCritical ? " a critical" : "")} {damage} damage and {stun} stun");
         data.Increment(-damage);
 
         DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
@@ -87,6 +94,52 @@ public class Health : MonoBehaviour
             onDeath.Invoke(killMessage);
             Notification<KillMessage>.Transmit(killMessage);
         }
+    }
+    public void DamageFromPhysicsCollision(Collision collision, Hitbox hitbox)
+    {
+        // Figure out impact force from velocity. If a rigidbody is present, multiply the mass accordingly
+        float force = collision.relativeVelocity.magnitude;
+        Rigidbody rb = collision.rigidbody;
+        if (rb != null)
+        {
+            force *= rb.mass;
+        }
+        /*
+        else
+        {
+            // How do I determine the impact force if the entity collides with terrain?
+        }
+        */
+
+        // If the force isn't enough to register, cancel.
+        // We don't want things constantly taking chip damage from the most miniscule impacts
+        bool willTakeDamage = force > minimumCollisionForceToDamage;
+        if (willTakeDamage == false) return;
+
+        // Check the root rigidbody this entity is attached to.
+        // If it's been too soon since the last hit, don't register it
+        // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
+        GameObject damagedBy = rb != null ? MiscFunctions.GetRootRigidbody(rb).gameObject : collision.gameObject;
+        if (recentPhysicsCollisions.TryGetValue(damagedBy, out float hitTime) && (Time.time - hitTime) < minTimeBetweenCollisions)
+        {
+            Debug.Log("This collider hit too soon");
+            return;
+        }
+        recentPhysicsCollisions[damagedBy] = Time.time; // Update the last time hit for the next check
+
+        //Debug.Log($"{damagedBy} {(willTakeDamage ? "will" : "won't")} damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}");
+
+        // Calculate damage and stun accordingly
+        //force *= hitbox.damageMultiplier;
+        //force -= minimumCollisionForceToDamage;
+        float damage = force * damagePerCollisionForceUnit;
+        float stun = force * stunPerCollisionForceUnit;
+        Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponentInParent<Entity>();
+
+        // TO DO: multiply damage values and set as critical based on the specified hitbox's parameters
+        Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), hitbox.isCritical, DamageType.Impact, thingThatDamagedThisHitbox);
+
+        // TO DO: ragdollise if impact was above a certain level of force
     }
     public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer);
 
