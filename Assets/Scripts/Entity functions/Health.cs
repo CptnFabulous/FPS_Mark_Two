@@ -24,14 +24,18 @@ public enum DamageType
 
 public class Health : MonoBehaviour
 {
+    public bool godmode = false;
     public Resource data = new Resource(100, 100, 20);
     
     public UnityEvent<DamageMessage> onDamage;
     public UnityEvent<DamageMessage> onHeal;
     public UnityEvent<KillMessage> onDeath;
     public bool allowPosthumousDamage;
-    public bool IsAlive => data.current > 0;
 
+    Character c;
+    Hitbox[] hb;
+
+    public bool IsAlive => data.current > 0;
     public Character attachedTo => c ??= GetComponentInParent<Character>();
     public Hitbox[] hitboxes
     {
@@ -49,9 +53,6 @@ public class Health : MonoBehaviour
         }
     }
 
-    Character c;
-    Hitbox[] hb;
-
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.
     /// </summary>
@@ -63,7 +64,16 @@ public class Health : MonoBehaviour
         if (IsAlive == false && allowPosthumousDamage == false) return;
 
         bool isHealing = damage < 0;
-        if (isHealing) type = DamageType.Healing;
+        if (isHealing)
+        {
+            type = DamageType.Healing;
+        }
+        else if (godmode && type != DamageType.DeletionByGame)
+        {
+            // If godmode is enabled, set damage to zero
+            damage = 0;
+            stun = 0;
+        }
 
         data.Increment(-damage);
 
