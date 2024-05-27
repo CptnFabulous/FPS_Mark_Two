@@ -42,6 +42,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2426134569975506424}
+  - component: {fileID: 3295435487868414854}
   - component: {fileID: 2426134569975506430}
   - component: {fileID: 2426134569975506425}
   m_Layer: 0
@@ -69,6 +70,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3295435487868414854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2426134569975506427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Human Target
+  description: For practicing shooting.
+  isUnique: 0
+  health: {fileID: 2426134569975506430}
 --- !u!114 &2426134569975506430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,6 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b63a9b2426f8f348b87938ba438c9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  godmode: 0
   data:
     name: New Resource
     max: 25
@@ -132,7 +150,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   allowPosthumousDamage: 0
-  stunData: {fileID: 0}
 --- !u!114 &2426134569975506425
 MonoBehaviour:
   m_ObjectHideFlags: 0
