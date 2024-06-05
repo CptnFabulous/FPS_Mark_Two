@@ -82,6 +82,7 @@ public readonly struct MiscFunctions
     }
     #endregion
 
+    #region Physics interactions
     public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit rh, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
     {
         List<RaycastHit> list = RaycastAllWithExceptions(origin, direction, distance, layerMask, exceptions);
@@ -117,7 +118,9 @@ public readonly struct MiscFunctions
         }
         return finalMask;
     }
+    #endregion
 
+    #region Finding components
     public static T GetComponentInParentWhere<T>(Transform target, Func<T, bool> criteria) where T : Component
     {
         while (target != null)
@@ -133,6 +136,25 @@ public readonly struct MiscFunctions
 
         return null;
     }
+    public static Rigidbody GetRootRigidbody(Rigidbody rb)
+    {
+        if (rb == null) return null;
+
+        Rigidbody root = rb;
+        Joint j = null;
+        bool rootReached = false;
+        while (!rootReached)
+        {
+            j = root.GetComponent<Joint>();
+            rootReached = j == null;
+            if (rootReached) break;
+
+            root = j.connectedBody;
+        }
+
+        return root;
+    }
+    #endregion
 
     #region Math
     public static float Min(params float[] values)
@@ -404,6 +426,7 @@ public readonly struct MiscFunctions
         return b;
     }
     #endregion
+
     public static bool GetToggleableInput(bool currentState, bool buttonPressed, bool isToggled)
     {
         if (isToggled == false) currentState = buttonPressed;
