@@ -140,15 +140,13 @@ public readonly struct MiscFunctions
     {
         if (rb == null) return null;
 
+        // Check for a joint, and get its connected body.
+        // If neither are found, break the loop.
+        // Whatever was last assigned to 'root' is what we need.
         Rigidbody root = rb;
-        Joint j = null;
-        bool rootReached = false;
-        while (!rootReached)
+        while (root.TryGetComponent(out Joint j) && j.connectedBody != null)
         {
-            j = root.GetComponent<Joint>();
-            rootReached = j == null;
-            if (rootReached) break;
-
+            // If we found a connected body, re-iterate the check until we reach the end of the chain.
             root = j.connectedBody;
         }
 
