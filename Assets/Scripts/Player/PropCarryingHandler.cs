@@ -37,18 +37,21 @@ public class PropCarryingHandler : MonoBehaviour
     {
         // Check that:
         // The player isn't already holding something
-        if (throwHandler.holding != null) return false; 
+        if (throwHandler.holding != null) return false;
         // There's something to pick up
-        if (target == null) return false; 
+        if (target == null) return false;
         // The object can be picked up in the first place
         if (target.isKinematic) return false;
         if (target.mass > maxWeight) return false;
+
+        Character character = target.GetComponentInParent<Character>();
+        if (character != null && character.health.IsAlive) return false;
 
         return true;
     }
     public void Pickup(Rigidbody target)
     {
-        // Check the size of the object: if it's small enough, add to inventory of quick throwables
+        // TO DO: Check the size of the object: if it's small enough, add to inventory of quick throwables
         
         // Holster current weapon
         // (for now, later on I might have code for one-handing a gun with smaller objects, simply reducing accuracy instead)
@@ -63,6 +66,8 @@ public class PropCarryingHandler : MonoBehaviour
     }
     public void Throw()
     {
+        // TO DO: check for stamina, and consume stamina
+
         Rigidbody thrown = throwHandler.holding;
         throwHandler.Throw();
         onThrow.Invoke(thrown);
