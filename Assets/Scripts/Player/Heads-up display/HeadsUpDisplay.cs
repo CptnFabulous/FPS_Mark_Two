@@ -46,7 +46,7 @@ public class HeadsUpDisplay : MonoBehaviour
             }
         }
 
-        Character observedEnemy = null;
+        Entity observedEnemy = null;
         if (RelevantThingObserved(detectionRange, out RaycastHit observedObject))
         {
             Hitbox h = observedObject.collider.GetComponent<Hitbox>();
