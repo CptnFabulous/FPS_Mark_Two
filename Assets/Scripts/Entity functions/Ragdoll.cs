@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ragdoll : MonoBehaviour
 {
+    public Character attachedTo;
     public Transform rootBone;
     [SerializeField] Animator animator;
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
