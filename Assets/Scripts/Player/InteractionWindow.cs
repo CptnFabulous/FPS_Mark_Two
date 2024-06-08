@@ -19,6 +19,7 @@ public class InteractionWindow : MonoBehaviour
     [Header("Physics interaction")]
     public string pickupText = "Pick up";
     public string deniedText = "Too heavy";
+    public string deadText = "(dead)";
 
     public PropCarryingHandler objectCarrier => following.objectCarrier;
 
@@ -75,11 +76,19 @@ public class InteractionWindow : MonoBehaviour
     }
     void DisplayPhysicsProp(Rigidbody target)
     {
-        // Set values
+        // Interactability should always be true - if it wasn't interactable, it shouldn't have been assigned in the first place
         SetInteractability(true);
-        interactableName.text = target.name;
+        // Determine display name (add suffix for additional info e.g. if a character is dead)
+        string name = target.name;
+        if (PropCarryingHandler.IsCharacter(target, out Character c))
+        {
+            name = c.properName;
+            if (c.health.IsAlive == false) name += $" {deadText}";
+        }
+        interactableName.text = name;
+        
         progressBar.fillAmount = 0;
-        action.text = "Pick up";
+        action.text = pickupText;
     }
 
 
