@@ -44,7 +44,15 @@ public class PropCarryingHandler : MonoBehaviour
         if (target.isKinematic) return false;
         if (target.mass > maxWeight) return false;
 
+        // Make sure the player can't pick up an alive entity
         Character character = target.GetComponentInParent<Character>();
+        if (character == null)
+        {
+            // If a 'character' script can't be found, check if the collider is on a ragdoll
+            // (since ragdolls are separated from their original entities to prevent wonky physics)
+            Ragdoll ragdoll = target.GetComponentInParent<Ragdoll>();
+            if (ragdoll != null) character = ragdoll.attachedTo;
+        }
         if (character != null && character.health.IsAlive) return false;
 
         return true;
