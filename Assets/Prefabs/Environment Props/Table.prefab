@@ -392,6 +392,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8131454595356754263}
+  - component: {fileID: 5265771956071633849}
   - component: {fileID: 8131454595356754262}
   - component: {fileID: 5499614498537676256}
   - component: {fileID: 7897498145491450672}
@@ -421,6 +422,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &5265771956071633849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8131454595356754261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Wooden Table
+  description: '[PLACEHOLDER]'
+  isUnique: 0
+  health: {fileID: 0}
 --- !u!54 &8131454595356754262
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -447,11 +464,11 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.75, y: 0.05, z: 0.375}
+  m_Extents: {x: 0.75, y: 0.4, z: 0.375}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.35, z: 0}
   m_TimeToStationary: 0.5
 --- !u!114 &7897498145491450672
 MonoBehaviour:
