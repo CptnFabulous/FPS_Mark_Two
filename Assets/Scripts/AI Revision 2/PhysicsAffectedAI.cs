@@ -35,6 +35,10 @@ public class PhysicsAffectedAI : MonoBehaviour
         navMeshAgent.enabled = !value;
         ragdoll.enabled = value;
 
+        // Ensure the root AI doesn't fall through the floor
+        // Since when all its colliders are disabled/separated due to turning into a ragdoll, there's nothing stopping it from doing so
+        rigidbody.useGravity = !value;
+
         // Perform unique functions upon ragdollising or returning to normal
         if (value)
         {
