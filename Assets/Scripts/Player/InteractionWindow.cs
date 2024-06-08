@@ -18,7 +18,6 @@ public class InteractionWindow : MonoBehaviour
 
     [Header("Physics interaction")]
     public string pickupText = "Pick up";
-    public string deniedText = "Too heavy";
     public string deadText = "(dead)";
 
     public PropCarryingHandler objectCarrier => following.objectCarrier;
