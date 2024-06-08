@@ -3,38 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AIStaggering : AIStateFunction
+public class AIStaggering : AIProcedure
 {
+    [Header("Stun data")]
     [SerializeField] float staggerTime = 3;
+    [SerializeField] CharacterPoise stunHandler;
 
-    float timeEntered;
-    StateFunction previousState;
     NavMeshPath existingPath;
 
-    protected override void OnEnable()
+    protected override IEnumerator Procedure()
     {
-        base.OnEnable();
-        
-        previousState = controller.previousState;
-        timeEntered = Time.time;
-        
+        // Ensure this code switches to the AI's previous state
+        toSwitchToOnEnd = controller.previousState;
+
+        // Disable agent pathing (but save original path)
         existingPath = navMeshAgent.path;
         navMeshAgent.ResetPath();
-    }
-    private void OnDisable()
-    {
+
+        yield return new WaitForSeconds(staggerTime);
+
+        // Re-assign path now that stun is complete
         navMeshAgent.path = existingPath;
         existingPath = null;
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // If the enemy has remained stunned for long enough, revert to normal functioning
-        float timeElapsed = Time.time - timeEntered;
-        if (timeElapsed > staggerTime)
-        {
-            SwitchToState(previousState);
-        }
+        stunHandler.ReturnToNormalFunction();
     }
 }

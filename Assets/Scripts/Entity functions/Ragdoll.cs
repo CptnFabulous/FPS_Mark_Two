@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ragdoll : MonoBehaviour
 {
+    public Transform rootBone;
     [SerializeField] Animator animator;
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
 
@@ -25,7 +26,6 @@ public class Ragdoll : MonoBehaviour
             foreach (Rigidbody rb in rigidbodies) rb.mass = divided;
         }
     }
-
     public Vector3 totalVelocity
     {
         get
@@ -67,7 +67,7 @@ public class Ragdoll : MonoBehaviour
         {
             rb.isKinematic = !active;
             rb.constraints = RigidbodyConstraints.None;
-            // If kinematic, the collision mode has to be continuous speculative. Otherwise set it to whatever it's meant to be normally.
+            // Collision mode needs to be set to continuous speculative, when a rigidbody is kinematic
             rb.collisionDetectionMode = !active ? CollisionDetectionMode.ContinuousSpeculative : collisionDetectionMode;
         }
     }
