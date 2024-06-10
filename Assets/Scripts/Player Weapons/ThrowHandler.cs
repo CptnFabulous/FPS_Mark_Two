@@ -20,6 +20,12 @@ public class ThrowHandler : MonoBehaviour
     public LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(holding.gameObject.layer);
     public bool InAction => currentlyThrowing;
 
+    private void Awake()
+    {
+        // If the character dies, they should drop whatever they're holding
+        user.health.onDeath.AddListener((__) => Drop(out _));
+    }
+
     public void Pickup(Rigidbody toThrow)
     {
         // Assign reference (and drop the previously held item if there is one)

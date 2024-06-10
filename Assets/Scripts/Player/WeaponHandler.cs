@@ -93,6 +93,8 @@ public class WeaponHandler : MonoBehaviour
         if (ammo == null) ammo = GetComponent<AmmunitionInventory>();
         
         weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
+        // Make it so the current weapon is automatically put away if the player dies
+        controller.health.onDeath.AddListener((_) => weaponDrawn = false);
     }
     private void Start()
     {
