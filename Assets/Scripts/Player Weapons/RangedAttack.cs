@@ -52,6 +52,7 @@ public class RangedAttack : WeaponMode
     }
     protected override void OnPrimaryInputChanged(bool held)
     {
+        if (enabled == false) return;
         if (held == false) return;
         if (isFiring) return;
         if (NotReloading == false) return;

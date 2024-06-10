@@ -56,6 +56,8 @@ public class ThrowHandler : MonoBehaviour
     }
     public void Throw()
     {
+        if (holding == null) return;
+
         currentlyThrowing = true;
 
         // Prep to throw by calculating direction
