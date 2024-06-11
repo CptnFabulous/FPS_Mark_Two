@@ -79,7 +79,7 @@ public class InteractionWindow : MonoBehaviour
         SetInteractability(true);
         // Determine display name (add suffix for additional info e.g. if a character is dead)
         string name = target.name;
-        if (PropCarryingHandler.IsCharacter(target, out Character c))
+        if (PhysicsCache.PhysicsObjectCharacterCheck(target, out Character c))
         {
             name = c.properName;
             if (c.health.IsAlive == false) name += $" {deadText}";

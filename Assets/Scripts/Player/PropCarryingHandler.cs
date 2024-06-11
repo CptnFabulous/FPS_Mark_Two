@@ -45,7 +45,7 @@ public class PropCarryingHandler : MonoBehaviour
         if (target.mass > maxWeight) return false;
 
         // Make sure the player can't pick up an alive entity
-        if (IsCharacter(target, out Character c) && c.health.IsAlive) return false;
+        if (PhysicsCache.PhysicsObjectCharacterCheck(target, out Character c) && c.health.IsAlive) return false;
 
         return true;
     }
@@ -72,18 +72,5 @@ public class PropCarryingHandler : MonoBehaviour
         throwHandler.Throw();
         onThrow.Invoke(thrown);
         weaponHandler.SetCurrentWeaponActive(true);
-    }
-
-    public static bool IsCharacter(Rigidbody target, out Character character)
-    {
-        character = target.GetComponentInParent<Character>();
-        if (character == null)
-        {
-            // If a 'character' script can't be found, check if the collider is on a ragdoll
-            // (since ragdolls are separated from their original entities to prevent wonky physics)
-            Ragdoll ragdoll = target.GetComponentInParent<Ragdoll>();
-            if (ragdoll != null) character = ragdoll.attachedTo;
-        }
-        return character != null;
     }
 }
