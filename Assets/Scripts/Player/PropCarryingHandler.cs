@@ -15,6 +15,8 @@ public class PropCarryingHandler : MonoBehaviour
     public ThrowHandler throwHandler;
     public SingleInput throwInput;
 
+    int frameOfLastPickup = 0;
+
     WeaponHandler weaponHandler => throwHandler.user.weaponHandler;
 
     private void Awake()
@@ -58,9 +60,14 @@ public class PropCarryingHandler : MonoBehaviour
         weaponHandler.SetCurrentWeaponActive(false);
         // Trigger pickup
         throwHandler.Pickup(target);
+
+        frameOfLastPickup = Time.frameCount;
     }
     public void Drop(bool autoDrawLastWeapon = true)
     {
+        // A small hack fix to prevent the game from dropping an item the player just picked up due to the same input
+        if (frameOfLastPickup == Time.frameCount) return;
+        
         throwHandler.Drop(out _);
         if (autoDrawLastWeapon) weaponHandler.SetCurrentWeaponActive(true);
     }
