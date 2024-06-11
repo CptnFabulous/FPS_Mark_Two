@@ -113,16 +113,15 @@ public class Health : MonoBehaviour
 
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
-        bool willTakeDamage = force > minimumCollisionForceToDamage;
-        if (willTakeDamage == false) return;
+        if (force <= minimumCollisionForceToDamage) return;
 
         // Check the root rigidbody this entity is attached to.
         // If it's been too soon since the last hit, don't register it
         // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
-        GameObject damagedBy = rb != null ? MiscFunctions.GetRootRigidbody(rb).gameObject : collision.gameObject;
+        GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
         if (recentPhysicsCollisions.TryGetValue(damagedBy, out float hitTime) && (Time.time - hitTime) < minTimeBetweenCollisions)
         {
-            Debug.Log("This collider hit too soon");
+            //Debug.Log("This collider hit too soon");
             return;
         }
         recentPhysicsCollisions[damagedBy] = Time.time; // Update the last time hit for the next check
@@ -138,8 +137,6 @@ public class Health : MonoBehaviour
 
         // TO DO: multiply damage values and set as critical based on the specified hitbox's parameters
         Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), hitbox.isCritical, DamageType.Impact, thingThatDamagedThisHitbox);
-
-        // TO DO: ragdollise if impact was above a certain level of force
     }
     public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer);
 

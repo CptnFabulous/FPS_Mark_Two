@@ -68,7 +68,7 @@ public class InteractionHandler : MonoBehaviour
             {
                 // Check for a root rigidbody, and then check if the player can pick it up
                 rb = c.GetComponentInParent<Rigidbody>();
-                rb = MiscFunctions.GetRootRigidbody(rb);
+                rb = PhysicsCache.GetRootRigidbody(rb);
                 if (objectCarrier.CanPickUpObject(rb) == false) rb = null;
             }
             if (i == null && rb == null) continue;
