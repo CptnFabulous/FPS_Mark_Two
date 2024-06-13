@@ -135,6 +135,7 @@ MonoBehaviour:
   properName: Medkit
   description: Use to recover from injuries.
   isUnique: 0
+  health: {fileID: 0}
 --- !u!114 &4544066185653120222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactable: {fileID: 4544066185653120211}
   pickupNoise: {fileID: 0}
-  healthRestored: 50
+  healthRestored: 200
   deleteOnPickup: 1
   attachedTo: {fileID: 4544066185653120220}
 --- !u!114 &4544066185653120211

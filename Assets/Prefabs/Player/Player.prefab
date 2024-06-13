@@ -981,11 +981,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b63a9b2426f8f348b87938ba438c9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  throwHandler: {fileID: 1145182430858350181}
   data:
     name: New Resource
-    max: 100
-    current: 100
+    max: 200
+    current: 200
     criticalLevel: 20
+  godmode: 0
   onDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -1008,9 +1010,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
   isCritical: 0
-  sourceHealth: {fileID: 0}
+  sourceHealth: {fileID: 745592948619609687}
 --- !u!136 &5952785220977946993
 CapsuleCollider:
   m_ObjectHideFlags: 0
