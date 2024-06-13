@@ -32,6 +32,10 @@ public class Health : MonoBehaviour
     public UnityEvent<KillMessage> onDeath;
     public bool allowPosthumousDamage;
 
+    [Header("Other")]
+    [Tooltip("For ensuring the entity can't be damaged by a physics object they're holding, if it glitches out"),
+     SerializeField] ThrowHandler throwHandler;
+
     Character c;
     Hitbox[] hb;
     Dictionary<GameObject, float> recentPhysicsCollisions = new Dictionary<GameObject, float>();
@@ -122,6 +126,9 @@ public class Health : MonoBehaviour
         // If it's been too soon since the last hit, don't register it
         // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
+
+        // Don't deal damage if the attached entity is deliberately holding it
+        if (throwHandler != null && throwHandler.holding.gameObject == damagedBy) return;
 
         // If this character applied a physics force to this object a short time ago, don't register a hit
         if (timesPhysicsObjectsWereLaunchedByThisEntity.TryGetValue(damagedBy, out float timeOfHit))
