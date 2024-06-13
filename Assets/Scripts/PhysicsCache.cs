@@ -5,6 +5,7 @@ using UnityEngine;
 public static class PhysicsCache
 {
     static Dictionary<Rigidbody, Rigidbody> rootDictionary = new Dictionary<Rigidbody, Rigidbody>();
+    static Dictionary<Rigidbody, float> massDictionary = new Dictionary<Rigidbody, float>();
     static Dictionary<Rigidbody, Character> characterDictionary = new Dictionary<Rigidbody, Character>();
     static Dictionary<Rigidbody, Rigidbody[]> childDictionary = new Dictionary<Rigidbody, Rigidbody[]>();
 
@@ -27,6 +28,26 @@ public static class PhysicsCache
 
         return root;
     }
+    public static float TotalMassOfConnectedRigidbodies(Rigidbody rb)
+    {
+        if (rb == null) return 1;
+
+        rb = GetRootRigidbody(rb);
+
+        float mass;
+        // If a value is already stored, get that
+        if (massDictionary.TryGetValue(rb, out mass)) return mass;
+
+        // Calculate total mass from child rigidbodies, and cache it to save processing
+        foreach (Rigidbody child in GetChildRigidbodies(rb))
+        {
+            mass += child.mass;
+        }
+        massDictionary[rb] = mass;
+
+        return mass;
+    }
+    
     public static Character GetRootCharacter(Rigidbody target)
     {
         if (characterDictionary.TryGetValue(target, out Character c)) return c;
@@ -53,8 +74,10 @@ public static class PhysicsCache
 
     public static Rigidbody[] GetChildRigidbodies(Rigidbody target)
     {
+        target = GetRootRigidbody(target);
+        // Check for pre-cached value
         if (childDictionary.TryGetValue(target, out var array)) return array;
-
+        // Find and cache value
         childDictionary[target] = target.GetComponentsInChildren<Rigidbody>();
         return childDictionary[target];
     }

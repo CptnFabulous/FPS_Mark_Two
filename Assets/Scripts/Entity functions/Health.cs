@@ -109,7 +109,7 @@ public class Health : MonoBehaviour
         Rigidbody rb = collision.rigidbody;
         if (rb != null)
         {
-            force *= rb.mass;
+            force *= PhysicsCache.TotalMassOfConnectedRigidbodies(rb);
         }
         /*
         else
