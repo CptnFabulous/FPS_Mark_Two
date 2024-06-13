@@ -24,30 +24,30 @@ public class DiegeticSound : ScriptableObject
     {
         Play(source.transform.position, source.GetComponentInParent<Entity>(), source, multiplier);
     }
-    public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1)
+    public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1, bool playAudioAtMaxVolume = false)
     {
         AudioSource source = null;
         if (sourceEntity != null)
         {
             source = sourceEntity.GetComponentInChildren<AudioSource>();
         }
-        Play(point, sourceEntity, source, multiplier);
+        Play(point, sourceEntity, source, multiplier, playAudioAtMaxVolume);
     }
 
-    public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1)
+    public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1, bool playAudioAtMaxVolume = false)
     {
         AudioClip clip = sounds[Random.Range(0, sounds.Length)];
-        float totalMultiplier = /*Random.Range(minVolumeVariance, maxVolumeVariance) * */multiplier;
-
+        float volumeForPlayer = /*Random.Range(minVolumeVariance, maxVolumeVariance) * */multiplier;
+        volumeForPlayer = playAudioAtMaxVolume ? 1 : volumeForPlayer;
         if (source != null)
         {
             source.pitch = Random.Range(minPitchVariance, maxPitchVariance);
-            source.volume = totalMultiplier;
+            source.volume = volumeForPlayer;
             source.PlayOneShot(clip);
         }
         else
         {
-            AudioSource.PlayClipAtPoint(clip, point, totalMultiplier);
+            AudioSource.PlayClipAtPoint(clip, point, volumeForPlayer);
         }
 
         // TO DO: play text in subtitles, if close enough for the player to hear

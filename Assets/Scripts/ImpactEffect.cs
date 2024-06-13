@@ -13,6 +13,7 @@ public class ImpactEffect : ScriptableObject
     public DiegeticSound defaultSound;
     public ParticleSystem defaultImpactEffect;
     public Sprite defaultDecal;
+    public bool playSoundAtMaxVolume = false;
 
     static SpriteRenderer decalPrefab;
     static int maxNumberOfSpawnedEffects = 100;
@@ -36,7 +37,7 @@ public class ImpactEffect : ScriptableObject
         // Play sound effect at point
         if (sound != null)
         {
-            sound.Play(point, sourceEntity, intensity);
+            sound.Play(point, sourceEntity, intensity, playSoundAtMaxVolume);
         }
 
         // Stick decal
