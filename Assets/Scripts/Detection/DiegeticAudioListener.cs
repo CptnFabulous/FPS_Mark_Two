@@ -54,7 +54,7 @@ public class DiegeticAudioListener : MonoBehaviour
             // Then only count a sound if the incoming volume is greater than or equal to the loudest sound.
 
             // If it's above the threshold for being heard, play its onHeard event.
-            Debug.Log($"{listener.rootEntity} heard {sound}, volume = {heardDecibels}dB, on frame {Time.frameCount}");
+            //Debug.Log($"{listener.rootEntity} heard {sound}, volume = {heardDecibels}dB, on frame {Time.frameCount}");
             listener.onSoundHeard.Invoke(new HeardSound(sound, heardDecibels, source, source.CentreOfMass, Time.time));
         }
     }

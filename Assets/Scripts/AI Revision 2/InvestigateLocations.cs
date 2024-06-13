@@ -20,21 +20,21 @@ public class InvestigateLocations : AIStateFunction
         // Ignore if the enemy is already engaging a known target
         if (targetManager.targetExists && targetManager.canSeeTarget == ViewStatus.Visible)
         {
-            Debug.Log("Ignored, AI has already found the target");
+            //Debug.Log("Ignored, AI has already found the target");
             return;
         }
 
         // Ignore if the current target is more important/suspicious
         if (priority < priorityLevel)
         {
-            Debug.Log($"Ignored, location is not a high-enough priority ({priority}, {priorityLevel})");
+            //Debug.Log($"Ignored, location is not a high-enough priority ({priority}, {priorityLevel})");
             return;
         }
 
         // Ignore if the enemy has already just acquired a new position to check
         if (Time.time - lastTimeOfTargetChange < delayBetweenChangingTargetLocation)
         {
-            Debug.Log("Ignored, it's too soon since the AI acquired a new target");
+            //Debug.Log("Ignored, it's too soon since the AI acquired a new target");
             return;
         }
 

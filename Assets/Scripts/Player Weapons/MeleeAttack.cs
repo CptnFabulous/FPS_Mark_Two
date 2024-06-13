@@ -40,7 +40,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     protected override void OnPrimaryInputChanged(bool held)
     {
-        Debug.Log($"{this}: input changed to {held}");
+        //Debug.Log($"{this}: input changed to {held}");
         if (held == false) return;
         if (currentAttack != null) return;
         // Attack
@@ -116,7 +116,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         #region Deal damage to target (if the attack hits something)
         if (target != null)
         {
-            Debug.Log($"{this}: dealing damage");
+            //Debug.Log($"{this}: dealing damage");
 
             Vector3 point = target.bounds.center;
             Vector3 hitDirection = point - origin;
@@ -126,17 +126,19 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, hitDetection))
         {
             // Casts a secondary check
-            Debug.Log("Hit something that isn't an entity");
+            //Debug.Log("Hit something that isn't an entity");
             hitData.AttackObject(rh.collider.gameObject, User, User, rh.point, direction, rh.normal);
         }
+        /*
         else
         {
             Debug.Log($"{this}: missed");
         }
+        */
         #endregion
 
         #region Cooldown
-        Debug.Log($"{this}: cooling down");
+        //Debug.Log($"{this}: cooling down");
         // Play cooldown/return animation
         if (animator != null) animator.SetTrigger(cooldownTrigger);
         yield return new WaitForSeconds(cooldownTime);
