@@ -6,6 +6,7 @@ public static class PhysicsCache
 {
     static Dictionary<Rigidbody, Rigidbody> rootDictionary = new Dictionary<Rigidbody, Rigidbody>();
     static Dictionary<Rigidbody, Character> characterDictionary = new Dictionary<Rigidbody, Character>();
+    static Dictionary<Rigidbody, Rigidbody[]> childDictionary = new Dictionary<Rigidbody, Rigidbody[]>();
 
     public static Rigidbody GetRootRigidbody(Rigidbody rb)
     {
@@ -48,5 +49,13 @@ public static class PhysicsCache
     {
         character = GetRootCharacter(target);
         return character != null;
+    }
+
+    public static Rigidbody[] GetChildRigidbodies(Rigidbody target)
+    {
+        if (childDictionary.TryGetValue(target, out var array)) return array;
+
+        childDictionary[target] = target.GetComponentsInChildren<Rigidbody>();
+        return childDictionary[target];
     }
 }

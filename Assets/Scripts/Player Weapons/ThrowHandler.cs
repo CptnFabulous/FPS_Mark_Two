@@ -76,10 +76,23 @@ public class ThrowHandler : MonoBehaviour
 
         // Detach object and apply velocity
         Drop(out Rigidbody toThrow);
-        toThrow.AddForce(throwDirection * startingVelocity, ForceMode.Impulse); 
-
+        AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
         // Update the last time thrown
         user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
+
         currentlyThrowing = false;
+    }
+
+    public static void AddForceToRigidbodyChain(Rigidbody toThrow, Vector3 force, Vector3 position, ForceMode mode)
+    {
+        // Check all child rigidbodies
+        Rigidbody[] rbs = PhysicsCache.GetChildRigidbodies(toThrow);
+        // Divide force amongst all rigidbodies
+        Vector3 forceFraction = force / rbs.Length;
+        for (int i = 0; i < rbs.Length; i++)
+        {
+            // TO DO: I might need to change the force applied to different rigidbodies to account for their weight
+            rbs[i].AddForceAtPosition(forceFraction, position, mode);
+        }
     }
 }
