@@ -33,6 +33,12 @@ public class DamageDealer
         if (rb != null)
         {
             rb.AddForceAtPosition(knockback * multiplier * direction.normalized, point, ForceMode.Impulse);
+
+            // Tell the attacker's health script that it just applied velocity to a physics object, to prevent self damage from physics glitches
+            if (attacker.health != null)
+            {
+                attacker.health.timesPhysicsObjectsWereLaunchedByThisEntity[PhysicsCache.GetRootRigidbody(rb).gameObject] = Time.time;
+            }
         }
 
         // Apply damage and stun to either the hitbox or the health script, if there is one

@@ -35,11 +35,14 @@ public class Health : MonoBehaviour
     Character c;
     Hitbox[] hb;
     Dictionary<GameObject, float> recentPhysicsCollisions = new Dictionary<GameObject, float>();
+    // Any time the attached entity manually exerts force on a physics object (e.g. with AddForce()), register it and the time here
+    public Dictionary<GameObject, float> timesPhysicsObjectsWereLaunchedByThisEntity = new Dictionary<GameObject, float>();
 
     static float minimumCollisionForceToDamage = 10;
     static float damagePerCollisionForceUnit = 1f;
     static float stunPerCollisionForceUnit = 1f;
     static float minTimeBetweenCollisions = 0.2f;
+    static float minTimeAfterThrowBeforeCollision = 1f;
 
     public bool IsAlive => data.current > 0;
     public Character attachedTo => c ??= GetComponentInParent<Character>();
@@ -119,11 +122,16 @@ public class Health : MonoBehaviour
         // If it's been too soon since the last hit, don't register it
         // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
-        if (recentPhysicsCollisions.TryGetValue(damagedBy, out float hitTime) && (Time.time - hitTime) < minTimeBetweenCollisions)
+
+        // If this character applied a physics force to this object a short time ago, don't register a hit
+        if (timesPhysicsObjectsWereLaunchedByThisEntity.TryGetValue(damagedBy, out float timeOfHit))
         {
-            //Debug.Log("This collider hit too soon");
-            return;
+            if ((Time.time - timeOfHit) < minTimeAfterThrowBeforeCollision) return;
         }
+
+        // If the root object just dealt physics damage previously, don't count
+        // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
+        if (recentPhysicsCollisions.TryGetValue(damagedBy, out float hitTime) && (Time.time - hitTime) < minTimeBetweenCollisions) return;
         recentPhysicsCollisions[damagedBy] = Time.time; // Update the last time hit for the next check
 
         //Debug.Log($"{damagedBy} {(willTakeDamage ? "will" : "won't")} damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}");

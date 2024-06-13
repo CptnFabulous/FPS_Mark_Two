@@ -77,6 +77,9 @@ public class ThrowHandler : MonoBehaviour
         // Detach object and apply velocity
         Drop(out Rigidbody toThrow);
         toThrow.AddForce(throwDirection * startingVelocity, ForceMode.Impulse); 
+
+        // Update the last time thrown
+        user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
         currentlyThrowing = false;
     }
 }
