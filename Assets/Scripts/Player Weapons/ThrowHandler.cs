@@ -1,22 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ThrowHandler : MonoBehaviour
 {
+    public Character user;
+    public Transform hand;
+
     [Header("Throwing stats")]
     public float startingVelocity = 50;
     public float range = 50;
     public float delayBeforeLaunch = 0.25f;
     public float cooldown = 0.5f;
 
-    public Transform hand;
+    public UnityEvent<Rigidbody> onThrow;
 
     public Rigidbody holding { get; private set; } = null;
     public bool currentlyThrowing { get; private set; } = false;
     //Coroutine throwCoroutine;
 
-    public Character user;
     public LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(holding.gameObject.layer);
     public bool InAction => currentlyThrowing;
 
@@ -79,6 +82,8 @@ public class ThrowHandler : MonoBehaviour
         AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
         // Update the last time thrown
         user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
+
+        onThrow.Invoke(toThrow);
 
         currentlyThrowing = false;
     }

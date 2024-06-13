@@ -44,12 +44,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0805a1cbda4a954eab074c81766b4d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  user: {fileID: 5952785220977947003}
+  hand: {fileID: 9086804113655461420}
   startingVelocity: 12
   range: 5
   delayBeforeLaunch: 0.25
   cooldown: 0.5
-  hand: {fileID: 9086804113655461420}
-  user: {fileID: 5952785220977947003}
+  onThrow:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 62b428f5282ed384f8c7302168362bbe, type: 2}
+        m_TargetAssemblyTypeName: DiegeticSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 5952785220977947006}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2406643243703453481
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,7 +996,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b63a9b2426f8f348b87938ba438c9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  throwHandler: {fileID: 1145182430858350181}
   data:
     name: New Resource
     max: 200
@@ -998,6 +1012,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   allowPosthumousDamage: 0
+  throwHandler: {fileID: 1145182430858350181}
 --- !u!114 &317139347150765821
 MonoBehaviour:
   m_ObjectHideFlags: 0
