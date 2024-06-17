@@ -23,6 +23,7 @@ public class AI : Character
     public AITargetManager targeting;
 
     [Header("Animations and feedback")]
+    public Animator animator;
     public AIStatusIcon statusIcon;
 
     AIGunAttack _attack;

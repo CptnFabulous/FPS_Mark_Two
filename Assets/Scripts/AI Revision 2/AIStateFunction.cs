@@ -7,6 +7,7 @@ public abstract class AIStateFunction : StateFunction
 {
     public Sprite icon; // The icon that appears as a visual shorthand to show the enemy's state has changed
     public DiegeticSound soundCue; // Sounds that the enemy makes to signal that it's switched to the new state
+    public string animationTrigger; // Lets the enemy play a unique animation to signal that it's switched to the new state
 
     AI _root;
     public AI rootAI => _root ??= GetComponentInParent<AI>();
@@ -22,5 +23,6 @@ public abstract class AIStateFunction : StateFunction
         // Play effects to indicate the AI has switched to a new action
         if (icon != null) rootAI.statusIcon.TriggerAnimation(icon);
         if (soundCue != null) soundCue.Play(rootAI.transform.position, rootAI);
+        if (string.IsNullOrEmpty(animationTrigger) == false) rootAI.animator.SetTrigger(animationTrigger);
     }
 }
