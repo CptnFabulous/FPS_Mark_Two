@@ -7,6 +7,9 @@ public class EnvironmentalHazard : Entity
 {
     [SerializeField] DamageType damageType;
 
+    Collider c;
+    public Collider collider => c ??= GetComponent<Collider>();
+
     private void OnCollisionEnter(Collision collision) => DamageCheck(collision.collider);
     private void OnTriggerEnter(Collider other) => DamageCheck(other);
     private void DamageCheck(Collider other)
@@ -17,7 +20,7 @@ public class EnvironmentalHazard : Entity
         {
             Debug.Log($"{e} entered/collided with {this} and will now be killed");
             int damage = e.health.data.max * 10;
-            e.health.Damage(damage, damage, true, damageType, this);
+            e.health.Damage(damage, damage, true, damageType, this, other.bounds.center - collider.bounds.center);
         }
     }
 }

@@ -24,9 +24,10 @@ public enum DamageType
 
 public class Health : MonoBehaviour
 {
-    public bool godmode = false;
+    [Header("Stats")]
     public Resource data = new Resource(100, 100, 20);
-    
+    public bool godmode = false;
+
     public UnityEvent<DamageMessage> onDamage;
     public UnityEvent<DamageMessage> onHeal;
     public UnityEvent<KillMessage> onDeath;
@@ -72,7 +73,7 @@ public class Health : MonoBehaviour
     /// <param name="amount"></param>
     /// <param name="type"></param>
     /// <param name="attacker"></param>
-    public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker)
+    public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker, Vector3 direction)
     {
         if (IsAlive == false && allowPosthumousDamage == false) return;
 
@@ -91,7 +92,7 @@ public class Health : MonoBehaviour
         Debug.Log($"{this} ({data.current} health) took{(isCritical ? " a critical" : "")} {damage} damage and {stun} stun");
         data.Increment(-damage);
 
-        DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun);
+        DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun, direction);
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
         Notification<DamageMessage>.Transmit(damageMessage);
 
@@ -102,8 +103,17 @@ public class Health : MonoBehaviour
             Notification<KillMessage>.Transmit(killMessage);
         }
     }
+
+
+
+
+
+
+
+
     public void DamageFromPhysicsCollision(Collision collision, Hitbox hitbox)
     {
+        #region Calculate collision force, cancel if too low
         // Figure out impact force from velocity. If a rigidbody is present, multiply the mass accordingly
         float force = collision.relativeVelocity.magnitude;
         Rigidbody rb = collision.rigidbody;
@@ -121,10 +131,11 @@ public class Health : MonoBehaviour
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
         if (force <= minimumCollisionForceToDamage) return;
+        #endregion
+
+        #region Check if the entity can take damage from the colliding object at this time
 
         // Check the root rigidbody this entity is attached to.
-        // If it's been too soon since the last hit, don't register it
-        // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
 
         // Don't deal damage if the attached entity is deliberately holding it
@@ -141,19 +152,30 @@ public class Health : MonoBehaviour
         if (recentPhysicsCollisions.TryGetValue(damagedBy, out float hitTime) && (Time.time - hitTime) < minTimeBetweenCollisions) return;
         recentPhysicsCollisions[damagedBy] = Time.time; // Update the last time hit for the next check
 
-        //Debug.Log($"{damagedBy} {(willTakeDamage ? "will" : "won't")} damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}");
+        #endregion
+
+        #region Deal damage and stun
+        Debug.Log($"{damagedBy} will damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
+        //Debug.Log($"{damagedBy} {(willTakeDamage ? "will" : "won't")} damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
 
         // Calculate damage and stun accordingly
         //force *= hitbox.damageMultiplier;
-        //force -= minimumCollisionForceToDamage;
         float damage = force * damagePerCollisionForceUnit;
         float stun = force * stunPerCollisionForceUnit;
         Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponentInParent<Entity>();
 
+        // Deal damage
         // TO DO: multiply damage values and set as critical based on the specified hitbox's parameters
-        Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), hitbox.isCritical, DamageType.Impact, thingThatDamagedThisHitbox);
+        Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), hitbox.isCritical, DamageType.Impact, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized);
+        #endregion
     }
-    public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer);
+
+
+
+
+
+
+    public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer, Vector3.zero);
 
     #region Miscellaneous functions
     public void DestroyOnDeath()

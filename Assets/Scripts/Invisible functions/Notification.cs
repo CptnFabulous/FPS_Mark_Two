@@ -48,8 +48,9 @@ public class DamageMessage
     public int damage;
     public bool critical;
     public int stun;
+    public Vector3 direction;
     
-    public DamageMessage(Entity _attacker, Health _victim, DamageType _method, int _damage, bool _critical, int _stun)
+    public DamageMessage(Entity _attacker, Health _victim, DamageType _method, int _damage, bool _critical, int _stun, Vector3 direction)
     {
         attacker = _attacker;
         victim = _victim;
@@ -57,6 +58,7 @@ public class DamageMessage
         damage = _damage;
         critical = _critical;
         stun = _stun;
+        this.direction = direction;
     }
 }
 public class KillMessage
