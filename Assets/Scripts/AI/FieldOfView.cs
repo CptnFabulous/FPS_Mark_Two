@@ -25,12 +25,17 @@ public class FieldOfView : MonoBehaviour
 
     public T FindObjectInFieldOfView<T>(System.Predicate<T> criteria, out RaycastHit hit) where T : Entity
     {
-        foreach (T e in FindObjectsOfType<T>())
+        Collider[] overlapSphere = Physics.OverlapSphere(transform.position, viewRange, viewDetection);
+        foreach (Collider c in overlapSphere)
         {
-            // Ignore if not meeting the criteria
+            // Check that an entity exists
+            T e = EntityCache<T>.GetEntity(c);
+            if (e == null) continue;
+
+            // Check that it can actually be seen
             if (criteria != null && criteria.Invoke(e) == false) continue;
-            // If it is a relevant object, check if the AI can actually see it.
             if (VisionConeCheck(e, out hit) != ViewStatus.Visible) continue;
+
             // We've found one!
             return e;
         }
@@ -39,13 +44,21 @@ public class FieldOfView : MonoBehaviour
     }
     public List<T> FindObjectsInFieldOfView<T>(System.Predicate<T> criteria) where T : Entity
     {
-        List<T> entities = new List<T>(FindObjectsOfType<T>());
-        entities.RemoveAll((e) =>
+        Collider[] overlapSphere = Physics.OverlapSphere(transform.position, viewRange, viewDetection);
+        List<T> entities = new List<T>();
+        foreach (Collider c in overlapSphere)
         {
-            if (criteria != null && criteria.Invoke(e) == false) return true;
-            if (VisionConeCheck(e, out _) != ViewStatus.Visible) return true;
-            return false; // Entry is detected and shouldn't be removed
-        });
+            // Check that an entity exists
+            T e = EntityCache<T>.GetEntity(c);
+            // Check that it's not already added to the list
+            if (entities.Contains(e)) continue;
+            // Check that it can actually be seen
+            if (criteria != null && criteria.Invoke(e) == false) continue;
+            if (VisionConeCheck(e, out _) != ViewStatus.Visible) continue;
+            // Entry is detected and should be added to the list
+            entities.Add(e);
+        }
+
         return entities;
     }
 

@@ -82,3 +82,15 @@ public static class PhysicsCache
         return childDictionary[target];
     }
 }
+
+public static class EntityCache<T> where T : Entity
+{
+    static Dictionary<Collider, T> dictionary = new Dictionary<Collider, T>();
+
+    public static T GetEntity(Collider c)
+    {
+        if (dictionary.TryGetValue(c, out T e)) return e;
+        dictionary[c] = c.GetComponentInParent<T>();
+        return dictionary[c];
+    }
+}
