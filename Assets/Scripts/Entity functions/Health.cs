@@ -45,7 +45,7 @@ public class Health : MonoBehaviour
     static float minimumCollisionForceToDamage = 10;
     static float damagePerCollisionForceUnit = 1f;
     static float stunPerCollisionForceUnit = 1f;
-    static float minTimeBetweenCollisions = 0.2f;
+    static float minTimeBetweenCollisions = 0.5f;
     static float minTimeAfterThrowBeforeCollision = 1f;
 
     public bool IsAlive => data.current > 0;
