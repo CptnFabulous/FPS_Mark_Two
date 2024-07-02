@@ -9,32 +9,44 @@ public class HumanoidAnimator : MonoBehaviour
     [Header("Anatomy")]
     [SerializeField] Animator animator;
     [SerializeField] Ragdoll ragdoll;
+    [SerializeField] PhysicsAffectedAI physicsHandler;
     [SerializeField] Transform[] spineBones;
 
     [Header("Animator values")]
-    [SerializeField] string walkXValue;
-    [SerializeField] string walkZValue;
-    
-    /*
-    void Start()
+    [SerializeField] string standardMovementLayer = "Movement";
+    [SerializeField] string walkXValue = "Movement X";
+    [SerializeField] string walkZValue = "Movement Z";
+
+    [Header("Stuns")]
+    [SerializeField] string damageDirectionX = "Damage Direction X";
+    [SerializeField] string damageDirectionZ = "Damage Direction Z";
+
+    [SerializeField] string standUpState = "Movement.Stand up from fall";
+    [SerializeField] string ragdollOrientationDotProduct = "Ragdoll orientation dot product";
+
+    public int defaultAnimationLayer => animator.GetLayerIndex(standardMovementLayer);
+
+    private void Awake()
     {
-        // Add listeners for other functions e.g. stagger animations
+        character.health.onDamage.AddListener(UpdateDamageData);
+        /*
+        ragdoll.onActiveStateSet.AddListener((b) =>
+        {
+            if (b == false) RecoverFromRagdoll();
+        });
+        */
     }
-    */
     private void Update()
     {
-        if (ragdoll.enabled) return;
-
         // Update walk direction values
         Vector3 walkValues = character.LocalMovementDirection;
         animator.SetFloat(walkXValue, walkValues.x);
         animator.SetFloat(walkZValue, walkValues.z);
     }
-
     void LateUpdate()
     {
         if (ragdoll.enabled) return;
-        
+
         // Set up appropriate aiming rotation of upper body
         // I used this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
 
@@ -47,6 +59,28 @@ public class HumanoidAnimator : MonoBehaviour
             Quaternion rotation = Quaternion.Slerp(Quaternion.identity, rotationOffsetBetweenAIAndBody, value);
             spineBones[i].rotation = rotation * spineBones[i].rotation;
         }
-        
+    }
+
+    void UpdateDamageData(DamageMessage damageMessage)
+    {
+        Vector3 localDamageDirection = transform.InverseTransformDirection(damageMessage.direction);
+        localDamageDirection = localDamageDirection.normalized;
+        animator.SetFloat(damageDirectionX, localDamageDirection.x);
+        animator.SetFloat(damageDirectionZ, localDamageDirection.z);
+    }
+
+    /// <summary>
+    /// Run this animation when standing up from being ragdollised. Overrides existing states and ensure the animator goes right to the correct animation
+    /// </summary>
+    public void RecoverFromRagdoll()
+    {
+        /*
+        animator.SetTrigger(standUpTrigger);
+        animator.Update(0);
+        return;
+        */
+        float dotProductSign = Mathf.Sign(physicsHandler.ragdollUprightDotProduct);
+        animator.SetFloat(ragdollOrientationDotProduct, dotProductSign);
+        animator.Play(standUpState, defaultAnimationLayer, 0);
     }
 }

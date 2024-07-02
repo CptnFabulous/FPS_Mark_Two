@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class PhysicsAffectedAI : MonoBehaviour
 {
@@ -14,8 +15,9 @@ public class PhysicsAffectedAI : MonoBehaviour
     public bool ragdollActive
     {
         get => ragdoll != null && ragdoll.enabled;
-        set => StartCoroutine(SetRagdollActiveState(value));
+        set => ragdoll.StartCoroutine(SetRagdollActiveState(value));
     }
+    public float ragdollUprightDotProduct => Vector3.Dot(ragdoll.rootBone.forward, rootAI.transform.up);
 
     public IEnumerator SetRagdollActiveState(bool value)
     {
@@ -33,6 +35,7 @@ public class PhysicsAffectedAI : MonoBehaviour
         // Set active states of appropriate scripts
         collider.enabled = !value;
         navMeshAgent.enabled = !value;
+        //rootAI.animator.enabled = !value;
         ragdoll.enabled = value;
 
         // Ensure the root AI doesn't fall through the floor
@@ -118,7 +121,6 @@ public class PhysicsAffectedAI : MonoBehaviour
         }
     }
 
-    public float ragdollUprightDotProduct => Vector3.Dot(ragdoll.rootBone.forward, rootAI.transform.up);
 
     void UpdateBasePositionToMatchRagdoll()
     {
@@ -129,16 +131,16 @@ public class PhysicsAffectedAI : MonoBehaviour
         
         // Check what direction the enemy would face after standing up, based on their ragdoll direction
         // If we compare the direction to up and it's zero, that means it's perfectly forward.
-        // More than 0 means ragdoll is closer to lying on its back. Use the 'down' vector
-        // Less than 0 means ragdoll is closer to lying on its face. Use the 'up' vector
         Vector3 ragdollForward = ragdollRootBone.forward;
         float dot = ragdollUprightDotProduct;
         if (dot < 0)
         {
+            // Less than 0 means ragdoll is closer to lying on its face. Use the 'up' vector instead of 'forward'
             ragdollForward = ragdollRootBone.up;
         }
         else if (dot > 0)
         {
+            // More than 0 means ragdoll is closer to lying on its back. Use the 'down' vector instead of 'forward'
             ragdollForward = -ragdollRootBone.up;
         }
 
@@ -148,5 +150,22 @@ public class PhysicsAffectedAI : MonoBehaviour
         aiTransform.position = rootAI.bounds.center;
         // Adjust direction to face roughly in the same 'forward' direction as the ragdoll
         aiTransform.rotation = Quaternion.LookRotation(aiForward, up);
+    }
+    public void SetPositionWithoutAdjustingRagdoll(Vector3 worldPosition)
+    {
+
+        Transform aiTransform = rootAI.transform;
+        Transform ragdollRootBone = ragdoll.rootBone;
+
+        // Preserve current position of root bone
+        Vector3 rootBoneWorldPosition = ragdollRootBone.position;
+        Quaternion rootBoneWorldRotation = ragdollRootBone.rotation;
+
+        aiTransform.position = worldPosition;
+
+
+        // Re-assign root bone orientation (so the ragdoll position doesn't visually change)
+        ragdollRootBone.position = rootBoneWorldPosition;
+        ragdollRootBone.rotation = rootBoneWorldRotation;
     }
 }

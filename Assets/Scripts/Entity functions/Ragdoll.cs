@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Ragdoll : MonoBehaviour
 {
     public Character attachedTo;
     public Transform rootBone;
+    public SkinnedMeshRenderer baseRenderer;
     [SerializeField] Animator animator;
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
+
+    public UnityEvent<bool> onActiveStateSet;
 
     Rigidbody[] _rb;
 
@@ -63,6 +67,8 @@ public class Ragdoll : MonoBehaviour
     private void OnDisable() => SetActive(false);
     void SetActive(bool active)
     {
+        onActiveStateSet.Invoke(active);
+        
         if (animator != null) animator.enabled = !active;
         foreach (Rigidbody rb in rigidbodies)
         {
@@ -70,6 +76,12 @@ public class Ragdoll : MonoBehaviour
             rb.constraints = RigidbodyConstraints.None;
             // Collision mode needs to be set to continuous speculative, when a rigidbody is kinematic
             rb.collisionDetectionMode = !active ? CollisionDetectionMode.ContinuousSpeculative : collisionDetectionMode;
+        }
+
+        if (baseRenderer != null && active == false)
+        {
+            baseRenderer.transform.localPosition = Vector3.zero;
+            baseRenderer.transform.localRotation = Quaternion.identity;
         }
     }
 }
