@@ -44,7 +44,7 @@ public class Health : MonoBehaviour
     public Dictionary<GameObject, float> timesPhysicsObjectsWereLaunchedByThisEntity = new Dictionary<GameObject, float>();
 
     static float minimumCollisionForceToDamage = 10;
-    static float damagePerCollisionForceUnit = 1f;
+    static float damagePerCollisionForceUnit = 0.5f;
     static float stunPerCollisionForceUnit = 1f;
     static float minTimeBetweenCollisions = 0.5f;
     static float minTimeAfterThrowBeforeCollision = 1f;
@@ -103,14 +103,7 @@ public class Health : MonoBehaviour
             Notification<KillMessage>.Transmit(killMessage);
         }
     }
-
-
-
-
-
-
-
-
+    public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer, Vector3.zero);
     public void DamageFromPhysicsCollision(Collision collision, Hitbox hitbox)
     {
         #region Calculate collision force, cancel if too low
@@ -169,13 +162,6 @@ public class Health : MonoBehaviour
         Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), hitbox.isCritical, DamageType.Impact, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized);
         #endregion
     }
-
-
-
-
-
-
-    public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer, Vector3.zero);
 
     #region Miscellaneous functions
     public void DestroyOnDeath()
