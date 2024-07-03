@@ -139,7 +139,7 @@ public class Health : MonoBehaviour
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
 
         // Don't deal damage if the attached entity is deliberately holding it
-        if (throwHandler != null && throwHandler.holding.gameObject == damagedBy) return;
+        if (throwHandler != null && throwHandler.holding != null && throwHandler.holding.gameObject == damagedBy) return;
 
         // If this character applied a physics force to this object a short time ago, don't register a hit
         if (timesPhysicsObjectsWereLaunchedByThisEntity.TryGetValue(damagedBy, out float timeOfHit))
