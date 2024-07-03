@@ -7,6 +7,7 @@ public class AI : Character
 {
     [Header("Behaviour")]
     public StateController stateController;
+    public AIStateFunction deathState;
 
     [Header("Sensing and reaction")]
     public FieldOfView visionCone;
@@ -67,17 +68,16 @@ public class AI : Character
     }
     protected override void Die()
     {
-        //agent.enabled = false;
-        //aiming.enabled = false;
-        //actions.enabled = false;
-
         base.Die();
-
+        stateController.SwitchToState(deathState);
+        
+        /*
         stateController.enabled = false;
         aiming.enabled = false;
         targeting.enabled = false;
         physicsHandler.ragdollActive = true;
         //gameObject.SetActive(false);
+        */
     }
 
     public IEnumerator TravelToDestination(Vector3 position)
