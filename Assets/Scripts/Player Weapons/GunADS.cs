@@ -148,7 +148,7 @@ public class GunADS : MonoBehaviour
         {
             float regularFOV = lookControls.fieldOfView;
             float zoomedFOV = regularFOV / magnification;
-            lookControls.worldViewCamera.fieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
+            lookControls.currentFieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
         }
 
         Transform aimAxis = userWeaponHandler.aimAxis;

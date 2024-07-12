@@ -60,7 +60,7 @@ public class GameplayOptions : OptionsMenu
         invertX.isOn = lookControls.invertX;
         invertY.isOn = lookControls.invertY;
         fieldOfView.value = lookControls.fieldOfView;
-        lookControls.worldViewCamera.fieldOfView = fieldOfView.value;
+        lookControls.currentFieldOfView = fieldOfView.value;
         // Obtain other control values
         toggleCrouch.isOn = (movement.crouchController != null) ? movement.crouchController.toggleCrouch : false;
         toggleSprint.isOn = (movement.sprintController != null) ? movement.sprintController.toggleInput : false;
@@ -79,7 +79,7 @@ public class GameplayOptions : OptionsMenu
         {
             if (playerUpdating != null)
             {
-                lookControls.worldViewCamera.fieldOfView = fov;
+                lookControls.currentFieldOfView = fov;
             }
         });
         AddValueChangedEvent(toggleSprint);

@@ -76,13 +76,13 @@ public class DirectionalHUDIndicator : MonoBehaviour
             return;
         }
 
-        Debug.DrawRay(ViewCamera.transform.position, direction, Color.red);
+        //Debug.DrawRay(ViewCamera.transform.position, direction, Color.red);
         // Rotate world direction to account for a 2D HUD being used to represent 3D space
 
         //direction = Quaternion.Euler(-10, 0, 0) * direction;
 
 
-        Debug.DrawRay(ViewCamera.transform.position, direction, Color.yellow);
+        //Debug.DrawRay(ViewCamera.transform.position, direction, Color.yellow);
 
         // Flatten to forward axis of camera
         direction = Vector3.ProjectOnPlane(direction, ViewCamera.transform.forward);

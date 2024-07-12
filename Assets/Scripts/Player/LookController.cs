@@ -34,7 +34,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
     [Header("Camera")]
     public Camera worldViewCamera;
     public Camera headsUpDisplayCamera;
-    [Range(1, 179)] public float fieldOfView = 90;
+    [SerializeField, Range(1, 179)] public float fieldOfView = 90;
 
     [Header("Recoil and offset")]
     public RecoilController recoilController;
@@ -85,6 +85,16 @@ public class LookController : MonoBehaviour, ICharacterLookController
             mainBodyTransform.rotation = Quaternion.LookRotation(transformDirection, mainBodyTransform.up);
             // Rotates head to look in the appropriate direction
             aimAxis.rotation = value;
+        }
+    }
+
+    public float currentFieldOfView
+    {
+        get => worldViewCamera.fieldOfView;
+        set
+        {
+            worldViewCamera.fieldOfView = value;
+            //headsUpDisplayCamera.fieldOfView = value;
         }
     }
 
@@ -156,7 +166,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
 
     void Start()
     {
-        worldViewCamera.fieldOfView = fieldOfView;
+        currentFieldOfView = fieldOfView;
     }
     void Update()
     {
