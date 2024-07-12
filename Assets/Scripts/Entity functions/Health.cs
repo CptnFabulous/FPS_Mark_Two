@@ -128,6 +128,9 @@ public class Health : MonoBehaviour
 
         #region Check if the entity can take damage from the colliding object at this time
 
+        // Ensure the entity can't be damaged by its own colliders
+        if (attachedTo.colliders.Contains(collision.collider)) return;
+
         // Check the root rigidbody this entity is attached to.
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
 
