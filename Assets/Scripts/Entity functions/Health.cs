@@ -106,6 +106,9 @@ public class Health : MonoBehaviour
     public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer, Vector3.zero);
     public void DamageFromPhysicsCollision(Collision collision, Hitbox hitbox)
     {
+        // Don't bother with calculations if entity is already dead
+        if (IsAlive == false && allowPosthumousDamage == false) return;
+
         #region Calculate collision force, cancel if too low
         // Figure out impact force from velocity. If a rigidbody is present, multiply the mass accordingly
         float force = collision.relativeVelocity.magnitude;
