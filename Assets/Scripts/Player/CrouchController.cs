@@ -60,6 +60,9 @@ public class CrouchController : MonoBehaviour
             if (SpaceToStandUpBlocked()) wantsToCrouch = true;
         }
 
+        // Check again to not invoke events unnecessarily
+        if (isCrouching == wantsToCrouch) return;
+
         // If currently sprinting, try to cancel sprint
         if (wantsToCrouch)
         {
