@@ -53,16 +53,11 @@ public class CrouchController : MonoBehaviour
         // If the user wants to crouch, check if they are on solid ground.
         if (wantsToCrouch)
         {
-            if (movementController.isGrounded == false) wantsToCrouch = false;
+            if (!movementController.isGrounded) wantsToCrouch = false;
         }
         else
         {
-            // If the user wants to stand up, check if there is enough space to do so.
-            Vector3 centre = collider.transform.TransformPoint(collider.center);
-            Vector3 direction = collider.transform.TransformDirection(collider.height / 2 * Vector3.up);
-            bool ceilingInWay = Physics.Raycast(centre, direction, out RaycastHit _, direction.magnitude, movementController.collisionMask);
-            
-            if (ceilingInWay) wantsToCrouch = true;
+            if (SpaceToStandUpBlocked()) wantsToCrouch = true;
         }
 
         // If currently sprinting, try to cancel sprint
@@ -82,6 +77,19 @@ public class CrouchController : MonoBehaviour
         //speedModifiers.Remove(crouchSpeedMultiplier);
         (wantsToCrouch ? onCrouch : onStand).Invoke();
     }
+    bool SpaceToStandUpBlocked()
+    {
+        // TO DO: look into rigidbody sweep test and its possible uses for collisions
+
+        // The cast distance needs to be from the CROUCHED collider centre to the STANDING top
+        // Since it needs to start in the centre to ensure the raycast doesn't hit itself
+        // But it needs to check if there's enough space to stand up
+        float castLength = standHeight - (collider.height / 2);
+        // Calculate origin and direction in world space
+        Vector3 centre = collider.transform.TransformPoint(collider.center);
+        Vector3 direction = collider.transform.TransformDirection(castLength * Vector3.up);
+        return Physics.Raycast(centre, direction, out RaycastHit _, direction.magnitude, movementController.collisionMask);
+    }
 
     private void OnEnable()
     {
@@ -96,9 +104,10 @@ public class CrouchController : MonoBehaviour
     }
     private void Update()
     {
+        // Calculate value for lerping
         float targetValue = isCrouching ? 1 : 0;
         crouchTimer = Mathf.MoveTowards(crouchTimer, targetValue, Time.deltaTime / crouchTransitionTime);
-
+        // Lerp collider and look axis values accordingly
         collider.height = Mathf.Lerp(standHeight, crouchHeight, crouchTimer);
         collider.center = Vector3.up * (collider.height / 2);
         lookControls.aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
