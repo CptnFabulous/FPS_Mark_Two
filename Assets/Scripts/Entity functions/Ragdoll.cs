@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class Ragdoll : MonoBehaviour
 {
-    public Character attachedTo;
+    public Entity attachedTo;
     public Transform rootBone;
     public SkinnedMeshRenderer baseRenderer;
     [SerializeField] Animator animator;

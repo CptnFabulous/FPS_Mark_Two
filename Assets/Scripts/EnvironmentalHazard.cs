@@ -14,9 +14,11 @@ public class EnvironmentalHazard : Entity
     private void OnTriggerEnter(Collider other) => DamageCheck(other);
     private void DamageCheck(Collider other)
     {
-        // If an entity fell into the trigger zone, 
-        Character e = other.GetComponentInParent<Character>();
-        if (e != null)
+        //Debug.Log($"{other}: checking hazard collision");
+
+        // If the collider is part of an entity, said entity has fallen into the damage zone. Damage it!
+        Entity e = EntityCache<Entity>.GetEntity(other.gameObject);
+        if (e != null && e.health != null)
         {
             Debug.Log($"{e} entered/collided with {this} and will now be killed");
             int damage = e.health.data.max * 10;

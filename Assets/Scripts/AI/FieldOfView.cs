@@ -29,7 +29,7 @@ public class FieldOfView : MonoBehaviour
         foreach (Collider c in overlapSphere)
         {
             // Check that an entity exists
-            T e = EntityCache<T>.GetEntity(c);
+            T e = EntityCache<T>.GetEntity(c.gameObject);
             if (e == null) continue;
 
             // Check that it can actually be seen
@@ -49,7 +49,7 @@ public class FieldOfView : MonoBehaviour
         foreach (Collider c in overlapSphere)
         {
             // Check that an entity exists
-            T e = EntityCache<T>.GetEntity(c);
+            T e = EntityCache<T>.GetEntity(c.gameObject);
             // Check that it's not already added to the list
             if (entities.Contains(e)) continue;
             // Check that it can actually be seen

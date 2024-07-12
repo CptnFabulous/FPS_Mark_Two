@@ -46,8 +46,9 @@ public class PropCarryingHandler : MonoBehaviour
         if (target.isKinematic) return false;
         if (target.mass > maxWeight) return false;
 
-        // Make sure the player can't pick up an alive entity
-        if (PhysicsCache.PhysicsObjectCharacterCheck(target, out Character c) && c.health.IsAlive) return false;
+        // If the target rigidbody belongs to an alive Character (whether player or AI controlled), the player shouldn't be able to pick it up
+        Character c = EntityCache<Character>.GetEntity(target.gameObject);
+        if (c != null && c.health.IsAlive) return false;
 
         return true;
     }

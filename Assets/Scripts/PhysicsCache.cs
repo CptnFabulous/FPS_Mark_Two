@@ -6,7 +6,6 @@ public static class PhysicsCache
 {
     static Dictionary<Rigidbody, Rigidbody> rootDictionary = new Dictionary<Rigidbody, Rigidbody>();
     static Dictionary<Rigidbody, float> massDictionary = new Dictionary<Rigidbody, float>();
-    static Dictionary<Rigidbody, Character> characterDictionary = new Dictionary<Rigidbody, Character>();
     static Dictionary<Rigidbody, Rigidbody[]> childDictionary = new Dictionary<Rigidbody, Rigidbody[]>();
 
     public static Rigidbody GetRootRigidbody(Rigidbody rb)
@@ -47,31 +46,6 @@ public static class PhysicsCache
 
         return mass;
     }
-    
-    public static Character GetRootCharacter(Rigidbody target)
-    {
-        if (characterDictionary.TryGetValue(target, out Character c)) return c;
-
-        // Check for an entity first, so if 'target' is a child of an entity that's a child of a Character, it doesn't return that one by mistake
-        Entity e = target.GetComponentInParent<Entity>();
-        Character character = e as Character;
-        if (character == null)
-        {
-            // If a 'character' script can't be found, check if the collider is on a ragdoll
-            // (since ragdolls are separated from their original entities to prevent wonky physics)
-            Ragdoll ragdoll = target.GetComponentInParent<Ragdoll>();
-            if (ragdoll != null) character = ragdoll.attachedTo;
-        }
-        characterDictionary[target] = character;
-
-        return character;
-    }
-    public static bool PhysicsObjectCharacterCheck(Rigidbody target, out Character character)
-    {
-        character = GetRootCharacter(target);
-        return character != null;
-    }
-
     public static Rigidbody[] GetChildRigidbodies(Rigidbody target)
     {
         target = GetRootRigidbody(target);
@@ -85,12 +59,25 @@ public static class PhysicsCache
 
 public static class EntityCache<T> where T : Entity
 {
-    static Dictionary<Collider, T> dictionary = new Dictionary<Collider, T>();
+    static Dictionary<GameObject, T> dictionary = new Dictionary<GameObject, T>();
 
-    public static T GetEntity(Collider c)
+    public static T GetEntity(GameObject g)
     {
-        if (dictionary.TryGetValue(c, out T e)) return e;
-        dictionary[c] = c.GetComponentInParent<T>();
-        return dictionary[c];
+        if (dictionary.TryGetValue(g, out T e)) return e;
+
+        // Check in parent
+        // If that didn't work, check for a ragdoll and get the attached entity instead
+        T toAssign = g.GetComponentInParent<T>();
+        if (toAssign == null)
+        {
+            // If a root entity can't be found, check if the collider is on a ragdoll
+            // (since ragdolls are separated from their original entities to prevent wonky physics)
+            // If the desired entity type is found, assign it
+            Ragdoll r = g.GetComponentInParent<Ragdoll>();
+            if (r != null && r.attachedTo is T t) toAssign = t;
+        }
+
+        dictionary[g] = toAssign;
+        return dictionary[g];
     }
 }

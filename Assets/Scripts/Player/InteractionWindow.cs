@@ -79,13 +79,16 @@ public class InteractionWindow : MonoBehaviour
         SetInteractability(true);
         // Determine display name (add suffix for additional info e.g. if a character is dead)
         string name = target.name;
-        if (PhysicsCache.PhysicsObjectCharacterCheck(target, out Character c))
+
+        Entity e = EntityCache<Entity>.GetEntity(target.gameObject);
+        if (e != null)
         {
-            name = c.properName;
-            if (c.health.IsAlive == false) name += $" {deadText}";
+            name = e.properName;
+            if (e.health.IsAlive == false) name += $" {deadText}";
         }
+
         interactableName.text = name;
-        
+
         progressBar.fillAmount = 0;
         action.text = pickupText;
     }
