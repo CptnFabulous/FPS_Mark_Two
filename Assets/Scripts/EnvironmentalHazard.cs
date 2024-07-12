@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class EnvironmentalHazard : Entity
+public class EnvironmentalHazard : MonoBehaviour
 {
+    public Entity entity;
     [SerializeField] DamageType damageType;
 
     Collider c;
@@ -20,9 +21,10 @@ public class EnvironmentalHazard : Entity
         Entity e = EntityCache<Entity>.GetEntity(other.gameObject);
         if (e != null && e.health != null)
         {
-            Debug.Log($"{e} entered/collided with {this} and will now be killed");
-            int damage = e.health.data.max * 10;
-            e.health.Damage(damage, damage, true, damageType, this, other.bounds.center - collider.bounds.center);
+            Health h = e.health;
+            //Debug.Log($"{e} entered/collided with {this} and will now be killed");
+            int damage = h.data.max * 10;
+            h.Damage(damage, damage, true, damageType, entity, other.bounds.center - collider.bounds.center);
         }
     }
 }
