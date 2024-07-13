@@ -29,15 +29,14 @@ public class ThrowHandler : MonoBehaviour
         user.health.onDeath.AddListener((__) => Drop(out _));
     }
 
-    public void Pickup(Rigidbody toThrow)
+    public void Pickup(Rigidbody toPickUp)
     {
         // Assign reference (and drop the previously held item if there is one)
         Drop(out _);
-        holding = toThrow;
+        holding = toPickUp;
 
         // Disable physics while picked up
-        holding.detectCollisions = false;
-        holding.isKinematic = true;
+        SetPhysicsInteractions(holding, false);
         // Later on I might have a different thing to create a physics joint if the object is much larger)
 
         // Orient object relative to throw socket
@@ -56,9 +55,10 @@ public class ThrowHandler : MonoBehaviour
         // Separate item from player
         detached.transform.SetParent(null, true);
         // Re-enable movement and collisions
-        detached.isKinematic = false;
-        detached.detectCollisions = true;
-
+        SetPhysicsInteractions(detached, true);
+        
+        // Inherit velocity
+        // TO DO: make it distribute velocity between all child rigidbodies
         //detached.velocity = user.rigidbody.velocity;
 
         return true;
@@ -79,6 +79,8 @@ public class ThrowHandler : MonoBehaviour
 
         // Detach object and apply velocity
         Drop(out Rigidbody toThrow);
+        //toThrow.AddForce(throwDirection * startingVelocity, ForceMode.Impulse);
+        //toThrow.AddForceAtPosition(throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
         AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
         // Update the last time thrown
         user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
@@ -99,5 +101,18 @@ public class ThrowHandler : MonoBehaviour
             float fraction = rb.mass / totalMass;
             rb.AddForceAtPosition(force * fraction, position, mode);
         }
+    }
+
+    public static void SetPhysicsInteractions(Rigidbody target, bool active)
+    {
+        target.detectCollisions = active;
+        target.isKinematic = !active;
+        /*
+        foreach (Rigidbody rb in PhysicsCache.GetChildRigidbodies(target))
+        {
+            rb.detectCollisions = active;
+            //rb.isKinematic = !active;
+        }
+        */
     }
 }
