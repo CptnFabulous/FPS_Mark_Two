@@ -191,6 +191,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
+--- !u!1 &6350044375452309609 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7657966619581158213, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
+  m_PrefabInstance: {fileID: 5595313904304370898}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1768870778475020377 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3086436065929644917, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
@@ -246,14 +251,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -3542885339558904099, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
   m_PrefabInstance: {fileID: 5595313904304370898}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7655667497528964831 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -6370085079684087283, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
-  m_PrefabInstance: {fileID: 5595313904304370898}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4712987908096690563 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
+  m_PrefabInstance: {fileID: 5595313904304370898}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7655667497528964831 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -6370085079684087283, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
   m_PrefabInstance: {fileID: 5595313904304370898}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &7492588321040053970 stripped
@@ -311,11 +316,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -9070493210130169274, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
   m_PrefabInstance: {fileID: 5595313904304370898}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &6350044375452309609 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -7657966619581158213, guid: cc0ff5a92d060a849a0dd1bfdf502167, type: 3}
-  m_PrefabInstance: {fileID: 5595313904304370898}
-  m_PrefabAsset: {fileID: 0}
 --- !u!54 &7912999692177965737
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -365,6 +365,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   impactEffect: {fileID: 11400000, guid: b797b6a3292295946963c952a0de5f9b, type: 2}
+--- !u!114 &5365927547579274058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4712987908096690563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  properName: Corpse
+  description: '[PLACEHOLDER]'
+  isUnique: 0
+  health: {fileID: 0}
 --- !u!65 &396615589
 BoxCollider:
   m_ObjectHideFlags: 0
