@@ -53,7 +53,7 @@ public class HeadsUpDisplay : MonoBehaviour
             if (h != null) observedEnemy = h.attachedTo;
         }
 
-        bool shouldShow = observedEnemy != null && observedEnemy.health.IsAlive;
+        bool shouldShow = observedEnemy != null && observedEnemy.health != null && observedEnemy.health.IsAlive;
         enemyHealthMeter.gameObject.SetActive(shouldShow);
         if (shouldShow == false) return;
 
