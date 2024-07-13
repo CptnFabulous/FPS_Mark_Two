@@ -21,7 +21,11 @@ public abstract class AIProcedure : AIStateFunction
 
     IEnumerator RunProcedure()
     {
+        // Extra frame yield until everything's initialised
+        yield return null;
+        // Run the procedure
         yield return Procedure();
+        // Switch to another state on end
         controller.SwitchToState(toSwitchToOnEnd);
     }
 
