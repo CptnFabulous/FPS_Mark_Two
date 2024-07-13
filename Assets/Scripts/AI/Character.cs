@@ -4,9 +4,10 @@ using UnityEngine;
 
 public abstract class Character : Entity
 {
+    public RegeneratingResource stamina;
+
     [Header("Character data")]
     public Faction affiliation;
-    public RegeneratingResource stamina;
 
     public Vector3 RelativeCentreOfMass(Vector3 hypotheticalTransformPosition)
     {
