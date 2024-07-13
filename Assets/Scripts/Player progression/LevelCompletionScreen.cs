@@ -77,12 +77,20 @@ public class LevelCompletionScreen : MonoBehaviour
         // Assign next level
         // Disable 'next level' button interactability if there isn't one
         nextLevelName = objectives.nextLevelName;
-        nextLevelButton.interactable = nextLevelExists;
+        //nextLevelButton.interactable = nextLevelExists;
+
+        //UnityEngine.EventSystems.EventSystem.current.a
     }
 
     void GoToNextLevel()
     {
-        if (nextLevelExists == false) return;
+        if (nextLevelExists == false)
+        {
+            QuitToMenu();
+            return;
+        }
+        
+        //if (nextLevelExists == false) return;
 
         // Save game
 
