@@ -5,9 +5,16 @@ using UnityEngine;
 public class PhysicsObjectEffects : MonoBehaviour
 {
     public ImpactEffect impactEffect;
+    //public ImpactEffect scrapeEffect;
+
 
     float minImpactForce = 0;
     float maxImpactForce = 20;
+    /*
+    float scrapeThreshold = 0.2f;
+    float minScrapeForce;
+    float maxScrapeForce;
+    */
 
     Entity e;
     public Entity rootEntity => e ??= GetComponentInParent<Entity>();
@@ -35,4 +42,33 @@ public class PhysicsObjectEffects : MonoBehaviour
             impactEffect.Play(collision.collider.gameObject, rootEntity, contactPoint.point, contactPoint.normal, multiplier);
         }
     }
+    /*
+    private void OnCollisionStay(Collision collision)
+    {
+        Vector3 direction = collision.relativeVelocity;
+        Vector3 normal = collision.contacts[0].normal;
+        for (int i = 1; i < collision.contactCount; i++)
+        {
+            normal += collision.contacts[i].normal;
+        }
+
+        // Calculate the dot (if the value is close to zero then the two objects are scraping against each other)
+        // Since it doesn't matter whether the scrape is moving towards or away, just get the absolute value
+        // Since 0 means a 90 degree angle (which is what we want, change the value to 1 - value, so zero is no scrape and 1 is full scrape
+        float dot = Vector3.Dot(direction, normal);
+        float scrapeMultiplier = 1 - Mathf.Abs(dot);
+        if (scrapeMultiplier < scrapeThreshold) return;
+
+        // Multiply scrapeValue by some kind of multiplier between the min and max scrape force
+        // Play the impact effect at that intensity
+
+    }
+    */
+
+    /*
+    private void OnCollisionExit(Collision collision)
+    {
+        
+    }
+    */
 }
