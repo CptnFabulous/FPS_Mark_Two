@@ -42,10 +42,10 @@ public class ThrowHandler : MonoBehaviour
 
         // Orient object relative to throw socket
         holding.transform.SetParent(hand);
-        holding.transform.localPosition = Vector3.zero;
-        holding.transform.localRotation = Quaternion.identity;
 
-        // Assign an object in 'readyToThrow' if ammunition is present (disable otherwise)
+        Vector3 position = -holding.centerOfMass;
+        holding.transform.localPosition = position;
+        holding.transform.localRotation = Quaternion.identity;
     }
     public bool Drop(out Rigidbody detached)
     {
