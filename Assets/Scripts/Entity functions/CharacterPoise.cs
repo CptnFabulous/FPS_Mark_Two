@@ -53,7 +53,7 @@ public class CharacterPoise : MonoBehaviour
         
         // Check if stun is high enough to go to knockdown state
         if (stateController.currentState == knockdownState) return;
-        if (currentStunAmount > knockdownThreshold)
+        if (currentStunAmount >= knockdownThreshold)
         {
             stateController.SwitchToState(knockdownState);
             return;
@@ -61,7 +61,7 @@ public class CharacterPoise : MonoBehaviour
 
         // If able to, check if stun is high enough for stagger state
         if (stateController.currentState == stunState) return;
-        if (currentStunAmount > staggerThreshold)
+        if (currentStunAmount >= staggerThreshold)
         {
             stateController.SwitchToState(stunState);
             return;
