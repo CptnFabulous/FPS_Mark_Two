@@ -25,6 +25,7 @@ public class InteractionHandler : MonoBehaviour
     public Interactable targetedInteractable { get; private set; }
     public Rigidbody targetedPhysicsProp { get; private set; }
     public RaycastHit hitData { get; private set; }
+    public Bounds targetBounds { get; private set; }
 
     Vector3 aimOrigin => referenceCamera.transform.position;
     Vector3 aimDirection => referenceCamera.transform.forward;
@@ -85,6 +86,16 @@ public class InteractionHandler : MonoBehaviour
             targetedInteractable = i;
             targetedPhysicsProp = rb;
             hitData = rh;
+            // Get bounds
+            if (i != null)
+            {
+                targetBounds = i.collider.bounds;
+            }
+            else if (rb != null)
+            {
+                targetBounds = MiscFunctions.CombinedBounds(PhysicsCache.GetChildColliders(rb));
+            }
+            
             break;
         }
     }

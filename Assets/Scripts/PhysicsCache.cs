@@ -7,6 +7,7 @@ public static class PhysicsCache
     static Dictionary<Rigidbody, Rigidbody> rootDictionary = new Dictionary<Rigidbody, Rigidbody>();
     static Dictionary<Rigidbody, float> massDictionary = new Dictionary<Rigidbody, float>();
     static Dictionary<Rigidbody, Rigidbody[]> childDictionary = new Dictionary<Rigidbody, Rigidbody[]>();
+    static Dictionary<Rigidbody, Collider[]> colliderDictionary = new Dictionary<Rigidbody, Collider[]>();
 
     public static Rigidbody GetRootRigidbody(Rigidbody rb)
     {
@@ -54,6 +55,15 @@ public static class PhysicsCache
         // Find and cache value
         childDictionary[target] = target.GetComponentsInChildren<Rigidbody>();
         return childDictionary[target];
+    }
+    public static Collider[] GetChildColliders(Rigidbody target)
+    {
+        target = GetRootRigidbody(target);
+        // Check for pre-cached value
+        if (colliderDictionary.TryGetValue(target, out var array)) return array;
+        // Find and cache value
+        colliderDictionary[target] = target.GetComponentsInChildren<Collider>();
+        return colliderDictionary[target];
     }
 }
 
