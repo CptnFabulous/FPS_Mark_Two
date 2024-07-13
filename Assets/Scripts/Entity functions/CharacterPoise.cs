@@ -19,6 +19,7 @@ public class CharacterPoise : MonoBehaviour
     float currentStunAmount;
     StateFunction lastNonStunState;
 
+    Health health => attachedTo.health;
     float currentStun
     {
         get => currentStunAmount;
@@ -27,7 +28,7 @@ public class CharacterPoise : MonoBehaviour
     
     void Awake()
     {
-        attachedTo.health.onDamage.AddListener((dm) => ApplyStun(dm.stun));
+        health.onDamage.AddListener((dm) => ApplyStun(dm.stun));
     }
     void Update()
     {
@@ -41,6 +42,8 @@ public class CharacterPoise : MonoBehaviour
     public void ApplyStun(float stunValue) => currentStun += stunValue;
     public void SetStun(float newStunValue)
     {
+        if (health.IsAlive == false) return;
+
         //Debug.Log("Setting stun to " + newStunValue);
         currentStunAmount = newStunValue;
 
