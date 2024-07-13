@@ -50,8 +50,11 @@ public class FieldOfView : MonoBehaviour
         {
             // Check that an entity exists
             T e = EntityCache<T>.GetEntity(c.gameObject);
+            if (e == null) continue;
+
             // Check that it's not already added to the list
             if (entities.Contains(e)) continue;
+
             // Check that it can actually be seen
             if (criteria != null && criteria.Invoke(e) == false) continue;
             if (VisionConeCheck(e, out _) != ViewStatus.Visible) continue;
@@ -61,7 +64,6 @@ public class FieldOfView : MonoBehaviour
 
         return entities;
     }
-
     public ViewStatus VisionConeCheck(Vector3 position)
     {
         Vector3 direction = position - transform.position;
