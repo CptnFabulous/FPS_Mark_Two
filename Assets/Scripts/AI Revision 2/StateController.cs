@@ -79,7 +79,17 @@ public abstract class StateFunction : MonoBehaviour
     /// <summary>
     /// The controller that this state is managed by. Only registers if it's in a parent GameObject.
     /// </summary>
-    public StateController controller => _base ??= transform.parent.GetComponentInParent<StateController>();
+    public StateController controller
+    {
+        get
+        {
+            if (_base == null && transform.parent != null)
+            {
+                _base = transform.parent.GetComponentInParent<StateController>();
+            }
+            return _base;
+        }
+    }
     /// <summary>
     /// The root controller in a hierarchy.
     /// <para></para>
@@ -89,4 +99,6 @@ public abstract class StateFunction : MonoBehaviour
     // Once a state can't find a parent controller, that state is the root.
 
     public virtual void SwitchToState(StateFunction newState) => controller.SwitchToState(newState);
+
+    //public virtual IEnumerator AsyncProcedure() => null;
 }
