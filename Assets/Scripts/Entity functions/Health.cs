@@ -37,7 +37,7 @@ public class Health : MonoBehaviour
     [Tooltip("For ensuring the entity can't be damaged by a physics object they're holding, if it glitches out"),
      SerializeField] ThrowHandler throwHandler;
 
-    Character c;
+    Entity e;
     Hitbox[] hb;
     Dictionary<GameObject, float> recentPhysicsCollisions = new Dictionary<GameObject, float>();
     // Any time the attached entity manually exerts force on a physics object (e.g. with AddForce()), register it and the time here
@@ -50,7 +50,7 @@ public class Health : MonoBehaviour
     static float minTimeAfterThrowBeforeCollision = 1f;
 
     public bool IsAlive => data.current > 0;
-    public Character attachedTo => c ??= GetComponentInParent<Character>();
+    public Entity attachedTo => e ??= GetComponentInParent<Entity>();
     public Hitbox[] hitboxes
     {
         get

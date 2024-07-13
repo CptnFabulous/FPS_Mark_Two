@@ -12,7 +12,7 @@ public class Hitbox : MonoBehaviour
     Collider c;
 
     public Collider collider => c ??= GetComponent<Collider>();
-    public Character attachedTo => (sourceHealth != null) ? sourceHealth.attachedTo : null;
+    public Entity attachedTo => (sourceHealth != null) ? sourceHealth.attachedTo : null;
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, Vector3 direction, bool critical = false)
     {
