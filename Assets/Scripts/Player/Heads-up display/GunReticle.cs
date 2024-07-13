@@ -82,12 +82,7 @@ public class GunReticle : MonoBehaviour
         Vector3 forwardAngled = handler.aimAxis.rotation * Quaternion.Euler(0, angle, 0) * Vector3.forward;
         Vector3 centreAtDistance = (adjacent * forwardStraight) + origin;
         Vector3 offsetAtDistance = (hypotenuse * forwardAngled) + origin;
-
-        Debug.DrawLine(origin, centreAtDistance, Color.green);
-        Debug.DrawLine(origin, offsetAtDistance, Color.red);
-        Debug.DrawRay(centreAtDistance, targetRadius * handler.aimAxis.right, Color.blue);
-        Debug.DrawLine(centreAtDistance + (targetRadius * handler.aimAxis.right), Vector3.zero, Color.magenta);
-
+        
         // Gain the screen positions of the centre and offset point
         Vector2 screenPosCentre = playerCamera.WorldToScreenPoint(centreAtDistance);
         Vector2 screenPosOffset = playerCamera.WorldToScreenPoint(offsetAtDistance);
