@@ -4,13 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
+using System;
 
 public class InteractionWindow : MonoBehaviour
 {
     public InteractionHandler following;
+    public Camera guiCamera;
 
     [Header("UI elements")]
     public CanvasGroup canvasGroup;
+    public RectTransform highlightParent;
+    public RectTransform highlight;
     public TMP_Text interactableName;
     public TMP_Text action;
     public GUIButtonPrompt prompt;
@@ -24,13 +28,11 @@ public class InteractionWindow : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("Awaking");
         // Assign button prompt
         PlayerInput input = following.player.controls;
         InputAction action = following.input.action;
         prompt.AssignAction(action, input);
     }
-
     private void LateUpdate()
     {
         bool somethingToInteractWith = following.targetedInteractable != null;
@@ -38,10 +40,34 @@ public class InteractionWindow : MonoBehaviour
         bool somethingPresent = somethingToInteractWith || somethingToPickUp;
         canvasGroup.alpha = somethingPresent ? 1 : 0;
         if (!somethingPresent) return;
-        
 
+        /*
         // TO DO: have a bit here to gain the renderer/bounds and position the interaction window accordingly
+        if (highlight != null)
+        {
+            Camera cam = following.referenceCamera;
+            Rect hr = BoundsToRect(following.targetBounds, cam);
 
+            //DebugDrawScreenLine(hr.min, hr.max, cam, Color.yellow);
+
+
+            //highlight.anchoredPosition = hr.position;
+            //highlight.sizeDelta = hr.size;
+
+            
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(highlightParent, hr.position, guiCamera, out Vector2 pos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(highlightParent, hr.size, guiCamera, out Vector2 size);
+
+
+            highlight.anchoredPosition = pos;
+            highlight.sizeDelta = size;
+            //highlight.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
+            //highlight.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
+            
+
+            //highlight.rect.Set(hr.x, hr.y, hr.width, hr.height);
+        }
+        */
 
         if (somethingToInteractWith)
         {
@@ -52,8 +78,6 @@ public class InteractionWindow : MonoBehaviour
             DisplayPhysicsProp(following.targetedPhysicsProp);
         }
     }
-
-
     void DisplayInteractable(Interactable target)
     {
         bool canInteract = target.CanInteract(following.player);
@@ -84,7 +108,9 @@ public class InteractionWindow : MonoBehaviour
         if (e != null)
         {
             name = e.properName;
-            if (e.health.IsAlive == false) name += $" {deadText}";
+
+            Health h = e.health;
+            if (h != null && h.IsAlive == false) name += $" {deadText}";
         }
 
         interactableName.text = name;
@@ -101,36 +127,66 @@ public class InteractionWindow : MonoBehaviour
         prompt.inputDisabled = !canInteract;
     }
 
-
-
-
-
     /*
-    public static Rect BoundsToRect(Bounds bounds, Camera referenceCamera)
+    private void OnDrawGizmos()
     {
-        Vector2 startPos = referenceCamera.WorldToScreenPoint(bounds.min);
-        Rect final = new Rect(startPos, Vector2.zero); // Input the first value. If it starts at zero but no part of the bounds is inside zero, then the size will be inaccurate.
-        for (int x = -1; x < 2; x += 2)
-        {
-            for (int y = -1; y < 2; y += 2)
-            {
-                for (int z = -1; z < 2; z += 2)
-                {
-                    // Calculate each corner. Since x, y and z will always be either -1 or 1, multiplying the extents by every combination will result in every corner
-                    Vector3 corner = bounds.extents;
-                    corner.x *= x;
-                    corner.y *= y;
-                    corner.z *= z;
-                    corner += bounds.center;
-                    // Obtain the screen space, and expand the Rect to encompass it
-                    Vector2 screenPoint = referenceCamera.WorldToScreenPoint(corner);
-                    final.min = Vector2.Min(final.min, screenPoint);
-                    final.max = Vector2.Max(final.max, screenPoint);
-                }
-            }
-        }
+        if (following.referenceCamera == null) return;
+        if (Camera.current != following.referenceCamera) return;
 
-        return final;
+        bool somethingToInteractWith = following.targetedInteractable != null;
+        bool somethingToPickUp = objectCarrier != null && following.targetedPhysicsProp != null;
+        bool somethingPresent = somethingToInteractWith || somethingToPickUp;
+        if (!somethingPresent) return;
+
+        Bounds b = following.targetBounds;
+        Gizmos.DrawWireCube(b.center, b.size);
+        //Gizmos.DrawGUITexture(BoundsToRect(b, following.referenceCamera), progressBar.mainTexture);
     }
     */
+    public static void DebugDrawScreenLine(Vector2 a, Vector2 b, Camera camera, Color colour, float duration = 0)
+    {
+        Vector3 a3 = a;
+        Vector3 b3 = b;
+        a3.z = 1;
+        b3.z = 1;
+        Debug.DrawRay(camera.ScreenToWorldPoint(a3), camera.ScreenToWorldPoint(b3), colour, duration);
+    }
+
+    static readonly Vector3[] cubeCorners = new Vector3[]
+    {
+        new Vector3(-1, -1, -1),
+        new Vector3(1, -1, -1),
+        new Vector3(-1, -1, 1),
+        new Vector3(1, -1, 1),
+
+        new Vector3(-1, 1, -1),
+        new Vector3(1, 1, -1),
+        new Vector3(-1, 1, 1),
+        new Vector3(1, 1, 1),
+    };
+
+    public static Rect BoundsToRect(Bounds bounds, Camera cam)
+    {
+        Vector3 extents = bounds.extents;
+        // Input the first value. If it starts at zero but no part of the bounds is inside zero, then the size will be inaccurate.
+        Vector2 startPos = cam.WorldToScreenPoint(bounds.center);
+        Rect final = new Rect(startPos, Vector2.zero);
+        for (int i = 0; i < 8; i++)
+        {
+            // Create corner in world space
+            Vector3 corner = cubeCorners[i];
+            corner.x *= extents.x;
+            corner.y *= extents.y;
+            corner.z *= extents.z;
+            corner += bounds.center;
+
+            // Calculate screen position and add it to the final rect
+            Vector2 screenPoint = cam.WorldToScreenPoint(corner);
+            final.min = Vector2.Min(final.min, screenPoint);
+            final.max = Vector2.Max(final.max, screenPoint);
+        }
+
+        final.position = startPos;
+        return final;
+    }
 }
