@@ -5,7 +5,7 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public string properName = "New Entity";
-    public string description = "A new entity.";
+    public string description = "[PLACEHOLDER]";
     public bool isUnique;
 
     public Health health;
