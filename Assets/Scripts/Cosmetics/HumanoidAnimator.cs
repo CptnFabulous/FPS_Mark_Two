@@ -38,6 +38,8 @@ public class HumanoidAnimator : MonoBehaviour
     }
     private void Update()
     {
+        if (ragdoll.enabled) return;
+
         // Update walk direction values
         Vector3 walkValues = character.LocalMovementDirection;
         animator.SetFloat(walkXValue, walkValues.x);
