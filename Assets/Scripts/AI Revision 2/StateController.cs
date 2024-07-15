@@ -6,15 +6,9 @@ using UnityEngine;
 public class StateController : StateFunction
 {
     [SerializeField] StateFunction current;
-
     public UnityEngine.Events.UnityEvent<bool> onSetActive;
 
-
-    public StateFunction currentState
-    {
-        get => current;
-        set => SwitchToState(value);
-    }
+    public StateFunction currentState => current;
     public StateFunction previousState { get; private set; }
     public StateFunction[] states { get; private set; }
 
@@ -30,6 +24,7 @@ public class StateController : StateFunction
         // If not a child of this controller, but still in the hierarchy, initiate from its parent controller instead
         if (newState.controller != this)
         {
+            
             newState.controller.SwitchToState(newState);
             return;
         }
@@ -55,20 +50,21 @@ public class StateController : StateFunction
         states = states.Where(s => s.controller == this).ToArray();
         // Pre-emptively disables all states
         foreach (StateFunction f in states) f.enabled = false;
+
+        // If 'current' state is not actually a child state, replace it with one that is
+        if (states.Contains(current) == false)
+        {
+            current = null;
+            if (states.Length > 0) current = states[0];
+        }
     }
     private void OnEnable() => SetActivity(true);
     private void OnDisable() => SetActivity(false);
 
     void SetActivity(bool active)
     {
-        /*
-        foreach (Behaviour c in subComponents)
-        {
-            c.enabled = active;
-        }
-        */
         currentState.enabled = active;
-        //onSetActive.Invoke(active);
+        onSetActive.Invoke(active);
     }
 }
 
