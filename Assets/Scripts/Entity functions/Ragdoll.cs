@@ -8,7 +8,6 @@ public class Ragdoll : MonoBehaviour
     public Entity attachedTo;
     public Transform rootBone;
     public SkinnedMeshRenderer baseRenderer;
-    [SerializeField] Animator animator;
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
     public UnityEvent<bool> onActiveStateSet;
 
@@ -72,8 +71,6 @@ public class Ragdoll : MonoBehaviour
     void SetActive(bool active)
     {
         onActiveStateSet.Invoke(active);
-        
-        if (animator != null) animator.enabled = !active;
 
         // When activating ragdoll, ensure root bone is at the default orientation relative to the base transform.
         // Otherwise it causes stretching issues, as the joints are synced up to the correct position.
