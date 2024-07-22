@@ -69,20 +69,26 @@ public class ThrowHandler : MonoBehaviour
 
         currentlyThrowing = true;
 
-        // Prep to throw by calculating direction
+        // Create an exceptions list that accounts for the colliders of both the user and the held item
+        // Making a new list for every throw does create garbage, but it's not like this function runs every frame
+        List<Collider> exceptions = new List<Collider>(user.colliders);
+        exceptions.AddRange(PhysicsCache.GetChildColliders(holding));
+
+        // Calculate directions for initial cast
         Vector3 aimOrigin = user.LookTransform.position;
         Vector3 aimDirection = user.LookTransform.forward;
         Vector3 throwOrigin = holding.transform.position;
-        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, attackMask, user.colliders, out Vector3 throwDirection, out _, out _, out _);
+        // Calculate the direction to throw the object in
+        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, attackMask, exceptions, out Vector3 throwDirection, out _, out _, out _);
         throwDirection = throwDirection.normalized;
-        Debug.DrawRay(throwOrigin, throwDirection * range, Color.blue, 5);
+        //Debug.DrawRay(throwOrigin, throwDirection * range, Color.blue, 5);
 
         // Detach object and apply velocity
         Drop(out Rigidbody toThrow);
         //toThrow.AddForce(throwDirection * startingVelocity, ForceMode.Impulse);
         //toThrow.AddForceAtPosition(throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
         AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
-        // Update the last time thrown
+        // Update the last time thrown for the user's health, so the player can't be damaged by an object they just threw due to wacky physics
         user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
 
         onThrow.Invoke(toThrow);
