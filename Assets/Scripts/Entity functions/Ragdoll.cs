@@ -7,9 +7,13 @@ public class Ragdoll : MonoBehaviour
 {
     public Entity attachedTo;
     public Transform rootBone;
-    public SkinnedMeshRenderer baseRenderer;
+
+    [Header("Logic")]
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
     public UnityEvent<bool> onActiveStateSet;
+
+    [Header("Animations")]
+    public SkinnedMeshRenderer baseRenderer;
 
     Rigidbody[] _rb;
     Vector3 rootBoneOriginalPosition;
