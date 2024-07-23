@@ -6,13 +6,14 @@ using UnityEngine;
 public class Hitbox : MonoBehaviour
 {
     //public float damageMultiplier = 1;
+    [SerializeField] Entity _attachedTo;
     public bool isCritical;
-    public Health sourceHealth;
 
     Collider c;
 
     public Collider collider => c ??= GetComponent<Collider>();
-    public Entity attachedTo => (sourceHealth != null) ? sourceHealth.attachedTo : null;
+    public Entity attachedTo => _attachedTo ??= GetComponentInParent<Entity>();
+    public Health sourceHealth => attachedTo.health;
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, Vector3 direction, bool critical = false)
     {
@@ -31,6 +32,7 @@ public class Hitbox : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (sourceHealth == null) return;
         sourceHealth.DamageFromPhysicsCollision(collision, this);
     }
 }

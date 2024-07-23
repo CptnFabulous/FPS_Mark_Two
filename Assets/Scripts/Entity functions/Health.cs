@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -51,22 +52,8 @@ public class Health : MonoBehaviour
 
     public bool IsAlive => data.current > 0;
     public Entity attachedTo => e ??= GetComponentInParent<Entity>();
-    public Hitbox[] hitboxes
-    {
-        get
-        {
-            if (hb != null) return hb;
-
-            hb = GetComponentsInChildren<Hitbox>();
-            for (int i = 0; i < hitboxes.Length; i++)
-            {
-                hitboxes[i].sourceHealth = this;
-            }
-
-            return hb;
-        }
-    }
-
+    public Hitbox[] hitboxes => hb ??= GetComponentsInChildren<Hitbox>().Where((hb) => hb.attachedTo == attachedTo).ToArray();
+    
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.
     /// </summary>
