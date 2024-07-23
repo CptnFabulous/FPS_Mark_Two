@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Hitbox : MonoBehaviour
 {
-    public float damageMultiplier = 1;
+    //public float damageMultiplier = 1;
     public bool isCritical;
     public Health sourceHealth;
 
