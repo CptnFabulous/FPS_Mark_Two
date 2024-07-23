@@ -113,12 +113,12 @@ public class ThrowHandler : MonoBehaviour
     {
         target.detectCollisions = active;
         target.isKinematic = !active;
-        /*
+        
         foreach (Rigidbody rb in PhysicsCache.GetChildRigidbodies(target))
         {
             rb.detectCollisions = active;
             //rb.isKinematic = !active;
         }
-        */
+        
     }
 }
