@@ -74,6 +74,11 @@ public class LookController : MonoBehaviour, ICharacterLookController
             aimAxis.localRotation = Quaternion.Euler(-clampedY, 0, 0);
         }
     }
+    public bool active
+    {
+        get => enabled;
+        set => enabled = value;
+    }
     public Quaternion lookRotation
     {
         get => aimAxis.rotation;

@@ -6,17 +6,18 @@ public class AIDeathState : AIStateFunction
 {
     protected override void OnEnable()
     {
+        Debug.Log($"{rootAI}: entering death state");
         base.OnEnable();
 
         // Ragdollise enemy
-        rootAI.aiming.enabled = false;
-        rootAI.targeting.enabled = false;
+        //rootAI.aiming.enabled = false;
+        //rootAI.targeting.enabled = false;
         rootAI.physicsHandler.ragdollActive = true;
     }
     private void OnDisable()
     {
         rootAI.physicsHandler.ragdollActive = false;
-        rootAI.aiming.enabled = true;
-        rootAI.targeting.enabled = true;
+        //rootAI.aiming.enabled = true;
+        //rootAI.targeting.enabled = true;
     }
 }

@@ -7,6 +7,7 @@ public class Ragdoll : MonoBehaviour
 {
     public Entity attachedTo;
     public Transform rootBone;
+    [SerializeField] Transform[] _boneTransforms;
 
     [Header("Logic")]
     [SerializeField] CollisionDetectionMode collisionDetectionMode;
@@ -19,6 +20,7 @@ public class Ragdoll : MonoBehaviour
     Vector3 rootBoneOriginalPosition;
     Quaternion rootBoneOriginalRotation;
 
+    public Transform[] boneTransforms => _boneTransforms;
     public Rigidbody[] rigidbodies => _rb ??= GetComponentsInChildren<Rigidbody>();
     public Rigidbody rootRigidbody => rigidbodies[0];
     public float combinedMass

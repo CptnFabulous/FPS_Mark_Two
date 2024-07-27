@@ -19,7 +19,7 @@ public class PhysicsAffectedAI : MonoBehaviour
     }
     public float ragdollUprightDotProduct => Vector3.Dot(ragdoll.rootBone.forward, rootAI.transform.up);
 
-    public IEnumerator SetRagdollActiveState(bool value)
+    public IEnumerator SetRagdollActiveState(bool active)
     {
         // Don't bother setting everything up if there isn't a ragdoll, just set it to the regular active state
         if (ragdoll == null)
@@ -33,17 +33,17 @@ public class PhysicsAffectedAI : MonoBehaviour
         yield return new WaitForFixedUpdate();
 
         // Set active states of appropriate scripts
-        collider.enabled = !value;
-        navMeshAgent.enabled = !value;
+        collider.enabled = !active;
+        navMeshAgent.enabled = !active;
         //rootAI.animator.enabled = !value;
-        ragdoll.enabled = value;
+        ragdoll.enabled = active;
 
         // Ensure the root AI doesn't fall through the floor
         // Since when all its colliders are disabled/separated due to turning into a ragdoll, there's nothing stopping it from doing so
-        rigidbody.useGravity = !value;
+        rigidbody.useGravity = !active;
 
         // Perform unique functions upon ragdollising or returning to normal
-        if (value)
+        if (active)
         {
             // Unparent the ragdoll from the AI itself so the physics don't get wacky
             ragdoll.transform.SetParent(null);
@@ -125,47 +125,54 @@ public class PhysicsAffectedAI : MonoBehaviour
     void UpdateBasePositionToMatchRagdoll()
     {
         Transform aiTransform = rootAI.transform;
-        Transform ragdollRootBone = ragdoll.rootBone;
+        Transform rootBone = ragdoll.rootBone;
 
         Vector3 up = aiTransform.up;//-Physics.gravity;
         
         // Check what direction the enemy would face after standing up, based on their ragdoll direction
         // If we compare the direction to up and it's zero, that means it's perfectly forward.
-        Vector3 ragdollForward = ragdollRootBone.forward;
+        Vector3 ragdollForward = rootBone.forward;
         float dot = ragdollUprightDotProduct;
         if (dot < 0)
         {
             // Less than 0 means ragdoll is closer to lying on its face. Use the 'up' vector instead of 'forward'
-            ragdollForward = ragdollRootBone.up;
+            ragdollForward = rootBone.up;
         }
         else if (dot > 0)
         {
             // More than 0 means ragdoll is closer to lying on its back. Use the 'down' vector instead of 'forward'
-            ragdollForward = -ragdollRootBone.up;
+            ragdollForward = -rootBone.up;
         }
 
         // Calculate the direction the AI should face in to roughly match the ragdoll (while remaining upright)
         Vector3 aiForward = Vector3.ProjectOnPlane(ragdollForward, up);
-        // Adjust transform to be roughly in the centre of the ragdoll's body
-        aiTransform.position = rootAI.bounds.center;
+
+        // Adjust transform to be roughly in the centre-bottom of the ragdoll's bounds
+        // TO DO: have code that converts ragdoll bounds to the AI's local space instead of world space
+        Bounds bounds = rootAI.bounds;
+        Vector3 bottom = bounds.center;
+        bottom.y = bounds.min.y;
+        aiTransform.position = bottom;
+        
+
         // Adjust direction to face roughly in the same 'forward' direction as the ragdoll
         aiTransform.rotation = Quaternion.LookRotation(aiForward, up);
     }
     public void SetPositionWithoutAdjustingRagdoll(Vector3 worldPosition)
     {
-
         Transform aiTransform = rootAI.transform;
-        Transform ragdollRootBone = ragdoll.rootBone;
+        Transform rootBone = ragdoll.rootBone;
 
         // Preserve current position of root bone
-        Vector3 rootBoneWorldPosition = ragdollRootBone.position;
-        Quaternion rootBoneWorldRotation = ragdollRootBone.rotation;
+        Vector3 rootBoneWorldPosition = rootBone.position;
+        Quaternion rootBoneWorldRotation = rootBone.rotation;
+
+        Debug.DrawLine(aiTransform.position, worldPosition, Color.cyan, 5);
 
         aiTransform.position = worldPosition;
 
-
         // Re-assign root bone orientation (so the ragdoll position doesn't visually change)
-        ragdollRootBone.position = rootBoneWorldPosition;
-        ragdollRootBone.rotation = rootBoneWorldRotation;
+        rootBone.position = rootBoneWorldPosition;
+        rootBone.rotation = rootBoneWorldRotation;
     }
 }

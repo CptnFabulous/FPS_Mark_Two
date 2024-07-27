@@ -57,9 +57,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!1 &4528304437844994945
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,9 +116,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!1001 &5595313904304370898
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -418,12 +416,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attachedTo: {fileID: 0}
   rootBone: {fileID: 467362707699315629}
+  _boneTransforms:
+  - {fileID: 467362707699315629}
+  - {fileID: 7936156939448847057}
+  - {fileID: 3357485047863906831}
+  - {fileID: 7871762067181791971}
+  - {fileID: 4393813624771904658}
+  - {fileID: 118315776015579656}
+  - {fileID: 5032699133425554094}
+  - {fileID: 149918681368150078}
+  - {fileID: 6703927232927716566}
+  - {fileID: 5238361714892858557}
+  - {fileID: 2160360715904935914}
+  - {fileID: 3130507737440422443}
+  - {fileID: 1700927507965878545}
+  - {fileID: 2225682660513835991}
+  - {fileID: 7941485174414229882}
+  - {fileID: 6058221741651938074}
+  - {fileID: 2035811559026311610}
   collisionDetectionMode: 2
   onActiveStateSet:
     m_PersistentCalls:
       m_Calls: []
   baseRenderer: {fileID: 4809095828349999358}
-  animator: {fileID: 0}
 --- !u!114 &956639457516880340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -478,9 +493,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615665
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -619,9 +633,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615664
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -760,9 +773,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615663
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -900,9 +912,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615662
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1041,9 +1052,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615661
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1182,9 +1192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615660
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1322,9 +1331,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615659
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1462,9 +1470,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615658
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1602,9 +1609,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615657
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1742,9 +1748,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!65 &396615616
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1770,9 +1775,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615655
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1911,9 +1915,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615654
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2052,9 +2055,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615653
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2192,9 +2194,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!135 &396615612
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2220,9 +2221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615651
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2361,9 +2361,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 1
-  sourceHealth: {fileID: 0}
 --- !u!65 &396615611
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2389,9 +2388,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615649
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2530,9 +2528,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615648
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2671,9 +2668,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}
 --- !u!54 &396615647
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2811,6 +2807,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageMultiplier: 1
+  _attachedTo: {fileID: 0}
   isCritical: 0
-  sourceHealth: {fileID: 0}

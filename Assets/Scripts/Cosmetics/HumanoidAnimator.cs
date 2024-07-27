@@ -7,7 +7,7 @@ public class HumanoidAnimator : MonoBehaviour
     public Character character;
 
     [Header("Anatomy")]
-    [SerializeField] Animator animator;
+    [SerializeField] public Animator animator;
     [SerializeField] PhysicsAffectedAI physicsHandler;
     [SerializeField] Transform[] spineBones;
 
@@ -20,6 +20,7 @@ public class HumanoidAnimator : MonoBehaviour
     [SerializeField] string damageDirectionX = "Damage Direction X";
     [SerializeField] string damageDirectionZ = "Damage Direction Z";
 
+    [Header("Ragdoll")]
     [SerializeField] string standUpState = "Movement.Stand up from fall";
     [SerializeField] string ragdollOrientationDotProduct = "Ragdoll orientation dot product";
 
@@ -29,12 +30,6 @@ public class HumanoidAnimator : MonoBehaviour
     private void Awake()
     {
         character.health.onDamage.AddListener(UpdateDamageData);
-        /*
-        ragdoll.onActiveStateSet.AddListener((b) =>
-        {
-            if (b == false) RecoverFromRagdoll();
-        });
-        */
         ragdoll.onActiveStateSet.AddListener((active) => animator.enabled = !active);
     }
     private void Update()
@@ -50,17 +45,21 @@ public class HumanoidAnimator : MonoBehaviour
     {
         if (ragdoll.enabled) return;
 
-        // Set up appropriate aiming rotation of upper body
-        // I used this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
 
-        // Generates an offset rotation so that the upper body transform rotates in the appropriate direction of the head
-        Quaternion rotationOffsetBetweenAIAndBody = Quaternion.FromToRotation(character.transform.forward, character.LookTransform.forward);
-        for (int i = 0; i < spineBones.Length; i++)
+        if (character.lookController.active)
         {
-            float value = (i + 1) / spineBones.Length;
-            // Creates weighted rotation that increases towards the end of the array (last bone is fully weighted)
-            Quaternion rotation = Quaternion.Slerp(Quaternion.identity, rotationOffsetBetweenAIAndBody, value);
-            spineBones[i].rotation = rotation * spineBones[i].rotation;
+            // Set up appropriate aiming rotation of upper body
+            // I used this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
+
+            // Generates an offset rotation so that the upper body transform rotates in the appropriate direction of the head
+            Quaternion rotationOffsetBetweenAIAndBody = Quaternion.FromToRotation(character.transform.forward, character.LookTransform.forward);
+            for (int i = 0; i < spineBones.Length; i++)
+            {
+                float value = (i + 1) / spineBones.Length;
+                // Creates weighted rotation that increases towards the end of the array (last bone is fully weighted)
+                Quaternion rotation = Quaternion.Slerp(Quaternion.identity, rotationOffsetBetweenAIAndBody, value);
+                spineBones[i].rotation = rotation * spineBones[i].rotation;
+            }
         }
     }
 

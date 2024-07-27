@@ -38,6 +38,11 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
 
     #region Look direction values
+    public bool active
+    {
+        get => enabled;
+        set => enabled = value;
+    }
     public Quaternion lookRotation
     {
         get => viewAxis.rotation;

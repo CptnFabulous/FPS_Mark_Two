@@ -14,7 +14,7 @@ public abstract class AIProcedure : AIStateFunction
         currentCoroutine = StartCoroutine(RunProcedure());
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         if (currentCoroutine != null) StopCoroutine(currentCoroutine);
     }
@@ -26,7 +26,7 @@ public abstract class AIProcedure : AIStateFunction
         // Run the procedure
         yield return Procedure();
         // Switch to another state on end
-        controller.SwitchToState(toSwitchToOnEnd);
+        if (toSwitchToOnEnd != null) controller.SwitchToState(toSwitchToOnEnd);
     }
 
     protected abstract IEnumerator Procedure();

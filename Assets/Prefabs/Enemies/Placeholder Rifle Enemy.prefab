@@ -788,6 +788,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6963202339453747508}
   - component: {fileID: 8683465564459443557}
+  - component: {fileID: 2926516114127351961}
   m_Layer: 6
   m_Name: Knockdown
   m_TagString: Untagged
@@ -830,24 +831,46 @@ MonoBehaviour:
   standUpTime: 3
   maxVelocityToStandUp: 0.25
   maxAngularVelocityToStandUp: 0.25
-  onKnockdownStart:
-    m_PersistentCalls:
-      m_Calls: []
-  onStandUpStart:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8165074354203544479}
-        m_TargetAssemblyTypeName: HumanoidAnimator, Assembly-CSharp
-        m_MethodName: RecoverFromRagdoll
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  animationHandler: {fileID: 8165074354203544479}
+  ragdollLerpHandler: {fileID: 2926516114127351961}
+--- !u!114 &2926516114127351961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6922549671669234546}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5f01f076fec3b5448f5f86c87308bd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lerpDuration: 1
+  transitionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  ragdoll: {fileID: 7976993758989521222}
 --- !u!1 &7161686342594176071
 GameObject:
   m_ObjectHideFlags: 0
@@ -2765,22 +2788,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 5365927547579274058, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
---- !u!4 &2639052945598389644 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5344705289576829753, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
-  m_PrefabInstance: {fileID: 7976993758715039413}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7976993758989521222 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 396615667, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
-  m_PrefabInstance: {fileID: 7976993758715039413}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3446410433104660278}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a16144d5c15e114ea74c490df74ba81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &7829340484288056971 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 149918681368150078, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
@@ -2811,6 +2818,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4712987908096690563, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
   m_PrefabInstance: {fileID: 7976993758715039413}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &2639052945598389644 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5344705289576829753, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
+  m_PrefabInstance: {fileID: 7976993758715039413}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7976993758989521222 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 396615667, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
+  m_PrefabInstance: {fileID: 7976993758715039413}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3446410433104660278}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a16144d5c15e114ea74c490df74ba81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &6828394565666564523
 Animator:
   serializedVersion: 3
@@ -2844,7 +2867,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: {fileID: 7555169701559161296}
   animator: {fileID: 6828394565666564523}
-  ragdoll: {fileID: 7976993758989521222}
   physicsHandler: {fileID: 726081221385024944}
   spineBones:
   - {fileID: 7829340484288056971}
