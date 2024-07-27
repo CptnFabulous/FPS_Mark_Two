@@ -16,11 +16,18 @@ public class PhysicsObjectEffects : MonoBehaviour
     float maxScrapeForce;
     */
 
+    float effectCooldown = 0.2f;
+
+    float lastTimeEffectPlayed = 0;
+
     Entity e;
     public Entity rootEntity => e ??= GetComponentInParent<Entity>();
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (Time.time - lastTimeEffectPlayed < effectCooldown) return;
+        lastTimeEffectPlayed = Time.time;
+        
         // Calculate multiplier for effects
         float force = collision.relativeVelocity.magnitude - minImpactForce;
         float forceRange = maxImpactForce - minImpactForce;
