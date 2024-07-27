@@ -29,9 +29,9 @@ public class StateController : StateFunction
             return;
         }
 
-        Debug.Log($"{this}: switching from {current} to {newState}");
         if (newState != currentState)
         {
+            Debug.Log($"{this}: switching from {current} to {newState}");
             current.enabled = false;
             previousState = current;
             current = newState;
