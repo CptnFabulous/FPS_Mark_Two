@@ -6,14 +6,25 @@ using UnityEngine;
 public class EnvironmentalHazard : MonoBehaviour
 {
     public Entity entity;
+    public bool enableFromPhysicsEvents = true;
+    [Header("Damage")]
+    //public int damageOnCollide = 99999;
+    //public int damagePerSecond = 0;
+    //public float tickDelay = 0.2f;
     [SerializeField] DamageType damageType;
 
     Collider c;
     public Collider collider => c ??= GetComponent<Collider>();
 
-    private void OnCollisionEnter(Collision collision) => DamageCheck(collision.collider);
-    private void OnTriggerEnter(Collider other) => DamageCheck(other);
-    private void DamageCheck(Collider other)
+    private void OnCollisionEnter(Collision collision) => CheckFromCollision(collision.collider);
+    private void OnTriggerEnter(Collider other) => CheckFromCollision(other);
+    void CheckFromCollision(Collider c)
+    {
+        if (enableFromPhysicsEvents) DamageCheck(c);
+    }
+
+    public void DamageCheck(Rigidbody rb) => DamageCheck(rb.GetComponentInChildren<Collider>());
+    public void DamageCheck(Collider other)
     {
         //Debug.Log($"{other}: checking hazard collision");
 
