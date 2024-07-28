@@ -68,8 +68,6 @@ public class Ragdoll : MonoBehaviour
     {
         rootBoneOriginalPosition = rootBone.localPosition;
         rootBoneOriginalRotation = rootBone.localRotation;
-        
-        combinedMass = rootRigidbody.mass;
         SetActive(enabled);
     }
     private void OnEnable() => SetActive(true);
