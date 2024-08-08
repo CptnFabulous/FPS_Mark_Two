@@ -24,15 +24,20 @@ public class ADSOverlayTransition : MonoBehaviour
 
     public void OnLerp(float t)
     {
-        if (ads.user == null || ads.player == null) return;
-
-        overlayCanvas.worldCamera = ads.lookControls.headsUpDisplayCamera;
-
         // Enable overlay and disable weapon visuals, if past the desired threshold
         bool showOverlay = t > switchThreshold;
+
+        // If the ADS function is attached to a gun that's currently being used by a player, assign the world camera to the canvas
+        if (showOverlay && ads.enabled && !ads.notSetupProperly)
+        {
+            overlayCanvas.worldCamera = ads.lookControls.headsUpDisplayCamera;
+        }
+
+        // Set visibility of overlay and weapon model
         reticleGroup.gameObject.SetActive(showOverlay);
         foreach (GameObject r in weaponModelComponents) r?.SetActive(!showOverlay);
 
+        // Calculate swap mask opacity
         overlaySwapMask.alpha = swapMaskCurve.Evaluate(t);
     }
 }

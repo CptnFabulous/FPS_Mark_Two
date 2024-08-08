@@ -30,6 +30,8 @@ public class GunGeneralStats : MonoBehaviour
     public UnityEvent effectsOnFire;
     public void Shoot(Character user)
     {
+        if (user == null) return;
+
         Vector3 origin = user.LookTransform.position;
         Vector3 aimDirection = user.aimDirection;
         Vector3 worldUp = user.LookTransform.up;

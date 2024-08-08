@@ -36,9 +36,9 @@ public class GunADS : MonoBehaviour
     public float timer { get; private set; }
 
     Weapon attachedWeapon => w ??= GetComponentInParent<Weapon>();
-    public Character user => attachedWeapon.user;
-    WeaponHandler userWeaponHandler => user.weaponHandler;
-    Player player => userWeaponHandler.controller;
+    public Character user => (attachedWeapon != null) ? attachedWeapon.user : null;
+    public Player player => user as Player;
+    WeaponHandler userWeaponHandler => player.weaponHandler;
     /// <summary>
     /// Is the player currently using ADS? Change this value to trigger ADS changing code
     /// </summary>
@@ -60,7 +60,7 @@ public class GunADS : MonoBehaviour
     float TargetValue => IsAiming ? 1 : 0;
     bool IsScope => viewingCamera != null && sightPicture != null;
     public LookController lookControls => player.movement.lookControls;
-    bool notSetupProperly => attachedWeapon == null || user == null || userWeaponHandler == null || player == null;
+    public bool notSetupProperly => attachedWeapon == null || user == null || userWeaponHandler == null || player == null;
 
     private void Awake()
     {

@@ -28,13 +28,10 @@ public abstract class Character : Entity
 
     public abstract Vector3 MovementDirection { get; }
     public Vector3 LocalMovementDirection => transform.InverseTransformDirection(MovementDirection);
-
-
-
-    public WeaponHandler weaponHandler => (this as Player) != null ? (this as Player).weapons : null;
     public AmmunitionInventory ammo => (weaponHandler != null) ? weaponHandler.ammo : null;
 
 
+    public abstract WeaponHandler weaponHandler { get; }
     public abstract Character target { get; }
 
     /*
