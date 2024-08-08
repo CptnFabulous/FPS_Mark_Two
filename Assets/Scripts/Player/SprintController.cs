@@ -29,7 +29,7 @@ public class SprintController : MonoBehaviour
             // If setting to true, check that the player can start sprinting
             if (value == true) TryStartSprint(out value);
 
-            Debug.Log("Setting sprint to " + value);
+            //Debug.Log("Setting sprint to " + value);
             _sprinting = value;
 
             // At this point we'd change the player movement value, but that is presently handled within the MovementController class itself.

@@ -64,7 +64,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
         
         #region Windup
-        Debug.Log($"{this}: winding up");
+        //Debug.Log($"{this}: winding up");
         // Play windup animation
         OnAttack();
         if (animator != null) animator.SetTrigger(windupTrigger);
@@ -84,7 +84,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
             return Vector3.Angle(direction, hitLocation - origin);
         });
         Character target = (targets.Count > 0) ? targets[0] : null;
-        Debug.Log($"{this}: commencing attack, target = {target}");
+        //Debug.Log($"{this}: commencing attack, target = {target}");
         #endregion
 
         #region Play attack animation
