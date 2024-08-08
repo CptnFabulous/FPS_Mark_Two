@@ -10,6 +10,25 @@ public class Weapon : MonoBehaviour
     [Header("Attack modes")]
     public WeaponMode[] modes;
     public int currentModeIndex;
+
+    [Header("Switching")]
+    public float switchSpeed;
+    public UnityEvent onDraw;
+    public UnityEvent onHolster;
+    public bool isSwitching { get; private set; }
+
+    Character _user;
+
+    public Character user
+    {
+        get
+        {
+            // Check if the weapon is still attached to the current user. Clear if not (e.g. if dropped)
+            if (_user != null && transform.IsChildOf(_user.transform) == false) _user = null;
+            // If now null, check for a new user
+            return _user ??= GetComponentInParent<Character>();
+        }
+    }
     public WeaponMode CurrentMode
     {
         get
@@ -18,12 +37,6 @@ public class Weapon : MonoBehaviour
             return modes[currentModeIndex];
         }
     }
-
-    [Header("Switching")]
-    public float switchSpeed;
-    public UnityEvent onDraw;
-    public UnityEvent onHolster;
-    public bool isSwitching { get; private set; }
     public bool InAction
     {
         get
@@ -32,13 +45,6 @@ public class Weapon : MonoBehaviour
             if (CurrentMode.InAction) return true;
             return false;
         }
-    }
-
-    public Character user { get; private set; }
-
-    private void OnEnable()
-    {
-        user = GetComponentInParent<Character>();
     }
 
     public IEnumerator Draw()
