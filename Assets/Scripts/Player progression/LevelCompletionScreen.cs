@@ -24,7 +24,6 @@ public class LevelCompletionScreen : MonoBehaviour
 
     [Header("Proceeding")]
     [SerializeField] Button nextLevelButton;
-    [SerializeField] Button quitToMenuButton;
 
     string nextLevelName;
 
@@ -33,7 +32,6 @@ public class LevelCompletionScreen : MonoBehaviour
     private void Awake()
     {
         nextLevelButton.onClick.AddListener(GoToNextLevel);
-        quitToMenuButton.onClick.AddListener(QuitToMenu);
     }
 
     public IEnumerator EndLevel()
@@ -80,29 +78,18 @@ public class LevelCompletionScreen : MonoBehaviour
         // Assign next level
         // Disable 'next level' button interactability if there isn't one
         nextLevelName = objectives.nextLevelName;
-        //nextLevelButton.interactable = nextLevelExists;
-
-        //UnityEngine.EventSystems.EventSystem.current.a
     }
 
     void GoToNextLevel()
     {
+        // TO DO: Save game
+
         if (nextLevelExists == false)
         {
-            QuitToMenu();
+            LoadingScreen.ReturnToMainMenu();
             return;
         }
-        
-        //if (nextLevelExists == false) return;
-
-        // Save game
 
         LoadingScreen.LoadScene(nextLevelName); // Load next level
-    }
-    void QuitToMenu()
-    {
-        // Save game
-        
-        LoadingScreen.ReturnToMainMenu(); // Load menu
     }
 }
