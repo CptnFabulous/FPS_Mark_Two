@@ -27,6 +27,7 @@ public class GunADS : MonoBehaviour
     public float swayUpdateTime = 0.1f;
     public UnityEvent onSwitchToADS;
     public UnityEvent onSwitchToHipfire;
+    public UnityEvent<float> onADSLerp;
 
     Weapon w;
     bool currentlyAiming;
@@ -191,6 +192,8 @@ public class GunADS : MonoBehaviour
         Vector3 reticleRelativeToHead = lookControls.upperBody.forward * distanceBetweenReticleAxisAndHead;
         Vector3 position = lookControls.upperBody.position - reticleRelativeToModelTransform + reticleRelativeToHead;
         modelOrientationTransform.position = Vector3.Lerp(hipFireOrientation.position, position, timer);
+
+        onADSLerp.Invoke(timer);
     }
 
 }
