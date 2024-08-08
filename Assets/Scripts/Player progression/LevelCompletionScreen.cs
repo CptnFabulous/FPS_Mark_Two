@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class LevelCompletionScreen : MonoBehaviour
 {
@@ -46,6 +47,8 @@ public class LevelCompletionScreen : MonoBehaviour
         // Wait until the desired time and disable player inputs
         yield return new WaitForSeconds(delayBeforeTakingControl);
         objectives.targetPlayer.stateHandler.navigatingMenus = true;
+        // Update event system to highlight the main button in the menu (so you can navigate to it on a controller)
+        EventSystem.current.SetSelectedGameObject(nextLevelButton.gameObject);
     }
 
     void DisplayInfo(ObjectiveHandler objectives)
