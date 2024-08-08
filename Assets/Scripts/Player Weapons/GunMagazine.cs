@@ -24,15 +24,7 @@ public class GunMagazine : MonoBehaviour
 
     RangedAttack mode;
 
-    AmmunitionInventory inventory
-    {
-        get
-        {
-            if (mode == null) return null;
-            if (mode.User == null) return null;
-            return mode.User.ammo;
-        }
-    }
+    AmmunitionInventory inventory => (mode != null) ? mode.ammo : null;
     AmmunitionType type => mode.stats.ammoType;
 
     public void Initialise(RangedAttack currentMode)

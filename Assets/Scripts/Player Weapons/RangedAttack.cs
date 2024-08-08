@@ -34,7 +34,8 @@ public class RangedAttack : WeaponMode
     }
     public bool NotReloading => magazine == null || magazine.ReloadActive == false;
 
-    public bool consumesAmmo => User.ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
+    public AmmunitionInventory ammo => (User != null && User.weaponHandler != null) ? User.weaponHandler.ammo : null;
+    public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
     public override void OnSwitchTo()
     {
@@ -126,7 +127,7 @@ public class RangedAttack : WeaponMode
         }
 
         // If the weapon consumes ammunition, but there isn't enough to fire
-        if (consumesAmmo && User.ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
+        if (consumesAmmo && ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
         {
             return false;
         }
@@ -141,7 +142,7 @@ public class RangedAttack : WeaponMode
         }
         if (consumesAmmo)
         {
-            User.ammo.Spend(stats.ammoType, stats.ammoPerShot);
+            ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
         shotsInBurst++;
     }
