@@ -145,14 +145,12 @@ public class Health : MonoBehaviour
         //Debug.Log($"{damagedBy} {(willTakeDamage ? "will" : "won't")} damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
 
         // Calculate damage and stun accordingly
-        //force *= hitbox.damageMultiplier;
         float damage = force * damagePerCollisionForceUnit;
         float stun = force * stunPerCollisionForceUnit;
         Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponentInParent<Entity>();
 
-        // Deal damage
-        // TO DO: multiply damage values and set as critical based on the specified hitbox's parameters
-        Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), hitbox.isCritical, DamageType.Impact, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized);
+        // Deal damage (use the hitbox's main damage function to calculate things like resistances)
+        hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.Impact, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized, hitbox.isCritical);
         #endregion
     }
 

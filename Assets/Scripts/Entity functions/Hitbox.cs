@@ -8,6 +8,7 @@ public class Hitbox : MonoBehaviour
     //public float damageMultiplier = 1;
     [SerializeField] Entity _attachedTo;
     public bool isCritical;
+    public DamageResistanceProfile resistances;
 
     Collider c;
 
@@ -18,6 +19,16 @@ public class Hitbox : MonoBehaviour
     public void Damage(int damage, int stun, DamageType type, Entity attacker, Vector3 direction, bool critical = false)
     {
         if (sourceHealth == null) return;
+
+        //force *= hitbox.damageMultiplier;
+        if (resistances != null)
+        {
+            float multiplier = resistances[type];
+            //Debug.Log($"{attachedTo}: damage resistance profile present, multiplying by {multiplier}");
+            damage = Mathf.RoundToInt(damage * multiplier);
+            stun = Mathf.RoundToInt(stun * multiplier);
+        }
+
         sourceHealth.Damage(damage, stun, critical, type, attacker, direction);
     }
     public void Damage(int damage, float criticalMultiplier, int stun, DamageType type, Entity attacker, Vector3 direction)
