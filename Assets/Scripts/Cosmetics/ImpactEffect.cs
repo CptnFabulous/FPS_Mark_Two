@@ -41,7 +41,7 @@ public class ImpactEffect : ScriptableObject
         }
 
         // Stick decal
-        if (decal != null)
+        if (decal != null && EntityCache<Player>.GetEntity(surfaceCollider) == null)
         {
             if (decalPrefab == null)
             {
