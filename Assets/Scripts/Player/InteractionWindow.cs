@@ -81,12 +81,18 @@ public class InteractionWindow : MonoBehaviour
     void DisplayInteractable(Interactable target)
     {
         bool canInteract = target.CanInteract(following.player);
-        float progress = target.Progress;
-
         SetInteractability(canInteract);
 
+        string displayName = target.displayName;
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            Entity e = target.parentEntity;
+            displayName = (e != null) ? e.name : target.name;
+        }
+        interactableName.text = displayName;
+
         // Set values
-        interactableName.text = target.name;
+        float progress = target.Progress;
         progressBar.fillAmount = progress;
         if (progress > 0 && progress < 1)
         {

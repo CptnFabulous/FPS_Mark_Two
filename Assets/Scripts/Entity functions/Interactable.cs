@@ -8,6 +8,9 @@ public class Interactable : MonoBehaviour
 {
     public bool active = true;
     public bool activateOnCollision;
+    public Entity parentEntity;
+    [Tooltip("If left blank, will instead use the name of the parent entity, or the object name itself")]
+    public string displayName;
     public string promptMessage = "Interact";
     public string inProgressMessage = "In progress";
     public string disabledMessage = "Cannot interact";
