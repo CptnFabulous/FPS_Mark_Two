@@ -157,12 +157,12 @@ public class WeaponHandler : MonoBehaviour
         int increment = Mathf.RoundToInt(Mathf.Sign(inputValue));
 
         // Switch either your weapon, or the firing mode on your current weapon
-        if (quickSwitchModes)
+        if (quickSwitchModes && CurrentWeapon != null)
         {
             int newIndex = MiscFunctions.LoopIndex(CurrentWeapon.currentModeIndex + increment, CurrentWeapon.modes.Length);
             StartCoroutine(CurrentWeapon.SwitchMode(newIndex));
         }
-        else
+        else if (equippedWeapons.Length > 0) // Don't allow switching if there's nothing to switch to
         {
             int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Length);
             StartCoroutine(SwitchWeapon(newIndex));
