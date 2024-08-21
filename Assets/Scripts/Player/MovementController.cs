@@ -81,7 +81,8 @@ public class MovementController : MonoBehaviour
     {
         Vector3 rayOrigin = transform.position + transform.up * (collider.height / 2);
         float distance = groundingRayLength + Vector3.Distance(transform.position, rayOrigin);
-        Physics.SphereCast(rayOrigin, collider.radius, -transform.up, out RaycastHit newGroundingData, distance, collisionMask);
+        float radius = collider.radius * 0.9f;
+        Physics.SphereCast(rayOrigin, radius, -transform.up, out RaycastHit newGroundingData, distance, collisionMask);
         if (newGroundingData.collider != null && groundingData.collider == null)
         {
             //Debug.Log("Landing on ground on frame " + Time.frameCount);
