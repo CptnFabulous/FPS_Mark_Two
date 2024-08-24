@@ -460,6 +460,7 @@ GameObject:
   - component: {fileID: 4973556070369201381}
   - component: {fileID: 8510839127407747177}
   - component: {fileID: 5438377952590165758}
+  - component: {fileID: 2603796428523769575}
   m_Layer: 0
   m_Name: Steam Valve
   m_TagString: Untagged
@@ -534,20 +535,33 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2252089926997695381}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Play
-        m_Mode: 1
+      - m_Target: {fileID: 2252089926997695383}
+        m_TargetAssemblyTypeName: SmokeCloud, Assembly-CSharp
+        m_MethodName: set_emitting
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
   allowPosthumousDamage: 0
   throwHandler: {fileID: 0}
+--- !u!114 &2603796428523769575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4973556070369201380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactEffect: {fileID: 11400000, guid: 16f4d5a2627a7824a83c6dda7700d914, type: 2}
 --- !u!1 &4973556070530330630
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,7 +1036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 8510839127407747177}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: bfd431f49c395c3439a104d9e7960585, type: 2}
 --- !u!114 &8022330546164388838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1035,9 +1049,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 449a4007d55b2664b88fcf02918e9f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentEntity: {fileID: 8510839127407747177}
   active: 1
   activateOnCollision: 0
+  parentEntity: {fileID: 8510839127407747177}
+  displayName: 
   promptMessage: Release steam
   inProgressMessage: Releasing steam
   disabledMessage: Steam empty
@@ -1585,7 +1600,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8862784052061853080, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: m_Name
-      value: Smoke Plume
+      value: Steam Cloud
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853082, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: m_RootOrder
@@ -1644,24 +1659,36 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: ShapeModule.angle
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.m_BurstCount
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
-      value: 40
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: VelocityModule.speedModifier.scalar
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.rateOverTime.minMaxState
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: VelocityModule.speedModifier.minMaxState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].cycleCount
@@ -1676,6 +1703,10 @@ PrefabInstance:
       value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].time
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
       value: 30
       objectReference: {fileID: 0}
@@ -1685,27 +1716,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.rateOverTime.maxCurve.m_Curve.Array.data[1].time
-      value: 0.11383927
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.rateOverTime.maxCurve.m_Curve.Array.data[1].value
-      value: 0.07692319
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: VelocityModule.speedModifier.maxCurve.m_Curve.Array.data[1].time
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: VelocityModule.speedModifier.minCurve.m_Curve.Array.data[1].time
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: VelocityModule.speedModifier.maxCurve.m_Curve.Array.data[0].value
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: VelocityModule.speedModifier.maxCurve.m_Curve.Array.data[1].value
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+      propertyPath: VelocityModule.speedModifier.minCurve.m_Curve.Array.data[1].value
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: VelocityModule.speedModifier.maxCurve.m_Curve.Array.data[0].inSlope
-      value: -23.9417
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: VelocityModule.speedModifier.maxCurve.m_Curve.Array.data[0].outSlope
-      value: -23.9417
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: VelocityModule.speedModifier.maxCurve.m_Curve.Array.data[0].outWeight
-      value: 0.42410713
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.maxCurve.m_PreInfinity
@@ -1802,8 +1849,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8862784052061853082, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
   m_PrefabInstance: {fileID: 7331834870983429642}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &2252089926997695381 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 8862784052061853087, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+--- !u!114 &2252089926997695383 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8862784052061853085, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
   m_PrefabInstance: {fileID: 7331834870983429642}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d836eec020f38aa479951a46dd5f1f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
