@@ -7,35 +7,71 @@ public class EnvironmentalHazard : MonoBehaviour
 {
     public Entity entity;
     public bool enableFromPhysicsEvents = true;
+
     [Header("Damage")]
-    //public int damageOnCollide = 99999;
-    //public int damagePerSecond = 0;
+    //[SerializeField] DamageType damageType;
+
+    public DamageDealer contactDamage;
+    //public DamageDealer continuousDamage;
     //public float tickDelay = 0.2f;
-    [SerializeField] DamageType damageType;
+
+
+
+    Dictionary<Entity, float> previouslyDamaged = new Dictionary<Entity, float>();
+    float damageCooldown = 0.5f;
 
     Collider c;
     public Collider collider => c ??= GetComponent<Collider>();
 
-    private void OnCollisionEnter(Collision collision) => CheckFromCollision(collision.collider);
-    private void OnTriggerEnter(Collider other) => CheckFromCollision(other);
-    void CheckFromCollision(Collider c)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (enableFromPhysicsEvents) DamageCheck(c);
+        if (enableFromPhysicsEvents == false) return;
+        ContactPoint contactPoint = collision.contacts[0];
+        DamageCheck(collision.collider, contactPoint.point, -collision.relativeVelocity, contactPoint.normal);
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (enableFromPhysicsEvents == false) return;
+        DamageCheck(c);
     }
 
-    public void DamageCheck(Rigidbody rb) => DamageCheck(rb.GetComponentInChildren<Collider>());
+    public void DamageCheck(Rigidbody rb)
+    {
+        Collider c = rb.GetComponentInChildren<Collider>();
+        DamageCheck(c, rb.centerOfMass, rb.velocity, -rb.velocity);
+    }
     public void DamageCheck(Collider other)
     {
+        Vector3 entityPosition = other.bounds.center;
+        Vector3 direction = collider.bounds.center - entityPosition;
+        DamageCheck(other, entityPosition, direction, -direction);
+    }
+    public void DamageCheck(Collider other, Vector3 point, Vector3 direction, Vector3 normal)
+    {
         //Debug.Log($"{other}: checking hazard collision");
-
-        // If the collider is part of an entity, said entity has fallen into the damage zone. Damage it!
         Entity e = EntityCache<Entity>.GetEntity(other.gameObject);
-        if (e != null && e.health != null)
-        {
-            Health h = e.health;
-            //Debug.Log($"{e} entered/collided with {this} and will now be killed");
-            int damage = h.data.max * 10;
-            h.Damage(damage, damage, true, damageType, entity, other.bounds.center - collider.bounds.center);
-        }
+
+
+        Entity attacker = entity;
+
+        /*
+        // Check if the incoming object was recently hit 
+
+
+
+        if (PhysicsCache.launchedBy.TryGetValue())
+        Entity potentialAttacker = PhysicsCache.launchedBy[].Item1;
+        float timeLaunched = PhysicsCache.launchedBy[].Item2;
+        */
+
+        // If we damaged the object too recently, ignore
+        // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
+        
+        // TO DO? Make it so if the hit object isn't part of a parent entity, just register that object instead (change the dictionary to use gameobjects instead of entities)
+        
+        if (previouslyDamaged.TryGetValue(e, out float hitTime) && (Time.time - hitTime) < damageCooldown) return;
+        previouslyDamaged[e] = Time.time; // Update the last time hit for the next check
+
+        contactDamage.AttackObject(other.gameObject, attacker, entity, point, direction, normal);
     }
 }

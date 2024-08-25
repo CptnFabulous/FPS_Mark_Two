@@ -3413,7 +3413,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entity: {fileID: 190440045342803948}
   enableFromPhysicsEvents: 0
-  damageType: 0
+  contactDamage:
+    damage: 25
+    stun: 25
+    knockback: -5
+    type: 0
+    criticalMultiplier: 1
+    impactEffect: {fileID: 0}
+    onHit:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!65 &190440045342803946
 BoxCollider:
   m_ObjectHideFlags: 0
