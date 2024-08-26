@@ -15,7 +15,7 @@ public enum DamageType
     Explosive,
     Burning,
     //Freezing,
-    //Electric,
+    Electrocution,
     //Corrosive,
     //Poison,
     Asphyxiation,
