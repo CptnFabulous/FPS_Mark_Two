@@ -28,7 +28,7 @@ public class PhysicsAffectedAI : MonoBehaviour
             rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             yield break;
         }
-        
+
         // Wait for the next fixed update call, so that all physics changes have occurred properly
         yield return new WaitForFixedUpdate();
 
@@ -60,6 +60,9 @@ public class PhysicsAffectedAI : MonoBehaviour
         }
         else
         {
+            // Store prior look direction (so it can be reassigned afterwards)
+            Quaternion lookRotation = rootAI.aiming.lookRotation;
+
             // Secretly update the real AI's orientation to match the ragdoll's (while preserving the AI's up axis), then re-parent them.
             // This should hide that the AI and ragdoll were ever separated.
             UpdateBasePositionToMatchRagdoll();
@@ -87,6 +90,9 @@ public class PhysicsAffectedAI : MonoBehaviour
             // Re-assign root bone orientation (so the ragdoll position doesn't visually change)
             ragdollRootBone.position = rootBoneWorldPosition;
             ragdollRootBone.rotation = rootBoneWorldRotation;
+
+            // Preserve prior look direction (without this the AI sometimes rotates to weird unintended directions while de-ragdollising)
+            rootAI.aiming.lookRotation = lookRotation;
         }
     }
     private void OnEnable()
