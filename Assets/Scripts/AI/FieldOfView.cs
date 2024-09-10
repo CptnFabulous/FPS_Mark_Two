@@ -183,4 +183,11 @@ public class FieldOfView : MonoBehaviour
         Vector3 onPlane = Vector3.ProjectOnPlane(direction, up);
         return Vector3.Angle(onPlane, forward);
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.DrawFrustum(Vector3.zero, viewingAngles.y, viewRange, 0, viewingAngles.x / viewingAngles.y);
+    }
 }
