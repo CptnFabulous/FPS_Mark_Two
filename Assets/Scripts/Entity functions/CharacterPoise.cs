@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class CharacterPoise : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class CharacterPoise : MonoBehaviour
     [SerializeField] float staggerThreshold = 10;
     [SerializeField] float knockdownThreshold = 20;
     [SerializeField] float recoverSpeed = 3.33f;
+    public UnityEvent<DamageMessage> onStunApplied;
 
     [Header("State transitions")]
     [SerializeField] Character attachedTo;
@@ -28,7 +30,7 @@ public class CharacterPoise : MonoBehaviour
     
     void Awake()
     {
-        health.onDamage.AddListener((dm) => ApplyStun(dm.stun));
+        health.onDamage.AddListener(ApplyStun);
     }
     void Update()
     {
@@ -39,8 +41,12 @@ public class CharacterPoise : MonoBehaviour
         }
     }
 
-    public void ApplyStun(float stunValue) => currentStun += stunValue;
-    public void SetStun(float newStunValue)
+    public void ApplyStun(DamageMessage dm)
+    {
+        currentStun += dm.stun;
+        onStunApplied.Invoke(dm);
+    }
+    void SetStun(float newStunValue)
     {
         if (health.IsAlive == false) return;
 
