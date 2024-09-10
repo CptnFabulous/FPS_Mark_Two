@@ -44,6 +44,8 @@ public class Health : MonoBehaviour
     // Any time the attached entity manually exerts force on a physics object (e.g. with AddForce()), register it and the time here
     public Dictionary<GameObject, float> timesPhysicsObjectsWereLaunchedByThisEntity = new Dictionary<GameObject, float>();
 
+    public DamageMessage lastSourceOfDamage { get; private set; } = null;
+
     static float minimumCollisionForceToDamage = 10;
     static float damagePerCollisionForceUnit = 0.5f;
     static float stunPerCollisionForceUnit = 1f;
@@ -80,6 +82,8 @@ public class Health : MonoBehaviour
         data.Increment(-damage);
 
         DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun, direction);
+        // At this point I think I'd need to delete the previous 'lastSourceOfDamage' if C# meant I didn't have to worry about garbage collection
+        lastSourceOfDamage = damageMessage;
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
         Notification<DamageMessage>.Transmit(damageMessage);
 
