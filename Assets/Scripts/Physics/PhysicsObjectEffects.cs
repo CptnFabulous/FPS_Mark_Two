@@ -16,7 +16,7 @@ public class PhysicsObjectEffects : MonoBehaviour
     float maxScrapeForce;
     */
 
-    float effectCooldown = 0.2f;
+    float effectCooldown = 0.05f; // Try 0.2f if effects start spamming. Maybe the amount should vary based on the class
 
     float lastTimeEffectPlayed = 0;
 
