@@ -52,11 +52,14 @@ public class GunReticle : MonoBehaviour
     }
     private void LateUpdate()
     {
+        // Pre-emptively hide reticle and show regular dot
+        opacity = 0;
+        centreDot.gameObject.SetActive(true);
+
         // Check that a reticle is present
         if (mode == null)
         {
             // If not, hide the reticle and end the function early since there's nothing to render
-            opacity = 0;
             return;
         }
 
