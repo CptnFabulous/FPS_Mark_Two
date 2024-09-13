@@ -66,6 +66,8 @@ public class Health : MonoBehaviour
     {
         if (IsAlive == false && allowPosthumousDamage == false) return;
 
+        bool wasAlive = IsAlive;
+
         bool isHealing = damage < 0;
         if (isHealing)
         {
@@ -87,7 +89,8 @@ public class Health : MonoBehaviour
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
         Notification<DamageMessage>.Transmit(damageMessage);
 
-        if (data.current <= 0)
+        // If this attack is the one that killed the entity, run death events
+        if (!IsAlive && wasAlive)
         {
             KillMessage killMessage = new KillMessage(attacker, this, type);
             onDeath.Invoke(killMessage);
