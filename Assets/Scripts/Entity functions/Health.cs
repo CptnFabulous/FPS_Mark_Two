@@ -102,6 +102,8 @@ public class Health : MonoBehaviour
     {
         // Don't bother with calculations if entity is already dead
         if (IsAlive == false && allowPosthumousDamage == false) return;
+        // Ensure the entity can't be damaged by its own colliders
+        if (attachedTo.colliders.Contains(collision.collider)) return;
 
         #region Calculate collision force, cancel if too low
         // Figure out impact force from velocity. If a rigidbody is present, multiply the mass accordingly
@@ -125,8 +127,6 @@ public class Health : MonoBehaviour
 
         #region Check if the entity can take damage from the colliding object at this time
 
-        // Ensure the entity can't be damaged by its own colliders
-        if (attachedTo.colliders.Contains(collision.collider)) return;
 
         // Check the root rigidbody this entity is attached to.
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
