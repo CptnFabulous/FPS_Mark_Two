@@ -398,6 +398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 7555169701559161296}
   isCritical: 1
+  resistances: {fileID: 0}
 --- !u!1 &2299994607354715158
 GameObject:
   m_ObjectHideFlags: 0
@@ -541,6 +542,9 @@ MonoBehaviour:
   staggerThreshold: 10
   knockdownThreshold: 20
   recoverSpeed: 3.33
+  onStunApplied:
+    m_PersistentCalls:
+      m_Calls: []
   attachedTo: {fileID: 7555169701559161296}
   stateController: {fileID: 4300564472772752741}
   stunState: {fileID: 2504197487795092743}
@@ -826,11 +830,12 @@ MonoBehaviour:
   soundCue: {fileID: 0}
   animationTrigger: 
   toSwitchToOnEnd: {fileID: 0}
-  stunHandler: {fileID: 780700435301158838}
   timeBeforeStandingUp: 2
   standUpTime: 3
   maxVelocityToStandUp: 0.25
   maxAngularVelocityToStandUp: 0.25
+  stunlockThreshold: 10
+  stunHandler: {fileID: 780700435301158838}
   animationHandler: {fileID: 8165074354203544479}
   ragdollLerpHandler: {fileID: 2926516114127351961}
 --- !u!114 &2926516114127351961
@@ -1399,6 +1404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 7555169701559161296}
   isCritical: 0
+  resistances: {fileID: 0}
 --- !u!1 &7556363973061287510
 GameObject:
   m_ObjectHideFlags: 0
