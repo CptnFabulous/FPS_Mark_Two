@@ -29,5 +29,11 @@ public abstract class AIProcedure : AIStateFunction
         if (toSwitchToOnEnd != null) controller.SwitchToState(toSwitchToOnEnd);
     }
 
+    protected void ResetProcedure()
+    {
+        if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+        currentCoroutine = StartCoroutine(RunProcedure());
+    }
+
     protected abstract IEnumerator Procedure();
 }

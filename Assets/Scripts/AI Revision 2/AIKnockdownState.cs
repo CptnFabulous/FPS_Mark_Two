@@ -6,23 +6,35 @@ using UnityEngine.Events;
 
 public class AIKnockdownState : AIProcedure
 {
-    [Header("Stun data")]
-    [SerializeField] CharacterPoise stunHandler;
+    [Header("Standing up")]
     [SerializeField] float timeBeforeStandingUp = 2;
     [SerializeField] float standUpTime = 2;
     [SerializeField] float maxVelocityToStandUp = 0.25f;
     [SerializeField] float maxAngularVelocityToStandUp = 0.25f;
 
+    [Header("Re-ragdollising")]
+    [SerializeField] int stunlockThreshold = 10;
+
+    [Header("Stun data")]
+    [SerializeField] CharacterPoise stunHandler;
+
     public HumanoidAnimator animationHandler;
     public StandUpFromRagdoll ragdollLerpHandler;
 
     NavMeshPath existingPath;
+    bool currentlyStandingUp;
 
     PhysicsAffectedAI aiPhysics => rootAI.physicsHandler;
     ICharacterLookController lookController => rootAI.lookController;
-    //Animator animator => ragdollLerpHandler.animator.animator;
+
+    void Awake()
+    {
+        stunHandler.onStunApplied.AddListener(CheckToStunlock);
+    }
+
     protected override IEnumerator Procedure()
     {
+        currentlyStandingUp = false;
         if (ragdollLerpHandler != null) ragdollLerpHandler.enabled = false;
 
         Debug.Log($"{rootAI} ({rootAI.GetInstanceID()}): Knockdown start");
@@ -58,9 +70,12 @@ public class AIKnockdownState : AIProcedure
         // If lerping code is present, start that up
         if (ragdollLerpHandler != null) ragdollLerpHandler.StartTransition();
 
+        // Reset stun value so the class can check for stunlocks
+        Debug.Log($"{rootAI}: resetting stun meter for stunlocking");
+        stunHandler.currentStun = 0;
+
         // Wait while character stands back up
-        // TO DO: figure out what happens if the enemy is hit by something that should knock them down, while they're in the 'standing up' animation
-        // Alternatively, if the standing up animation is quick enough, I can just give them I-frames and it should be fine.
+        currentlyStandingUp = true;
         yield return new WaitForSeconds(standUpTime);
 
         stunHandler.ReturnToNormalFunction();
@@ -79,6 +94,7 @@ public class AIKnockdownState : AIProcedure
             aiPhysics.ragdollActive = false;
         }
 
+        currentlyStandingUp = false;
         if (ragdollLerpHandler != null) ragdollLerpHandler.enabled = false;
 
         if (existingPath != null)
@@ -89,7 +105,18 @@ public class AIKnockdownState : AIProcedure
 
         lookController.active = true;
     }
+    void CheckToStunlock(DamageMessage dm)
+    {
+        // Check that the entity is in this state, and trying to stand up from a knockdown
+        if (!enabled) return;
+        if (!currentlyStandingUp) return;
 
+        // If the enemy was stunned enough while trying to stand up, knock them back down again
+        if (stunHandler.currentStun < stunlockThreshold) return;
+
+        Debug.Log($"{rootAI}: resetting knockdown due to stunlock");
+        ResetProcedure();
+    }
     bool RagdollCanStandUp(out NavMeshHit solidGround)
     {
         solidGround = new NavMeshHit();

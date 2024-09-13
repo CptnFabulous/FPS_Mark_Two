@@ -22,7 +22,7 @@ public class CharacterPoise : MonoBehaviour
     StateFunction lastNonStunState;
 
     Health health => attachedTo.health;
-    float currentStun
+    public float currentStun
     {
         get => currentStunAmount;
         set => SetStun(value);
