@@ -9,6 +9,7 @@ public class GunReticle : MonoBehaviour
     [SerializeField] float targetRadius = 0.5f;
     [SerializeField] RectTransform centreDot;
     [SerializeField] RectTransform[] reticleBlades;
+    [SerializeField] RectTransform simpleReticle;
     [SerializeField] AnimationCurve animationCurveForADS = AnimationCurve.EaseInOut(0, 1, 1, 0);
 
     RectTransform rt;
@@ -52,16 +53,16 @@ public class GunReticle : MonoBehaviour
     }
     private void LateUpdate()
     {
-        // Pre-emptively hide reticle and show regular dot
-        opacity = 0;
-        centreDot.gameObject.SetActive(true);
-
         // Check that a reticle is present
         if (mode == null)
         {
             // If not, hide the reticle and end the function early since there's nothing to render
+            opacity = 0;
+            simpleReticle.gameObject.SetActive(true);
             return;
         }
+        // Deactivate simple reticle, so it doesn't get in the way of gun reticle
+        simpleReticle.gameObject.SetActive(false);
 
         // Set visibility based on various factors specified in reticle opacity
         opacity = ReticleOpacity();
