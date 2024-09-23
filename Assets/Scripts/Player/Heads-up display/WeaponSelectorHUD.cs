@@ -36,13 +36,10 @@ public class WeaponSelectorHUD : MonoBehaviour
         radialMenu.onValueChanged.AddListener(DisplayInfoOnSelectedMode);
     }
 
-    public void Setup(WeaponHandler newHandler)
+    public void Refresh(WeaponHandler newHandler)
     {
         handler = newHandler;
-        SetupRadialMenu();
-    }
-    void SetupRadialMenu()
-    {
+        
         #region Add options
         List<Sprite> icons = new List<Sprite>();
         foreach (Weapon w in handler.equippedWeapons) // Get all the icons from all the firing modes

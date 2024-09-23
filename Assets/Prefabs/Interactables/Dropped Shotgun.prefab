@@ -186,7 +186,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   activateOnCollision: 0
-  promptMessage: Restore ammo
+  parentEntity: {fileID: 0}
+  displayName: 
+  promptMessage: Pick up
   inProgressMessage: Picking up
   disabledMessage: Ammo full
   onInteract:
@@ -206,6 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactable: {fileID: 377312252}
   pickupNoise: {fileID: 0}
+  toPickup: {fileID: 3275955952515887918, guid: 9a9200cc3aeba9648b15e2e54a2ebb54, type: 3}
   type: {fileID: 11400000, guid: d450133976532494a9ca9ecf16dd1804, type: 2}
   amountToRestore: 6
   limitedSupply: 1

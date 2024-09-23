@@ -9,7 +9,7 @@ public class WeaponHandler : MonoBehaviour
     public Player controller;
 
     [Header("Weapons")]
-    public Weapon[] equippedWeapons;
+    public List<Weapon> equippedWeapons;
     public WeaponMode offhand;
     public Transform holdingSocket;
     public AmmunitionInventory ammo;
@@ -34,7 +34,7 @@ public class WeaponHandler : MonoBehaviour
     public bool SecondaryActive { get; private set; }
     public bool isSwitching { get; private set; }
 
-    public Weapon CurrentWeapon => (equippedWeapons.Length > 0) ? equippedWeapons[equippedWeaponIndex] : null;
+    public Weapon CurrentWeapon => (equippedWeapons.Count > 0) ? equippedWeapons[equippedWeaponIndex] : null;
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
@@ -162,9 +162,9 @@ public class WeaponHandler : MonoBehaviour
             int newIndex = MiscFunctions.LoopIndex(CurrentWeapon.currentModeIndex + increment, CurrentWeapon.modes.Length);
             StartCoroutine(CurrentWeapon.SwitchMode(newIndex));
         }
-        else if (equippedWeapons.Length > 0) // Don't allow switching if there's nothing to switch to
+        else if (equippedWeapons.Count > 0) // Don't allow switching if there's nothing to switch to
         {
-            int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Length);
+            int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Count);
             StartCoroutine(SwitchWeapon(newIndex));
         }
     }
@@ -173,26 +173,41 @@ public class WeaponHandler : MonoBehaviour
     #region Weapon switching
     void UpdateAvailableWeapons()
     {
-        equippedWeapons = GetComponentsInChildren<Weapon>(true);
-
-        foreach (Weapon w in equippedWeapons)
+        equippedWeapons.Clear();
+        foreach (Weapon w in GetComponentsInChildren<Weapon>(true))
         {
-            // Assign proper transform values
-            w.transform.SetParent(holdingSocket);
-            w.transform.localPosition = Vector3.zero;
-            w.transform.localRotation = Quaternion.identity;
-
-            // Disable all weapons so that only the appropriate one will be enabled
-            w.gameObject.SetActive(false);
+            AddWeapon(w, false);
         }
+
+        //selectorInfo.Refresh(this);
         
-        selectorInfo.Setup(this);
-        
-        if (CurrentWeapon != null)
+        if (CurrentWeapon != null) StartCoroutine(SwitchWeapon(equippedWeaponIndex));
+    }
+
+
+    public void AddWeapon(Weapon w, bool autoSwitch)
+    {
+        equippedWeapons.Add(w);
+
+        // Assign proper transform values
+        w.transform.SetParent(holdingSocket);
+        w.transform.localPosition = Vector3.zero;
+        w.transform.localRotation = Quaternion.identity;
+        // Pre-emptively disable weapon object so that switching and setup can play properly
+        w.gameObject.SetActive(false);
+        // Refresh weapon selector
+        selectorInfo.Refresh(this);
+
+        // Switch to new weapon, if specified
+        if (autoSwitch)
         {
-            StartCoroutine(SwitchWeapon(equippedWeaponIndex));
+            // Switch to first firing mode
+            int index = equippedWeapons.IndexOf(w);
+            StartCoroutine(SwitchWeaponAndFiringMode(index, 0));
         }
     }
+
+
     public void SetCurrentWeaponActive(bool drawn)
     {
         // If the desired state is already met, do nothing
@@ -216,10 +231,10 @@ public class WeaponHandler : MonoBehaviour
     }
     IEnumerator SwitchWeapon(int newIndex)
     {
-        if (equippedWeapons.Length <= 0) yield break;
+        if (equippedWeapons.Count <= 0) yield break;
         if (isSwitching) yield break; // Don't attempt another switch if in the middle of another switch operation
 
-        newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Length - 1);
+        newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Count - 1);
 
         if (weaponDrawn)
         {
@@ -267,7 +282,7 @@ public class WeaponHandler : MonoBehaviour
     public int SelectorIndexFromWeaponAndMode(int weaponIndex, int firingModeIndex)
     {
         int index = 0;
-        for (int w = 0; w < equippedWeapons.Length; w++)
+        for (int w = 0; w < equippedWeapons.Count; w++)
         {
             for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
             {

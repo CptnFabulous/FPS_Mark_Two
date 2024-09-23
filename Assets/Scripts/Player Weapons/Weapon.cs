@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class Weapon : MonoBehaviour
 {
+    public Entity parentEntity;
     public Sprite hudGraphic;
     
     [Header("Attack modes")]
