@@ -90,7 +90,18 @@ public abstract class StateFunction : MonoBehaviour
     /// The root controller in a hierarchy.
     /// <para></para>
     /// </summary>
-    public StateFunction root => controller == null ? this : controller.root;
+    public StateController root
+    {
+        get
+        {
+            // If a parent controller exists, return its root instead
+            if (controller != null) return controller.root;
+            // If not, check if this state is itself a controller. If so, it's the root.
+            if (this is StateController c) return c;
+            // If not, the state is not part of a hierarchy and there is no valid root.
+            return null;
+        }
+    }
     // If a parent controller is present, ask it for its root.
     // Once a state can't find a parent controller, that state is the root.
 
