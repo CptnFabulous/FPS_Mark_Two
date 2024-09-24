@@ -24,6 +24,10 @@ public class ADSOverlayTransition : MonoBehaviour
 
     public void OnLerp(float t)
     {
+        // Hide canvas completely if ADS is not active
+        overlayCanvas.gameObject.SetActive(t > 0);
+        if (t <= 0) return;
+
         // Enable overlay and disable weapon visuals, if past the desired threshold
         bool showOverlay = t > switchThreshold;
 
