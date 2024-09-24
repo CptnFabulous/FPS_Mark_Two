@@ -61,6 +61,18 @@ public class AI : Character
         agent.speed = baseMovementSpeed;
     }
 
+
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        AIAction.GizmosDrawNavMeshPath(agent.path);
+    }
+
+
+
+
     public override void Delete()
     {
         // Pre-emptively kills AI to ensure 'on death' events occur properly

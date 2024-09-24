@@ -51,6 +51,14 @@ public abstract class AIAction : Action
             Debug.DrawLine(path.corners[i - 1], path.corners[i], colour, time);
         }
     }
+    public static void GizmosDrawNavMeshPath(NavMeshPath path)
+    {
+        if (path.corners.Length <= 1) return;
+        for (int i = 1; i < path.corners.Length; i++)
+        {
+            Gizmos.DrawLine(path.corners[i - 1], path.corners[i]);
+        }
+    }
 
     public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, params IEnumerable<Collider>[] exceptionLists)
     {
