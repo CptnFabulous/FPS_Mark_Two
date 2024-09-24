@@ -6,7 +6,7 @@ using UnityEngine;
 public class InvestigateSuspiciousNoise : MonoBehaviour
 {
     public InvestigateLocations locationSearchState;
-    public StateFunction onSearchUnsuccessful;
+    //public StateFunction onSearchUnsuccessful;
     public List<DiegeticSound> suspiciousNoises;
 
     private void Awake()
@@ -19,8 +19,14 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
         float priority = suspiciousNoises.FindIndex((s) => s == sound.sound);
         if (priority < 0) return;
 
-        // MAYBE: Also if the position doesn't line up with a known friendly/harmless thing?
 
-        locationSearchState.TrySearchForNewPosition(sound.originPoint, priority, onSearchUnsuccessful);
+        //locationSearchState.TrySearchForNewPosition(sound.originPoint, priority, onSearchUnsuccessful);
+
+        // MAYBE: Also if the position doesn't line up with a known friendly/harmless thing?
+        /*
+        StateFunction previousState = locationSearchState.controller.currentActiveStateInHierarchy;
+        Debug.Log($"{locationSearchState.rootAI.name}: Investigating {sound.sound.name} at {sound.originPoint}. Will switch to {previousState.name} if failed");
+        */
+        locationSearchState.TrySearchForNewPosition(sound.originPoint, priority, false);
     }
 }

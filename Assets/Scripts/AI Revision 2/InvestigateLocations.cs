@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class InvestigateLocations : AIStateFunction
 {
+    [Header("Investigating")]
     public float delayBetweenChangingTargetLocation = 10;
 
     //StateFunction onSuccess;
-    StateFunction onFail;
+    public StateFunction onFail;
 
     [Header("State transitions")]
     [SerializeField] List<StateFunction> statesToSwitchFrom;
@@ -18,7 +19,7 @@ public class InvestigateLocations : AIStateFunction
     public float priorityLevel { get; private set; }
     public float lastTimeOfTargetChange { get; private set; } = Mathf.NegativeInfinity;
 
-    public void TrySearchForNewPosition(Vector3 position, float priority, /*StateFunction onSuccess, */StateFunction onFail)
+    public void TrySearchForNewPosition(Vector3 position, float priority, bool overrideCooldown)
     {
         // Check that the AI is in a state where it's actually interested in investigating noises (e.g. not in combat)
         if (statesToSwitchFrom.Count > 0 && statesToSwitchFrom.Contains(root.currentStateInHierarchy) == false) return;
@@ -37,8 +38,8 @@ public class InvestigateLocations : AIStateFunction
             return;
         }
 
-        // Ignore if the enemy has already just acquired a new position to check
-        if (Time.time - lastTimeOfTargetChange < delayBetweenChangingTargetLocation)
+        // Ignore if the enemy has already just acquired a new position to check (and this check does not have authority to override it)
+        if (overrideCooldown == false && (Time.time - lastTimeOfTargetChange) < delayBetweenChangingTargetLocation)
         {
             //Debug.Log("Ignored, it's too soon since the AI acquired a new target");
             return;
@@ -49,7 +50,7 @@ public class InvestigateLocations : AIStateFunction
         lastTimeOfTargetChange = Time.time;
 
         //this.onSuccess = onSuccess;
-        this.onFail = onFail;
+        //this.onFail = onFail;
 
         // Switch to this state if not already there
         if (controller.currentState != this)
@@ -85,7 +86,7 @@ public class InvestigateLocations : AIStateFunction
         //Debug.Log($"{this}: looking around target's last-known position (frame {Time.frameCount})");
         yield return aim.SweepSurroundings();
 
-        // If nothing is detected, resume normal patrol route
+        // If nothing is detected, switch to alternate procedure
         aim.lookingInDefaultDirection = true;
         SwitchToState(onFail);
     }

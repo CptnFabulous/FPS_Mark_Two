@@ -15,12 +15,16 @@ public class SearchForLastTargetPosition : AIStateFunction
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        investigateState.onFail = onFail;
+
         currentCoroutine = SearchCoroutine();
         StartCoroutine(currentCoroutine);
     }
     private void OnDisable()
     {
         StopCoroutine(currentCoroutine);
+
         aim.lookingInDefaultDirection = true;
     }
 
@@ -37,7 +41,8 @@ public class SearchForLastTargetPosition : AIStateFunction
 
         // Go to the last known position (automatically override existing priority by making it a little bit higher than the current value)
         //Debug.Log($"{rootAI}: cannot see target, travelling to target's last-known position (frame {Time.frameCount})");
-        investigateState.TrySearchForNewPosition(targetManager.lastKnownPosition, investigateState.priorityLevel + Mathf.Epsilon, onFail);
+        //investigateState.TrySearchForNewPosition(targetManager.lastKnownPosition, investigateState.priorityLevel + Mathf.Epsilon, onFail);
+        investigateState.TrySearchForNewPosition(targetManager.lastKnownPosition, investigateState.priorityLevel + Mathf.Epsilon, true);
     }
     
 }

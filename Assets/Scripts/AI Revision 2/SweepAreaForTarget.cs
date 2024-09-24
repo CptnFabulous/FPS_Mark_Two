@@ -12,6 +12,7 @@ public class SweepAreaForTarget : AIStateFunction
     public float distanceForInstinctCheck = 2;
     public AIStateFunction successState;
     public AIStateFunction failState;
+    public InvestigateLocations investigateState;
 
     List<AIGridPoints.GridPoint> pointsToCheck;
     float lastTimeDestinationUpdated;
@@ -19,6 +20,7 @@ public class SweepAreaForTarget : AIStateFunction
     protected override void OnEnable()
     {
         base.OnEnable();
+        investigateState.onFail = this; // Let the AI be temporarily distracted by noises, but then go back to sweeping the area
         //Debug.Log($"{rootAI}: starting search");
         //if (pointsToCheck == null) GetPoints();
         StartNewSearch();
