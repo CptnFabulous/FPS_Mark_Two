@@ -9,6 +9,9 @@ public class InvestigateLocations : AIStateFunction
     //StateFunction onSuccess;
     StateFunction onFail;
 
+    [Header("State transitions")]
+    [SerializeField] List<StateFunction> statesToSwitchFrom;
+
     IEnumerator currentCoroutine;
 
     public Vector3 positionToCheck { get; private set; }
@@ -17,6 +20,9 @@ public class InvestigateLocations : AIStateFunction
 
     public void TrySearchForNewPosition(Vector3 position, float priority, /*StateFunction onSuccess, */StateFunction onFail)
     {
+        // Check that the AI is in a state where it's actually interested in investigating noises (e.g. not in combat)
+        if (statesToSwitchFrom.Count > 0 && statesToSwitchFrom.Contains(root.currentStateInHierarchy) == false) return;
+        
         // Ignore if the enemy is already engaging a known target
         if (targetManager.targetExists && targetManager.canSeeTarget == ViewStatus.Visible)
         {
