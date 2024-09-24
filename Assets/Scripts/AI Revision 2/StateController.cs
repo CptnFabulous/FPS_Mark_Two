@@ -12,6 +12,17 @@ public class StateController : StateFunction
     public StateFunction previousState { get; private set; }
     public StateFunction[] states { get; private set; }
 
+    public StateFunction currentStateInChildren
+    {
+        get
+        {
+            // Check the active state. If it's a StateController, check there instead.
+            if (currentState is StateController childController) return childController.currentStateInChildren;
+            return currentState;
+        }
+    }
+    public StateFunction currentStateInHierarchy => root.currentStateInChildren;
+
     public override void SwitchToState(StateFunction newState)
     {
         // Do nothing if the desired state is not part of the state machine hierarchy
@@ -24,14 +35,13 @@ public class StateController : StateFunction
         // If not a child of this controller, but still in the hierarchy, initiate from its parent controller instead
         if (newState.controller != this)
         {
-            
             newState.controller.SwitchToState(newState);
             return;
         }
 
         if (newState != currentState)
         {
-            Debug.Log($"{this}: switching from {current} to {newState}");
+            Debug.Log($"{root}: switching from {current} to {newState} on frame {Time.frameCount}");
             current.enabled = false;
             previousState = current;
             current = newState;
