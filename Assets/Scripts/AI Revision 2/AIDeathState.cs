@@ -8,8 +8,8 @@ public class AIDeathState : AIStateFunction
     {
         // Do nothing if AI is not actually dead
         if (rootAI.health.IsAlive) return;
-        
-        Debug.Log($"{rootAI}: entering death state");
+
+        rootAI.DebugLog($"Entering death state");
         base.OnEnable();
 
         // Ragdollise enemy

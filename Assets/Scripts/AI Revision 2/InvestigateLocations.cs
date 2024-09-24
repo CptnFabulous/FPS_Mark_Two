@@ -27,21 +27,21 @@ public class InvestigateLocations : AIStateFunction
         // Ignore if the enemy is already engaging a known target
         if (targetManager.targetExists && targetManager.canSeeTarget == ViewStatus.Visible)
         {
-            //Debug.Log("Ignored, AI has already found the target");
+            rootAI.DebugLog("Ignored, AI has already found the target");
             return;
         }
 
         // Ignore if the current target is more important/suspicious
         if (priority < priorityLevel)
         {
-            //Debug.Log($"Ignored, location is not a high-enough priority ({priority}, {priorityLevel})");
+            rootAI.DebugLog($"Ignored, location is not a high-enough priority ({priority}, {priorityLevel})");
             return;
         }
 
         // Ignore if the enemy has already just acquired a new position to check (and this check does not have authority to override it)
         if (overrideCooldown == false && (Time.time - lastTimeOfTargetChange) < delayBetweenChangingTargetLocation)
         {
-            //Debug.Log("Ignored, it's too soon since the AI acquired a new target");
+            rootAI.DebugLog("Ignored, it's too soon since the AI acquired a new target");
             return;
         }
 
@@ -79,11 +79,11 @@ public class InvestigateLocations : AIStateFunction
     {
         // Go to location of sound.
         // BUG: for some reason the AI sometimes skips this phase and does not actually go to the target's last position (even though all the code plays)
-        //Debug.Log($"{this}: travelling to suspicious position (frame {Time.frameCount})");
+        rootAI.DebugLog($"{this}: travelling to suspicious position (frame {Time.frameCount})");
         yield return rootAI.TravelToDestination(positionToCheck);
 
         // Look around said position
-        //Debug.Log($"{this}: looking around target's last-known position (frame {Time.frameCount})");
+        rootAI.DebugLog($"{this}: looking around target's last-known position (frame {Time.frameCount})");
         yield return aim.SweepSurroundings();
 
         // If nothing is detected, switch to alternate procedure

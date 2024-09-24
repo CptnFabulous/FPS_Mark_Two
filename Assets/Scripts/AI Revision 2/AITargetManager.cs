@@ -46,7 +46,7 @@ public class AITargetManager : MonoBehaviour
         // If the target was null or not visible last frame (and so a change has occurred), switch to the appropriate AI state
         if (canSeeTarget != viewStatusLastFrame)
         {
-            Debug.Log($"{controlling}: target found");
+            controlling.DebugLog($"Target found");
             controlling.stateController.SwitchToState(onTargetFound);
         }
     }

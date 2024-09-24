@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    public bool showDebugData = false;
+
     public string properName = "New Entity";
     public string description = "[PLACEHOLDER]";
     public bool isUnique;
@@ -83,4 +85,21 @@ public class Entity : MonoBehaviour
     public float FixedDeltaTime => Time.fixedDeltaTime * timeScale;
     */
     public virtual void Delete() => Destroy(gameObject);
+
+
+
+
+
+
+
+
+
+    public void DebugLog(string message)
+    {
+        if (showDebugData) Debug.Log($"{this}: " + message);
+    }
+    public void DebugLog(object target)
+    {
+        if (showDebugData) Debug.Log($"{this}: " + target);
+    }
 }

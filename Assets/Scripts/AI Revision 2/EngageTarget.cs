@@ -32,7 +32,6 @@ public class EngageTarget : TravelToDestination
         // I might need to change this so that it only picks a new position during OnEnable() if a certain amount of time has passed between switching away from this state and returning to it.
         // So if the AI only switches for like a second (e.g. to look around) and doesn't actually need to change position, it doesn't constantly zip around like a maniac
         
-        
         base.OnEnable();
         //currentAttack.enabled = true;
     }
@@ -54,6 +53,7 @@ public class EngageTarget : TravelToDestination
         currentAttack.enabled = targetIsVisible;
         if (targetIsVisible == false)
         {
+            rootAI.DebugLog($"View status is {targetManager.canSeeTarget} on frame {Time.frameCount}. Hit target = {targetManager.lastHit.collider}");
             SwitchToState(onTargetLost);
             return;
         }
