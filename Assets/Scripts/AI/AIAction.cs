@@ -72,11 +72,20 @@ public abstract class AIAction : Action
         RaycastHit[] hits = Physics.RaycastAll(ray, viewRange, viewDetection);
         foreach (RaycastHit rh in hits)
         {
-            hit = rh;
+            //hit = rh;
             // If it hit one of the desired colliders, return true
-            if (MiscFunctions.ArrayContains(targetColliders, rh.collider)) return true;
+            if (MiscFunctions.ArrayContains(targetColliders, rh.collider))
+            {
+                hit = rh;
+                return true;
+            }
             // If it's neither a target nor an exception, line of sight is blocked.
-            if (IsExceptionCollider(rh.collider, exceptionLists) == false) return false;
+            if (IsExceptionCollider(rh.collider, exceptionLists) == false)
+            {
+                hit = rh;
+                Debug.Log(hit.collider);
+                return false;
+            }
             // If the collider was one of the exceptions, ignore and proceed to the next value
         }
 

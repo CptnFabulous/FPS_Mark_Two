@@ -28,7 +28,7 @@ public class SearchForLastTargetPosition : AIStateFunction
     {
         // Look towards the target's last-known position.
         //Debug.Log($"{rootAI}: target lost, checking if outside field of view");
-        yield return aim.RotateTowards(targetManager.lastHit.point);
+        yield return aim.RotateTowards(targetManager.lastValidHit.point);
 
         // The AI now knows the target is blocked by cover. Wait for several seconds
         // (in case the target has simply taken cover, or to allow the player to perform a flanking maneuver) 

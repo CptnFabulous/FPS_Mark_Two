@@ -80,11 +80,12 @@ public class FieldOfView : MonoBehaviour
     /// </summary>
     public ViewStatus VisionConeCheck(Entity targetEntity, out RaycastHit hit)
     {
+        hit = new RaycastHit();
+
         IList<Collider> targetColliders = targetEntity.colliders;
         if (targetColliders == null || targetColliders.Count <= 0)
         {
             // No colliders are present, do a simple bounds check
-            hit = new RaycastHit();
             return VisionConeCheck(targetEntity.CentreOfMass);
         }
 
@@ -150,11 +151,10 @@ public class FieldOfView : MonoBehaviour
 
             // Run a line of sight check to the target colliders
             float distance = Mathf.Min(direction.magnitude, viewRange);
-            if (AIAction.LineOfSightToTarget(ray, out hit, distance, viewDetection, targetColliders, rootAI.colliders))
-            {
-                // A raycast hit a collider that's part of the target, that means the AI can see it!
-                return ViewStatus.Visible;
-            }
+            bool lineOfSight = AIAction.LineOfSightToTarget(ray, out hit, distance, viewDetection, targetColliders, rootAI.colliders);
+            //Debug.Log(hit.collider);
+            // If the raycast hit one of the target's colliders, that means the AI can see it!
+            if (lineOfSight) return ViewStatus.Visible;
 
             // Raycast did not find target.
             // If it did hit something else, register as an obstruction
@@ -162,8 +162,6 @@ public class FieldOfView : MonoBehaviour
             // Proceed to next check
         }
         #endregion
-
-        hit = new RaycastHit();
 
         // If the only casts that hit were blocked, the object is behind cover.
         // If a cast is outside the viewing angle, the AI couldn't see it anyway, so we didn't bother checking if it's blocked 

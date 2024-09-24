@@ -12,6 +12,7 @@ public class AITargetManager : MonoBehaviour
 
     public ViewStatus canSeeTarget { get; private set; }
     public RaycastHit lastHit { get; private set; }
+    public RaycastHit lastValidHit { get; private set; }
     public Vector3 lastKnownPosition { get; private set; }
     public float lastTimeSeenTarget { get; private set; }
 
@@ -32,16 +33,21 @@ public class AITargetManager : MonoBehaviour
         {
             canSeeTarget = controlling.visionCone.VisionConeCheck(target, out hit);
         }
+        lastHit = hit;
 
         // If no target is visible, no need to proceed
         if (canSeeTarget != ViewStatus.Visible) return;
 
         // Update info on target
-        lastHit = hit;
+        lastValidHit = hit;
         lastKnownPosition = target.transform.position;
         lastTimeSeenTarget = Time.time;
 
         // If the target was null or not visible last frame (and so a change has occurred), switch to the appropriate AI state
-        if (canSeeTarget != viewStatusLastFrame) controlling.stateController.SwitchToState(onTargetFound);
+        if (canSeeTarget != viewStatusLastFrame)
+        {
+            Debug.Log($"{controlling}: target found");
+            controlling.stateController.SwitchToState(onTargetFound);
+        }
     }
 }
