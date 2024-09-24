@@ -72,7 +72,6 @@ public abstract class AIAction : Action
         RaycastHit[] hits = Physics.RaycastAll(ray, viewRange, viewDetection);
         foreach (RaycastHit rh in hits)
         {
-            //hit = rh;
             // If it hit one of the desired colliders, return true
             if (MiscFunctions.ArrayContains(targetColliders, rh.collider))
             {
@@ -83,7 +82,6 @@ public abstract class AIAction : Action
             if (IsExceptionCollider(rh.collider, exceptionLists) == false)
             {
                 hit = rh;
-                Debug.Log(hit.collider);
                 return false;
             }
             // If the collider was one of the exceptions, ignore and proceed to the next value
