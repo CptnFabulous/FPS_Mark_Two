@@ -54,7 +54,18 @@ public class Health : MonoBehaviour
 
     public bool IsAlive => data.current > 0;
     public Entity attachedTo => e ??= GetComponentInParent<Entity>();
-    public Hitbox[] hitboxes => hb ??= GetComponentsInChildren<Hitbox>().Where((hb) => hb.attachedTo == attachedTo).ToArray();
+    public Hitbox[] hitboxes
+    {
+        get
+        {
+            if (hb != null) return hb;
+            // Look for hitboxes in child components
+            hb = GetComponentsInChildren<Hitbox>();
+            // If entity has a child attached, exclude hitboxes that are part of that child
+            hb = hb.Where((hb) => hb.attachedTo == attachedTo).ToArray();
+            return hb;
+        }
+    }
     
     /// <summary>
     /// Deals damage to this health script. Don't directly call this except in fringe circumstances - instead call Damage() on one of its Hitbox classes.

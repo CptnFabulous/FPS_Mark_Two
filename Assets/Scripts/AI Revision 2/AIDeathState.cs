@@ -6,6 +6,9 @@ public class AIDeathState : AIStateFunction
 {
     protected override void OnEnable()
     {
+        // Do nothing if AI is not actually dead
+        if (rootAI.health.IsAlive) return;
+        
         Debug.Log($"{rootAI}: entering death state");
         base.OnEnable();
 

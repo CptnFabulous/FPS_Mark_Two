@@ -30,24 +30,22 @@ public class Entity : MonoBehaviour
     {
         get
         {
+            // If colliders are already cached, return those
             if (_colliders != null) return _colliders;
 
-            // Check if health script is present
-            if (health != null)
+            // If no health script is present, just return all child colliders
+            if (health == null)
             {
-                // If so, generate a list from the hitbox colliders
-                _colliders = new Collider[health.hitboxes.Length];
-                for (int i = 0; i < _colliders.Count; i++)
-                {
-                    _colliders[i] = health.hitboxes[i].collider;
-                }
-            }
-            else
-            {
-                // Otherwise, just obtain a list of child colliders
                 _colliders = GetComponentsInChildren<Collider>(false);
+                return _colliders;
             }
 
+            // If health script exists, generate a list from the hitbox colliders
+            _colliders = new Collider[health.hitboxes.Length];
+            for (int i = 0; i < _colliders.Count; i++)
+            {
+                _colliders[i] = health.hitboxes[i].collider;
+            }
             return _colliders;
         }
     }
