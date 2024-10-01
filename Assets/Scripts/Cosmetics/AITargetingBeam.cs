@@ -4,37 +4,44 @@ using UnityEngine;
 
 public class AITargetingBeam : MonoBehaviour
 {
-    public LayerMask beamCollision = ~0;
+    public AIGunAttack attachedTo;
+
+    [Header("Beam visuals")]
+    public LineRenderer beam;
     public float minLength = 0.5f;
     public float maxLength = 10f;
 
-    LineRenderer beam;
-    Vector3[] points = new Vector3[2];
-
-
+    LayerMask hitDetection => attachedTo.weapon.attackMask;
+    
     private void Awake()
     {
-        beam = GetComponent<LineRenderer>();
-        beam.useWorldSpace = true;
         //beam.startColor = attackData.aiming.ai.character.affiliation.colour;
-        enabled = false;
-    }
-
-    private void OnDisable()
-    {
-        beam.enabled = false;
+        beam.useWorldSpace = false;
+        beam.SetPosition(0, minLength * Vector3.forward);
     }
 
     private void LateUpdate()
     {
-        bool raycastHit = Physics.Raycast(transform.position, transform.forward, out RaycastHit rh, maxLength, beamCollision);
-        beam.enabled = raycastHit == false || rh.distance > minLength;
-        if (beam.enabled)
-        {
-            points[0] = (minLength * transform.forward) + transform.position;
-            points[1] = raycastHit ? rh.point : (maxLength * transform.forward) + transform.position;
+        // Launch a simple raycast to check roughly what the enemy will presently hit
+        Ray ray = new Ray(transform.position, transform.forward);
+        bool raycastHit = AIAction.RaycastWithExceptions(ray, out RaycastHit rh, maxLength, hitDetection, attachedTo.rootAI.colliders);
+        beam.enabled = raycastHit && rh.distance > minLength;
 
-            beam.SetPositions(points);
-        }
+        if (beam.enabled == false) return;
+
+        // Set beam length
+        beam.SetPosition(1, rh.distance * Vector3.forward);
+    }
+
+
+
+    // These two functions may need to be replaced at some point. I'm not exactly sure how to handle playing and stopping, but I know I may want more elaborate animations.
+    public void Play()
+    {
+        gameObject.SetActive(true);
+    }
+    public void Stop()
+    {
+        gameObject.SetActive(false);
     }
 }

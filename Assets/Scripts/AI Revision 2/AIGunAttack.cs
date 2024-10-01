@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AIGunAttack : MonoBehaviour
 {
@@ -12,15 +12,19 @@ public class AIGunAttack : MonoBehaviour
     [Header("Telegraph")]
     public float telegraphDelay = 0.25f;
     public float telegraphMoveSpeedMultiplier = 0.5f;
+    public UnityEvent onTelegraph;
+    public UnityEvent onTelegraphEnd;
 
     [Header("Attack")]
     public int attackNumberMin = 1;
     public int attackNumberMax = 3;
     public float attackMoveSpeedMultiplier = 0.5f;
+    public UnityEvent onAttack;
 
     [Header("Cooldown")]
     public float cooldownMin = 0.05f;
     public float cooldownMax = 0.2f;
+    public UnityEvent onCooldown;
 
     //IEnumerator currentAttackSequence;
 
@@ -80,11 +84,17 @@ public class AIGunAttack : MonoBehaviour
     {
         inAttack = true;
 
+        rootAI.DebugLog($"Telegraphing {weapon}");
+
         //currentAimTarget = targetPosition;
         rootAI.agent.speed = rootAI.baseMovementSpeed * telegraphMoveSpeedMultiplier;
+        onTelegraph.Invoke();
         yield return new WaitForSeconds(telegraphDelay);
 
         rootAI.agent.speed = rootAI.baseMovementSpeed * attackMoveSpeedMultiplier;
+        onTelegraphEnd.Invoke();
+
+        rootAI.DebugLog($"Executing attack with {weapon}");
 
         int max = weapon.controls.maxBurst;
         max = max > 0 ? max : int.MaxValue - 1;
@@ -93,10 +103,14 @@ public class AIGunAttack : MonoBehaviour
         for (int i = 0; i < numberOfAttacks; i++)
         {
             yield return weapon.SingleShot();
+            onAttack.Invoke();
         }
+
+        rootAI.DebugLog($"Cooling down from attack with {weapon}");
 
         rootAI.agent.speed = rootAI.baseMovementSpeed;
         float cooldown = Random.Range(cooldownMin, cooldownMax);
+        onCooldown.Invoke();
         yield return new WaitForSeconds(cooldown);
         inAttack = false;
     }

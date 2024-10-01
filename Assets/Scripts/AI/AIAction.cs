@@ -60,6 +60,31 @@ public abstract class AIAction : Action
         }
     }
 
+
+
+    public static bool RaycastWithExceptions(Ray ray, out RaycastHit hit, float distance, LayerMask layerMask, params IEnumerable<Collider>[] exceptionLists)
+    {
+        // Run RaycastAll to get all colliders in the path of the object
+        List<RaycastHit> results = new List<RaycastHit>(Physics.RaycastAll(ray, distance, layerMask));
+        // Sort by distance
+        MiscFunctions.SortListWithOnePredicate(results, (rh) => rh.distance);
+
+        // Iterate through the options
+        // Return the first result that isn't one of the exceptions
+        foreach (RaycastHit rh in results)
+        {
+            if (IsExceptionCollider(rh.collider, exceptionLists)) continue;
+
+            // We found a valid result
+            hit = rh;
+            return true;
+        }
+
+        // If nothing else was found, return the first exception collider (or a blank value if nothing was hit at all)
+        hit = results.Count > 0 ? results[0] : new RaycastHit();
+        return false;
+    }
+
     public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, params IEnumerable<Collider>[] exceptionLists)
     {
         // Calculate direction and use magnitude for distance
