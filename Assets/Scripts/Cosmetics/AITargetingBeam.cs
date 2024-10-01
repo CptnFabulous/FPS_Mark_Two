@@ -22,15 +22,19 @@ public class AITargetingBeam : MonoBehaviour
 
     private void LateUpdate()
     {
-        // Launch a simple raycast to check roughly what the enemy will presently hit
+        // Launch a simple raycast to check roughly what the attack will hit
         Ray ray = new Ray(transform.position, transform.forward);
         bool raycastHit = AIAction.RaycastWithExceptions(ray, out RaycastHit rh, maxLength, hitDetection, attachedTo.rootAI.colliders);
-        beam.enabled = raycastHit && rh.distance > minLength;
 
+        // Get the distance that the beam travels (use full length if beam hits nothing)
+        float distance = raycastHit ? rh.distance : maxLength;
+
+        // Disable beam if distance is too short to bother rendering
+        beam.enabled = distance > minLength;
         if (beam.enabled == false) return;
 
         // Set beam length
-        beam.SetPosition(1, rh.distance * Vector3.forward);
+        beam.SetPosition(1, distance * Vector3.forward);
     }
 
 
