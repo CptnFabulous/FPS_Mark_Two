@@ -423,6 +423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebugData: 0
   properName: Placeholder Rifle
   description: '[PLACEHOLDER]'
   isUnique: 0
@@ -623,7 +624,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6154177461571150366}
   projectileCount: 1
   muzzle: {fileID: 3321402550516367603}
-  sway: 0.1
+  sway: 1.1
   shotSpread: 0
   range: 400
   ammoType: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
@@ -776,10 +777,6 @@ PrefabInstance:
     - target: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
       propertyPath: startingVelocity
       value: 600
-      objectReference: {fileID: 0}
-    - target: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
-      propertyPath: damageStats.knockback
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
       propertyPath: m_RootOrder

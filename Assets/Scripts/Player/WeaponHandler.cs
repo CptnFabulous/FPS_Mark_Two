@@ -17,9 +17,7 @@ public class WeaponHandler : MonoBehaviour
     public WeaponSelectorHUD selectorInfo;
 
     [Header("Stats")]
-    public Transform aimAxis;
-    public float standingAccuracy = 1;
-    public float swaySpeed = 0.5f;
+    public AimSwayHandler swayHandler;
     public bool toggleADS;
     public bool quickSwitchModes = true;
 
@@ -35,25 +33,6 @@ public class WeaponHandler : MonoBehaviour
     public bool isSwitching { get; private set; }
 
     public Weapon CurrentWeapon => (equippedWeapons.Count > 0) ? equippedWeapons[equippedWeaponIndex] : null;
-    /// <summary>
-    /// The direction the player is currently aiming in, accounting for accuracy sway.
-    /// </summary>
-    public Vector3 AimDirection => aimAxis.rotation * WeaponUtility.AimSway(aimSwayAngle, swaySpeed) * Vector3.forward;
-    public float aimSwayAngle
-    {
-        get
-        {
-            float totalSway = standingAccuracy;
-            if (CurrentWeapon != null)
-            {
-                if (CurrentWeapon.CurrentMode is RangedAttack ra)
-                {
-                    totalSway += ra.stats.sway;
-                }
-            }
-            return totalSway;
-        }
-    }
     public bool weaponDrawn
     {
         get => CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true;
@@ -86,6 +65,9 @@ public class WeaponHandler : MonoBehaviour
         }
     }
 
+    public Transform aimAxis => swayHandler.aimAxis;
+    public Vector3 AimDirection => swayHandler.aimDirection;
+    public float aimSwayAngle => swayHandler.aimSwayAngle;
 
 
     private void Awake()

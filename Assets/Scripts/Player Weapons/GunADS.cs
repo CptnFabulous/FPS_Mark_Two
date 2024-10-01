@@ -97,6 +97,8 @@ public class GunADS : MonoBehaviour
         {
             viewingCamera.gameObject.SetActive(false);
         }
+        LerpADS(0);
+        LerpADSCosmetics(0);
     }
     private void Update()
     {
@@ -156,6 +158,11 @@ public class GunADS : MonoBehaviour
         Transform upperBody = lookControls.upperBody;
         Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, userWeaponHandler.AimDirection, timer);
         upperBody.LookAt(upperBody.position + cameraDirection, aimAxis.up);
+
+        // Lerp sway to change weapon accuracy while aiming down sights
+        AimSwayHandler sway = userWeaponHandler.swayHandler;
+        sway.swayMultipliers[sway.adsMultiplierReference] = Mathf.Lerp(1, sway.adsMultiplier, timer);
+        
     }
     /// <summary>
     /// Lerps appropriate cosmetic features between standard and ADS modes.

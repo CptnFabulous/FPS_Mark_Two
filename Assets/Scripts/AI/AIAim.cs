@@ -68,7 +68,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     /// <summary>
     /// The direction the AI is looking in, converted into an easy Vector3 value.
     /// </summary>
-    public Vector3 AimDirection => lookRotation * WeaponUtility.AimSway(Stats.swayAngle, Stats.swaySpeed) * Vector3.forward;
+    public Vector3 AimDirection => lookRotation * AimSwayHandler.AimSway(Stats.swayAngle, Stats.swaySpeed) * Vector3.forward;
     #endregion
 
     #region Look functions

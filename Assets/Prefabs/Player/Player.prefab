@@ -693,6 +693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13a3bcf5f18b6849ba44c6e126ec575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebugData: 0
   properName: Player
   description: It's you!
   isUnique: 1
@@ -945,9 +946,7 @@ MonoBehaviour:
   ammo: {fileID: 7479822334647491782}
   weaponSelector: {fileID: 1942817378809579715}
   selectorInfo: {fileID: 7605556675667947530}
-  aimAxis: {fileID: 5952785221988775342}
-  standingAccuracy: 1
-  swaySpeed: 0.5
+  swayHandler: {fileID: 395139178566883132}
   toggleADS: 0
   quickSwitchModes: 1
   onDraw:
@@ -1026,6 +1025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 0}
   isCritical: 0
+  resistances: {fileID: 0}
 --- !u!136 &5952785220977946993
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1274,6 +1274,8 @@ GameObject:
   - component: {fileID: 5952785221988775342}
   - component: {fileID: 3029115496829350827}
   - component: {fileID: 7479822334647491782}
+  - component: {fileID: 395139178566883132}
+  - component: {fileID: 2802680270846931}
   m_Layer: 6
   m_Name: Aim Axis
   m_TagString: Untagged
@@ -1371,6 +1373,46 @@ MonoBehaviour:
     max: 3
     current: 3
     criticalLevel: 1
+  onResourceUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &395139178566883132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785221988775329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76638497c49253c4389216a6c75081cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseAccuracyMultiplier: 2
+  swaySpeed: 0.5
+  adsMultiplier: 0.5
+  adsMultiplierReference: Aiming down sights
+  aimAxis: {fileID: 5952785221988775342}
+  weaponHandler: {fileID: 4579184524127900838}
+--- !u!114 &2802680270846931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785221988775329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e28df5a7c7d1c94f833b7bdec5aa8fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swayHandler: {fileID: 395139178566883132}
+  movementController: {fileID: 5952785220977947007}
+  multiplierWhileMoving: 2
+  movementMultiplierReference: Player Movement
+  crouchController: {fileID: 2692210061216476635}
+  multiplierWhileCrouching: 0.5
+  crouchMultiplierReference: Player Crouching
 --- !u!1 &5952785222623807981
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,22 +3007,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
---- !u!114 &8098729900447558270 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06375990f6058fb418571800f9400e70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!224 &5952785221938061820 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1942817378809579715 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8168604717116882185, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -2992,9 +3018,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546527b39a8bf244699538b10c47cc5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &3773584271034839818 stripped
+--- !u!223 &5952785221938061819 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5345706760175754708 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2415393206806800414, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &5952785221938061820 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6914298990779041472, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1881373689726421184 stripped
@@ -3008,14 +3044,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5d0006968286ad47b9b9aca0d879f41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &5345706760175754708 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2415393206806800414, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
---- !u!223 &5952785221938061819 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+--- !u!224 &3773584271034839818 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6914298990779041472, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &7605556675667947530 stripped
@@ -3027,6 +3058,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1e8b72f6ce30f74db4519d9e8301c6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8098729900447558270 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06375990f6058fb418571800f9400e70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &8233808102799960725

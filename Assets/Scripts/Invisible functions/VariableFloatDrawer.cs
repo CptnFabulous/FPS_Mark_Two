@@ -3,6 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+public class MultiplierStack
+{
+    Dictionary<string, float> multipliers = new Dictionary<string, float>();
+    //public System.Func<float> multiplierFunctions;
+
+    public float calculatedValue
+    {
+        get
+        {
+            float totalMultiplier = 1;
+            foreach (var kvp in multipliers)
+            {
+                totalMultiplier *= kvp.Value;
+            }
+
+            //totalMultiplier += multiplierFunctions.Invoke();
+
+            return totalMultiplier;
+        }
+    }
+    public float this[string key]
+    {
+        get => multipliers[key];
+        set => multipliers[key] = value;
+    }
+}
+
+/*
+
 [System.Serializable]
 public class VariableFloat
 {
@@ -41,3 +70,4 @@ public class VariableFloatDrawer : PropertyDrawer
     }
 }
 #endif
+*/

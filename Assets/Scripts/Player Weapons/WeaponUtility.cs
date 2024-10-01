@@ -4,24 +4,6 @@ using UnityEngine;
 
 public static class WeaponUtility
 {
-    /// <summary>
-    /// Multiply this by a Quaternion and a Vector3 to get an aim direction with a smooth sway for accuracy deviation.
-    /// </summary>
-    /// <param name="maxSwayAngle"></param>
-    /// <param name="swaySpeed"></param>
-    /// <returns></returns>
-    public static Quaternion AimSway(float maxSwayAngle, float swaySpeed)
-    {
-        // Generates changing values from noise
-        float t = Time.time * swaySpeed;
-        float noiseX = Mathf.PerlinNoise(t, 0);
-        float noiseY = Mathf.PerlinNoise(0, t);
-        // Converts values from 0 - 1 to -1 - 1
-        Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
-        angles *= maxSwayAngle; //  Multiplies by accuracy value
-        // Creates euler angles and combines with current aim direction
-        return Quaternion.Euler(angles.y, angles.x, 0);
-    }
     public static void CalculateObjectLaunch(Vector3 aimOrigin, Vector3 launchOrigin, Vector3 direction, float range, LayerMask detection, IList<Collider> exceptions, out Vector3 launchDirection, out Vector3 castHitPoint, out RaycastHit rh, out bool hitPointIsBehindMuzzle)
     {
         bool successfulCast = MiscFunctions.RaycastWithExceptions(aimOrigin, direction, out rh, range, detection, exceptions);

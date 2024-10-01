@@ -152,7 +152,7 @@ public class RangedAttack : WeaponMode
         if (Time.time - timeOfLastMessage <= controls.messageDelay) return;
         
         int damage = stats.projectilePrefab.damageStats.damage;
-        float spread = stats.shotSpread + User.weaponHandler.standingAccuracy;
+        float spread = stats.shotSpread + User.weaponHandler.aimSwayAngle;
 
         DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, stats.range, spread, stats.projectilePrefab.detection);
         Notification<AttackMessage>.Transmit(newMessage);
