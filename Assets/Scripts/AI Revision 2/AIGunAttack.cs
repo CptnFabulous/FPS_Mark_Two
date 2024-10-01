@@ -12,6 +12,7 @@ public class AIGunAttack : MonoBehaviour
     [Header("Telegraph")]
     public float telegraphDelay = 0.25f;
     public float telegraphMoveSpeedMultiplier = 0.5f;
+    public float aimSpeedWhileTelegraphing = 3;
     public UnityEvent onTelegraph;
     public UnityEvent onTelegraphEnd;
 
@@ -58,11 +59,14 @@ public class AIGunAttack : MonoBehaviour
         aim.lookingInDefaultDirection = false;
         if (inAttack)
         {
+            /*
             // Shift aim target position linearly
             // (at a speed proportional to the player's movement speed, so it's more difficult when moving normally but easier when sprinting)
             float speed = 0;
             if (target is Player p) speed = p.movement.defaultSpeed * 0.5f; // Should I add a property for the multiplier?
             aim.ShiftLookTowards(targetPosition, speed);
+            */
+            aim.ShiftLookTowards(targetPosition, aimSpeedWhileTelegraphing);
         }
         else if (canTarget)
         {
