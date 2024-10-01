@@ -102,17 +102,25 @@ public class CrouchController : MonoBehaviour
     {
         // Cancel crouching
         isCrouching = false;
-        crouchTimer = 0;
-        Update();
+        LerpCrouch(0);
     }
     private void Update()
     {
         // Calculate value for lerping
         float targetValue = isCrouching ? 1 : 0;
         crouchTimer = Mathf.MoveTowards(crouchTimer, targetValue, Time.deltaTime / crouchTransitionTime);
+
+        LerpCrouch(crouchTimer);
+    }
+
+    void LerpCrouch(float t)
+    {
+        crouchTimer = t;
+
         // Lerp collider and look axis values accordingly
-        collider.height = Mathf.Lerp(standHeight, crouchHeight, crouchTimer);
+        collider.height = Mathf.Lerp(standHeight, crouchHeight, t);
         collider.center = Vector3.up * (collider.height / 2);
         lookControls.aimAxis.transform.localPosition = new Vector3(0, collider.height - headDistanceFromTop, 0);
+        //onCrouchLerp.Invoke(t);
     }
 }
