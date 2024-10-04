@@ -13,12 +13,12 @@ GameObject:
   - component: {fileID: 6462575825889443780}
   - component: {fileID: 3351468458486029672}
   - component: {fileID: 8864470035879536819}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Potential opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &5497902937595912826
 Transform:
@@ -177,12 +177,12 @@ GameObject:
   - component: {fileID: 632508246835535311}
   - component: {fileID: 1743478839805620825}
   - component: {fileID: 5225903527220056619}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Potential opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &3819217007517494389
 Transform:
@@ -341,12 +341,12 @@ GameObject:
   - component: {fileID: 2543468509542959952}
   - component: {fileID: 1102890745929951343}
   - component: {fileID: 256619750414389415}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Potential opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &4894058683375873167
 Transform:
@@ -505,12 +505,12 @@ GameObject:
   - component: {fileID: 6236651756779180430}
   - component: {fileID: 84341104848082362}
   - component: {fileID: 293045776964441465}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Potential opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &3699842101678994521
 Transform:
@@ -669,12 +669,12 @@ GameObject:
   - component: {fileID: 6085024830624010668}
   - component: {fileID: 7302570953682475971}
   - component: {fileID: 4552587128808645735}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stairs (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &661384690161671201
 Transform:
@@ -2042,12 +2042,12 @@ GameObject:
   - component: {fileID: 3563352151303109451}
   - component: {fileID: 2365277127765994921}
   - component: {fileID: 4505977411861501932}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Small long stairwell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &6025543959386063122
 Transform:
@@ -2067,6 +2067,7 @@ Transform:
   - {fileID: 2913666724671490160}
   - {fileID: 5269893284790952633}
   - {fileID: 3819217007517494389}
+  - {fileID: 664700773742338381}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2701,12 +2702,12 @@ GameObject:
   - component: {fileID: 9190560124280427060}
   - component: {fileID: 5262553508968730816}
   - component: {fileID: 7337326737359380022}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Potential opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &2913666724671490160
 Transform:
@@ -2865,12 +2866,12 @@ GameObject:
   - component: {fileID: 2238819860146909244}
   - component: {fileID: 7468957413149073900}
   - component: {fileID: 9066573996216928789}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Potential opening
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 40
   m_IsActive: 1
 --- !u!4 &5269893284790952633
 Transform:
@@ -3016,3 +3017,65 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!1001 &4770398873463072089
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6025543959386063122}
+    m_Modifications:
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5407311688207057941, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+      propertyPath: m_Name
+      value: Placeholder Ceiling Light
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+--- !u!4 &664700773742338381 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5407311688207057940, guid: 178e189c22a7e2a47aba6c3af9bf108d, type: 3}
+  m_PrefabInstance: {fileID: 4770398873463072089}
+  m_PrefabAsset: {fileID: 0}
