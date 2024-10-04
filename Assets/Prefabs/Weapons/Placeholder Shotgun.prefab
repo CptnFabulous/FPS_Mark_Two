@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8ddee4d0d61eae4f811fc23b3eeb2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roundsPerMinute: 120
+  roundsPerMinute: 60
   maxBurst: 0
   messageDelay: 1
 --- !u!114 &8068031674473056488
@@ -147,7 +147,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   roundsReloadedAtOnce: 1
-  delayBetweenLoads: 0.4
+  delayBetweenLoads: 0.6
   onReloadEnd:
     m_PersistentCalls:
       m_Calls:
@@ -289,6 +289,21 @@ MonoBehaviour:
   soundPlayer: {fileID: 3275955952633922249}
   weaponClips:
   - {fileID: 8300000, guid: 1f5697ce6403ec747a1d4fa117b4c8db, type: 3}
+  onEjection:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6411865653973799356}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3275955952836653050
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,18 +435,6 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 7971850597641458658}
         m_TargetAssemblyTypeName: CameraShake, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6411865653973799356}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
         m_MethodName: Play
         m_Mode: 1
         m_Arguments:

@@ -1061,19 +1061,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   magnification: 4
   transitionTime: 0.25
+  hipfireAccuracyMultiplier: 2
   hideMainReticle: 0
-  viewingCamera: {fileID: 0}
-  sightPicture: {fileID: 0}
-  sightTextureDimensions: {x: 512, y: 512}
-  sightTextureDepthBuffer: 1
-  hipFireOrientation: {fileID: 0}
-  modelOrientationTransform: {fileID: 0}
-  modelPivot: {fileID: 0}
-  reticleAxis: {fileID: 3334470909646726304}
-  distanceBetweenReticleAxisAndHead: 0.14
-  lookSwayDegrees: 0
-  speedForMaxSway: 0
-  swayUpdateTime: 0
   onSwitchToADS:
     m_PersistentCalls:
       m_Calls: []
@@ -1083,6 +1072,42 @@ MonoBehaviour:
   onADSLerp:
     m_PersistentCalls:
       m_Calls: []
+  viewingCamera: {fileID: 0}
+  sightPicture: {fileID: 0}
+  sightTextureDimensions: {x: 512, y: 512}
+  sightTextureDepthBuffer: 1
+  hipFireOrientation: {fileID: 0}
+  modelOrientationTransform: {fileID: 0}
+  modelPivot: {fileID: 0}
+  distanceBetweenReticleAxisAndHead: 0.14
+  modelMovementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reticleAxis: {fileID: 3334470909646726304}
+  lookSwayDegrees: 0
+  speedForMaxSway: 0
+  swayUpdateTime: 0
 --- !u!114 &550396683275937224
 MonoBehaviour:
   m_ObjectHideFlags: 0

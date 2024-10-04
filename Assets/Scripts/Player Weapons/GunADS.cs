@@ -8,7 +8,11 @@ public class GunADS : MonoBehaviour
     [Header("Stats")]
     public float magnification = 1;
     public float transitionTime = 0.25f;
+    public float hipfireAccuracyMultiplier = 1;
     public bool hideMainReticle;
+    public UnityEvent onSwitchToADS;
+    public UnityEvent onSwitchToHipfire;
+    public UnityEvent<float> onADSLerp;
 
     [Header("Sight picture")]
     public Camera viewingCamera;
@@ -20,14 +24,14 @@ public class GunADS : MonoBehaviour
     public Transform hipFireOrientation;
     public Transform modelOrientationTransform;
     public Transform modelPivot;
-    public Transform reticleAxis;
     public float distanceBetweenReticleAxisAndHead = 1f;
+    public AnimationCurve modelMovementCurve = AnimationCurve.Linear(0, 0, 1, 1);
+
+    [Header("Turn sway")]
+    public Transform reticleAxis;
     public float lookSwayDegrees = 2;
     public float speedForMaxSway = 120;
     public float swayUpdateTime = 0.1f;
-    public UnityEvent onSwitchToADS;
-    public UnityEvent onSwitchToHipfire;
-    public UnityEvent<float> onADSLerp;
 
     Weapon w;
     bool currentlyAiming;
@@ -161,7 +165,7 @@ public class GunADS : MonoBehaviour
 
         // Lerp sway to change weapon accuracy while aiming down sights
         AimSwayHandler sway = userWeaponHandler.swayHandler;
-        sway.swayMultipliers[sway.adsMultiplierReference] = Mathf.Lerp(1, sway.adsMultiplier, timer);
+        sway.swayMultipliers[sway.adsMultiplierReference] = Mathf.Lerp(hipfireAccuracyMultiplier, sway.adsMultiplier, timer);
         
     }
     /// <summary>
@@ -198,7 +202,9 @@ public class GunADS : MonoBehaviour
         Vector3 reticleRelativeToModelTransform = reticleAxis.position - modelPivot.position;
         Vector3 reticleRelativeToHead = lookControls.upperBody.forward * distanceBetweenReticleAxisAndHead;
         Vector3 position = lookControls.upperBody.position - reticleRelativeToModelTransform + reticleRelativeToHead;
-        modelOrientationTransform.position = Vector3.Lerp(hipFireOrientation.position, position, timer);
+
+        float movementCurveTimer = modelMovementCurve.Evaluate(timer);
+        modelOrientationTransform.position = Vector3.Lerp(hipFireOrientation.position, position, movementCurveTimer);
 
         onADSLerp.Invoke(timer);
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WeaponAnimator : MonoBehaviour
 {
@@ -20,15 +21,10 @@ public class WeaponAnimator : MonoBehaviour
     [Header("Audio")]
     public AudioSource soundPlayer;
     public AudioClip[] weaponClips;
-    public void PlaySoundFromArray(int index)
-    {
-        if (weaponClips.Length <= 0)
-        {
-            return;
-        }
-        index = Mathf.Clamp(index, 0, weaponClips.Length - 1);
-        soundPlayer.PlayOneShot(weaponClips[index]);
-    }
+
+    [Header("Events")]
+    public UnityEvent onEjection;
+
 
     private void Awake()
     {
@@ -56,7 +52,6 @@ public class WeaponAnimator : MonoBehaviour
         }
 
     }
-
     private void Update()
     {
         //controller.SetBool(active, weaponToAnimate.isActiveAndEnabled);
@@ -68,7 +63,18 @@ public class WeaponAnimator : MonoBehaviour
             bool isReloading = (rm.magazine != null && rm.magazine.ReloadActive == true);
             controller.SetBool(reloadActiveString, isReloading);
         }
-        
-        
+
+
     }
+
+    public void PlaySoundFromArray(int index)
+    {
+        if (weaponClips.Length <= 0)
+        {
+            return;
+        }
+        index = Mathf.Clamp(index, 0, weaponClips.Length - 1);
+        soundPlayer.PlayOneShot(weaponClips[index]);
+    }
+    public void ShellEjection() => onEjection.Invoke();
 }
