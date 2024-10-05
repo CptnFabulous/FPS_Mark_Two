@@ -8,7 +8,7 @@ public class GunADS : MonoBehaviour
     [Header("Stats")]
     public float magnification = 1;
     public float transitionTime = 0.25f;
-    public float hipfireAccuracyMultiplier = 1;
+    public float hipfireSwayMultiplier = 1;
     public bool hideMainReticle;
     public UnityEvent onSwitchToADS;
     public UnityEvent onSwitchToHipfire;
@@ -165,7 +165,7 @@ public class GunADS : MonoBehaviour
 
         // Lerp sway to change weapon accuracy while aiming down sights
         AimSwayHandler sway = userWeaponHandler.swayHandler;
-        sway.swayMultipliers[sway.adsMultiplierReference] = Mathf.Lerp(hipfireAccuracyMultiplier, sway.adsMultiplier, timer);
+        sway.swayMultipliers[sway.adsMultiplierReference] = Mathf.Lerp(hipfireSwayMultiplier, sway.adsMultiplier, timer);
         
     }
     /// <summary>
