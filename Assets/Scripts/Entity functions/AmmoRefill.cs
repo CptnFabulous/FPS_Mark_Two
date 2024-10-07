@@ -6,6 +6,8 @@ public class AmmoRefill : ItemPickup
 {
     [Header("Weapon")]
     public Weapon toPickup;
+    public bool idLocked = false;
+    public string idLockedMessage = "ID-locked";
 
     [Header("Ammo")]
     public AmmunitionType type;
@@ -26,7 +28,18 @@ public class AmmoRefill : ItemPickup
         message = null;
 
         // If this is a new weapon, always pick it up
-        if (CanPlayerPickUpThisWeapon(player)) return true;
+        if (CanPlayerPickUpThisWeapon(player))
+        {
+            // If the weapon is ID-locked (and the player doesn't have another weapon that accepts the same ammo), no reason to pick it up
+            if (idLocked)
+            {
+                message = idLockedMessage;
+                return false;
+            }
+
+
+            return true;
+        }
 
         // Otherwise check if the player's ammo can be topped up
         return player.weapons.ammo.GetStock(type) < player.weapons.ammo.GetMax(type);
