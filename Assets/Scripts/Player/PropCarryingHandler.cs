@@ -7,32 +7,33 @@ using UnityEngine.InputSystem;
 public class PropCarryingHandler : MonoBehaviour
 {
     public float maxWeight = 5;
-    public UnityEvent<Rigidbody> onPickup;
-    public UnityEvent<Rigidbody> onPickupFailed;
-    public UnityEvent<Rigidbody> onThrow;
-
     public InteractionHandler interactionHandler;
     public ThrowHandler throwHandler;
     public SingleInput throwInput;
 
+    public UnityEvent<Rigidbody> onPickup;
+    public UnityEvent<Rigidbody> onDrop;
+    public UnityEvent<Rigidbody> onThrow;
+
     int frameOfLastPickup = 0;
+
+    Rigidbody heldItem;
+    bool autoDrawLastWeaponOnDrop;
 
     WeaponHandler weaponHandler => throwHandler.user.weaponHandler;
 
     private void Awake()
     {
-        // Add listeners to throw objects (these won't run if the player isn't carrying anything, due to checks in throwHandler)
-        interactionHandler.input.onActionPerformed.AddListener((_) => Drop());
-        throwInput.onActionPerformed.AddListener((value) =>
-        {
-            if (value.ReadValueAsButton() == true)
-            {
-                Throw();
-            }
-        });
+        // Add input to drop object
+        interactionHandler.input.onActionPerformed.AddListener((_) => Drop(true, true));
+        // Ensure that correct code runs after dropping an item. The item drop code can be triggered from elsewhere
+        throwHandler.onDrop.AddListener(OnDrop);
+
+        // Add input to throw object
+        throwInput.onActionPerformed.AddListener((value) => Throw(value.ReadValueAsButton()));
 
         // Add listener to drop the current item if the player deliberately switches weapons
-        weaponHandler.onSwitchWeapon.AddListener((_) => Drop(false));
+        weaponHandler.onSwitchWeapon.AddListener((_) => Drop(false, false));
     }
 
     public bool CanPickUpObject(Rigidbody target)
@@ -62,23 +63,44 @@ public class PropCarryingHandler : MonoBehaviour
         // Trigger pickup
         throwHandler.Pickup(target);
 
+        heldItem = target;
         frameOfLastPickup = Time.frameCount;
+
+        onPickup.Invoke(target);
     }
-    public void Drop(bool autoDrawLastWeapon = true)
+    void Drop(bool frameCheck, bool autoDrawLastWeapon)
     {
         // A small hack fix to prevent the game from dropping an item the player just picked up due to the same input
-        if (frameOfLastPickup == Time.frameCount) return;
-        
+        if (frameCheck && frameOfLastPickup == Time.frameCount) return;
+
+        autoDrawLastWeaponOnDrop = autoDrawLastWeapon;
         throwHandler.Drop(out _);
-        if (autoDrawLastWeapon) weaponHandler.SetCurrentWeaponActive(true);
     }
-    public void Throw()
+    void Throw(bool inputPressed = true)
     {
+        if (!inputPressed) return;
+        
         // TO DO: check for stamina, and consume stamina
 
         Rigidbody thrown = throwHandler.holding;
         throwHandler.Throw();
-        onThrow.Invoke(thrown);
         weaponHandler.SetCurrentWeaponActive(true);
+        onThrow.Invoke(thrown);
+    }
+
+    void OnDrop(Rigidbody dropped)
+    {
+        if (dropped != heldItem) return;
+
+
+        // If specified prior, switch to the previous weapon
+        // (can be disabled in case this code was run due to holstering current weapon)
+        if (autoDrawLastWeaponOnDrop) weaponHandler.SetCurrentWeaponActive(true);
+
+        // Clear values
+        heldItem = null;
+        autoDrawLastWeaponOnDrop = false;
+
+        onDrop.Invoke(dropped);
     }
 }

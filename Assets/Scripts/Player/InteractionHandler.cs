@@ -138,11 +138,10 @@ public class InteractionHandler : MonoBehaviour
         if (objectCarrier.CanPickUpObject(target))
         {
             objectCarrier.Pickup(target);
-            objectCarrier.onPickup.Invoke(target);
         }
         else
         {
-            objectCarrier.onPickupFailed.Invoke(target);
+            //objectCarrier.onPickupFailed.Invoke(target);
         }
     }
 

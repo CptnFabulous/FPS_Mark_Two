@@ -14,6 +14,8 @@ public class ThrowHandler : MonoBehaviour
     public float delayBeforeLaunch = 0.25f;
     public float cooldown = 0.5f;
 
+    public UnityEvent<Rigidbody> onPickup;
+    public UnityEvent<Rigidbody> onDrop;
     public UnityEvent<Rigidbody> onThrow;
 
     public Rigidbody holding { get; private set; } = null;
@@ -45,6 +47,8 @@ public class ThrowHandler : MonoBehaviour
         Vector3 position = -holding.centerOfMass;
         holding.transform.localPosition = position;
         holding.transform.localRotation = Quaternion.identity;
+
+        onPickup.Invoke(toPickUp);
     }
     public bool Drop(out Rigidbody detached)
     {
@@ -56,10 +60,12 @@ public class ThrowHandler : MonoBehaviour
         detached.transform.SetParent(null, true);
         // Re-enable movement and collisions
         SetPhysicsInteractions(detached, true);
-        
+
         // Inherit velocity
         // TO DO: make it distribute velocity between all child rigidbodies
         //detached.velocity = user.rigidbody.velocity;
+
+        onDrop.Invoke(detached);
 
         return true;
     }

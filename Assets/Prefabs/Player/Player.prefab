@@ -50,6 +50,12 @@ MonoBehaviour:
   range: 5
   delayBeforeLaunch: 0.25
   cooldown: 0.5
+  onPickup:
+    m_PersistentCalls:
+      m_Calls: []
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
   onThrow:
     m_PersistentCalls:
       m_Calls:
@@ -1724,18 +1730,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxWeight: 2
+  interactionHandler: {fileID: 6329320551191257722}
+  throwHandler: {fileID: 1145182430858350181}
+  throwInput: {fileID: 899306883574438364}
   onPickup:
     m_PersistentCalls:
       m_Calls: []
-  onPickupFailed:
+  onDrop:
     m_PersistentCalls:
       m_Calls: []
   onThrow:
     m_PersistentCalls:
       m_Calls: []
-  interactionHandler: {fileID: 6329320551191257722}
-  throwHandler: {fileID: 1145182430858350181}
-  throwInput: {fileID: 899306883574438364}
 --- !u!1 &6756839502517151461
 GameObject:
   m_ObjectHideFlags: 0
@@ -2790,6 +2796,10 @@ PrefabInstance:
       propertyPath: playerTracking
       value: 
       objectReference: {fileID: 5952785220977947003}
+    - target: {fileID: 904632498491475538, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: propCarrier
+      value: 
+      objectReference: {fileID: 3775226713762095602}
     - target: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: camera
       value: 
