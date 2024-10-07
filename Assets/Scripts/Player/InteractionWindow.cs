@@ -73,7 +73,7 @@ public class InteractionWindow : MonoBehaviour
     }
     void DisplayInteractable(Interactable target)
     {
-        bool canInteract = target.CanInteract(following.player);
+        bool canInteract = following.canInteractWithTarget;
         SetInteractability(canInteract);
 
         string displayName = target.displayName;

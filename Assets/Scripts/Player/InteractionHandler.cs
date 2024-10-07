@@ -26,6 +26,7 @@ public class InteractionHandler : MonoBehaviour
     public Rigidbody targetedPhysicsProp { get; private set; }
     public RaycastHit hitData { get; private set; }
     public Bounds targetBounds { get; private set; }
+    public bool canInteractWithTarget { get; private set; }
 
     Vector3 aimOrigin => referenceCamera.transform.position;
     Vector3 aimDirection => referenceCamera.transform.forward;
@@ -85,10 +86,12 @@ public class InteractionHandler : MonoBehaviour
         // Get bounds
         if (i != null)
         {
+            canInteractWithTarget = i.CanInteract(player);
             targetBounds = i.collider.bounds;
         }
         else if (rb != null)
         {
+            canInteractWithTarget = true;
             targetBounds = MiscFunctions.CombinedBounds(PhysicsCache.GetChildColliders(rb));
         }
     }
@@ -123,7 +126,7 @@ public class InteractionHandler : MonoBehaviour
     }
     void ContextInteractionCheck(Interactable target)
     {
-        if (target.CanInteract(player))
+        if (canInteractWithTarget)
         {
             target.OnInteract(player);
             onInteract.Invoke(player, target);
@@ -135,7 +138,7 @@ public class InteractionHandler : MonoBehaviour
     }
     void PhysicsPropInteractionCheck(Rigidbody target)
     {
-        if (objectCarrier.CanPickUpObject(target))
+        if (canInteractWithTarget)
         {
             objectCarrier.Pickup(target);
         }
