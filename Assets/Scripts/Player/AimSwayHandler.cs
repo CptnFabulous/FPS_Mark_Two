@@ -6,6 +6,7 @@ public class AimSwayHandler : MonoBehaviour
 {
     public float baseAccuracyMultiplier = 1;
     public float swaySpeed = 0.5f;
+    public AnimationCurve centeringCurve = AnimationCurve.Linear(0, 0, 1, 1);
     public MultiplierStack swayMultipliers = new MultiplierStack();
     public float swayAcceleration = 20;
 
@@ -41,12 +42,30 @@ public class AimSwayHandler : MonoBehaviour
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
-    public Vector3 aimDirection => aimAxis.rotation * AimSway(aimSwayAngle, swaySpeed) * Vector3.forward;
+    public Vector3 aimDirection
+    {
+        get
+        {
+            Quaternion q = AimSway(aimSwayAngle, swaySpeed, centeringCurve);
+            return aimAxis.rotation * q * Vector3.forward;
+        }
+    }
 
     private void Update()
     {
         // Gradually shifts aim sway towards the desired value
         _currentSway = Mathf.MoveTowards(_currentSway, desiredSwayAngle, swayAcceleration * Time.deltaTime);
+    }
+    private void OnDrawGizmosSelected()
+    {
+        float length = 20;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(aimAxis.position, length * aimDirection);
+
+        Gizmos.matrix = aimAxis.localToWorldMatrix;
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawFrustum(Vector3.zero, aimSwayAngle, length, 0, 1);
     }
 
     /// <summary>
@@ -55,7 +74,7 @@ public class AimSwayHandler : MonoBehaviour
     /// <param name="maxSwayAngle"></param>
     /// <param name="swaySpeed"></param>
     /// <returns></returns>
-    public static Quaternion AimSway(float maxSwayAngle, float swaySpeed)
+    public static Quaternion AimSway(float maxSwayAngle, float swaySpeed, AnimationCurve centeringCurve = null)
     {
         // Generates changing values from noise
         float t = Time.time * swaySpeed;
@@ -63,8 +82,15 @@ public class AimSwayHandler : MonoBehaviour
         float noiseY = Mathf.PerlinNoise(0, t);
         // Converts values from 0 - 1 to -1 - 1
         Vector2 angles = new Vector2(noiseX - 0.5f, noiseY - 0.5f) * 2;
-        angles *= maxSwayAngle; //  Multiplies by accuracy value
-        // Creates euler angles and combines with current aim direction
+
+        // Evaluate the magnitude based on a curve (to bias shots towards or away from the centre)
+        if (centeringCurve != null)
+        {
+            angles = angles.normalized * centeringCurve.Evaluate(angles.magnitude);
+        }
+
+        // Multiply by accuracy value and create euler angles
+        angles *= maxSwayAngle;
         return Quaternion.Euler(angles.y, angles.x, 0);
     }
 }
