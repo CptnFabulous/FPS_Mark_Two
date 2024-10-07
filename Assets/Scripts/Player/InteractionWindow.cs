@@ -25,14 +25,7 @@ public class InteractionWindow : MonoBehaviour
     public string deadText = "(dead)";
 
     public PropCarryingHandler objectCarrier => following.objectCarrier;
-
-    private void Awake()
-    {
-        // Assign button prompt
-        PlayerInput input = following.player.controls;
-        InputAction action = following.input.action;
-        prompt.AssignAction(action, input);
-    }
+    
     private void LateUpdate()
     {
         bool somethingToInteractWith = following.targetedInteractable != null;
@@ -126,12 +119,7 @@ public class InteractionWindow : MonoBehaviour
     }
 
 
-    void SetInteractability(bool canInteract)
-    {
-        // Set active states of button prompt and status icon
-
-        prompt.inputDisabled = !canInteract;
-    }
+    void SetInteractability(bool canInteract) => prompt.inputDisabled = !canInteract; // Set active states of button prompt and status icon
 
     /*
     private void OnDrawGizmos()
