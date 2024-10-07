@@ -1,20 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-/*
-public enum AmmoTypeEnum
-{
-    Pistol,
-    Buckshot,
-    Rifle,
-    Grenade
-}
-*/
 public class AmmunitionInventory : MonoBehaviour
 {
     public bool startEmpty;
-    public Resource[] ammunitionTypes;
+    [SerializeField] Resource[] ammunitionTypes;
+
+    public UnityEvent<AmmunitionType, int, Resource> onResourceUpdated;
 
     private void Start()
     {
@@ -24,26 +18,23 @@ public class AmmunitionInventory : MonoBehaviour
         }
     }
 
-    public Resource GetValues(AmmunitionType type)
-    {
-        return ammunitionTypes[AmmunitionType.GetIndex(type)];
-    }
-    public float GetStock(AmmunitionType type)
-    {
-        return GetValues(type).current;
-    }
-    public int GetMax(AmmunitionType type)
-    {
-        return GetValues(type).max;
-    }
+    public Resource GetValues(AmmunitionType type) => ammunitionTypes[AmmunitionType.GetIndex(type)];
+    public float GetStock(AmmunitionType type) => GetValues(type).current;
+    public int GetMax(AmmunitionType type) => GetValues(type).max;
     public void Collect(AmmunitionType type, int amount, out int remainder)
     {
-        ammunitionTypes[AmmunitionType.GetIndex(type)].Increment(amount, out float extra);
+        int index = AmmunitionType.GetIndex(type);
+        ammunitionTypes[index].Increment(amount, out float extra);
         remainder = Mathf.RoundToInt(extra);
+
+        onResourceUpdated.Invoke(type, amount - remainder, ammunitionTypes[index]);
     }
     public void Spend(AmmunitionType type, int amount)
     {
-        ammunitionTypes[AmmunitionType.GetIndex(type)].Increment(-amount);
+        int index = AmmunitionType.GetIndex(type);
+        ammunitionTypes[index].Increment(-amount);
+
+        onResourceUpdated.Invoke(type, -amount, ammunitionTypes[index]);
     }
 
     void Reset()
