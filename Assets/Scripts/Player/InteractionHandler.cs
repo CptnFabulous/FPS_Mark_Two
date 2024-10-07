@@ -27,6 +27,7 @@ public class InteractionHandler : MonoBehaviour
     public RaycastHit hitData { get; private set; }
     public Bounds targetBounds { get; private set; }
     public bool canInteractWithTarget { get; private set; }
+    public string message { get; private set; }
 
     Vector3 aimOrigin => referenceCamera.transform.position;
     Vector3 aimDirection => referenceCamera.transform.forward;
@@ -42,6 +43,7 @@ public class InteractionHandler : MonoBehaviour
         Interactable i = null;
         Rigidbody rb = null;
         RaycastHit rh = new RaycastHit();
+        string msg = null;
 
         // Perform an initial cast, prioritising whatever the player is directly aiming at
         bool directCast = InteractionCast(aimDirection, out rh) && ColliderIsInteractable(rh.collider, out i, out rb);
@@ -83,10 +85,13 @@ public class InteractionHandler : MonoBehaviour
         targetedInteractable = i;
         targetedPhysicsProp = rb;
         hitData = rh;
-        // Get bounds
+
+        // Obtain and cache additional data
         if (i != null)
         {
-            canInteractWithTarget = i.CanInteract(player);
+            // Cache interactability data
+            canInteractWithTarget = i.CanInteract(player, out msg);
+            message = msg;
             targetBounds = i.collider.bounds;
         }
         else if (rb != null)

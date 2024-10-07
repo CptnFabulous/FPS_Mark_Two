@@ -85,16 +85,8 @@ public class InteractionWindow : MonoBehaviour
         interactableName.text = displayName;
 
         // Set values
-        float progress = target.Progress;
-        progressBar.fillAmount = progress;
-        if (progress > 0 && progress < 1)
-        {
-            action.text = target.inProgressMessage;
-        }
-        else
-        {
-            action.text = canInteract ? target.promptMessage : target.disabledMessage;
-        }
+        progressBar.fillAmount = target.Progress;
+        action.text = following.message;
     }
     void DisplayPhysicsProp(Rigidbody target)
     {

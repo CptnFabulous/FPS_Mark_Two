@@ -12,7 +12,11 @@ public class ItemPickup : MonoBehaviour
         interactable.onInteract.AddListener(OnPickup);
         interactable.canInteract += CanInteract;
     }
-    public virtual bool CanInteract(Player player) => true;
+    public virtual bool CanInteract(Player player, out string message)
+    {
+        message = null;
+        return true;
+    }
     public virtual void OnPickup(Player player)
     {
         Destroy(gameObject);

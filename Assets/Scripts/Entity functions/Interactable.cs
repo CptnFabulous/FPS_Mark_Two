@@ -6,6 +6,8 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Collider))]
 public class Interactable : MonoBehaviour
 {
+    public delegate bool InteractionCheck(Player player, out string message);
+
     public bool active = true;
     public bool activateOnCollision;
     public Entity parentEntity;
@@ -16,7 +18,7 @@ public class Interactable : MonoBehaviour
     public string disabledMessage = "Cannot interact";
 
     public UnityEvent<Player> onInteract;
-    public System.Func<Player, bool> canInteract;
+    public InteractionCheck canInteract;
 
     public Collider collider => c ??= GetComponent<Collider>();
     Collider c;
@@ -25,7 +27,29 @@ public class Interactable : MonoBehaviour
     float cooldownTimer;
     public float Progress => cooldownTimer;
 
-    public bool CanInteract(Player player) => active && (canInteract == null || canInteract.Invoke(player));
+    public bool CanInteract(Player player, out string message)
+    {
+        message = null;
+
+        if (active == false) return false;
+
+
+        bool can = canInteract == null || (cooldownTimer == 0 && canInteract.Invoke(player, out message));
+        if (string.IsNullOrEmpty(message))
+        {
+            if (cooldownTimer > 0 && cooldownTimer < 1)
+            {
+                message = inProgressMessage;
+            }
+            else
+            {
+                message = can ? promptMessage : disabledMessage;
+            }
+        }
+        
+        return can;
+    }
+
     public virtual void OnInteract(Player interactedWith)
     {
         onInteract.Invoke(interactedWith);
@@ -41,10 +65,9 @@ public class Interactable : MonoBehaviour
         if (p == null) return;
 
         Debug.Log("Player is present, checking if interactable");
-        if (CanInteract(p))
-        {
-            OnInteract(p);
-        }
+        
+        if (CanInteract(p, out _)) OnInteract(p);
+
     }
 
 
@@ -62,7 +85,6 @@ public class Interactable : MonoBehaviour
     }
     IEnumerator Cooldown(float duration)
     {
-        active = false;
         cooldownTimer = 0;
         while (cooldownTimer != 1)
         {
@@ -78,6 +100,5 @@ public class Interactable : MonoBehaviour
         StopCoroutine(cooldown);
         cooldown = null;
         cooldownTimer = 0;
-        active = true;
     }
 }

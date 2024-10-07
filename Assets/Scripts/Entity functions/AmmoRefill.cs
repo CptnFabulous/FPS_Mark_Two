@@ -21,8 +21,10 @@ public class AmmoRefill : ItemPickup
         return player.weapons.equippedWeapons.Find((w) => w.parentEntity.properName == properName) == null;
     }
 
-    public override bool CanInteract(Player player)
+    public override bool CanInteract(Player player, out string message)
     {
+        message = null;
+
         // If this is a new weapon, always pick it up
         if (CanPlayerPickUpThisWeapon(player)) return true;
 

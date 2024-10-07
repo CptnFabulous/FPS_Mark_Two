@@ -14,7 +14,11 @@ public class DamageOnInteract : MonoBehaviour
 
     private void Awake()
     {
-        interactable.canInteract += (_) => health.IsAlive;
+        interactable.canInteract += (Player player, out string msg) =>
+        {
+            msg = null;
+            return health.IsAlive;
+        };
         interactable.onInteract.AddListener(DamageObject);
     }
 
