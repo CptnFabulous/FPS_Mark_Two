@@ -374,10 +374,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebugData: 0
   properName: Fire Extinguisher
   description: A new entity.
   isUnique: 0
   health: {fileID: 4453649957227706591}
+  audioSource: {fileID: 0}
 --- !u!114 &4453649957227706591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,7 +449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impactEffect: {fileID: 11400000, guid: 16f4d5a2627a7824a83c6dda7700d914, type: 2}
+  impactEffect: {fileID: 11400000, guid: 38e34c20468788a4db98134dccfdf123, type: 2}
 --- !u!1 &4453649957301235150
 GameObject:
   m_ObjectHideFlags: 0
