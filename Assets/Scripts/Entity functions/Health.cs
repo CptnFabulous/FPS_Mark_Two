@@ -122,6 +122,14 @@ public class Health : MonoBehaviour
         float force = relativeVelocity.magnitude;
         Rigidbody rb = collision.rigidbody;
 
+        // Multiply the force based on the angle of the normal and relative velocity.
+        // This ensures that entities don't take ridiculous amounts of damage just from scrapes.
+        Vector3 normal = MiscFunctions.GetAverageCollisionNormal(collision);
+        float dotProduct = Vector3.Dot(relativeVelocity, normal);
+        //Debug.Log($"{attachedTo}: Hit dot product = {dotProduct}");
+        dotProduct = Mathf.Clamp01(dotProduct);
+        force *= dotProduct;
+
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
         //attachedTo.DebugLog($"{hitbox} impacted with {collision.collider}, velocity = {force}/{minimumCollisionForceToDamage}");
