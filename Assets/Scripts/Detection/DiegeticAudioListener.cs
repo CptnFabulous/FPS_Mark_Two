@@ -63,6 +63,11 @@ public class DiegeticAudioListener : MonoBehaviour
     {
         heardDecibels = 0;
 
+        // Ignore own sounds
+        if (source == rootEntity) return false;
+        // Ignore sounds coming from friendly characters
+        if (rootEntity.IsHostileTowards(source) == false) return false;
+
         // Check how far it takes the sound to travel, based on how the sound would reach the target.
         // First, check if it's a clear line of sight to the target.
         float travelDistance;
