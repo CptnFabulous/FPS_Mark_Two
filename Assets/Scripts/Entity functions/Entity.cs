@@ -11,6 +11,7 @@ public class Entity : MonoBehaviour
     public bool isUnique;
 
     public Health health;
+    public AudioSource audioSource;
 
     IList<Collider> _colliders;
     Rigidbody _rb;

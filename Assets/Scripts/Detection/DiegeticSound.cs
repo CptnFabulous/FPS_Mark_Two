@@ -29,7 +29,7 @@ public class DiegeticSound : ScriptableObject
         AudioSource source = null;
         if (sourceEntity != null)
         {
-            source = sourceEntity.GetComponentInChildren<AudioSource>();
+            source = sourceEntity.audioSource;
         }
         Play(point, sourceEntity, source, multiplier, playAudioAtMaxVolume);
     }
