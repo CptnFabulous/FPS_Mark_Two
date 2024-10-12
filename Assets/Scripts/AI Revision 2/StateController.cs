@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class StateController : StateFunction
 {
+    [SerializeField] Entity _rootEntity;
     [SerializeField] StateFunction current;
     public UnityEngine.Events.UnityEvent<bool> onSetActive;
 
+    public Entity rootEntity => _rootEntity ??= controller.rootEntity;
     public StateFunction currentState => current;
     public StateFunction previousState { get; private set; }
     public StateFunction[] states { get; private set; }
@@ -28,7 +30,7 @@ public class StateController : StateFunction
         // Do nothing if the desired state is not part of the state machine hierarchy
         if (newState.root != root)
         {
-            Debug.LogError($"{this}: cannot switch to {newState} because it's not part of this state machine!");
+            rootEntity.DebugLog($"{this}: cannot switch to {newState} because it's not part of this state machine!");
             return;
         }
 
@@ -41,7 +43,7 @@ public class StateController : StateFunction
 
         if (newState != currentState)
         {
-            Debug.Log($"{root}: switching from {current} to {newState} on frame {Time.frameCount}");
+            rootEntity.DebugLog($"{root}: switching from {current} to {newState} on frame {Time.frameCount}");
             current.enabled = false;
             previousState = current;
             current = newState;
