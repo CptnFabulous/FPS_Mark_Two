@@ -118,6 +118,16 @@ public readonly struct MiscFunctions
         }
         return finalMask;
     }
+    public static Vector3 GetAverageCollisionNormal(Collision collision)
+    {
+        Vector3 normal = Vector3.zero;
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            normal += collision.GetContact(i).normal;
+        }
+        normal /= collision.contactCount;
+        return normal;
+    }
     #endregion
 
     #region Finding components

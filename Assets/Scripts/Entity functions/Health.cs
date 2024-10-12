@@ -117,8 +117,8 @@ public class Health : MonoBehaviour
         if (attachedTo.colliders.Contains(collision.collider)) return;
 
         #region Calculate collision force, cancel if too low
-        // Figure out impact force from velocity. If a rigidbody is present, multiply the mass accordingly
-        float force = collision.relativeVelocity.magnitude;
+        Vector3 relativeVelocity = GetRelativeVelocityOfPhysicsImpact(collision, hitbox);
+        float force = relativeVelocity.magnitude;
         Rigidbody rb = collision.rigidbody;
 
         // If the force isn't enough to register, cancel.
@@ -179,6 +179,54 @@ public class Health : MonoBehaviour
         // Deal damage (use the hitbox's main damage function to calculate things like resistances)
         hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.Impact, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized, hitbox.isCritical);
         #endregion
+    }
+
+    /// <summary>
+    /// Obtains the relative velocity of a collision, but accounting for kinematic child bodies (in case they register the hit but are attached to a non-kinematic parent rigidbody).
+    /// </summary>
+    /// <param name="collision"></param>
+    /// <param name="hitbox"></param>
+    /// <returns></returns>
+    static Vector3 GetRelativeVelocityOfPhysicsImpact(Collision collision, Hitbox hitbox)
+    {
+        // First, get it the normal way.
+        Vector3 relativeVelocity = collision.relativeVelocity;
+        if (relativeVelocity.magnitude > 0.01f) return relativeVelocity;
+
+        // If force is zero or basically zero, that might be because the hitbox is part of a kinematic child collider compared to an actually active rigidbody.
+        // Check if at least one rigidbody exists and is kinematic
+        Rigidbody incomingRigidbody = collision.rigidbody;
+        Rigidbody hitRigidbody = hitbox.rigidbody;
+        if (hitRigidbody != null && hitRigidbody.isKinematic == false) return relativeVelocity;
+        if (hitRigidbody != null && hitRigidbody.isKinematic == false) return relativeVelocity;
+
+        // If not, check in the parent values
+        //attachedTo.DebugLog($"Miniscule collision detected, check for non-kinematic parents. {hitRigidbody}, {incomingRigidbody}, {force}");
+        Rigidbody hit = MiscFunctions.GetComponentInParentWhere<Rigidbody>(hitbox.transform, (rb) => rb.isKinematic == false);
+        Rigidbody incoming = MiscFunctions.GetComponentInParentWhere<Rigidbody>(collision.collider.transform, (rb) => rb.isKinematic == false);
+        bool hitExists = hit != null;
+        bool incomingExists = incoming != null;
+
+        // If both values exist, just subtract incoming from hit to get the relative velocity!
+        if (hitExists && incomingExists) return hit.velocity - incoming.velocity;
+
+        // If neither exists (somehow), there's no physics occurring in the first place.
+        if (!hitExists && !incomingExists) return Vector3.zero;
+
+        // If hit is stationary, relative velocity is just incoming velocity (incoming - zero)
+        // If incoming is stationary, relative velocity is just opposite of hit velocity (zero - hit)
+        Vector3 velocity = Vector3.zero;
+        if (incomingExists) velocity += incoming.velocity;
+        else if (hitExists) velocity -= hit.velocity;
+
+        // Check the directions of the relative velocity and collision normal.
+        // If the angle is obtuse (dot product is less than zero), the two objects are moving away from each other and therefore not colliding.
+        Vector3 normal = MiscFunctions.GetAverageCollisionNormal(collision);
+        float dotProduct = Vector3.Dot(velocity, normal);
+        if (dotProduct < 0) return Vector3.zero;
+
+        // Return the functional relative velocity
+        return velocity;
     }
 
     #region Miscellaneous functions

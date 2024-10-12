@@ -11,10 +11,12 @@ public class Hitbox : MonoBehaviour
     public DamageResistanceProfile resistances;
 
     Collider c;
+    Rigidbody _rb;
 
     public Collider collider => c ??= GetComponent<Collider>();
     public Entity attachedTo => _attachedTo ??= GetComponentInParent<Entity>();
     public Health sourceHealth => attachedTo.health;
+    public Rigidbody rigidbody => _rb ??= GetComponentInParent<Rigidbody>();
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, Vector3 direction, bool critical = false)
     {
