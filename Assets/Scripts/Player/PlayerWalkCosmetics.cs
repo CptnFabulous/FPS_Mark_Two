@@ -19,6 +19,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
 
     [Header("Steps")]
     public ImpactEffect footsteps;
+    public float baseFootstepVolume = 0.5f;
     public UnityEvent<RaycastHit> onStep;
 
     [Header("Drag")] // Torso lingering/dragging when moving
@@ -64,7 +65,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
             if (stepTimer >= walkCycleLength / stepsPerCycle)
             {
                 #region Play footstep
-                float volume = 1;
+                float volume = baseFootstepVolume;
 
                 CrouchController cc = controller.crouchController;
                 if (cc.isCrouching) volume *= cc.footstepVolumeMultiplier;
