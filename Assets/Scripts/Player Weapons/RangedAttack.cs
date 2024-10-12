@@ -91,13 +91,16 @@ public class RangedAttack : WeaponMode
         shotsInBurst = 0;
         float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer, to infinity to ensure it always sends a message on the first shot.
 
-        while (PrimaryHeld && CanAttack())
+        while (CanAttack())
         {
             TrySendMessage(ref timeOfLastMessage);
             // Fire shot and increment burst timer
             yield return SingleShot();
         }
 
+        // Wait for the cooldown, if applicable
+        float cooldown = controls.burstCooldown;
+        if (cooldown > 0) yield return new WaitForSeconds(cooldown);
         // Wait until the fire button is released, then reset the shot timer
         yield return new WaitUntil(() => PrimaryHeld == false);
         shotsInBurst = 0;
@@ -114,6 +117,9 @@ public class RangedAttack : WeaponMode
     }
     public override bool CanAttack()
     {
+        //Check that the fire button is still held (or that the minimum burst hasn't yet completed)
+        if ((PrimaryHeld || controls.WillBurst(shotsInBurst)) == false) return false;
+        
         if (controls.CanBurst(shotsInBurst) == false) return false;
         
         // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
