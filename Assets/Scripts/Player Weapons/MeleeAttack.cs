@@ -21,6 +21,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     [Header("Damage")]
     [SerializeField] DamageDealer hitData;
+    [SerializeField] Vector3 directionOffsetAngles = Vector3.zero;
     [SerializeField] float staminaConsumption = 1;
 
     [Header("Animations")]
@@ -114,27 +115,45 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         #endregion
 
         #region Deal damage to target (if the attack hits something)
+        GameObject targetObject = null;
+        Vector3 point = Vector3.zero;
+        Vector3 normal = -direction;
+        Vector3 hitDirection = direction;
         if (target != null)
         {
             //Debug.Log($"{this}: dealing damage");
 
-            Vector3 point = target.bounds.center;
-            Vector3 hitDirection = point - origin;
-            hitData.AttackObject(target.gameObject, User, User, point, hitDirection, -hitDirection);
-            //target.health.Damage(damage, stun, false, damageType, User);
+            targetObject = target.gameObject;
+            point = target.bounds.center;
+            hitDirection = point - origin;
+            normal = -hitDirection;
+            //hitData.AttackObject(target.gameObject, User, User, point, hitDirection, -hitDirection);
         }
         else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, hitDetection))
         {
+            targetObject = rh.collider.gameObject;
+            point = rh.point;
+            normal = rh.normal;
+            hitDirection = direction;
             // Casts a secondary check
             //Debug.Log("Hit something that isn't an entity");
-            hitData.AttackObject(rh.collider.gameObject, User, User, rh.point, direction, rh.normal);
         }
-        /*
-        else
+
+        if (targetObject != null)
         {
-            Debug.Log($"{this}: missed");
+            Vector3 attackDirection = hitDirection;
+
+            if (directionOffsetAngles != Vector3.zero)
+            {
+                //Debug.DrawRay(point, attackDirection, Color.red, 5);
+                Quaternion q = Quaternion.LookRotation(attackDirection, transform.up);
+                q *= Quaternion.Euler(directionOffsetAngles);
+                attackDirection = q * Vector3.forward;
+            }
+            //Debug.DrawRay(point, attackDirection, Color.green, 5);
+
+            hitData.AttackObject(targetObject, User, User, point, attackDirection, normal);
         }
-        */
         #endregion
 
         #region Cooldown
