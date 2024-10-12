@@ -11,10 +11,11 @@ public class HumanoidAnimator : MonoBehaviour
     [SerializeField] PhysicsAffectedAI physicsHandler;
     [SerializeField] Transform[] spineBones;
 
-    [Header("Animator values")]
+    [Header("Movement")]
     [SerializeField] string standardMovementLayer = "Movement";
     [SerializeField] string walkXValue = "Movement X";
     [SerializeField] string walkZValue = "Movement Z";
+    [SerializeField] ImpactEffect footsteps;
 
     [Header("Stuns")]
     [SerializeField] string damageDirectionX = "Damage Direction X";
@@ -84,5 +85,12 @@ public class HumanoidAnimator : MonoBehaviour
         float dotProductSign = Mathf.Sign(physicsHandler.ragdollUprightDotProduct);
         animator.SetFloat(ragdollOrientationDotProduct, dotProductSign);
         animator.Play(standUpState, defaultAnimationLayer, 0);
+    }
+    public void PlayFootstep()
+    {
+        // Currently it just plays a noise despite using an ImpactEffect as a parameter.
+        // Later on, I want to add code for things like displaying footstep decals
+        footsteps.defaultSound.Play(transform.position, character, 1);
+        //footsteps.Play()
     }
 }
