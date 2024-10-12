@@ -120,6 +120,13 @@ public class Health : MonoBehaviour
         // Figure out impact force from velocity. If a rigidbody is present, multiply the mass accordingly
         float force = collision.relativeVelocity.magnitude;
         Rigidbody rb = collision.rigidbody;
+
+        // If the force isn't enough to register, cancel.
+        // We don't want things constantly taking chip damage from the most miniscule impacts
+        //attachedTo.DebugLog($"{hitbox} impacted with {collision.collider}, velocity = {force}/{minimumCollisionForceToDamage}");
+        if (force <= minimumCollisionForceToDamage) return;
+
+        // Multiply physics damage based on the incoming mass
         if (rb != null)
         {
             force *= PhysicsCache.TotalMassOfConnectedRigidbodies(rb);
@@ -131,9 +138,11 @@ public class Health : MonoBehaviour
         }
         */
 
+        /*
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
         if (force <= minimumCollisionForceToDamage) return;
+        */
         #endregion
 
         #region Check if the entity can take damage from the colliding object at this time
