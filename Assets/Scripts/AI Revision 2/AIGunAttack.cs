@@ -27,7 +27,7 @@ public class AIGunAttack : MonoBehaviour
     public float cooldownMax = 0.2f;
     public UnityEvent onCooldown;
 
-    //IEnumerator currentAttackSequence;
+    IEnumerator currentAttackSequence;
 
     bool inAttack;
     Vector3 currentAimTarget;
@@ -42,13 +42,9 @@ public class AIGunAttack : MonoBehaviour
         if (target == null) return;
         if (target.health.IsAlive == false) return;
 
-
         // While attacking, rotate aim towards target
         // While telegraphing and attacking, shift aim towards target at a speed roughly equivalent to their standard movement speed
         // While cooling down, rotate aim normally
-
-
-        
 
         bool canSee = rootAI.targeting.canSeeTarget == ViewStatus.Visible;
         currentAimTarget = rootAI.targeting.lastValidHit.point;
@@ -56,16 +52,8 @@ public class AIGunAttack : MonoBehaviour
         bool canTarget = canSee && canShoot;
         Debug.DrawLine(aim.LookOrigin, currentAimTarget, Color.magenta);
 
-        aim.lookingInDefaultDirection = false;
         if (inAttack)
         {
-            /*
-            // Shift aim target position linearly
-            // (at a speed proportional to the player's movement speed, so it's more difficult when moving normally but easier when sprinting)
-            float speed = 0;
-            if (target is Player p) speed = p.movement.defaultSpeed * 0.5f; // Should I add a property for the multiplier?
-            aim.ShiftLookTowards(targetPosition, speed);
-            */
             aim.ShiftLookTowards(targetPosition, aimSpeedWhileTelegraphing);
         }
         else if (canTarget)
@@ -74,15 +62,26 @@ public class AIGunAttack : MonoBehaviour
             aim.RotateLookTowards(currentAimTarget);
             if (aimIsCorrect)
             {
-                StartCoroutine(AttackSequence());
+                currentAttackSequence = null;
+                currentAttackSequence = AttackSequence();
+                StartCoroutine(currentAttackSequence);
             }
         }
-        else
+        aim.lookingInDefaultDirection = !inAttack && !canTarget;
+    }
+    private void OnDisable()
+    {
+        if (currentAttackSequence != null)
         {
-            aim.lookingInDefaultDirection = true; // Look in default direction
+            // Prematurely cancel attack
+            StopCoroutine(currentAttackSequence);
+            currentAttackSequence = null;
+            onTelegraphEnd.Invoke();
+            onCooldown.Invoke();
+            inAttack = false;
+            aim.lookingInDefaultDirection = true;
         }
     }
-
 
     IEnumerator AttackSequence()
     {
@@ -118,5 +117,4 @@ public class AIGunAttack : MonoBehaviour
         yield return new WaitForSeconds(cooldown);
         inAttack = false;
     }
-
 }
