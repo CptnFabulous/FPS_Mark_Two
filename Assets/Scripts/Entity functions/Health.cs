@@ -51,6 +51,7 @@ public class Health : MonoBehaviour
     static float stunPerCollisionForceUnit = 1f;
     static float minTimeBetweenCollisions = 0.5f;
     static float minTimeAfterThrowBeforeCollision = 1f;
+    static float multiplierForStaticCollisions = 4;
 
     public bool IsAlive => data.current > 0;
     public Entity attachedTo => e ??= GetComponentInParent<Entity>();
@@ -131,12 +132,10 @@ public class Health : MonoBehaviour
         {
             force *= PhysicsCache.TotalMassOfConnectedRigidbodies(rb);
         }
-        /*
         else
         {
-            // How do I determine the impact force if the entity collides with terrain?
+            force *= multiplierForStaticCollisions;
         }
-        */
 
         /*
         // If the force isn't enough to register, cancel.
