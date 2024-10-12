@@ -32,7 +32,7 @@ public class EnvironmentalHazard : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (enableFromPhysicsEvents == false) return;
-        DamageCheck(c);
+        DamageCheck(other);
     }
 
     public void DamageCheck(Rigidbody rb)
