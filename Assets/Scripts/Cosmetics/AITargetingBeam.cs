@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class AITargetingBeam : MonoBehaviour
 {
@@ -10,8 +11,9 @@ public class AITargetingBeam : MonoBehaviour
     public LineRenderer beam;
     public float minLength = 0.5f;
     public float maxLength = 10f;
-
+    public UnityEvent onPlay;
     LayerMask hitDetection => attachedTo.weapon.attackMask;
+
     
     private void Awake()
     {
@@ -43,6 +45,7 @@ public class AITargetingBeam : MonoBehaviour
     public void Play()
     {
         gameObject.SetActive(true);
+        onPlay.Invoke();
     }
     public void Stop()
     {

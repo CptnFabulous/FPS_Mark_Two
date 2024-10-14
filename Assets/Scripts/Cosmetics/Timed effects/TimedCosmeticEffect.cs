@@ -11,30 +11,39 @@ public class TimedCosmeticEffect : MonoBehaviour
 
     public bool looping;
     public bool playOnAwake;
+    public bool stopOnAwake = true;
     public UnityEvent<float> effects;
 
-    
+    RectTransform rt;
+
+    public bool completed => looping == false && timer >= 1;
+    public RectTransform rectTransform => rt ??= GetComponent<RectTransform>();
+
     private void OnValidate()
     {
         effects.Invoke(timer);
     }
+    /*
+    private void Awake()
+    {
+        Stop();
+    }
+    */
     private void Start()
     {
         if (playOnAwake)
         {
             Play();
         }
-        else
+        else if (stopOnAwake)
         {
             Stop();
         }
     }
     void LateUpdate()
     {
-        if (enabled == false) // This seems unnecessary but is needed because even if Stop or Pause is run on the same frame, LateUpdate will still run for said frame.
-        {
-            return;
-        }
+        // This seems unnecessary but is needed because even if Stop or Pause is run on the same frame, LateUpdate will still run for said frame.
+        if (enabled == false) return;
 
         timer += Time.deltaTime / duration;
         timer = Mathf.Clamp01(timer);
@@ -43,6 +52,7 @@ public class TimedCosmeticEffect : MonoBehaviour
         {
             if (looping)
             {
+                //timer %= 1;
                 timer = 0;
             }
             else
@@ -79,25 +89,4 @@ public class TimedCosmeticEffect : MonoBehaviour
         timer = Mathf.Clamp01(value);
         effects.Invoke(timer);
     }
-
-    public bool completed
-    {
-        get
-        {
-            return looping == false && timer >= 1;
-        }
-    }
-
-    public RectTransform rectTransform
-    {
-        get
-        {
-            if (rt == null)
-            {
-                rt = GetComponent<RectTransform>();
-            }
-            return rt;
-        }
-    }
-    RectTransform rt;
 }

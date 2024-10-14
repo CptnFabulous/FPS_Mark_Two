@@ -13,9 +13,6 @@ public abstract class LerpingCosmeticEffect : MonoBehaviour
             new Keyframe(1, 0),
         }
     };
-    public void LerpEffects(float timer)
-    {
-        SetLerpDirectly(curve.Evaluate(timer));
-    }
+    public void LerpEffects(float timer) => SetLerpDirectly(curve.Evaluate(timer));
     public abstract void SetLerpDirectly(float value);
 }
