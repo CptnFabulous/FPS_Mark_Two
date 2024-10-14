@@ -19,11 +19,8 @@ public class DiegeticSound : ScriptableObject
     [SerializeField] float delay;
     */
 
-    public void Play(AudioSource source) => Play(source, 1);
-    public void Play(AudioSource source, float multiplier)
-    {
-        Play(source.transform.position, source.GetComponentInParent<Entity>(), source, multiplier);
-    }
+    public void Play(Entity entity) => Play(entity.bounds.center, entity);
+    public void Play(AudioSource source) => Play(source.transform.position, source.GetComponentInParent<Entity>(), source);
     public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1, bool playAudioAtMaxVolume = false)
     {
         AudioSource source = null;
