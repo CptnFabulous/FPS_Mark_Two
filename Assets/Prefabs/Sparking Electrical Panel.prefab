@@ -992,6 +992,7 @@ MonoBehaviour:
   description: '[PLACEHOLDER]'
   isUnique: 0
   health: {fileID: 0}
+  audioSource: {fileID: 7234027802475353143}
 --- !u!82 &7234027802475353143
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1356,8 +1357,8 @@ MonoBehaviour:
   entity: {fileID: 975937460477862166}
   enableFromPhysicsEvents: 1
   contactDamage:
-    damage: 50
-    stun: 50
+    damage: 25
+    stun: 25
     knockback: 5
     type: 6
     criticalMultiplier: 1
@@ -1370,8 +1371,8 @@ MonoBehaviour:
           m_MethodName: Play
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 7234027802475353143}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+            m_ObjectArgument: {fileID: 975937460477862166}
+            m_ObjectArgumentAssemblyTypeName: Entity, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
@@ -1389,6 +1390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 975937460477862166}
   impactEffect: {fileID: 11400000, guid: 8259f091b2459bb4097918d40f5424b2, type: 2}
 --- !u!1001 &7255959964004601603
 PrefabInstance:
