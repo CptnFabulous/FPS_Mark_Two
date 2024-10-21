@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PhysicsObjectEffects : MonoBehaviour
 {
+    [SerializeField] Entity _rootEntity;
     public ImpactEffect impactEffect;
     //public ImpactEffect scrapeEffect;
 
@@ -20,8 +21,7 @@ public class PhysicsObjectEffects : MonoBehaviour
 
     float lastTimeEffectPlayed = 0;
 
-    Entity e;
-    public Entity rootEntity => e ??= GetComponentInParent<Entity>();
+    public Entity rootEntity => _rootEntity ??= GetComponentInParent<Entity>();
 
     private void OnCollisionEnter(Collision collision)
     {
