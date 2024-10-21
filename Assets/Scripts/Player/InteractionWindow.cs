@@ -22,7 +22,7 @@ public class InteractionWindow : MonoBehaviour
 
     [Header("Physics interaction")]
     public string pickupText = "Pick up";
-    public string deadText = "(dead)";
+    public string deadTextFormat = " ({0})";
 
     public PropCarryingHandler objectCarrier => following.objectCarrier;
     
@@ -101,7 +101,7 @@ public class InteractionWindow : MonoBehaviour
             name = e.properName;
 
             Health h = e.health;
-            if (h != null && h.IsAlive == false) name += $" {deadText}";
+            if (h != null && h.IsAlive == false) name += string.Format(deadTextFormat, h.deadDescription);
         }
 
         interactableName.text = name;

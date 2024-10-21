@@ -28,6 +28,7 @@ public class Health : MonoBehaviour
     [Header("Stats")]
     public Resource data = new Resource(100, 100, 20);
     public bool godmode = false;
+    public string deadDescription = "dead";
 
     public UnityEvent<DamageMessage> onDamage;
     public UnityEvent<DamageMessage> onHeal;
