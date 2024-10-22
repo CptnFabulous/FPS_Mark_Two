@@ -77,11 +77,14 @@ public class Health : MonoBehaviour
     /// <param name="attacker"></param>
     public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker, Vector3 direction)
     {
-        if (IsAlive == false && allowPosthumousDamage == false) return;
 
         bool wasAlive = IsAlive;
 
         bool isHealing = damage < 0;
+
+
+        if (IsAlive == false && allowPosthumousDamage == false && isHealing == false) return;
+
         if (isHealing)
         {
             type = DamageType.Healing;
@@ -93,7 +96,7 @@ public class Health : MonoBehaviour
             stun = 0;
         }
 
-        Debug.Log($"{this} ({data.current} health) took{(isCritical ? " a critical" : "")} {damage} damage and {stun} stun");
+        attachedTo.DebugLog($"{this} ({data.current} health) took{(isCritical ? " a critical" : "")} {damage} damage and {stun} stun");
         data.Increment(-damage);
 
         DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun, direction);
@@ -102,15 +105,41 @@ public class Health : MonoBehaviour
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
         Notification<DamageMessage>.Transmit(damageMessage);
 
+        /*
         // If this attack is the one that killed the entity, run death events
         if (!IsAlive && wasAlive)
         {
+            attachedTo.DebugLog($"Dying of {type}");
             KillMessage killMessage = new KillMessage(attacker, this, type);
             onDeath.Invoke(killMessage);
             Notification<KillMessage>.Transmit(killMessage);
         }
+        */
+
+        // If this attack is the one that killed the entity, run death events
+        if (IsAlive || !wasAlive) return;
+
+        
+        // If the player, check that they can respawn at a checkpoint
+        if (attachedTo is Player player)
+        {
+            CheckpointManager checkpointManager = FindObjectOfType<CheckpointManager>();
+            if (checkpointManager != null && checkpointManager.targetPlayer == player)
+            {
+                checkpointManager.RespawnAtLastCheckpoint();
+                return;
+            }
+        }
+        
+        
+
+        attachedTo.DebugLog($"Dying of {type}");
+        KillMessage killMessage = new KillMessage(attacker, this, type);
+        onDeath.Invoke(killMessage);
+        Notification<KillMessage>.Transmit(killMessage);
     }
     public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer, Vector3.zero);
+    
     public void DamageFromPhysicsCollision(Collision collision, Hitbox hitbox)
     {
         // Don't bother with calculations if entity is already dead
