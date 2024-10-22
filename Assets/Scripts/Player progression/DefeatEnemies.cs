@@ -10,8 +10,7 @@ public class DefeatEnemies : Objective
     public List<Character> enemies;
     [Tooltip("If assigned, will check in this transform for more enemies")]
     public Transform parentForFindingMoreEnemies;
-    [SerializeField] bool revealCount = true;
-    //public string counterFormat = "{}";
+    public string counterFormat = "{0} remaining";
 
     protected override bool DetermineSuccess()
     {
@@ -47,7 +46,7 @@ public class DefeatEnemies : Objective
     {
         get
         {
-            if (revealCount == false) return base.formattedProgress;
+            if (string.IsNullOrEmpty(counterFormat)) return base.formattedProgress;
 
             int remaining = 0;
             foreach (Character c in enemies)
@@ -58,8 +57,7 @@ public class DefeatEnemies : Objective
             //int total = enemies.Count;
             //int killed = total - remaining;
 
-            return $"{remaining} remaining";
-            // TO DO: replace the above with something formattable
+            return string.Format(counterFormat, remaining);
         }
     }
 
