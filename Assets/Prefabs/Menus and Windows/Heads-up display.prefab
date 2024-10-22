@@ -93,7 +93,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 25, y: -75}
-  m_SizeDelta: {x: 500, y: 0}
+  m_SizeDelta: {x: 800, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &4246809269540623628
 MonoBehaviour:
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
+  m_ChildControlWidth: 1
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
@@ -321,6 +321,7 @@ MonoBehaviour:
   duration: 1.5
   looping: 0
   playOnAwake: 1
+  stopOnAwake: 1
   effects:
     m_PersistentCalls:
       m_Calls:
@@ -603,6 +604,7 @@ MonoBehaviour:
   duration: 1
   looping: 0
   playOnAwake: 0
+  stopOnAwake: 1
   effects:
     m_PersistentCalls:
       m_Calls:
@@ -1818,6 +1820,7 @@ MonoBehaviour:
   duration: 0.5
   looping: 0
   playOnAwake: 0
+  stopOnAwake: 1
   effects:
     m_PersistentCalls:
       m_Calls:
@@ -2109,7 +2112,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 30}
+  m_SizeDelta: {x: 0, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2823234237345747450
 CanvasRenderer:
@@ -2301,6 +2304,7 @@ MonoBehaviour:
   duration: 0.25
   looping: 0
   playOnAwake: 0
+  stopOnAwake: 1
   effects:
     m_PersistentCalls:
       m_Calls:
@@ -2763,6 +2767,7 @@ MonoBehaviour:
   listParent: {fileID: 4246809269540623628}
   progressFormatting: '{0}: {1}'
   completedMessage: Completed
+  failMessageFormat: Failed ({0})
   optionalPrefix: '(Optional) '
   canvasGroup: {fileID: 7652630180933845733}
 --- !u!225 &7652630180933845733
@@ -3861,7 +3866,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1671019460700226348, guid: 4a3cc0e26c489f243b0801f7364d94c1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 162.5
       objectReference: {fileID: 0}
     - target: {fileID: 1671019460700226348, guid: 4a3cc0e26c489f243b0801f7364d94c1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -3959,7 +3964,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2686087112272195841, guid: 68626e1bdd672f44f8e41cf564f027ea, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 2686087112272195841, guid: 68626e1bdd672f44f8e41cf564f027ea, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -3991,7 +3996,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4970711529019439056, guid: 68626e1bdd672f44f8e41cf564f027ea, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 4970711529019439056, guid: 68626e1bdd672f44f8e41cf564f027ea, type: 3}
       propertyPath: m_AnchoredPosition.y
