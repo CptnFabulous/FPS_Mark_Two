@@ -10,6 +10,7 @@ public class ObjectiveInfo : MonoBehaviour
     [SerializeField] LayoutGroup listParent;
     [SerializeField] string progressFormatting = "{0}: {1}";
     [SerializeField] string completedMessage = "Completed";
+    [SerializeField] string failMessageFormat = "Failed ({0})";
     [SerializeField] string optionalPrefix = "(Optional) ";
 
 
@@ -56,7 +57,15 @@ public class ObjectiveInfo : MonoBehaviour
 
             #region Text
             string task = objective.name;
-            string progress = objective.status == ObjectiveStatus.Completed ? completedMessage : objective.formattedProgress;
+
+            string progress = objective.status switch
+            {
+                ObjectiveStatus.Completed => completedMessage,
+                ObjectiveStatus.Failed => string.Format(failMessageFormat, objective.formattedProgress),
+                _ => objective.formattedProgress,
+            };
+
+            //string progress = objective.status == ObjectiveStatus.Completed ? completedMessage : objective.formattedProgress;
 
             // Ensure the optional prefix is present if it's optional, and not if it isn't
             bool hasPrefix = task.StartsWith(optionalPrefix);
