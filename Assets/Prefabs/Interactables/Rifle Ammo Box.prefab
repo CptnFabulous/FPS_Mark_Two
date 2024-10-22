@@ -500,6 +500,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8357470468220207438}
+  - component: {fileID: 5566562777852737055}
   - component: {fileID: 8390498992792282974}
   - component: {fileID: 8390498992792282784}
   - component: {fileID: 4923675230932193003}
@@ -532,6 +533,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5566562777852737055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8696560492139060212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showDebugData: 0
+  properName: Rifle Ammo Box
+  description: '[PLACEHOLDER]'
+  isUnique: 0
+  health: {fileID: 0}
+  audioSource: {fileID: 8883986625901552865}
 --- !u!114 &8390498992792282974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,6 +834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 0}
   impactEffect: {fileID: 11400000, guid: 38e34c20468788a4db98134dccfdf123, type: 2}
 --- !u!1 &8954002482177228093
 GameObject:
