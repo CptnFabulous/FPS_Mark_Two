@@ -45,7 +45,7 @@ public class ObjectiveHandler : MonoBehaviour
     public Player targetPlayer => _p ??= FindObjectOfType<Player>();
 
 
-    private void Awake()
+    private void Start()
     {
         levelCompleted = false;
         foreach (Objective o in allObjectives)

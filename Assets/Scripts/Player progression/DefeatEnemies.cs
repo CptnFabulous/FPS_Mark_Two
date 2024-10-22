@@ -63,7 +63,7 @@ public class DefeatEnemies : Objective
         }
     }
 
-    public override Nullable<Vector3> location
+    public override Vector3 location
     {
         get
         {

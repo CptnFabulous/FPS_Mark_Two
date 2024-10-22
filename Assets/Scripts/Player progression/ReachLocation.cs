@@ -49,5 +49,5 @@ public class ReachLocation : Objective
         //throw new System.NotImplementedException();
     }
 
-    public override Vector3? location => GetAreaBounds().center;
+    public override Vector3 location => GetAreaBounds().center;
 }
