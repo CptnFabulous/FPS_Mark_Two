@@ -38,12 +38,50 @@ public class InteractionHandler : MonoBehaviour
     }
     private void Update()
     {
+
+        
+
+
+
+        // Reset values and set up values to assign
+        (Interactable, Rigidbody) returnedValues;
+        RaycastHit rh = new RaycastHit();
+        string msg = null;
+
+        bool angleCheck = AngleCheck.CheckForObjectsInCone<(Interactable, Rigidbody)>(aimOrigin, aimDirection, detectionAngle, interactionRange, detectionMask, out returnedValues, out rh, ColliderIsInteractable);
+
+
+        // Cache the data on whatever we hit this frame
+        targetedInteractable = returnedValues.Item1;
+        targetedPhysicsProp = returnedValues.Item2;
+        hitData = rh;
+
+        // Obtain and cache additional data
+        if (targetedInteractable != null)
+        {
+            // Cache interactability data
+            canInteractWithTarget = targetedInteractable.CanInteract(player, out msg);
+            message = msg;
+            targetBounds = targetedInteractable.collider.bounds;
+        }
+        else if (targetedPhysicsProp != null)
+        {
+            canInteractWithTarget = true;
+            targetBounds = MiscFunctions.CombinedBounds(PhysicsCache.GetChildColliders(targetedPhysicsProp));
+        }
+
+
+
+
+
+        /*
         // Reset values and set up values to assign
         collidersChecked.Clear();
         Interactable i = null;
         Rigidbody rb = null;
         RaycastHit rh = new RaycastHit();
         string msg = null;
+
 
         // Perform an initial cast, prioritising whatever the player is directly aiming at
         bool directCast = InteractionCast(aimDirection, out rh) && ColliderIsInteractable(rh.collider, out i, out rb);
@@ -99,9 +137,16 @@ public class InteractionHandler : MonoBehaviour
             canInteractWithTarget = true;
             targetBounds = MiscFunctions.CombinedBounds(PhysicsCache.GetChildColliders(rb));
         }
+        */
     }
 
     bool InteractionCast(Vector3 direction, out RaycastHit rh) => Physics.Raycast(aimOrigin, direction, out rh, interactionRange, detectionMask);
+    bool ColliderIsInteractable(Collider c, out (Interactable, Rigidbody) returnedValues)
+    {
+        bool check = ColliderIsInteractable(c, out Interactable i, out Rigidbody rb);
+        returnedValues = (i, rb);
+        return check;
+    }
     bool ColliderIsInteractable(Collider c, out Interactable i, out Rigidbody rb)
     {
         // Check for either an Interactable or Rigidbody, ignore if not found
@@ -152,5 +197,4 @@ public class InteractionHandler : MonoBehaviour
             //objectCarrier.onPickupFailed.Invoke(target);
         }
     }
-
 }
