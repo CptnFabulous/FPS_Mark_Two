@@ -17,6 +17,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
     public Transform upperBody;
     public bool invertX;
     public bool invertY;
+    public PlayerAimAssist aimAssist;
 
     [Header("Mouse settings")]
     [SerializeField] float baseMouseSensitivity = 50;

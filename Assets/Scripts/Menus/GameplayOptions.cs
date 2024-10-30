@@ -14,6 +14,7 @@ public class GameplayOptions : OptionsMenu
     public float maxGamepadSensitivityY = 150;
     public Toggle invertX;
     public Toggle invertY;
+    public Toggle aimAssist;
     public Slider fieldOfView;
     public Toggle toggleSprint;
     public Toggle toggleCrouch;
@@ -34,6 +35,7 @@ public class GameplayOptions : OptionsMenu
         // Assign other camera values
         lookControls.invertX = invertX.isOn;
         lookControls.invertY = invertY.isOn;
+        lookControls.aimAssist.enabled = aimAssist.isOn;
         lookControls.fieldOfView = fieldOfView.value;
         // Assign other control values
         if (movement.crouchController != null)
@@ -59,6 +61,7 @@ public class GameplayOptions : OptionsMenu
         // Obtain other camera values
         invertX.isOn = lookControls.invertX;
         invertY.isOn = lookControls.invertY;
+        aimAssist.isOn = lookControls.aimAssist.enabled;
         fieldOfView.value = lookControls.fieldOfView;
         lookControls.currentFieldOfView = fieldOfView.value;
         // Obtain other control values
@@ -74,6 +77,7 @@ public class GameplayOptions : OptionsMenu
         AddValueChangedEvent(gamepadSensitivityY);
         AddValueChangedEvent(invertX);
         AddValueChangedEvent(invertY);
+        AddValueChangedEvent(aimAssist);
         AddValueChangedEvent(fieldOfView);
         fieldOfView.onValueChanged.AddListener((fov) =>
         {

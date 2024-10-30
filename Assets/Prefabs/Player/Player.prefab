@@ -167,6 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Fire
+  guiPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -890,6 +891,7 @@ MonoBehaviour:
   upperBody: {fileID: 1184233747240851141}
   invertX: 0
   invertY: 0
+  aimAssist: {fileID: 6034779799005031584}
   baseMouseSensitivity: 100
   mouseSensitivityRange: 3
   mouseMultiplierWhileAiming: 0.5
@@ -1008,6 +1010,7 @@ MonoBehaviour:
     current: 100
     criticalLevel: 20
   godmode: 0
+  deadDescription: dead
   onDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -1284,6 +1287,7 @@ GameObject:
   - component: {fileID: 7479822334647491782}
   - component: {fileID: 395139178566883132}
   - component: {fileID: 2802680270846931}
+  - component: {fileID: 6034779799005031584}
   m_Layer: 6
   m_Name: Aim Axis
   m_TagString: Untagged
@@ -1446,6 +1450,100 @@ MonoBehaviour:
   crouchController: {fileID: 2692210061216476635}
   multiplierWhileCrouching: 0.5
   crouchMultiplierReference: Player Crouching
+--- !u!114 &6034779799005031584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785221988775329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d9e5e7ab97d644f918569ffb6af614, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lookController: {fileID: 2286233210308183897}
+  weaponHandler: {fileID: 4579184524127900838}
+  enabledForController: 1
+  enabledForMouseAndKeyboard: 0
+  disableWhileHipfiring: 1
+  checkRange: 50
+  magnetiseAngle: 10
+  magnetiseSpeed: 10
+  parallelDistanceCheck: 0.5
+  magnetiseRangeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  magnetiseAngleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  magnetiseTime: 0.5
+  magnetiseTimeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &5952785222623807981
 GameObject:
   m_ObjectHideFlags: 0
@@ -1607,6 +1705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: ADS
+  guiPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2017,6 +2116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Melee Attack
+  guiPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2412,6 +2512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Interact
+  guiPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2765,6 +2866,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Offhand Attack
+  guiPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -3056,6 +3158,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546527b39a8bf244699538b10c47cc5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8098729900447558270 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06375990f6058fb418571800f9400e70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!223 &5952785221938061819 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -3064,11 +3177,6 @@ Canvas:
 --- !u!1 &5345706760175754708 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2415393206806800414, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &5952785221938061820 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1881373689726421184 stripped
@@ -3098,17 +3206,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1e8b72f6ce30f74db4519d9e8301c6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8098729900447558270 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2003687615809757108, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+--- !u!224 &5952785221938061820 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06375990f6058fb418571800f9400e70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8233808102799960725
 PrefabInstance:
   m_ObjectHideFlags: 0
