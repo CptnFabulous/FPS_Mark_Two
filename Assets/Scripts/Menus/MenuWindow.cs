@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using System;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Canvas), typeof(CanvasGroup))]
 public class MenuWindow : MonoBehaviour
@@ -24,6 +26,28 @@ public class MenuWindow : MonoBehaviour
     MenuWindow immediateParent;
     MenuWindow root;
     MenuWindow[] children;
+
+
+    Player attachedTo;
+
+    /// <summary>
+    /// Enables or disables a menu window in a way that doesn't interfere with the functioning of any child menus.
+    /// </summary>
+    /// <param name="active"></param>
+    public bool menuIsActive
+    {
+        get
+        {
+            return gameObject.activeSelf && visualElements.interactable && visualElements.blocksRaycasts && visualElements.alpha > 0;
+        }
+        private set
+        {
+            gameObject.SetActive(true);
+            visualElements.interactable = value; // Objects in hidden menus are disabled so they aren't picked up by the event system
+            visualElements.blocksRaycasts = value; // Objects in hidden menus are disabled so they don't block the player from clicking buttons in the current menu
+            visualElements.alpha = value ? 1 : 0; // Alpha is adjusted to show visibility. If I disable the gameobject or canvas component it will hide children as well
+        }
+    }
 
     private void OnValidate()
     {
@@ -47,6 +71,16 @@ public class MenuWindow : MonoBehaviour
     }
     private void Awake()
     {
+        attachedTo = GetComponentInParent<Player>();
+
+        /*
+        attachedTo.controls.actions.FindActionMap("UI").FindAction("Cancel").performed += (ctx) =>
+        {
+            if (menuIsActive) ReturnToParentMenu();
+        };
+        */
+
+
         canvas = GetComponent<Canvas>();
         visualElements = GetComponent<CanvasGroup>();
         visualElements.ignoreParentGroups = true;
@@ -95,17 +129,8 @@ public class MenuWindow : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Enables or disables a menu window in a way that doesn't interfere with the functioning of any child menus.
-    /// </summary>
-    /// <param name="active"></param>
-    public void SetActiveState(bool active)
-    {
-        gameObject.SetActive(true);
-        visualElements.interactable = active; // Objects in hidden menus are disabled so they aren't picked up by the event system
-        visualElements.blocksRaycasts = active; // Objects in hidden menus are disabled so they don't block the player from clicking buttons in the current menu
-        visualElements.alpha = active ? 1 : 0; // Alpha is adjusted to show visibility. If I disable the gameobject or canvas component it will hide children as well
-    }
+    
+    
     /// <summary>
     /// Switches to a new window. Assign this as a button listener for menu transitions.
     /// </summary>
@@ -117,7 +142,7 @@ public class MenuWindow : MonoBehaviour
         // The root is not part of this specific for loop but that doesn't matter, it needs to be active in order for itself or any of its children to be active
         for (int i = 0; i < root.children.Length; i++)
         {
-            root.children[i].SetActiveState(false);
+            root.children[i].menuIsActive = false;
         }
         /*
         // Enable new window and parents, using canvas group to hide parents
@@ -125,11 +150,11 @@ public class MenuWindow : MonoBehaviour
         */
         for (int i = 0; i < newWindow.parents.Length; i++)
         {
-            newWindow.parents[i].SetActiveState(false);
+            newWindow.parents[i].menuIsActive = false;
         }
 
         // Enable new window and parents, using canvas group to hide parents
-        newWindow.SetActiveState(true);
+        newWindow.menuIsActive = true;
 
 
         // Switch EventSystem so player automatically selects the first selectable
@@ -141,6 +166,8 @@ public class MenuWindow : MonoBehaviour
     /// </summary>
     public void ReturnToParentMenu()
     {
+        if (menuIsActive == false) return;
+        if (immediateParent == null) return;
         SwitchWindow(immediateParent);
     }
     /// <summary>

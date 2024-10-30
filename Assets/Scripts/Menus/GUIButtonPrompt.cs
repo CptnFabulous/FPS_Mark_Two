@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System;
 
 public class GUIButtonPrompt : MonoBehaviour
 {
@@ -111,6 +112,14 @@ public class GUIButtonPrompt : MonoBehaviour
 
     void DetermineCurrentBinding(PlayerInput player)
     {
+        graphic.enabled = player != null;
+        if (player == null)
+        {
+            graphic.sprite = null;
+            keyName.text = "";
+            return;
+        }
+
         if (inputDisabled)
         {
             graphic.sprite = disabled;
@@ -119,25 +128,30 @@ public class GUIButtonPrompt : MonoBehaviour
         }
 
         string currentPlayerInputScheme = player.currentControlScheme;
+
         foreach (InputBinding b in assignedInput.bindings)
         {
             // Check if an available binding matches the current control scheme
             bool match = b.groups.Contains(currentPlayerInputScheme);
             if (match == false) continue;
-
             Refresh(b);
             return;
         }
 
         // Show that a binding was not found
+        Debug.Log("Undefined");
         Refresh(null);
     }
     public void Refresh(InputBinding binding) => Refresh(binding.effectivePath);
     public void Refresh(string path)
     {
+
+
         // If a binding wasn't found, display the appropriate text
         if (path == null)
         {
+            Debug.Log("Undefined path");
+            Debug.Log(assignedInput);
             graphic.sprite = undefined;
             keyName.text = "";
             return;
