@@ -6560,6 +6560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 0}
   impactEffect: {fileID: 11400000, guid: 5eb6b24353b04c449a65e4980f1c5590, type: 2}
 --- !u!1001 &892400109
 PrefabInstance:
@@ -10651,6 +10652,38 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[0].inSlope
+      value: Infinity
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[0].outSlope
+      value: -361
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[0].outWeight
+      value: 0.002770083
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[0].tangentMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6034779799005031584, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      propertyPath: magnetiseCurve.m_Curve.Array.data[0].weightedMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7479822334647491782, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
       propertyPath: startEmpty
       value: 0
@@ -12540,7 +12573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1726538862
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15542,7 +15575,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4712987908096690563, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5344705289576829753, guid: 5c478479011d48848ba7810a3020eed1, type: 3}
       propertyPath: m_RootOrder
