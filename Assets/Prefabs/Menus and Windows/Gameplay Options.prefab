@@ -383,6 +383,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b583815efed91674480082b63ba5f0ab, type: 3}
+--- !u!114 &4553628853740877142 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2124928614919214978, guid: b583815efed91674480082b63ba5f0ab, type: 3}
+  m_PrefabInstance: {fileID: 2471629579448689364}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2740732569989677181
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -834,17 +845,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4932944456305473892, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
   m_PrefabInstance: {fileID: 4535434554470145658}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1521508251642376563 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3165012403641495305, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
-  m_PrefabInstance: {fileID: 4535434554470145658}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4111622054758849152 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 576025121985758458, guid: e8e148869ecc2df4cbd70e18baffb8be, type: 3}
@@ -887,8 +887,8 @@ MonoBehaviour:
   maxGamepadSensitivityX: 250
   gamepadSensitivityY: {fileID: 2687624727824717067}
   maxGamepadSensitivityY: 150
-  invertX: {fileID: 1521508251642376563}
-  invertY: {fileID: 8222552004329853991}
+  invertX: {fileID: 8222552004329853991}
+  invertY: {fileID: 4553628853740877142}
   aimAssist: {fileID: 7733305091978284092}
   fieldOfView: {fileID: 1305028216681291629}
   toggleSprint: {fileID: 1497090112634187478}
