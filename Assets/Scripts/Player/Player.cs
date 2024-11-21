@@ -43,8 +43,8 @@ public class Player : Character
     {
         base.Die();
 
-        //movement.enabled = false;
-        //weapons.enabled = false;
+        movement.enabled = false;
+        weapons.enabled = false;
         rigidbody.constraints = RigidbodyConstraints.None;
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
     }
