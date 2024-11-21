@@ -25,6 +25,6 @@ public class DamageOnInteract : MonoBehaviour
     void DamageObject(Player player)
     {
         Vector3 direction = interactable.collider.bounds.center - player.bounds.center;
-        health.Damage(damage, stun, false, damageType, player, direction);
+        health.Damage(damage, stun, false, damageType, player, null, direction);
     }
 }

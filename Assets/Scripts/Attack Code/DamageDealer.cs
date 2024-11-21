@@ -45,14 +45,14 @@ public class DamageDealer
         Hitbox hb = target.GetComponentInParent<Hitbox>();
         if (hb != null)
         {
-            hb.Damage(d, criticalMultiplier, s, type, attacker, direction);
+            hb.Damage(d, criticalMultiplier, s, type, attacker, attackingWith, direction);
         }
         else
         {
             Health h = target.GetComponentInParent<Health>();
             if (h != null)
             {
-                h.Damage(d, s, false, type, attacker, direction);
+                h.Damage(d, s, false, type, attacker, attackingWith, direction);
             }
         }
 

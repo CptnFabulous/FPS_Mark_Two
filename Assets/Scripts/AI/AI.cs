@@ -76,7 +76,7 @@ public class AI : Character
     public override void Delete()
     {
         // Pre-emptively kills AI to ensure 'on death' events occur properly
-        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null, Vector3.zero);
+        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null, null, Vector3.zero);
         base.Delete();
     }
     protected override void Die()

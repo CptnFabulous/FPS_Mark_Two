@@ -15,7 +15,7 @@ public class HealthPickup : ItemPickup
     }
     public override void OnPickup(Player player)
     {
-        player.health.Heal(healthRestored, attachedTo);
+        player.health.Heal(healthRestored, attachedTo, attachedTo);
         if (deleteOnPickup) base.OnPickup(player);
     }
 }

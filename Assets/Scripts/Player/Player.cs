@@ -37,7 +37,7 @@ public class Player : Character
 
     public override void Delete()
     {
-        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null, Vector3.zero);
+        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null, null, Vector3.zero);
     }
     protected override void Die()
     {

@@ -18,7 +18,7 @@ public class Hitbox : MonoBehaviour
     public Health sourceHealth => attachedTo.health;
     public Rigidbody rigidbody => _rb ??= GetComponentInParent<Rigidbody>();
 
-    public void Damage(int damage, int stun, DamageType type, Entity attacker, Vector3 direction, bool critical = false)
+    public void Damage(int damage, int stun, DamageType type, Entity attacker, Entity weaponUsed, Vector3 direction, bool critical = false)
     {
         if (sourceHealth == null) return;
 
@@ -34,16 +34,16 @@ public class Hitbox : MonoBehaviour
             stun = Mathf.RoundToInt(stun * multiplier);
         }
 
-        sourceHealth.Damage(damage, stun, critical, type, attacker, direction);
+        sourceHealth.Damage(damage, stun, critical, type, attacker, weaponUsed, direction);
     }
-    public void Damage(int damage, float criticalMultiplier, int stun, DamageType type, Entity attacker, Vector3 direction)
+    public void Damage(int damage, float criticalMultiplier, int stun, DamageType type, Entity attacker, Entity weaponUsed, Vector3 direction)
     {
         if (isCritical)
         {
             damage = Mathf.RoundToInt(damage * criticalMultiplier);
             stun = Mathf.RoundToInt(stun * criticalMultiplier);
         }
-        Damage(damage, stun, type, attacker, direction, isCritical);
+        Damage(damage, stun, type, attacker, weaponUsed, direction, isCritical);
     }
 
     private void OnCollisionEnter(Collision collision)

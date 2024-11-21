@@ -43,6 +43,7 @@ public static class Notification<T>
 public class DamageMessage
 {
     public Entity attacker;
+    public Entity weaponUsed;
     public Health victim;
     public DamageType method;
     public int damage;
@@ -50,9 +51,10 @@ public class DamageMessage
     public int stun;
     public Vector3 direction;
     
-    public DamageMessage(Entity _attacker, Health _victim, DamageType _method, int _damage, bool _critical, int _stun, Vector3 direction)
+    public DamageMessage(Entity _attacker, Entity weaponUsed, Health _victim, DamageType _method, int _damage, bool _critical, int _stun, Vector3 direction)
     {
         attacker = _attacker;
+        this.weaponUsed = weaponUsed;
         victim = _victim;
         method = _method;
         damage = _damage;

@@ -51,7 +51,7 @@ public class CheckpointManager : MonoBehaviour
         player.lookController.lookRotation = checkpoint.rotation;
 
         int amountToHeal = Mathf.CeilToInt(player.health.data.max * healthRatioOnRespawn);
-        player.health.Heal(amountToHeal, null);
+        player.health.Heal(amountToHeal, null, null);
 
         deathCount += 1;
 

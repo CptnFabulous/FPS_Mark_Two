@@ -11,7 +11,7 @@ public enum DamageType
     Slashing, // e.g. shallow sword cuts
     //Severing, // e.g. body part removal
     Bludgeoning, // e.g. blunt force attacks
-    Impact, // e.g. slamming into a wall or floor
+    PhysicsImpact,
     Explosive,
     Burning,
     //Freezing,
@@ -75,7 +75,7 @@ public class Health : MonoBehaviour
     /// <param name="amount"></param>
     /// <param name="type"></param>
     /// <param name="attacker"></param>
-    public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker, Vector3 direction)
+    public void Damage(int damage, int stun, bool isCritical, DamageType type, Entity attacker, Entity weaponUsed, Vector3 direction)
     {
 
         bool wasAlive = IsAlive;
@@ -99,7 +99,7 @@ public class Health : MonoBehaviour
         attachedTo.DebugLog($"{this} ({data.current} health) took{(isCritical ? " a critical" : "")} {damage} damage and {stun} stun");
         data.Increment(-damage);
 
-        DamageMessage damageMessage = new DamageMessage(attacker, this, type, damage, isCritical, stun, direction);
+        DamageMessage damageMessage = new DamageMessage(attacker, weaponUsed, this, type, damage, isCritical, stun, direction);
         // At this point I think I'd need to delete the previous 'lastSourceOfDamage' if C# meant I didn't have to worry about garbage collection
         lastSourceOfDamage = damageMessage;
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
@@ -138,7 +138,7 @@ public class Health : MonoBehaviour
         onDeath.Invoke(killMessage);
         Notification<KillMessage>.Transmit(killMessage);
     }
-    public void Heal(int value, Entity healer) => Damage(-value, 0, false, DamageType.Healing, healer, Vector3.zero);
+    public void Heal(int value, Entity healer, Entity toolUsed) => Damage(-value, 0, false, DamageType.Healing, healer, toolUsed, Vector3.zero);
     
     public void DamageFromPhysicsCollision(Collision collision, Hitbox hitbox)
     {
@@ -205,16 +205,65 @@ public class Health : MonoBehaviour
         #endregion
 
         #region Deal damage and stun
-        Debug.Log($"{damagedBy} will damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
-        //Debug.Log($"{damagedBy} {(willTakeDamage ? "will" : "won't")} damage {attachedTo} in {this}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
+        attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
 
         // Calculate damage and stun accordingly
         float damage = force * damagePerCollisionForceUnit;
         float stun = force * stunPerCollisionForceUnit;
+
         Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponentInParent<Entity>();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+        // Obtain launch data for target and incoming object
+        // If only one has data assigned, use that.
+        // If both exist, check which one was launched first (prioritise whichever was launched by an actual player)
+        // Then register that value as the attacker.
+
+        // If neither has assigned launch data, use the incoming object itself as the attacker
+
+
+
+
+
+
+        if (PhysicsCache.GetObjectLaunchData(incomingRigidbody, out var incoming) || PhysicsCache.GetObjectLaunchData(attachedTo.rigidbody, out var self))
+        {
+            PhysicsCache.ObjectLaunchData best = MiscFunctions.GetBest((toCheck) =>
+            {
+
+            }, true, incoming, self);
+
+
+        }
+        */
+
         // Deal damage (use the hitbox's main damage function to calculate things like resistances)
-        hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.Impact, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized, hitbox.isCritical);
+        hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.PhysicsImpact, thingThatDamagedThisHitbox, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized, hitbox.isCritical);
         #endregion
     }
 
