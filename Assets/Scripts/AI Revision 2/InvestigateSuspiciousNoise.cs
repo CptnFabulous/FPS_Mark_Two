@@ -23,7 +23,7 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
         //locationSearchState.TrySearchForNewPosition(sound.originPoint, priority, onSearchUnsuccessful);
 
         // MAYBE: Also if the position doesn't line up with a known friendly/harmless thing?
-        locationSearchState.rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}");
+        //locationSearchState.rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}");
         /*
         StateFunction previousState = locationSearchState.controller.currentActiveStateInHierarchy;
         Debug.Log($"{locationSearchState.rootAI.name}: Investigating {sound.sound.name} at {sound.originPoint}. Will switch to {previousState.name} if failed");
