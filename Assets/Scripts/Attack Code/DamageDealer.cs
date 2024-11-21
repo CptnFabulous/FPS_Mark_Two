@@ -21,7 +21,7 @@ public class DamageDealer
         //if (attacker.transform.IsChildOf(target.transform)) return false;
 
         // Check that it's not hitting an ally (do nothing if so)
-        Entity targetChar = target.GetComponentInParent<Entity>();
+        Entity targetChar = EntityCache<Entity>.GetEntity(target);
         if (attacker.IsHostileTowards(targetChar) == false) return false;
 
         // Multiply values 
