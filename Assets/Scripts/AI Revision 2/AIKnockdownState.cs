@@ -37,7 +37,7 @@ public class AIKnockdownState : AIProcedure
         currentlyStandingUp = false;
         if (ragdollLerpHandler != null) ragdollLerpHandler.enabled = false;
 
-        Debug.Log($"{rootAI} ({rootAI.GetInstanceID()}): Knockdown start");
+        rootAI.DebugLog("Knockdown start");
         existingPath = navMeshAgent.path;
         navMeshAgent.ResetPath();
 
@@ -48,13 +48,13 @@ public class AIKnockdownState : AIProcedure
         #region Wait until it's appropriate to stand up again
         // Wait for minimum stun time
         // Then wait until the character is in a position to stand back up (in case they tumbled off a cliff or something)
-        Debug.Log("Waiting until enemy can stand up");
+        rootAI.DebugLog("Waiting until enemy can stand up");
         yield return new WaitForSeconds(timeBeforeStandingUp);
         NavMeshHit solidGround = new NavMeshHit();
         yield return new WaitUntil(() => RagdollCanStandUp(out solidGround));
         #endregion
 
-        Debug.Log("Standing up");
+        rootAI.DebugLog("Standing up");
 
         if (animationHandler != null) animationHandler.RecoverFromRagdoll();
 
@@ -71,7 +71,7 @@ public class AIKnockdownState : AIProcedure
         if (ragdollLerpHandler != null) ragdollLerpHandler.StartTransition();
 
         // Reset stun value so the class can check for stunlocks
-        Debug.Log($"{rootAI}: resetting stun meter for stunlocking");
+        rootAI.DebugLog("Resetting stun meter for stunlocking");
         stunHandler.currentStun = 0;
 
         // Wait while character stands back up
@@ -82,7 +82,7 @@ public class AIKnockdownState : AIProcedure
     }
     protected override void OnDisable()
     {
-        Debug.Log($"{rootAI}: exiting knockdown state");
+        rootAI.DebugLog("Exiting knockdown state");
         base.OnDisable();
         EndKnockdown();
     }
@@ -114,7 +114,7 @@ public class AIKnockdownState : AIProcedure
         // If the enemy was stunned enough while trying to stand up, knock them back down again
         if (stunHandler.currentStun < stunlockThreshold) return;
 
-        Debug.Log($"{rootAI}: resetting knockdown due to stunlock");
+        rootAI.DebugLog("Resetting knockdown due to stunlock");
         ResetProcedure();
     }
     bool RagdollCanStandUp(out NavMeshHit solidGround)
@@ -123,7 +123,10 @@ public class AIKnockdownState : AIProcedure
 
         // Check that the ragdoll velocity has slowed enough for the AI to realistically gain control of its momentum
         Ragdoll ragdoll = aiPhysics.ragdoll;
+
+        rootAI.DebugLog($"Velocity: {ragdoll.totalVelocity.magnitude}/{maxVelocityToStandUp}");
         if (ragdoll.totalVelocity.magnitude > maxVelocityToStandUp) return false;
+        rootAI.DebugLog($"Angular velocity: {ragdoll.totalAngularVelocity.magnitude}/{maxAngularVelocityToStandUp}");
         if (ragdoll.totalAngularVelocity.magnitude > maxAngularVelocityToStandUp) return false;
 
         // Check the position of the ragdoll is on solid ground
