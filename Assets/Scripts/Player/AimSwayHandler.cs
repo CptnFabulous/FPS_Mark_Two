@@ -19,6 +19,7 @@ public class AimSwayHandler : MonoBehaviour
     public WeaponHandler weaponHandler;
 
     float _currentSway;
+    Quaternion _currentSwayQuaternion;
 
     public Weapon currentWeapon => weaponHandler.CurrentWeapon;
     public float aimSwayAngle => _currentSway;
@@ -39,22 +40,19 @@ public class AimSwayHandler : MonoBehaviour
             return totalSway;
         }
     }
+
+    public Vector3 aimOrigin => transform.position;
+    public Quaternion aimRotation => aimAxis.rotation * _currentSwayQuaternion;//AimSway(aimSwayAngle, swaySpeed, centeringCurve);
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
-    public Vector3 aimDirection
-    {
-        get
-        {
-            Quaternion q = AimSway(aimSwayAngle, swaySpeed, centeringCurve);
-            return aimAxis.rotation * q * Vector3.forward;
-        }
-    }
+    public Vector3 aimDirection => aimRotation * Vector3.forward;
 
     private void Update()
     {
         // Gradually shifts aim sway towards the desired value
         _currentSway = Mathf.MoveTowards(_currentSway, desiredSwayAngle, swayAcceleration * Time.deltaTime);
+        _currentSwayQuaternion = AimSway(aimSwayAngle, swaySpeed, centeringCurve);
     }
     private void OnDrawGizmosSelected()
     {
