@@ -138,7 +138,12 @@ public class LookController : MonoBehaviour, ICharacterLookController
         }
 
         // Apply ADS multiplier for easier aiming
-        if (inADS) value *= usingGamepad ? gamepadMultiplierWhileAiming : mouseMultiplierWhileAiming;
+        if (inADS)
+        {
+            value *= usingGamepad ? gamepadMultiplierWhileAiming : mouseMultiplierWhileAiming;
+            // Reduced further based on magnification
+            value /= (weaponHandler.CurrentWeapon.CurrentMode as RangedAttack).optics.magnification;
+        }
         #endregion
 
         #region Invert axes
