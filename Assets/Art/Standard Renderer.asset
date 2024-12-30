@@ -45,7 +45,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -2063121396739932004}
   - {fileID: -8953650095367610553}
-  m_RendererFeatureMap: 9c00cf4205525ee3479f783ead3ebe83
+  - {fileID: 130944138922696273}
+  m_RendererFeatureMap: 9c00cf4205525ee3479f783ead3ebe83511ee8250035d101
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
@@ -74,3 +75,20 @@ MonoBehaviour:
   m_ShadowTransparentReceive: 1
   m_RenderingMode: 0
   m_AccurateGbufferNormals: 0
+--- !u!114 &130944138922696273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef4e7ce338afbd04e83ced2485ee8775, type: 3}
+  m_Name: NewDrawInteractionOutlines
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  interactableHighlight: {fileID: 2100000, guid: ce2a89b20147d934eb9d1867ee203e35, type: 2}
+  nonInteractableHighlight: {fileID: 2100000, guid: 506b3f2e195044e419720d74579b1b09, type: 2}
+  physicsPropHighlight: {fileID: 2100000, guid: 47c93975673ee894e859f1800a79e536, type: 2}
+  renderPassEvent: 300
