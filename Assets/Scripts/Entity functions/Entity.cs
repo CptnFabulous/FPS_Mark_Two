@@ -101,10 +101,10 @@ public class Entity : MonoBehaviour
 
     public void DebugLog(string message)
     {
-        if (showDebugData) Debug.Log($"{this}: " + message);
+        if (showDebugData) Debug.Log($"{this}: {message}, frame {Time.frameCount}");
     }
     public void DebugLog(object target)
     {
-        if (showDebugData) Debug.Log($"{this}: " + target);
+        if (showDebugData) Debug.Log($"{this}: {target}, frame {Time.frameCount}");
     }
 }
