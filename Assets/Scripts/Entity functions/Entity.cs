@@ -16,6 +16,8 @@ public class Entity : MonoBehaviour
     IList<Collider> _colliders;
     Rigidbody _rb;
 
+    Renderer[] _renderers;
+
     /// <summary>
     /// The bounds. I might need to make this abstract, once I figure out what type of entity to make the bullets.
     /// </summary>
@@ -53,6 +55,8 @@ public class Entity : MonoBehaviour
         }
     }
     public Rigidbody rigidbody => _rb ??= GetComponentInChildren<Rigidbody>();
+
+    public Renderer[] renderers => MiscFunctions.GetImmediateComponentsInChildren<Renderer, Entity>(this, ref _renderers);
 
     protected virtual void Awake()
     {

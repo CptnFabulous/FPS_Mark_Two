@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4452109570273401965}
   - component: {fileID: 4475602183059729075}
   - component: {fileID: 8111019857962052573}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 4973556069947040861}
   - component: {fileID: 4973556069947040860}
   - component: {fileID: 4973556069947046819}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 4973556070023933112}
   - component: {fileID: 4973556070023933114}
   - component: {fileID: 4973556070023933113}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 4973556070358613812}
   - component: {fileID: 4973556070358613814}
   - component: {fileID: 4973556070358613813}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +365,8 @@ GameObject:
   - component: {fileID: 8510839127407747177}
   - component: {fileID: 5438377952590165758}
   - component: {fileID: 2603796428523769575}
-  m_Layer: 0
+  - component: {fileID: 2539674625455532549}
+  m_Layer: 6
   m_Name: Steam Valve
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -480,6 +481,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rootEntity: {fileID: 0}
   impactEffect: {fileID: 11400000, guid: 38e34c20468788a4db98134dccfdf123, type: 2}
+--- !u!114 &2539674625455532549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4973556070369201380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b04208d9df46a7c4e934278bef8d8312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  degreesCelsius: 100
 --- !u!1 &4973556070530330630
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,7 +505,7 @@ GameObject:
   - component: {fileID: 4973556070530330631}
   - component: {fileID: 4973556070530330625}
   - component: {fileID: 4973556070530330624}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -580,7 +594,7 @@ GameObject:
   - component: {fileID: 4973556070721795544}
   - component: {fileID: 4973556070721795546}
   - component: {fileID: 4973556070721795545}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -661,7 +675,7 @@ GameObject:
   - component: {fileID: 4973556070782883970}
   - component: {fileID: 4973556070782884028}
   - component: {fileID: 4973556070782883971}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -742,7 +756,7 @@ GameObject:
   - component: {fileID: 4973556071002443735}
   - component: {fileID: 4973556071002443729}
   - component: {fileID: 4973556071002443728}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -825,7 +839,7 @@ GameObject:
   - component: {fileID: 3487235249434704566}
   - component: {fileID: 8022330546164388838}
   - component: {fileID: 6194918321890908691}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -924,7 +938,7 @@ GameObject:
   - component: {fileID: 4973556071667648324}
   - component: {fileID: 4973556071667648327}
   - component: {fileID: 4973556071667648326}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1005,7 +1019,7 @@ GameObject:
   - component: {fileID: 4973556071719923914}
   - component: {fileID: 4973556071719923908}
   - component: {fileID: 4973556071719923915}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1086,7 +1100,7 @@ GameObject:
   - component: {fileID: 4973556071796698945}
   - component: {fileID: 4973556071796698947}
   - component: {fileID: 4973556071796698946}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1167,7 +1181,7 @@ GameObject:
   - component: {fileID: 4973556072023311575}
   - component: {fileID: 4973556072023311569}
   - component: {fileID: 4973556072023311568}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grippy bit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1246,7 +1260,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6871284625004150926}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Corner tube (top)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1278,7 +1292,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3594031964176566789}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Corner tube (bottom)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1313,7 +1327,7 @@ GameObject:
   - component: {fileID: 3734159302864443018}
   - component: {fileID: 7524093753454612896}
   - component: {fileID: 2821379802865209171}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1409,7 +1423,7 @@ GameObject:
   - component: {fileID: 3326459942834119809}
   - component: {fileID: 650022612005698205}
   - component: {fileID: 5005689152729740864}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1505,7 +1519,7 @@ GameObject:
   - component: {fileID: 2403626609628541614}
   - component: {fileID: 5691631997544415071}
   - component: {fileID: 1688270953019957693}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1642,6 +1656,10 @@ PrefabInstance:
     - target: {fileID: 1434293639240556702, guid: d75d55f15af16d749852d270efb6a836, type: 3}
       propertyPath: m_Name
       value: Copper Pipe
+      objectReference: {fileID: 0}
+    - target: {fileID: 1434293639240556702, guid: d75d55f15af16d749852d270efb6a836, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d75d55f15af16d749852d270efb6a836, type: 3}
@@ -1903,6 +1921,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+--- !u!4 &2252089926997695376 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8862784052061853082, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
+  m_PrefabInstance: {fileID: 7331834870983429642}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2252089926997695383 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8862784052061853085, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
@@ -1914,8 +1937,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d836eec020f38aa479951a46dd5f1f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &2252089926997695376 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8862784052061853082, guid: 45a6080a6653010428ae22ee1a7ea2d5, type: 3}
-  m_PrefabInstance: {fileID: 7331834870983429642}
-  m_PrefabAsset: {fileID: 0}
