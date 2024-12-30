@@ -65,8 +65,46 @@ public static class PhysicsCache
         colliderDictionary[target] = target.GetComponentsInChildren<Collider>();
         return colliderDictionary[target];
     }
+
 }
 
+public static class ComponentCache<T>
+{
+    static Dictionary<GameObject, T> cache = new Dictionary<GameObject, T>();
+    
+    public static T Get(GameObject target)
+    {
+        // If a value is already cached, reference that
+        if (cache.TryGetValue(target, out T e)) return e;
+
+        // Check upwards in hierarchy
+        cache[target] = target.GetComponentInParent<T>();
+        if (cache[target] != null) return cache[target];
+
+        // If a component can't be found, check if the target is on a ragdoll
+        // (since ragdolls are separated from their original entities to prevent wonky physics)
+        Ragdoll r = target.GetComponentInParent<Ragdoll>();
+        if (r == null) return cache[target];
+
+        // If the attached entity is the desired type, assign that
+        if (r.attachedTo is T t)
+        {
+            cache[target] = t;
+            return cache[target];
+        }
+
+        // Otherwise perform a recursive check upwards from the attached entity
+        cache[target] = Get(r.attachedTo.gameObject);
+        return cache[target];
+    }
+
+    
+}
+
+/// <summary>
+/// An older version of Cache<T> that only works for entities
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public static class EntityCache<T> where T : Entity
 {
     static Dictionary<GameObject, T> dictionary = new Dictionary<GameObject, T>();
