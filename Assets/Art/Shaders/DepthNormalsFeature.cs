@@ -6,11 +6,14 @@ using UnityEngine.Rendering.Universal;
 public class DepthNormalsFeature : ScriptableRendererFeature
 {
     DepthNormalsPass depthNormalsPass;
+    public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingPrePasses;
+    public bool isTransparentQueue = false;
 
     public override void Create()
     {
         //Debug.Log("Creating depth/normals pass");
-        depthNormalsPass = new DepthNormalsPass();
+        depthNormalsPass = new DepthNormalsPass(isTransparentQueue);
+        depthNormalsPass.renderPassEvent = renderPassEvent;
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -42,17 +45,21 @@ public class DepthNormalsFeature : ScriptableRendererFeature
 
 
         private Material depthNormalsMaterial = null;
-        private FilteringSettings m_FilteringSettings = new FilteringSettings(RenderQueueRange.opaque, -1);
+        //private FilteringSettings m_FilteringSettings = new FilteringSettings(RenderQueueRange.opaque, -1);
+        private FilteringSettings m_FilteringSettings;
         string m_ProfilerTag = "DepthNormals Prepass";
         ShaderTagId m_ShaderTagId = new ShaderTagId("DepthOnly");
 
 
 
 
-        public DepthNormalsPass()
+        public DepthNormalsPass(bool isTransparentQueue)
         {
+            RenderQueueRange range = isTransparentQueue ? RenderQueueRange.transparent : RenderQueueRange.opaque;
+            m_FilteringSettings = new FilteringSettings(range, -1);
+
             depthNormalsMaterial = CoreUtils.CreateEngineMaterial("Hidden/Internal-DepthNormalsTexture");
-            renderPassEvent = RenderPassEvent.AfterRenderingPrePasses;
+            //renderPassEvent = RenderPassEvent.AfterRenderingPrePasses;
         }
 
 

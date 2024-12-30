@@ -1,5 +1,20 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8953650095367610553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd3d058665188284b8384f1f866d934d, type: 3}
+  m_Name: Outlines for transparents
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  renderPassEvent: 450
+  isTransparentQueue: 1
 --- !u!114 &-2063121396739932004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10,9 +25,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd3d058665188284b8384f1f866d934d, type: 3}
-  m_Name: NewDepthNormalsFeature
+  m_Name: Outlines for opaques
   m_EditorClassIdentifier: 
   m_Active: 1
+  renderPassEvent: 200
+  isTransparentQueue: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27,7 +44,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RendererFeatures:
   - {fileID: -2063121396739932004}
-  m_RendererFeatureMap: 9c00cf4205525ee3
+  - {fileID: -8953650095367610553}
+  m_RendererFeatureMap: 9c00cf4205525ee3479f783ead3ebe83
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
