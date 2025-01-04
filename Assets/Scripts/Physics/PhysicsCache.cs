@@ -72,7 +72,7 @@ public static class ComponentCache<T>
 {
     static Dictionary<GameObject, T> cache = new Dictionary<GameObject, T>();
     
-    public static T Get(GameObject target)
+    public static T GetInParent(GameObject target)
     {
         // If a value is already cached, reference that
         if (cache.TryGetValue(target, out T e)) return e;
@@ -94,7 +94,7 @@ public static class ComponentCache<T>
         }
 
         // Otherwise perform a recursive check upwards from the attached entity
-        cache[target] = Get(r.attachedTo.gameObject);
+        cache[target] = GetInParent(r.attachedTo.gameObject);
         return cache[target];
     }
 

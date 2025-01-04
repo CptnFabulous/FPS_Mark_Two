@@ -146,7 +146,32 @@ public readonly struct MiscFunctions
 
         return null;
     }
-    
+
+    /// <summary>
+    /// Gets all components of type <typeparamref name="Child"/>, whose closest parent is <paramref name="parent"/> and not any other instance.
+    /// </summary>
+    /// <typeparam name="Child"></typeparam>
+    /// <typeparam name="Parent"></typeparam>
+    /// <param name="parent"></param>
+    /// <param name="cachedData"></param>
+    /// <returns></returns>
+    public static Child[] GetImmediateComponentsInChildren<Child, Parent>(Parent parent, ref Child[] cachedData) where Child : Component where Parent : Component
+    {
+        // Just return cached data if already present
+        if (cachedData != null) return cachedData;
+        
+        // Do a standard children check
+        List<Child> list = new List<Child>();
+        list.AddRange(parent.GetComponentsInChildren<Child>());
+
+        // Cull values that have a different immediate parent
+        list.RemoveAll((i) => ComponentCache<Parent>.GetInParent(i.gameObject) != parent);
+
+        // Cache and return values
+        cachedData = list.ToArray();
+        return cachedData;
+    }
+
     #endregion
 
     #region Math
