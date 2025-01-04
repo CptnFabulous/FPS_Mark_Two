@@ -98,7 +98,20 @@ public static class ComponentCache<T>
         return cache[target];
     }
 
-    
+}
+
+public static class ImmediateChildrenCache<Parent, Child> where Child : Component where Parent : Component
+{
+    static Dictionary<Parent, Child[]> cache = new Dictionary<Parent, Child[]>();
+
+    public static Child[] GetValues(Parent target)
+    {
+        if (cache.ContainsKey(target)) return cache[target];
+
+        Child[] data = null;
+        cache[target] = MiscFunctions.GetImmediateComponentsInChildren(target, ref data);
+        return cache[target];
+    }
 }
 
 /// <summary>

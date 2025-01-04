@@ -26,39 +26,54 @@ public class DrawInteractionOutlines : ScriptableRendererFeature
             // Check if this camera is on a player with an active interaction handler
             if (interactionHandler == null) return;
             if (interactionHandler.enabled == false) return;
-            
-            // Check that the player is looking at something interactable
-            Interactable i = interactionHandler.targetedInteractable;
-            Rigidbody rb = interactionHandler.targetedPhysicsProp;
-            if (i == null && rb == null) return;
 
+            // Check if something has been hit
+            RaycastHit rh = interactionHandler.hitData;
+            if (rh.collider == null) return;
 
+            Material m;
+            Renderer[] childRenderers;
+
+            // Check what the player is actually looking at.
+            // Determine which highlight to use based on if it's a context-sensitive interaction or a physics object
+            Interactable interactable = interactionHandler.targetedInteractable;
+            Rigidbody physicsProp = interactionHandler.targetedPhysicsProp;
+            if (interactable != null)
+            {
+                bool canInteract = interactionHandler.canInteractWithTarget;
+                m = canInteract ? interactableHighlight : nonInteractableHighlight;
+                childRenderers = ImmediateChildrenCache<Interactable, Renderer>.GetValues(interactable);
+            }
+            else if (physicsProp != null)
+            {
+                m = physicsPropHighlight;
+                childRenderers = ImmediateChildrenCache<Rigidbody, Renderer>.GetValues(physicsProp);
+            }
+            else
+            {
+                // If no interaction is found, do nothing
+                return;
+            }
+
+            // Setup command buffer
             CommandBuffer cmd = CommandBufferPool.Get("Interaction Outline Pass");
             context.ExecuteCommandBuffer(cmd);
             cmd.Clear();
 
-            // Determine which highlight to use based on if it's a context-sensitive interaction or a physics object
-
-            Material m;
-            if (i != null)
-            {
-                bool canInteract = interactionHandler.canInteractWithTarget;
-                m = canInteract ? interactableHighlight : nonInteractableHighlight;
-            }
-            else
-            {
-                m = physicsPropHighlight;
-            }
-
-            //bool isInteractable = i != null;
-            //Material m = isInteractable ? interactableHighlight : physicsPropHighlight;
-
-            RaycastHit rh = interactionHandler.hitData;
+            // Draw all renderers that are part of the interactable
             LayerMask cameraMask = renderingData.cameraData.camera.cullingMask;
-            foreach (Renderer r in ComponentCache<Entity>.Get(rh.collider.gameObject).renderers)
+            foreach (Renderer r in childRenderers)
             {
                 if (MiscFunctions.IsLayerInLayerMask(cameraMask, r.gameObject.layer) == false) return;
-                cmd.DrawRenderer(r, m);
+                //if (MiscFunctions.IsLayerInLayerMask(interactionHandler.detectionMask, r.gameObject.layer) == false) return;
+
+                for (int i = 0; i < r.materials.Length; i++)
+                {
+                    // Make sure it only draws one render pass.
+                    // For some reason if I don't specify that it'll draw a heap of extra passes that mess up the desired look.
+                    //cmd.DrawRenderer(r, m, i);
+                    cmd.DrawRenderer(r, m, i, 0);
+                }
             }
 
             context.ExecuteCommandBuffer(cmd);
