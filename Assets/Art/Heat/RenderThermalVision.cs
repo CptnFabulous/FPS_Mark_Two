@@ -84,10 +84,12 @@ public class RenderThermalVision : ScriptableRendererFeature
 
                         // Generates material based off values, and applies it to each sub-mesh of the renderer
                         Material m = GetMaterial(heat.degreesCelsius, alpha);
-                        //cmd.DrawRenderer(r, m);
                         for (int i = 0; i < r.materials.Length; i++)
                         {
-                            cmd.DrawRenderer(r, m, i);
+                            //cmd.DrawRenderer(r, m, i);
+                            // Make sure it only draws one render pass.
+                            // For some reason if I don't specify that it'll draw a heap of extra passes that mess up the desired look.
+                            cmd.DrawRenderer(r, m, i, 0);
                         }
                     }
                 }
