@@ -77,8 +77,8 @@ public class RenderThermalVision : ScriptableRendererFeature
                 {
                     // Assign values (we don't need to instantiate multiple materials because we're only rendering 1 temperature)
                     float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
-                    backgroundMaterial.SetFloat("Temperature", tempRatio);
-                    backgroundMaterial.SetFloat("Opacity", 1);
+                    backgroundMaterial.SetFloat("_Temperature", tempRatio);
+                    backgroundMaterial.SetFloat("_Opacity", 1);
                     // Draw using command buffer and immediately execute, to ensure it goes behind everything else
                     cmd.DrawProcedural(Matrix4x4.identity, backgroundMaterial, 0, MeshTopology.Triangles, 3);
                     context.ExecuteCommandBuffer(cmd);
@@ -148,8 +148,8 @@ public class RenderThermalVision : ScriptableRendererFeature
 
             // Assign values
             float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, temperature);
-            newMaterial.SetFloat("Temperature", tempRatio);
-            newMaterial.SetFloat("Opacity", alpha);
+            newMaterial.SetFloat("_Temperature", tempRatio);
+            newMaterial.SetFloat("_Opacity", alpha);
 
             materialCache[key] = newMaterial;
             return newMaterial;
