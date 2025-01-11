@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using static UnityEngine.GraphicsBuffer;
@@ -18,14 +17,15 @@ public class RenderThermalVision : ScriptableRendererFeature
     [Header("Render data")]
     public LayerMask renderLayers = ~0;
     public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
-    public RenderQueueType renderQueueType = RenderQueueType.Opaque;
 
     class ThermalPass : ScriptableRenderPass
     {
-        public Material thermalVisionMaterial;
-        public LayerMask smokeLayers;
-        public float smokeAlpha = 0.1f;
-        public FilteringSettings filteringSettings;
+        Material thermalVisionMaterial;
+        Material backgroundMaterial;
+        LayerMask smokeLayers;
+        float smokeAlpha = 0.1f;
+        FilteringSettings opaqueForOpaques;
+        FilteringSettings opaqueForTransparents;
 
         string m_ProfilerTag = "Thermal Render Pass";
 
@@ -37,11 +37,24 @@ public class RenderThermalVision : ScriptableRendererFeature
             new ShaderTagId("LightweightForward"),
         };
 
+
+        public ThermalPass(Material viewMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
+        {
+            // Get a mask of everything that needs to have an effect over it, minus what needs to be rendered separately as transparent.
+            LayerMask opaqueMask = renderLayers & ~smokeLayers;
+            opaqueForOpaques = new FilteringSettings(RenderQueueRange.opaque, opaqueMask);
+            opaqueForTransparents = new FilteringSettings(RenderQueueRange.transparent, opaqueMask);
+
+            // Set the more cosmetic values
+            this.thermalVisionMaterial = viewMaterial;
+
+            this.smokeLayers = smokeLayers;
+            this.smokeAlpha = smokeAlpha;
+        }
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             CommandBuffer cmd = CommandBufferPool.Get(m_ProfilerTag);
-            //ProfilingSample sample = new ProfilingSample(cmd, m_ProfilerTag);
-            
+
             using (new ProfilingSample(cmd, m_ProfilerTag))
             {
                 context.ExecuteCommandBuffer(cmd);
@@ -54,20 +67,15 @@ public class RenderThermalVision : ScriptableRendererFeature
                 // Reset depth data so everything renders right over the original scene
                 cameraData.clearDepth = true;
 
-                SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
-                DrawingSettings drawSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
-
-                // Figure out ambient heat value
-                drawSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientHeat, 1);
 
                 // TO DO: Draw skybox/colour background
+                SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
 
-                // Draw base colour based on ambient temperature
-                // Use these links for more info:
-                // https://docs.unity3d.com/2020.3/Documentation/ScriptReference/Rendering.ScriptableRenderContext.DrawRenderers.html
-                // https://discussions.unity.com/t/rendering-objects-on-scene-using-only-scriptablerendercontext-drawrenderers/1519679/2 (info about disabling normal rendering while still showing additional render passes (involves changing culling mask before normal camera rendering, then changing back before the extra pass)
-                //FilteringSettings filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
-                context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref filteringSettings);
+                // Figure out ambient heat value, and draw as a base over everything that doesn't need unique data shown
+                DrawingSettings ambientPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+                ambientPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
+                context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForOpaques);
+                context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForTransparents);
 
                 // Then render specific objects that have unique heat data
                 foreach (ObjectHeat heat in ObjectHeat.activeHeatSources)
@@ -131,23 +139,22 @@ public class RenderThermalVision : ScriptableRendererFeature
     /// <inheritdoc/>
     public override void Create()
     {
-        m_ScriptablePass = new ThermalPass();
+        // Create a new pass instance
+        m_ScriptablePass = new ThermalPass(thermalVisionMaterial, backgroundMaterial, renderLayers, smokeLayers, smokeAlpha);
 
+        // Specify render pass event
         m_ScriptablePass.renderPassEvent = renderPassEvent;
-        RenderQueueRange range = renderQueueType switch
-        {
-            RenderQueueType.Transparent => RenderQueueRange.transparent,
-            _ => RenderQueueRange.opaque
-        };
-        m_ScriptablePass.filteringSettings = new FilteringSettings(range, renderLayers);
-
+        /*
+        // Get a mask of everything that needs to have an effect over it, minus what needs to be rendered separately as transparent.
+        LayerMask opaqueMask = renderLayers & ~smokeLayers;
+        m_ScriptablePass.opaqueForOpaques = new FilteringSettings(RenderQueueRange.opaque, opaqueMask);
+        m_ScriptablePass.opaqueForTransparents = new FilteringSettings(RenderQueueRange.transparent, opaqueMask);
         m_ScriptablePass.thermalVisionMaterial = thermalVisionMaterial;
         m_ScriptablePass.smokeLayers = smokeLayers;
         m_ScriptablePass.smokeAlpha = smokeAlpha;
+        */
     }
 
-    // Here you can inject one or multiple render passes in the renderer.
-    // This method is called when setting up the renderer once per-camera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
         renderer.EnqueuePass(m_ScriptablePass);
