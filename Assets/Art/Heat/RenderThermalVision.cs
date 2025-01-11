@@ -27,6 +27,8 @@ public class RenderThermalVision : ScriptableRendererFeature
         FilteringSettings opaqueForOpaques;
         FilteringSettings opaqueForTransparents;
 
+        static Material dpm;
+
         string m_ProfilerTag = "Thermal Render Pass";
 
         List<ShaderTagId> shaderTags = new List<ShaderTagId>()
@@ -37,6 +39,10 @@ public class RenderThermalVision : ScriptableRendererFeature
             new ShaderTagId("LightweightForward"),
         };
 
+        /// <summary>
+        /// An ultra simple opaque material, drawn to force an initial depth pass
+        /// </summary>
+        static Material depthPassMaterial => dpm ??= CoreUtils.CreateEngineMaterial("Unlit/Color");
 
         public ThermalPass(Material viewMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
         {
@@ -71,6 +77,12 @@ public class RenderThermalVision : ScriptableRendererFeature
                 // TO DO: Draw skybox/colour background
                 SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
 
+                // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
+                DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+                depthPassSettings.overrideMaterial = depthPassMaterial;
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques);
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents);
+                
                 // Figure out ambient heat value, and draw as a base over everything that doesn't need unique data shown
                 DrawingSettings ambientPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
                 ambientPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
