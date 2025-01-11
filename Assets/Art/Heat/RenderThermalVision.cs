@@ -74,6 +74,9 @@ public class RenderThermalVision : ScriptableRendererFeature
                 {
                     foreach (Renderer r in heat.renderers)
                     {
+                        // Don't try rendering if it's been destroyed for whatever reason
+                        if (r == null) continue;
+
                         // Don't write data for objects that aren't being viewed by the camera
                         int rendererLayer = r.gameObject.layer;
                         if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer) == false) continue;
