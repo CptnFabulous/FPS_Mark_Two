@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using static UnityEngine.GraphicsBuffer;
 
-/// <summary>
-/// WIP: The second, hopefully more optimised version of my thermal vision code.
-/// </summary>
 public class RenderThermalVision : ScriptableRendererFeature
 {
     public Material thermalVisionMaterial;
-    public LayerMask smokeLayers = LayerMask.GetMask("Smoke");
+    public Material backgroundMaterial;
+    public LayerMask smokeLayers;
     public float smokeAlpha = 0.1f;
 
     [Header("Render data")]
@@ -54,6 +51,8 @@ public class RenderThermalVision : ScriptableRendererFeature
             // Set the more cosmetic values
             this.thermalVisionMaterial = viewMaterial;
 
+            if (backgroundMaterial != null) this.backgroundMaterial = Instantiate(backgroundMaterial);
+
             this.smokeLayers = smokeLayers;
             this.smokeAlpha = smokeAlpha;
         }
@@ -73,8 +72,19 @@ public class RenderThermalVision : ScriptableRendererFeature
                 // Reset depth data so everything renders right over the original scene
                 cameraData.clearDepth = true;
 
+                // Draw background override material, but only if camera is set to render a background in the first place
+                if (backgroundMaterial != null && camera.clearFlags != CameraClearFlags.Nothing)
+                {
+                    // Assign values (we don't need to instantiate multiple materials because we're only rendering 1 temperature)
+                    float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
+                    backgroundMaterial.SetFloat("Temperature", tempRatio);
+                    backgroundMaterial.SetFloat("Opacity", 1);
+                    // Draw using command buffer and immediately execute, to ensure it goes behind everything else
+                    cmd.DrawProcedural(Matrix4x4.identity, backgroundMaterial, 0, MeshTopology.Triangles, 3);
+                    context.ExecuteCommandBuffer(cmd);
+                    cmd.Clear();
+                }
 
-                // TO DO: Draw skybox/colour background
                 SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
 
                 // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
