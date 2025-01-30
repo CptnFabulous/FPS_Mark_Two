@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using System;
 
 public class GUIButtonPrompt : MonoBehaviour
 {
@@ -11,7 +10,7 @@ public class GUIButtonPrompt : MonoBehaviour
 
     [Header("GUI elements")]
     [SerializeField] Image graphic;
-    [SerializeField] Text keyName;
+    [SerializeField] TMPro.TextMeshProUGUI keyNameText;
 
     [Header("Sprites - Keyboard + mouse")]
     [SerializeField] Sprite keyboardKey;
@@ -116,14 +115,14 @@ public class GUIButtonPrompt : MonoBehaviour
         if (player == null)
         {
             graphic.sprite = null;
-            keyName.text = "";
+            keyNameText.text = "";
             return;
         }
 
         if (inputDisabled)
         {
             graphic.sprite = disabled;
-            keyName.text = "";
+            keyNameText.text = "";
             return;
         }
 
@@ -153,7 +152,7 @@ public class GUIButtonPrompt : MonoBehaviour
             Debug.Log("Undefined path");
             Debug.Log(assignedInput);
             graphic.sprite = undefined;
-            keyName.text = "";
+            keyNameText.text = "";
             return;
         }
         
@@ -161,12 +160,12 @@ public class GUIButtonPrompt : MonoBehaviour
         if (iconDictionary.TryGetValue(path, out Sprite sprite))
         {
             graphic.sprite = sprite;
-            keyName.text = ""; // Don't show text because the icon explains it
+            keyNameText.text = ""; // Don't show text because the icon explains it
         }
         else // Otherwise default to key graphic
         {
             graphic.sprite = keyboardKey;
-            keyName.text = MiscFunctions.FormatNameForPresentation(path);
+            keyNameText.text = MiscFunctions.FormatNameForPresentation(path);
             // I might be able to use InputAction.GetBindingDisplayString(), but I don't fully understand how it works.
         }
     }

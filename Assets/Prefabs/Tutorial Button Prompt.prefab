@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5568035562192230361}
   - component: {fileID: 5568035562192230365}
   m_Layer: 7
-  m_Name: Tutorial Button Prompt
+  m_Name: 'Tutorial prompt: Interact'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,10 +31,10 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0.00000032782552, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -6.93}
   m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6089462137717539613}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -74,7 +74,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -137,6 +139,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5568035562192230360}
     m_Modifications:
     - target: {fileID: 66660049312002052, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
@@ -172,6 +175,18 @@ PrefabInstance:
       value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 6293359534163153940, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278223103
+      objectReference: {fileID: 0}
+    - target: {fileID: 6538536926832948941, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6538536926832948941, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.5019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 6538536926832948941, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4278223103
       objectReference: {fileID: 0}
@@ -265,6 +280,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4655294580705030818, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
 --- !u!224 &6089462137717539613 stripped
 RectTransform:
