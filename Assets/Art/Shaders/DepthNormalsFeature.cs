@@ -6,13 +6,15 @@ using UnityEngine.Rendering.Universal;
 public class DepthNormalsFeature : ScriptableRendererFeature
 {
     DepthNormalsPass depthNormalsPass;
+    public LayerMask sampleMask = -1;
     public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingPrePasses;
+    //public bool isOpaqueQueue = true;
     public bool isTransparentQueue = false;
 
     public override void Create()
     {
         //Debug.Log("Creating depth/normals pass");
-        depthNormalsPass = new DepthNormalsPass(isTransparentQueue);
+        depthNormalsPass = new DepthNormalsPass(isTransparentQueue, sampleMask);
         depthNormalsPass.renderPassEvent = renderPassEvent;
     }
 
@@ -47,16 +49,20 @@ public class DepthNormalsFeature : ScriptableRendererFeature
         private Material depthNormalsMaterial = null;
         //private FilteringSettings m_FilteringSettings = new FilteringSettings(RenderQueueRange.opaque, -1);
         private FilteringSettings m_FilteringSettings;
+        //private FilteringSettings opaqueFilteringSettings;
+        //private FilteringSettings transparentFilteringSettings;
         string m_ProfilerTag = "DepthNormals Prepass";
         ShaderTagId m_ShaderTagId = new ShaderTagId("DepthOnly");
 
 
 
 
-        public DepthNormalsPass(bool isTransparentQueue)
+        public DepthNormalsPass(bool isTransparentQueue, LayerMask sampleMask)
         {
             RenderQueueRange range = isTransparentQueue ? RenderQueueRange.transparent : RenderQueueRange.opaque;
-            m_FilteringSettings = new FilteringSettings(range, -1);
+            m_FilteringSettings = new FilteringSettings(range, sampleMask);
+            //opaqueFilteringSettings = new FilteringSettings(RenderQueueRange.opaque, sampleMask);
+            //transparentFilteringSettings = new FilteringSettings(RenderQueueRange.transparent, sampleMask);
 
             depthNormalsMaterial = CoreUtils.CreateEngineMaterial("Hidden/Internal-DepthNormalsTexture");
             //renderPassEvent = RenderPassEvent.AfterRenderingPrePasses;
@@ -107,6 +113,8 @@ public class DepthNormalsFeature : ScriptableRendererFeature
 
 
                 context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref m_FilteringSettings);
+                //context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref opaqueFilteringSettings);
+                //context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref transparentFilteringSettings);
 
                 cmd.SetGlobalTexture("_CameraDepthNormalsTexture", depthAttachmentHandle.id);
             }
