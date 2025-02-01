@@ -35,11 +35,20 @@ public readonly struct MiscFunctions
     #region IEnumerables
     public static bool ArrayContains<T>(IEnumerable<T> array, T data)
     {
-        foreach(T t in array)
+        foreach (T t in array)
         {
             if (t.Equals(data)) return true;
         }
         return false;
+    }
+    public static int IndexOfInArray<T>(IList<T> array, T data)
+    {
+        for (int i = 0; i < array.Count; i++)
+        {
+            if (!array[i].Equals(data)) continue;
+            return i;
+        }
+        return -1;
     }
     public static void ShuffleList<T>(IList<T> list)
     {
