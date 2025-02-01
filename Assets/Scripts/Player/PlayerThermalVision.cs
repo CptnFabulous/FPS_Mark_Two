@@ -1,51 +1,80 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class PlayerThermalVision : MonoBehaviour
+public class PlayerThermalVision : StateFunction
 {
+    [Header("Functionality")]
+    [SerializeField] Camera[] cameras;
+    public int standardRendererIndex = 0;
+    public int thermalRendererIndex = 1;
+    public float viewRange = 1000;
+    public float thermalViewRange = 50;
+    /*
+    [Header("Stats")]
+    public float aimSwayMultiplier = 3;
+    */
+    [Header("Animations")]
+    public float enableTime = 0.5f;
+    public float activateThreshold = 0.8f;
+    public GameObject goggleVisuals;
+    public UnityEvent<float> onLerp;
+    public UnityEvent<bool> onActiveSet;
 
-    [SerializeField] Camera mainCamera;
-    [SerializeField] Camera hudCamera;
+    bool thermalsActive;
+    UniversalAdditionalCameraData[] additionalData;
 
-    UniversalAdditionalCameraData additionalData_main;
-    UniversalAdditionalCameraData additionalData_hud;
-
-    bool _thermalsActive;
-
-    public bool thermalsActive
-    {
-        get => _thermalsActive;
-        set => SetThermalsActive(value);
-    }
+    float t;
 
     private void Awake()
     {
-        additionalData_main = mainCamera.GetComponent<UniversalAdditionalCameraData>();
-        additionalData_hud = hudCamera.GetComponent<UniversalAdditionalCameraData>();
-    }
-
-    // TO DO: replace this crappy input with something compatible with the actual input system
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
+        additionalData = new UniversalAdditionalCameraData[cameras.Length];
+        for (int i = 0; i < cameras.Length; i++)
         {
-            thermalsActive = !thermalsActive;
+            additionalData[i] = cameras[i].GetComponent<UniversalAdditionalCameraData>();
         }
     }
-
-
-
-
-
-    public void SetThermalsActive(bool active)
+    private void OnDisable() => LerpEffect(0);
+    void Update()
     {
-        _thermalsActive = active;
+        float lerpTarget = thermalsActive ? 1.0f : 0.0f;
+        t = Mathf.MoveTowards(t, lerpTarget, Time.deltaTime / enableTime);
+        LerpEffect(t);
+    }
+    public override IEnumerator AsyncProcedure()
+    {
+        thermalsActive = true;
+        yield return new WaitUntil(() => t >= 1);
+    }
+    public override IEnumerator AsyncExit()
+    {
+        thermalsActive = false;
+        yield return new WaitUntil(() => t <= 0);
+    }
 
-        int rendererIndex = active ? 1 : 0;
-        additionalData_main.SetRenderer(rendererIndex);
-        additionalData_hud.SetRenderer(rendererIndex);
+    void LerpEffect(float t)
+    {
+        bool active = t >= activateThreshold;
+        SetThermalsActive(active);
+        onLerp.Invoke(t);
+    }
+    void SetThermalsActive(bool active)
+    {
+        int rendererIndex = active ? thermalRendererIndex : standardRendererIndex;
+        float range = active ? thermalViewRange : viewRange;
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            // Change forward renderer between standard and thermal vision
+            additionalData[i].SetRenderer(rendererIndex);
+            cameras[i].farClipPlane = range;
+        }
+
+        if (goggleVisuals != null) goggleVisuals.gameObject.SetActive(!active);
+        onActiveSet.Invoke(active);
     }
 }
