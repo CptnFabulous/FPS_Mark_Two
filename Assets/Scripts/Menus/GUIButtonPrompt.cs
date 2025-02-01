@@ -4,9 +4,47 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-public class GUIButtonPrompt : MonoBehaviour
+
+
+public abstract class GUIButtonPromptBase : MonoBehaviour
 {
     [SerializeField] bool _inputDisabled;
+
+    protected InputAction assignedInput;
+    protected PlayerInput player;
+
+    public bool inputDisabled
+    {
+        get => _inputDisabled;
+        set
+        {
+            _inputDisabled = value;
+            //DetermineCurrentBinding(player);
+        }
+    }
+
+
+    //private void OnEnable() => player.onControlsChanged += DetermineCurrentBinding;
+    //private void OnDisable() => player.onControlsChanged -= DetermineCurrentBinding;
+    private void LateUpdate() => DetermineCurrentBinding();
+
+    public void AssignAction(InputAction newInput, PlayerInput newPlayer)
+    {
+        assignedInput = newInput;
+        player = newPlayer;
+
+        bool active = assignedInput != null && player != null;
+        gameObject.SetActive(active);
+        if (active == false) return;
+
+        DetermineCurrentBinding();
+    }
+    protected abstract void DetermineCurrentBinding();
+}
+
+public class GUIButtonPrompt : GUIButtonPromptBase
+{
+    //[SerializeField] bool _inputDisabled;
 
     [Header("GUI elements")]
     [SerializeField] Image graphic;
@@ -44,8 +82,6 @@ public class GUIButtonPrompt : MonoBehaviour
     [SerializeField] Sprite undefined;
     [SerializeField] Sprite disabled;
 
-    InputAction assignedInput;
-    PlayerInput player;
     Dictionary<string, Sprite> _dictionary;
 
     public Dictionary<string, Sprite> iconDictionary => _dictionary ??= new Dictionary<string, Sprite>()
@@ -79,37 +115,8 @@ public class GUIButtonPrompt : MonoBehaviour
         {"<Gamepad>/start", start },
         {"<Gamepad>/select", select },
     };
-    public bool inputDisabled
-    {
-        get => _inputDisabled;
-        set
-        {
-            _inputDisabled = value;
-            //DetermineCurrentBinding(player);
-        }
-    }
 
-    //private void OnEnable() => player.onControlsChanged += DetermineCurrentBinding;
-    //private void OnDisable() => player.onControlsChanged -= DetermineCurrentBinding;
-
-    private void Update() => DetermineCurrentBinding(player);
-
-
-
-
-    public void AssignAction(InputAction newInput, PlayerInput newPlayer)
-    {
-        assignedInput = newInput;
-        player = newPlayer;
-
-        bool active = assignedInput != null && player != null;
-        gameObject.SetActive(active);
-        if (active == false) return;
-
-        DetermineCurrentBinding(player);
-    }
-
-    void DetermineCurrentBinding(PlayerInput player)
+    protected override void DetermineCurrentBinding()
     {
         graphic.enabled = player != null;
         if (player == null)
@@ -126,12 +133,10 @@ public class GUIButtonPrompt : MonoBehaviour
             return;
         }
 
-        string currentPlayerInputScheme = player.currentControlScheme;
-
+        // Check if an available binding matches the current control scheme
         foreach (InputBinding b in assignedInput.bindings)
         {
-            // Check if an available binding matches the current control scheme
-            bool match = b.groups.Contains(currentPlayerInputScheme);
+            bool match = b.groups.Contains(player.currentControlScheme);
             if (match == false) continue;
             Refresh(b);
             return;
@@ -144,8 +149,6 @@ public class GUIButtonPrompt : MonoBehaviour
     public void Refresh(InputBinding binding) => Refresh(binding.effectivePath);
     public void Refresh(string path)
     {
-
-
         // If a binding wasn't found, display the appropriate text
         if (path == null)
         {
