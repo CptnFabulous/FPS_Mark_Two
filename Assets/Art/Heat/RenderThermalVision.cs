@@ -23,10 +23,14 @@ public class RenderThermalVision : ScriptableRendererFeature
         float smokeAlpha = 0.1f;
         FilteringSettings opaqueForOpaques;
         FilteringSettings opaqueForTransparents;
-
-        static Material dpm;
+        FilteringSettings transparentForOpaques;
+        FilteringSettings transparentForTransparents;
 
         string m_ProfilerTag = "Thermal Render Pass";
+        LayerMask renderLayers;
+        static Material dpm;
+        static Dictionary<(float, float), Material> materialCache = new Dictionary<(float, float), Material>();
+        //static List<Renderer> everythingToRender = new List<Renderer>();
 
         List<ShaderTagId> shaderTags = new List<ShaderTagId>()
         {
@@ -37,25 +41,30 @@ public class RenderThermalVision : ScriptableRendererFeature
         };
 
         /// <summary>
-        /// An ultra simple opaque material, drawn to force an initial depth pass
+        /// An ultra simple opaque material, drawn to force an initial depth pass.
         /// </summary>
         static Material depthPassMaterial => dpm ??= CoreUtils.CreateEngineMaterial("Unlit/Color");
 
-        public ThermalPass(Material viewMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
+        public ThermalPass(Material thermalVisionMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
         {
             // Get a mask of everything that needs to have an effect over it, minus what needs to be rendered separately as transparent.
+            this.renderLayers = renderLayers;
             LayerMask opaqueMask = renderLayers & ~smokeLayers;
             opaqueForOpaques = new FilteringSettings(RenderQueueRange.opaque, opaqueMask);
             opaqueForTransparents = new FilteringSettings(RenderQueueRange.transparent, opaqueMask);
+            transparentForOpaques = new FilteringSettings(RenderQueueRange.opaque, smokeLayers);
+            transparentForTransparents = new FilteringSettings(RenderQueueRange.transparent, smokeLayers);
 
             // Set the more cosmetic values
-            this.thermalVisionMaterial = viewMaterial;
-
-            if (backgroundMaterial != null) this.backgroundMaterial = Instantiate(backgroundMaterial);
-
+            this.thermalVisionMaterial = thermalVisionMaterial;
+            if (backgroundMaterial != null)
+            {
+                this.backgroundMaterial = Instantiate(backgroundMaterial);
+            }
             this.smokeLayers = smokeLayers;
             this.smokeAlpha = smokeAlpha;
         }
+
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             CommandBuffer cmd = CommandBufferPool.Get(m_ProfilerTag);
@@ -67,7 +76,7 @@ public class RenderThermalVision : ScriptableRendererFeature
 
                 CameraData cameraData = renderingData.cameraData;
                 Camera camera = cameraData.camera;
-                //if (cameraData.isStereoEnabled) context.StartMultiEye(camera);
+                if (cameraData.xr.enabled) context.StartMultiEye(camera);
 
                 // Reset depth data so everything renders right over the original scene
                 cameraData.clearDepth = true;
@@ -84,20 +93,56 @@ public class RenderThermalVision : ScriptableRendererFeature
                     context.ExecuteCommandBuffer(cmd);
                     cmd.Clear();
                 }
+                
 
                 SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
+                
+
+
+
+                // TO DO:
+                // Figure out how to use RenderStateBlocks to override depth passes, so I don't need to have a couple of RenderObjects passes beforehand to ensure depth is calculated
+                // Ideally I'd like to render depth for everything, without actually having that stuff show on screen.
+
+                /*
+                RenderStateBlock stateBlock = new RenderStateBlock(RenderStateMask.Everything);
+                //RenderStateBlock stateBlock = new RenderStateBlock();
+                //stateBlock.mask |= RenderStateMask.Depth;
+                //stateBlock.depthState = new DepthState();
 
                 // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
+                Debug.Log("Drawing initial opaque pass");
                 DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
                 depthPassSettings.overrideMaterial = depthPassMaterial;
-                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques);
-                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents);
-                
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques, ref stateBlock);
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents, ref stateBlock);
+                */
+
+
+
+                int shaderRenderQueue = thermalVisionMaterial.shader.renderQueue;
+                if (shaderRenderQueue <= RenderQueueRange.transparent.upperBound && shaderRenderQueue >= RenderQueueRange.transparent.lowerBound)
+                //if (true)
+                {
+                    // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
+                    Debug.Log("Drawing initial opaque pass");
+                    DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+                    depthPassSettings.overrideMaterial = depthPassMaterial;
+                    context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques);
+                    context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents);
+                }
+
                 // Figure out ambient heat value, and draw as a base over everything that doesn't need unique data shown
                 DrawingSettings ambientPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
                 ambientPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
                 context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForOpaques);
                 context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForTransparents);
+
+                // Draw another similar pass, for transparent objects with no heat value assigned
+                DrawingSettings ambientTransparentPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+                ambientTransparentPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, smokeAlpha);
+                context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForOpaques);
+                context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForTransparents);
 
                 // Then render specific objects that have unique heat data
                 foreach (ObjectHeat heat in ObjectHeat.activeHeatSources)
@@ -110,6 +155,8 @@ public class RenderThermalVision : ScriptableRendererFeature
                         // Don't write data for objects that aren't being viewed by the camera
                         int rendererLayer = r.gameObject.layer;
                         if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer) == false) continue;
+                        if (MiscFunctions.IsLayerInLayerMask(renderLayers, rendererLayer) == false) continue;
+                        //if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask & renderLayers, rendererLayer) == false) continue;
 
                         // Determines if renderer should be see-through
                         bool isSmoke = MiscFunctions.IsLayerInLayerMask(smokeLayers, rendererLayer);
@@ -126,18 +173,15 @@ public class RenderThermalVision : ScriptableRendererFeature
                         }
                     }
                 }
+
+                //context.ExecuteCommandBuffer(cmd);
+                //cmd.Clear();
             }
-            
+
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
         
-
-
-
-
-        static Dictionary<(float, float), Material> materialCache = new Dictionary<(float, float), Material>();
-
         Material GetMaterial(float temperature, float alpha)
         {
             (float, float) key = (temperature, alpha);
@@ -163,18 +207,7 @@ public class RenderThermalVision : ScriptableRendererFeature
     {
         // Create a new pass instance
         m_ScriptablePass = new ThermalPass(thermalVisionMaterial, backgroundMaterial, renderLayers, smokeLayers, smokeAlpha);
-
-        // Specify render pass event
         m_ScriptablePass.renderPassEvent = renderPassEvent;
-        /*
-        // Get a mask of everything that needs to have an effect over it, minus what needs to be rendered separately as transparent.
-        LayerMask opaqueMask = renderLayers & ~smokeLayers;
-        m_ScriptablePass.opaqueForOpaques = new FilteringSettings(RenderQueueRange.opaque, opaqueMask);
-        m_ScriptablePass.opaqueForTransparents = new FilteringSettings(RenderQueueRange.transparent, opaqueMask);
-        m_ScriptablePass.thermalVisionMaterial = thermalVisionMaterial;
-        m_ScriptablePass.smokeLayers = smokeLayers;
-        m_ScriptablePass.smokeAlpha = smokeAlpha;
-        */
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)

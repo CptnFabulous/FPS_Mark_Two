@@ -1,5 +1,46 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8706508791383512314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd3d058665188284b8384f1f866d934d, type: 3}
+  m_Name: DepthNormalsFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  sampleMask:
+    serializedVersion: 2
+    m_Bits: 1503
+  renderPassEvent: 200
+  isTransparentQueue: 1
+--- !u!114 &-8632380804330731928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a60de5f9bf7b2c43a297ebd59746f4d, type: 3}
+  m_Name: WIP Environment and smoke thermal pass
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  thermalVisionMaterial: {fileID: 2100000, guid: 537c1b7fd038efd4e983e35f52be0782, type: 2}
+  backgroundMaterial: {fileID: 2100000, guid: 872a0f64abcea9b43af356580dd6c2c3, type: 2}
+  smokeLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  smokeAlpha: 0.25
+  renderLayers:
+    serializedVersion: 2
+    m_Bits: 1664
+  renderPassEvent: 500
 --- !u!114 &-7363852587580461393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10,7 +51,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: Noise effect
+  m_Name: Video screen overlay
   m_EditorClassIdentifier: 
   m_Active: 1
   injectionPoint: 550
@@ -30,11 +71,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
-  m_Name: RenderObjects
+  m_Name: Render UI
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    passTag: RenderObjects
+    passTag: Render UI
     Event: 600
     filterSettings:
       RenderQueueType: 1
@@ -62,6 +103,66 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
+--- !u!114 &-7098746043773100696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
+  m_Name: Depth prepass thing test if this works
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    passTag: Depth prepass thing test if this works
+    Event: 150
+    filterSettings:
+      RenderQueueType: 0
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 1503
+      PassNames: []
+    overrideMaterial: {fileID: 2100000, guid: 43a2b30beba0d3f46ae34800de0983d3, type: 2}
+    overrideMaterialPassIndex: 0
+    overrideShader: {fileID: 0}
+    overrideShaderPassIndex: 0
+    overrideMode: 1
+    overrideDepthState: 1
+    depthCompareFunction: 4
+    enableWrite: 1
+    stencilSettings:
+      overrideStencilState: 1
+      stencilReference: 0
+      stencilCompareFunction: 8
+      passOperation: 1
+      failOperation: 1
+      zFailOperation: 1
+    cameraSettings:
+      overrideCamera: 0
+      restoreCamera: 1
+      offset: {x: 0, y: 0, z: 0, w: 0}
+      cameraFieldOfView: 60
+--- !u!114 &-6988023017962364928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd3d058665188284b8384f1f866d934d, type: 3}
+  m_Name: DepthNormalsFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  sampleMask:
+    serializedVersion: 2
+    m_Bits: 1503
+  renderPassEvent: 200
+  isTransparentQueue: 0
 --- !u!114 &-5644455337216894750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,10 +194,15 @@ MonoBehaviour:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
     hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
   m_RendererFeatures:
+  - {fileID: -6988023017962364928}
+  - {fileID: -8706508791383512314}
+  - {fileID: -7098746043773100696}
+  - {fileID: 2872137273019770023}
+  - {fileID: -8632380804330731928}
   - {fileID: 4897767930989420453}
   - {fileID: -7363852587580461393}
   - {fileID: -7147067298726585874}
-  m_RendererFeatureMap: a59fecd6fb5df843afeeec421657ce99ee5997992884d09c
+  m_RendererFeatureMap: 00a019dc168e059f062bc51f62442c8768dd317e15307c9da7a480f0a1e1db276846f70f659f3388a59fecd6fb5df843afeeec421657ce99ee5997992884d09c
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -132,9 +238,51 @@ MonoBehaviour:
   m_ShadowTransparentReceive: 0
   m_RenderingMode: 0
   m_DepthPrimingMode: 0
-  m_CopyDepthMode: 0
+  m_CopyDepthMode: 2
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &2872137273019770023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
+  m_Name: Depth prepass thing test if this works
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    passTag: Depth prepass thing test if this works
+    Event: 150
+    filterSettings:
+      RenderQueueType: 1
+      LayerMask:
+        serializedVersion: 2
+        m_Bits: 1503
+      PassNames: []
+    overrideMaterial: {fileID: 2100000, guid: 43a2b30beba0d3f46ae34800de0983d3, type: 2}
+    overrideMaterialPassIndex: 0
+    overrideShader: {fileID: 0}
+    overrideShaderPassIndex: 0
+    overrideMode: 1
+    overrideDepthState: 1
+    depthCompareFunction: 4
+    enableWrite: 1
+    stencilSettings:
+      overrideStencilState: 1
+      stencilReference: 0
+      stencilCompareFunction: 8
+      passOperation: 1
+      failOperation: 1
+      zFailOperation: 1
+    cameraSettings:
+      overrideCamera: 0
+      restoreCamera: 1
+      offset: {x: 0, y: 0, z: 0, w: 0}
+      cameraFieldOfView: 60
 --- !u!114 &4897767930989420453
 MonoBehaviour:
   m_ObjectHideFlags: 0
