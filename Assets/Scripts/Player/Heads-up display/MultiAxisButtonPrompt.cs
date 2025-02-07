@@ -20,10 +20,8 @@ public class MultiAxisButtonPrompt : GUIButtonPromptBase
 
     protected override void DetermineCurrentBinding()
     {
-        Debug.Log("Determining current binding");
         foreach (InputBinding binding in assignedInput.bindings)
         {
-            Debug.Log(binding.groups);
             bool match = binding.groups.Contains(player.currentControlScheme);
             if (match == false) continue;
             if (binding.isPartOfComposite == false) continue;
@@ -41,7 +39,6 @@ public class MultiAxisButtonPrompt : GUIButtonPromptBase
             };
             if (prompt == null) continue;
 
-            Debug.Log($"{binding.path}, {Time.frameCount}");
             prompt.Refresh(binding);
         }
     }

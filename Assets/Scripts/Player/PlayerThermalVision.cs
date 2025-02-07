@@ -43,8 +43,11 @@ public class PlayerThermalVision : StateFunction
     void Update()
     {
         float lerpTarget = thermalsActive ? 1.0f : 0.0f;
-        t = Mathf.MoveTowards(t, lerpTarget, Time.deltaTime / enableTime);
-        LerpEffect(t);
+        if (t != lerpTarget)
+        {
+            t = Mathf.MoveTowards(t, lerpTarget, Time.deltaTime / enableTime);
+            LerpEffect(t);
+        }
     }
     public override IEnumerator AsyncProcedure()
     {

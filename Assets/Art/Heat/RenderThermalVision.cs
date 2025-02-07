@@ -69,114 +69,118 @@ public class RenderThermalVision : ScriptableRendererFeature
         {
             CommandBuffer cmd = CommandBufferPool.Get(m_ProfilerTag);
 
+            /*
             using (new ProfilingSample(cmd, m_ProfilerTag))
             {
+                
+            }
+            */
+
+            context.ExecuteCommandBuffer(cmd);
+            cmd.Clear();
+
+            CameraData cameraData = renderingData.cameraData;
+            Camera camera = cameraData.camera;
+            if (cameraData.xr.enabled) context.StartMultiEye(camera);
+
+            // Reset depth data so everything renders right over the original scene
+            cameraData.clearDepth = true;
+
+            // Draw background override material, but only if camera is set to render a background in the first place
+            if (backgroundMaterial != null && camera.clearFlags != CameraClearFlags.Nothing)
+            {
+                // Assign values (we don't need to instantiate multiple materials because we're only rendering 1 temperature)
+                float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
+                backgroundMaterial.SetFloat("_Temperature", tempRatio);
+                backgroundMaterial.SetFloat("_Opacity", 1);
+                // Draw using command buffer and immediately execute, to ensure it goes behind everything else
+                cmd.DrawProcedural(Matrix4x4.identity, backgroundMaterial, 0, MeshTopology.Triangles, 3);
                 context.ExecuteCommandBuffer(cmd);
                 cmd.Clear();
+            }
 
-                CameraData cameraData = renderingData.cameraData;
-                Camera camera = cameraData.camera;
-                if (cameraData.xr.enabled) context.StartMultiEye(camera);
 
-                // Reset depth data so everything renders right over the original scene
-                cameraData.clearDepth = true;
-
-                // Draw background override material, but only if camera is set to render a background in the first place
-                if (backgroundMaterial != null && camera.clearFlags != CameraClearFlags.Nothing)
-                {
-                    // Assign values (we don't need to instantiate multiple materials because we're only rendering 1 temperature)
-                    float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
-                    backgroundMaterial.SetFloat("_Temperature", tempRatio);
-                    backgroundMaterial.SetFloat("_Opacity", 1);
-                    // Draw using command buffer and immediately execute, to ensure it goes behind everything else
-                    cmd.DrawProcedural(Matrix4x4.identity, backgroundMaterial, 0, MeshTopology.Triangles, 3);
-                    context.ExecuteCommandBuffer(cmd);
-                    cmd.Clear();
-                }
-                
-
-                SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
-                
+            SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
 
 
 
-                // TO DO:
-                // Figure out how to use RenderStateBlocks to override depth passes, so I don't need to have a couple of RenderObjects passes beforehand to ensure depth is calculated
-                // Ideally I'd like to render depth for everything, without actually having that stuff show on screen.
 
-                /*
-                RenderStateBlock stateBlock = new RenderStateBlock(RenderStateMask.Everything);
-                //RenderStateBlock stateBlock = new RenderStateBlock();
-                //stateBlock.mask |= RenderStateMask.Depth;
-                //stateBlock.depthState = new DepthState();
+            // TO DO:
+            // Figure out how to use RenderStateBlocks to override depth passes, so I don't need to have a couple of RenderObjects passes beforehand to ensure depth is calculated
+            // Ideally I'd like to render depth for everything, without actually having that stuff show on screen.
 
+            /*
+            RenderStateBlock stateBlock = new RenderStateBlock(RenderStateMask.Everything);
+            //RenderStateBlock stateBlock = new RenderStateBlock();
+            //stateBlock.mask |= RenderStateMask.Depth;
+            //stateBlock.depthState = new DepthState();
+
+            // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
+            Debug.Log("Drawing initial opaque pass");
+            DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+            depthPassSettings.overrideMaterial = depthPassMaterial;
+            context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques, ref stateBlock);
+            context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents, ref stateBlock);
+            */
+
+
+
+            int shaderRenderQueue = thermalVisionMaterial.shader.renderQueue;
+            if (shaderRenderQueue <= RenderQueueRange.transparent.upperBound && shaderRenderQueue >= RenderQueueRange.transparent.lowerBound)
+            //if (true)
+            {
                 // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
                 Debug.Log("Drawing initial opaque pass");
                 DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
                 depthPassSettings.overrideMaterial = depthPassMaterial;
-                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques, ref stateBlock);
-                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents, ref stateBlock);
-                */
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques);
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents);
+            }
 
+            // Figure out ambient heat value, and draw as a base over everything that doesn't need unique data shown
+            DrawingSettings ambientPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+            ambientPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
+            context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForOpaques);
+            context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForTransparents);
 
+            // Draw another similar pass, for transparent objects with no heat value assigned
+            DrawingSettings ambientTransparentPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+            ambientTransparentPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, smokeAlpha);
+            context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForOpaques);
+            context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForTransparents);
 
-                int shaderRenderQueue = thermalVisionMaterial.shader.renderQueue;
-                if (shaderRenderQueue <= RenderQueueRange.transparent.upperBound && shaderRenderQueue >= RenderQueueRange.transparent.lowerBound)
-                //if (true)
+            // Then render specific objects that have unique heat data
+            foreach (ObjectHeat heat in ObjectHeat.activeHeatSources)
+            {
+                foreach (Renderer r in heat.renderers)
                 {
-                    // Draw initial opaque pass, to force depth calculations for everything that needs to be opaque
-                    Debug.Log("Drawing initial opaque pass");
-                    DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
-                    depthPassSettings.overrideMaterial = depthPassMaterial;
-                    context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques);
-                    context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents);
-                }
+                    // Don't try rendering if it's been destroyed for whatever reason
+                    if (r == null) continue;
 
-                // Figure out ambient heat value, and draw as a base over everything that doesn't need unique data shown
-                DrawingSettings ambientPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
-                ambientPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
-                context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForOpaques);
-                context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForTransparents);
+                    // Don't write data for objects that aren't being viewed by the camera
+                    int rendererLayer = r.gameObject.layer;
+                    if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer) == false) continue;
+                    if (MiscFunctions.IsLayerInLayerMask(renderLayers, rendererLayer) == false) continue;
+                    //if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask & renderLayers, rendererLayer) == false) continue;
 
-                // Draw another similar pass, for transparent objects with no heat value assigned
-                DrawingSettings ambientTransparentPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
-                ambientTransparentPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, smokeAlpha);
-                context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForOpaques);
-                context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForTransparents);
+                    // Determines if renderer should be see-through
+                    bool isSmoke = MiscFunctions.IsLayerInLayerMask(smokeLayers, rendererLayer);
+                    float alpha = isSmoke ? smokeAlpha : 1f;
 
-                // Then render specific objects that have unique heat data
-                foreach (ObjectHeat heat in ObjectHeat.activeHeatSources)
-                {
-                    foreach (Renderer r in heat.renderers)
+                    // Generates material based off values, and applies it to each sub-mesh of the renderer
+                    Material m = GetMaterial(heat.degreesCelsius, alpha);
+                    for (int i = 0; i < r.materials.Length; i++)
                     {
-                        // Don't try rendering if it's been destroyed for whatever reason
-                        if (r == null) continue;
-
-                        // Don't write data for objects that aren't being viewed by the camera
-                        int rendererLayer = r.gameObject.layer;
-                        if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer) == false) continue;
-                        if (MiscFunctions.IsLayerInLayerMask(renderLayers, rendererLayer) == false) continue;
-                        //if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask & renderLayers, rendererLayer) == false) continue;
-
-                        // Determines if renderer should be see-through
-                        bool isSmoke = MiscFunctions.IsLayerInLayerMask(smokeLayers, rendererLayer);
-                        float alpha = isSmoke ? smokeAlpha : 1f;
-
-                        // Generates material based off values, and applies it to each sub-mesh of the renderer
-                        Material m = GetMaterial(heat.degreesCelsius, alpha);
-                        for (int i = 0; i < r.materials.Length; i++)
-                        {
-                            //cmd.DrawRenderer(r, m, i);
-                            // Make sure it only draws one render pass.
-                            // For some reason if I don't specify that it'll draw a heap of extra passes that mess up the desired look.
-                            cmd.DrawRenderer(r, m, i, 0);
-                        }
+                        //cmd.DrawRenderer(r, m, i);
+                        // Make sure it only draws one render pass.
+                        // For some reason if I don't specify that it'll draw a heap of extra passes that mess up the desired look.
+                        cmd.DrawRenderer(r, m, i, 0);
                     }
                 }
-
-                //context.ExecuteCommandBuffer(cmd);
-                //cmd.Clear();
             }
+
+            //context.ExecuteCommandBuffer(cmd);
+            //cmd.Clear();
 
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);

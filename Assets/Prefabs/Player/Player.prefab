@@ -70,7 +70,19 @@ MonoBehaviour:
   scrollInput: {fileID: 2980651033769120155}
   onIndexChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1216336399735792582}
+        m_TargetAssemblyTypeName: LinearMenu, Assembly-CSharp
+        m_MethodName: SetOption
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2980651033769120155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,7 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Scroll Vision Modes
-  guiPrompt: {fileID: 0}
+  guiPrompt: {fileID: 6470185208940946107}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2355,13 +2367,13 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 5
   m_Range: 35
-  m_SpotAngle: 60
+  m_SpotAngle: 40
   m_InnerSpotAngle: 0
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -4110,6 +4122,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+--- !u!114 &1216336399735792582 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8884400470870939148, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e07351237cd1de842ad42565d411ad21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1881373689726421184 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8192342176099384586, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -4152,6 +4175,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6470185208940946107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3629979914823473009, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d4ed03fc9a0ea4586a995bc23732e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7605556675667947530 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 155001636874061248, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
