@@ -5,7 +5,7 @@
 
 
 
-
+//CGPROGRAM
 //#include "UnityCG.cginc"
 //TEXTURE2D(_CameraDepthTexture);
 //SAMPLER(sampler_CameraDepthTexture);
@@ -30,92 +30,39 @@ SAMPLER(sampler_CameraDepthNormalsTexture);
 // This link should be super useful for learning how to use URP's lighting stuff:
 // https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@14.0/manual/use-built-in-shader-methods-lighting.html
 
-void GetAllLightData_float(float3 WorldSpacePosition, out float3 Direction, out float3 Colour, out float DistanceAttenuation, out float ShadowAttenuation)
+//float InverseLerp
+
+float StepValue(float input, float range)
 {
-    #if !defined(SHADERGRAPH_PREVIEW)
-    
-    Light light = GetMainLight();
-    Direction = light.direction;
-    Colour = light.color;
-    DistanceAttenuation = light.distanceAttenuation;
-    ShadowAttenuation = light.shadowAttenuation;
-
-    /*
-    Direction = float3(0, 0, 0);
-    Colour = float3(0, 0, 0);
-    DistanceAttenuation = 0;
-    ShadowAttenuation = 0;
-    */
-    int count = GetAdditionalLightsCount();
-    for (int i = 0; i < count; i++)
-    {
-        //int perObjectIndex = GetPerObjectLightIndex(i);
-        Light l = GetAdditionalLight(i, WorldSpacePosition);
-        Direction += l.direction;
-        Colour += l.color;
-        DistanceAttenuation += l.distanceAttenuation;
-        ShadowAttenuation += l.shadowAttenuation;
-    }
-
-    #else
-    Direction = float3(-1, 1, -1);
-    Colour = float3(1, 1, 0);
-    DistanceAttenuation = 0;
-    ShadowAttenuation = 0;
-    #endif
+    //if (input == 0) return input;
+    float output = input;
+    output /= range;
+    output = round(output);
+    //output = ceil(output);
+    output *= range;
+    return output;
 }
-void GetLightData_float(out float3 Direction, out float3 Colour, out float DistanceAttenuation, out float ShadowAttenuation)
-{
-    #if !defined(SHADERGRAPH_PREVIEW)
-    Light light = GetMainLight();
-    Direction = light.direction;
-    Colour = light.color;
-    DistanceAttenuation = light.distanceAttenuation;
-    ShadowAttenuation = light.shadowAttenuation;
-    #else
-    Direction = float3(0, 1, 0);
-    Colour = float3(1, 1, 1);
-    DistanceAttenuation = 0;
-    ShadowAttenuation = 0;
-    #endif
 
-    //#ifdef UNIVERSAL_LIGHTING_INCLUDED
-    /*
-    Light light = GetMainLight();
-    Direction = light.direction;
-    Colour = light.color;
-    DistanceAttenuation = light.distanceAttenuation;
-    ShadowAttenuation = light.shadowAttenuation;
-    */
-    /*
-    #else
-    Direction = float3(0, 0, 0);
-    Colour = float3(0, 0, 0);
-    DistanceAttenuation = 0;
-    ShadowAttenuation = 0;
-    #endif
-    */
-    //#endif
-}
 #if !defined(SHADERGRAPH_PREVIEW)
-float4 ApplyToonLight(Light light, float3 normal, float3 viewDirection, float glossiness)
+float3 ApplyToonLight(Light light, float3 normal, float3 viewDirection, float glossiness)
 {
     // Determine light intensity based on direction
     float lightDot = dot(light.direction, normal);
     float intensity = saturate(lightDot);
     
-    //intensity *= 0.001;
-    
     // This bit here is responsible for the cel-shading, by stepping the lights.
     //intensity = smoothstep(0, 0.01, intensity);
-    intensity = step(0.01, intensity);
-
-    float4 baseLightColour = float4(light.color.x, light.color.y, light.color.z, 1);
-    float4 lightColourValue = baseLightColour * intensity;
-
+    //intensity = step(0.01, intensity);
+    //intensity = StepValue(intensity, 1);
+    intensity = StepValue(intensity, 0.5);
+    
     // This value would normally be good for distance, but it results in gradients.
     // Maybe I'll add it back in later once I figure out code for multiple steps
-    //lightColourValue *= light.distanceAttenuation;
+    //intensity *= light.distanceAttenuation;
+    //intensity *= light.shadowAttenuation;
+    //intensity = StepValue(intensity, 0.5);
+    float3 lightColourValue = light.color * intensity;
+
 
 
 
@@ -123,7 +70,7 @@ float4 ApplyToonLight(Light light, float3 normal, float3 viewDirection, float gl
 
     //Apply gloss
     float glossSize = 32;
-    float4 glossColour = float4(1, 1, 1, 1) * glossiness;
+    float3 glossColour = float3(1, 1, 1) * glossiness;
 
     // Calculate specular intensity
     viewDirection = normalize(viewDirection);
@@ -136,7 +83,7 @@ float4 ApplyToonLight(Light light, float3 normal, float3 viewDirection, float gl
     specularIntensity = step(0.005, specularIntensity);
     
     // Combine with reflection colour (currently defaults to white)
-    float4 specular = specularIntensity * glossColour;
+    float3 specular = specularIntensity * glossColour;
     // Add to given value
     lightColourValue += specular;
 
@@ -155,17 +102,17 @@ float4 ApplyToonLight(Light light, float3 normal, float3 viewDirection, float gl
     //rimIntensity = smoothstep(rimThreshold - 0.01, rimThreshold + 0.01, rimIntensity);
     rimIntensity = step(rimThreshold, rimIntensity);
 
-    lightColourValue += baseLightColour * rimIntensity;
+    lightColourValue += light.color * rimIntensity;
 
 
     return lightColourValue;
 }
 #endif
 
-void ProcessAllLightData_float(float3 worldPosition, float3 normal, float3 viewDirection, /*float4 ambientLight, */float glossiness, out float4 colour)
+void ProcessAllLightData_float(float3 worldPosition, float3 normal, float3 viewDirection, /*float4 ambientLight, */float glossiness, out float3 colour)
 {
     #if !defined(SHADERGRAPH_PREVIEW)
-    colour = float4(0, 0, 0, 1);
+    colour = float3(0, 0, 0);
     // Start off with main light
     colour += ApplyToonLight(GetMainLight(), normal, viewDirection, glossiness);
 
@@ -178,11 +125,50 @@ void ProcessAllLightData_float(float3 worldPosition, float3 normal, float3 viewD
     }
     
     #else
-    colour = float4(1, 1, 1, 1);
+    colour = float3(1, 1, 1);
     #endif
+    
+    /*
+    colour = float3(1, 1, 1);
+    
+    #if !defined(SHADERGRAPH_PREVIEW)
+    // Start off with main light
+    colour *= ApplyToonLight(GetMainLight(), normal, viewDirection, glossiness);
+
+    // Apply all additional lights
+    int count = GetAdditionalLightsCount();
+    for (int i = 0; i < count; i++)
+    {
+        Light l = GetAdditionalLight(i, worldPosition);
+        colour *= ApplyToonLight(l, normal, viewDirection, glossiness);
+    }
+    #endif
+    */
 }
 
 
+
+void GetShadowAttenuations_float(float3 worldPosition, float3 normal, float3 viewDirection, float glossiness, out float3 colour)
+{
+    colour = float3(1, 1, 1);
+#if !defined(SHADERGRAPH_PREVIEW)
+    
+    float s = 0;
+    
+    s += GetMainLight().shadowAttenuation;
+
+    // Apply all additional lights
+    int count = GetAdditionalLightsCount();
+    for (int i = 0; i < count; i++)
+    {
+        Light l = GetAdditionalLight(i, worldPosition);
+        s += l.shadowAttenuation;
+    }
+    
+    colour *= s;
+    
+#endif
+}
 
 
 
