@@ -52,6 +52,7 @@ public class ImpactEffect : ScriptableObject
             SpriteRenderer sr = ObjectPool.RequestObject(decalPrefab, true, maxNumberOfSpawnedEffects);
             sr.sprite = decal;
             sr.name = $"Decal ({name})";
+            sr.gameObject.layer = surfaceCollider.layer;
 
             Vector3 pointToStickDecal = point + (normal.normalized * 0.01f);
             StickObjectToSurface(sr.transform, surfaceCollider.transform, pointToStickDecal, normal, Vector3.forward);
