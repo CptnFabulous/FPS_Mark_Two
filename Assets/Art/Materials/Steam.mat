@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Steam
-  m_Shader: {fileID: -6465566751694194690, guid: c80dde24229e76848956580016d9f5a0, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: ca85201476d85b74eb76c104f3cd2a6b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -63,6 +63,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Toonshading_6dd3288473a645bd930f3f5cd9cadfab_Texture2D9b1f708d5d634ded933344d05c113168_1535500054_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -82,10 +86,13 @@ Material:
     - Vector1_94df2e631f844cf08ff99b844ec59a81: 0
     - Vector1_dcaa07fd38534cd8a9c999bf63fe91a7: 1
     - Vector1_fd45c9f775744fb4b6818bebd8cd6e4f: 0.002
+    - _Billow_Radius: 0.1
     - _BumpScale: 1
+    - _Cell_Density: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Enable_Emission: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 1
@@ -97,14 +104,19 @@ Material:
     - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _Speed: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - Color_5b9877f949a64f08b1c5b3352cfa5a85: {r: 1, g: 1, b: 1, a: 1}
     - Color_d23dffed464e4119b78bcaebc88f1b81: {r: 0, g: 0, b: 0, a: 1}
+    - _Base_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Outline_Colour: {r: 0, g: 0, b: 0, a: 1}
+    - _Wind_direction: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &6256869723086590816
 MonoBehaviour:
