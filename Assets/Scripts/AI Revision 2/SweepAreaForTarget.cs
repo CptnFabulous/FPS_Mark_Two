@@ -10,6 +10,7 @@ public class SweepAreaForTarget : AIStateFunction
     public float maxSearchDistance = 50;
     public float positionUpdateInterval = 0.5f;
     public float distanceForInstinctCheck = 2;
+    public float distanceForVisualCheck = 10;
     public AIStateFunction successState;
     public AIStateFunction failState;
     public InvestigateLocations investigateState;
@@ -44,7 +45,12 @@ public class SweepAreaForTarget : AIStateFunction
         */
 
         // Clear points the AI can see (and therefore no longer needs to check)
-        pointsToCheck.RemoveAll((point) => visionCone.VisionConeCheck(point.position) == ViewStatus.Visible);
+        pointsToCheck.RemoveAll((point) =>
+        {
+            if (Vector3.Distance(point.position, visionCone.transform.position) > distanceForVisualCheck) return false;
+
+            return visionCone.VisionConeCheck(point.position) == ViewStatus.Visible;
+        });
         // Also remove points that are really close to the agent 
         pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) < distanceForInstinctCheck);
         // If all points have been checked, switch to the fail state (or start the search again if no fail state is present)
