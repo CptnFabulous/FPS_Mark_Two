@@ -25,9 +25,45 @@ public class CharacterPoise : MonoBehaviour
     public float currentStun
     {
         get => currentStunAmount;
-        set => SetStun(value);
+        set
+        {
+            if (health.IsAlive == false) return;
+
+            //Debug.Log("Setting stun to " + newStunValue);
+            currentStunAmount = value;
+
+            // Determine what the last non-stun state was
+            //StateFunction currentState = stateController.currentState;
+            //if (currentState != knockdownState && currentState != stunState) lastNonStunState = currentState;
+            if (notStunned) lastNonStunState = stateController.currentState;
+
+            // Check if stun is high enough to go to knockdown state
+            if (stateController.currentState == knockdownState) return;
+            if (currentStunAmount >= knockdownThreshold)
+            {
+                stateController.SwitchToState(knockdownState);
+                return;
+            }
+
+            // If able to, check if stun is high enough for stagger state
+            if (stateController.currentState == stunState) return;
+            if (currentStunAmount >= staggerThreshold)
+            {
+                stateController.SwitchToState(stunState);
+                return;
+            }
+        }
     }
-    
+    public bool notStunned
+    {
+        get
+        {
+            StateFunction currentState = stateController.currentState;
+            return currentState != knockdownState && currentState != stunState;
+        }
+    }
+
+
     void Awake()
     {
         health.onDamage.AddListener(ApplyStun);
@@ -46,37 +82,11 @@ public class CharacterPoise : MonoBehaviour
         currentStun += dm.stun;
         onStunApplied.Invoke(dm);
     }
-    void SetStun(float newStunValue)
-    {
-        if (health.IsAlive == false) return;
-
-        //Debug.Log("Setting stun to " + newStunValue);
-        currentStunAmount = newStunValue;
-
-        // Determine what the last non-stun state was
-        StateFunction currentState = stateController.currentState;
-        if (currentState != knockdownState && currentState != stunState) lastNonStunState = currentState;
-        
-        // Check if stun is high enough to go to knockdown state
-        if (stateController.currentState == knockdownState) return;
-        if (currentStunAmount >= knockdownThreshold)
-        {
-            stateController.SwitchToState(knockdownState);
-            return;
-        }
-
-        // If able to, check if stun is high enough for stagger state
-        if (stateController.currentState == stunState) return;
-        if (currentStunAmount >= staggerThreshold)
-        {
-            stateController.SwitchToState(stunState);
-            return;
-        }
-    }
+    
     public void ReturnToNormalFunction()
     {
         // Rather than preventing stun from increasing at all while staggered or knocked down, just reset stun to zero once the enemy leaves the stun state.
         stateController.SwitchToState(lastNonStunState);
-        SetStun(0);
+        currentStun = 0;
     }
 }
