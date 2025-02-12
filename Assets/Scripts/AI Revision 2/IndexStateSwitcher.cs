@@ -20,6 +20,7 @@ public class IndexStateSwitcher : MonoBehaviour
         controller.stateIndex += Mathf.RoundToInt(value);
 
         int nextStateIndex = MiscFunctions.IndexOfInArray(controller.states, controller.nextState);
+        if (nextStateIndex < 0 || nextStateIndex >= controller.states.Length) return;
         onIndexChanged.Invoke(nextStateIndex);
     }
 }
