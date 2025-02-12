@@ -39,7 +39,10 @@ public class ADSOverlayTransition : MonoBehaviour
 
         // Set visibility of overlay and weapon model
         reticleGroup.gameObject.SetActive(showOverlay);
-        foreach (GameObject r in weaponModelComponents) r?.SetActive(!showOverlay);
+        foreach (GameObject r in weaponModelComponents)
+        {
+            if (r != null) r.SetActive(!showOverlay);
+        }
 
         // Calculate swap mask opacity
         overlaySwapMask.alpha = swapMaskCurve.Evaluate(t);

@@ -38,6 +38,7 @@ public class GunADS : MonoBehaviour
     Vector3 cosmeticSwayAxes;
     Vector3 cosmeticSwayAngularVelocity;
     public float timer { get; private set; }
+    public float timerLastFrame { get; private set; }
 
     Weapon attachedWeapon => w ??= GetComponentInParent<Weapon>();
     public Character user => (attachedWeapon != null) ? attachedWeapon.user : null;
@@ -60,24 +61,23 @@ public class GunADS : MonoBehaviour
     /// <summary>
     /// Is the player in the process of switching between hip-firing or aiming down the sights?
     /// </summary>
-    public bool IsTransitioning => timer != TargetValue;
-    float TargetValue => IsAiming ? 1 : 0;
+    public bool IsTransitioning => timerLastFrame != targetValue;
+    float targetValue => IsAiming ? 1 : 0;
     bool IsScope => viewingCamera != null && sightPicture != null;
     public LookController lookControls => player.movement.lookControls;
     public bool notSetupProperly => attachedWeapon == null || user == null || userWeaponHandler == null || player == null;
 
     private void Awake()
     {
-        if (IsScope)
-        {
-            // Generates a new render texture, and sets the scope camera to output to it rather than the main screen
-            RenderTexture sight = new RenderTexture(sightTextureDimensions.x, sightTextureDimensions.y, sightTextureDepthBuffer);
-            viewingCamera.targetTexture = sight;
-            // Generates a unique material for this scope and assigns it to display the render texture
-            Material scopeMaterial = new Material(sightPicture.material);
-            scopeMaterial.mainTexture = sight;
-            sightPicture.material = scopeMaterial;
-        }
+        if (IsScope == false) return;
+
+        // Generates a new render texture, and sets the scope camera to output to it rather than the main screen
+        RenderTexture sight = new RenderTexture(sightTextureDimensions.x, sightTextureDimensions.y, sightTextureDepthBuffer);
+        viewingCamera.targetTexture = sight;
+        // Generates a unique material for this scope and assigns it to display the render texture
+        Material scopeMaterial = new Material(sightPicture.material);
+        scopeMaterial.mainTexture = sight;
+        sightPicture.material = scopeMaterial;
     }
     private void OnEnable()
     {
@@ -86,14 +86,15 @@ public class GunADS : MonoBehaviour
             enabled = false;
             return;
         }
-        //Debug.Log($"{this}: running OnEnable()");
-
+        
         if (IsScope)
         {
             //Debug.Log($"{this}: enabling camera");
             viewingCamera.gameObject.SetActive(true);
             viewingCamera.fieldOfView = lookControls.fieldOfView / magnification;
         }
+
+        timerLastFrame = timer;
     }
     void OnDisable()
     {
@@ -113,11 +114,8 @@ public class GunADS : MonoBehaviour
         }
 
         // If timer is different from desired value, lerp and update it
-        if (IsTransitioning)
-        {
-            timer = Mathf.MoveTowards(timer, TargetValue, Time.deltaTime / transitionTime);
-        }
-
+        timerLastFrame = timer;
+        timer = Mathf.MoveTowards(timer, targetValue, Time.deltaTime / transitionTime);
         LerpADS(timer);
     }
     private void LateUpdate()
@@ -133,23 +131,19 @@ public class GunADS : MonoBehaviour
             LerpADSCosmetics(timer);
         }
     }
-    /*
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawRay(reticleAxis.position, -reticleAxis.forward * distanceBetweenReticleAxisAndHead);
-        if (modelOrientationTransform != null)
-        {
-            Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.forward, new Color(1, 0.5f, 0));
-            Debug.DrawRay(modelOrientationTransform.position, modelOrientationTransform.up, new Color(1, 0.5f, 0));
-        }
-    }
-    */
+    
     /// <summary>
     /// Lerps the FOV and camera direction between standard and ADS modes.
     /// </summary>
     /// <param name="timer"></param>
     void LerpADS(float timer)
     {
+        if (notSetupProperly)
+        {
+            enabled = false;
+            return;
+        }
+
         // If a view camera and sight picture are not present, directly lerp the player's FOV instead
         if (!IsScope)
         {
@@ -166,7 +160,6 @@ public class GunADS : MonoBehaviour
         // Lerp sway to change weapon accuracy while aiming down sights
         AimSwayHandler sway = userWeaponHandler.swayHandler;
         sway.swayMultipliers[sway.adsMultiplierReference] = Mathf.Lerp(hipfireSwayMultiplier, sway.adsMultiplier, timer);
-        
     }
     /// <summary>
     /// Lerps appropriate cosmetic features between standard and ADS modes.
@@ -174,6 +167,12 @@ public class GunADS : MonoBehaviour
     /// <param name="timer"></param>
     void LerpADSCosmetics(float timer)
     {
+        if (notSetupProperly)
+        {
+            enabled = false;
+            return;
+        }
+
         // Rotate gun so the reticle axis transform is parallel with the player's aim direction
         Quaternion relativeRotation = MiscFunctions.FromToRotation(modelPivot.rotation, reticleAxis.rotation);
         Quaternion rotation = lookControls.upperBody.rotation * Quaternion.Inverse(relativeRotation);
