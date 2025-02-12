@@ -25,7 +25,7 @@ public class ThrowObject : WeaponMode
         throwablePrefab.gameObject.SetActive(false);
     }
 
-    protected override void OnSecondaryInputChanged() { }
+    protected override void OnSecondaryInputChanged(bool held) { }
     public override void OnTertiaryInput() { }
 
     public override bool CanAttack() => User.weaponHandler.ammo.GetStock(ammunitionType) > 0;

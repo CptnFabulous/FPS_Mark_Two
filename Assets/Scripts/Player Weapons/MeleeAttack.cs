@@ -47,7 +47,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         // Attack
         currentAttack = StartCoroutine(AttackSequence());
     }
-    protected override void OnSecondaryInputChanged()
+    protected override void OnSecondaryInputChanged(bool held)
     {
         // Block/parry
     }

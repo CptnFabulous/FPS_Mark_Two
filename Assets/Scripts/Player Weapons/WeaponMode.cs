@@ -12,8 +12,8 @@ public abstract class WeaponMode : MonoBehaviour
     public UnityEvent onSwitch;
 
     Character _user;
-    public bool PrimaryHeld { get; private set; }
-    public bool SecondaryActive { get; private set; }
+    public bool PrimaryHeld { get; protected set; }
+    public bool SecondaryHeld { get; protected set; }
 
     public Weapon attachedTo => _attachedTo ??= GetComponentInParent<Weapon>();
     public Character User
@@ -39,7 +39,7 @@ public abstract class WeaponMode : MonoBehaviour
     public abstract void OnAttack();
 
     protected abstract void OnPrimaryInputChanged(bool held);
-    protected abstract void OnSecondaryInputChanged();
+    protected abstract void OnSecondaryInputChanged(bool held);
     public abstract void OnTertiaryInput();
     protected abstract void OnInterrupt();
 
@@ -51,8 +51,8 @@ public abstract class WeaponMode : MonoBehaviour
     }
     public void SetSecondaryInput(bool active)
     {
-        SecondaryActive = active;
-        OnSecondaryInputChanged();
+        SecondaryHeld = active;
+        OnSecondaryInputChanged(active);
     }
     public void Interrupt()
     {
@@ -60,9 +60,6 @@ public abstract class WeaponMode : MonoBehaviour
         SetSecondaryInput(false);
         OnInterrupt();
     }
-
-    //public bool PrimaryHeld => User.weaponHandler.PrimaryHeld;
-    //public bool SecondaryActive => User.weaponHandler.SecondaryActive;
 
     public abstract bool InAction { get; }
 }

@@ -60,21 +60,15 @@ public class RangedAttack : WeaponMode
 
         StartCoroutine(FireBurst());
     }
-    protected override void OnSecondaryInputChanged()
+    protected override void OnSecondaryInputChanged(bool held)
     {
-        if (optics == null)
-        {
-            return;
-        }
-
-        optics.IsAiming = SecondaryActive;
+        if (optics == null) return;
+        optics.IsAiming = MiscFunctions.GetToggleableInput(optics.IsAiming, held, handler.toggleADS);
     }
     public override void OnTertiaryInput()
     {
-        if (magazine != null)
-        {
-            magazine.OnReloadPressed();
-        }
+        if (magazine == null) return;
+        magazine.OnReloadPressed();
     }
 
     protected override void OnInterrupt()

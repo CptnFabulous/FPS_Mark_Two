@@ -11,13 +11,15 @@ public class WeaponHandler : MonoBehaviour
     [Header("Weapons")]
     public List<Weapon> equippedWeapons;
     public WeaponMode offhand;
-    public Transform holdingSocket;
-    public AmmunitionInventory ammo;
-    public RadialMenu weaponSelector;
-    public WeaponSelectorHUD selectorInfo;
 
     [Header("Stats")]
+    public AmmunitionInventory ammo;
     public AimSwayHandler swayHandler;
+
+    [Header("Accessibility")]
+    public Transform holdingSocket;
+    public RadialMenu weaponSelector;
+    public WeaponSelectorHUD selectorInfo;
     public bool toggleADS;
     public bool quickSwitchModes = true;
 
@@ -28,8 +30,6 @@ public class WeaponHandler : MonoBehaviour
 
     int equippedWeaponIndex = 0;
 
-    //public bool PrimaryHeld { get; private set; }
-    public bool SecondaryActive { get; private set; }
     public bool isSwitching { get; private set; }
 
     public Weapon CurrentWeapon => (equippedWeapons.Count > 0) ? equippedWeapons[equippedWeaponIndex] : null;
@@ -95,15 +95,12 @@ public class WeaponHandler : MonoBehaviour
     void OnFire(InputValue input)
     {
         if (!WeaponReady) return;
-        //PrimaryHeld = input.isPressed;
         CurrentWeapon.CurrentMode.SetPrimaryInput(input.isPressed);
     }
     void OnADS(InputValue input)
     {
         if (!WeaponReady) return;
-
-        SecondaryActive = MiscFunctions.GetToggleableInput(SecondaryActive, input.isPressed, toggleADS);
-        CurrentWeapon.CurrentMode.SetSecondaryInput(SecondaryActive);
+        CurrentWeapon.CurrentMode.SetSecondaryInput(input.isPressed);
     }
     void OnReload()
     {
