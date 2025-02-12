@@ -63,7 +63,10 @@ public class RangedAttack : WeaponMode
     protected override void OnSecondaryInputChanged(bool held)
     {
         if (optics == null) return;
-        optics.IsAiming = MiscFunctions.GetToggleableInput(optics.IsAiming, held, handler.toggleADS);
+        WeaponHandler handler = User.weaponHandler;
+        if (handler == null) return;
+        
+        optics.IsAiming = (!handler.disableADS) && MiscFunctions.GetToggleableInput(optics.IsAiming, held, handler.toggleADS);
     }
     public override void OnTertiaryInput()
     {

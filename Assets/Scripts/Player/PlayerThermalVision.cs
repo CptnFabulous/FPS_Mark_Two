@@ -9,6 +9,8 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerThermalVision : StateFunction
 {
+    public Player player;
+    
     [Header("Functionality")]
     [SerializeField] Camera[] cameras;
     public int standardRendererIndex = 0;
@@ -33,13 +35,31 @@ public class PlayerThermalVision : StateFunction
 
     private void Awake()
     {
+        player = GetComponentInParent<Player>();
+        
         additionalData = new UniversalAdditionalCameraData[cameras.Length];
         for (int i = 0; i < cameras.Length; i++)
         {
             additionalData[i] = cameras[i].GetComponent<UniversalAdditionalCameraData>();
         }
     }
-    private void OnDisable() => LerpEffect(0);
+    private void OnEnable()
+    {
+        player.weaponHandler.disableADS = true;
+
+        Weapon currentWeapon = player.weaponHandler.CurrentWeapon;
+        if (currentWeapon == null) return;
+        RangedAttack rangedAttack = currentWeapon.CurrentMode as RangedAttack;
+        if (rangedAttack == null) return;
+
+        if (rangedAttack.optics == null) return;
+        rangedAttack.optics.IsAiming = false;
+    }
+    private void OnDisable()
+    {
+        LerpEffect(0);
+        player.weaponHandler.disableADS = false;
+    }
     void Update()
     {
         float lerpTarget = thermalsActive ? 1.0f : 0.0f;

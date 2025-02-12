@@ -30,6 +30,7 @@ public class WeaponHandler : MonoBehaviour
 
     int equippedWeaponIndex = 0;
 
+    public bool disableADS { get; set; }
     public bool isSwitching { get; private set; }
 
     public Weapon CurrentWeapon => (equippedWeapons.Count > 0) ? equippedWeapons[equippedWeaponIndex] : null;
