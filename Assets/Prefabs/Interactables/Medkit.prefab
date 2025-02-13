@@ -132,10 +132,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebugData: 0
   properName: Medkit
   description: Use to recover from injuries.
   isUnique: 0
   health: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!114 &4544066185653120222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   activateOnCollision: 0
+  parentEntity: {fileID: 0}
+  displayName: 
   promptMessage: Heal
   inProgressMessage: In progress
   disabledMessage: Health full
@@ -214,6 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 0}
   impactEffect: {fileID: 11400000, guid: 5eb6b24353b04c449a65e4980f1c5590, type: 2}
 --- !u!1 &4544066185875066785
 GameObject:
@@ -274,7 +279,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 2a4e621dc1634654e996408868280ebf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -355,7 +360,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a06064b540a769d4c82aca75ea56f128, type: 2}
+  - {fileID: 2100000, guid: 51ac721e60538d34cb86d42906c149ff, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
