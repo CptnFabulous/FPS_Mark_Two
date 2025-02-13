@@ -5,6 +5,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1242399719591464413, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
@@ -137,6 +138,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 254726574942239003, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4638640600411629618, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8303827674735154728}
+    - targetCorrespondingSourceObject: {fileID: 4638640600411629618, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 377312251}
+    - targetCorrespondingSourceObject: {fileID: 4638640600411629618, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 377312252}
+    - targetCorrespondingSourceObject: {fileID: 4638640600411629618, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 377312253}
+    - targetCorrespondingSourceObject: {fileID: 4638640600411629618, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 377312254}
   m_SourcePrefab: {fileID: 100100000, guid: 06b66378088cf1b48860b13e0fd2e619, type: 3}
 --- !u!1 &7641577958504024901 stripped
 GameObject:
@@ -150,10 +169,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7641577958504024901}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -171,6 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 0}
   impactEffect: {fileID: 11400000, guid: 16f4d5a2627a7824a83c6dda7700d914, type: 2}
 --- !u!114 &377312252
 MonoBehaviour:

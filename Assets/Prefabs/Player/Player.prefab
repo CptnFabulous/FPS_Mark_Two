@@ -1153,11 +1153,11 @@ MonoBehaviour:
   controller: {fileID: 5952785220977947003}
   equippedWeapons: []
   offhand: {fileID: 8388067693965976358}
-  holdingSocket: {fileID: 5952785222623807978}
   ammo: {fileID: 7479822334647491782}
+  swayHandler: {fileID: 395139178566883132}
+  holdingSocket: {fileID: 5952785222623807978}
   weaponSelector: {fileID: 1942817378809579715}
   selectorInfo: {fileID: 7605556675667947530}
-  swayHandler: {fileID: 395139178566883132}
   toggleADS: 0
   quickSwitchModes: 1
   onDraw:
@@ -1637,7 +1637,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76638497c49253c4389216a6c75081cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseAccuracyMultiplier: 2
+  baseAccuracyMultiplier: 1
   swaySpeed: 0.5
   centeringCurve:
     serializedVersion: 2
@@ -1664,7 +1664,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   swayAcceleration: 20
-  adsMultiplier: 0.5
+  adsMultiplier: 1
   adsMultiplierReference: Aiming down sights
   aimAxis: {fileID: 5952785221988775342}
   weaponHandler: {fileID: 4579184524127900838}
