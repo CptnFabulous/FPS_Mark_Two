@@ -31,6 +31,39 @@ public class ThrowHandler : MonoBehaviour
         user.health.onDeath.AddListener((__) => Drop(out _));
     }
 
+    public IEnumerator PickupSequence(Rigidbody toPickUp, float pickupTime)
+    {
+        // Assign reference (and drop the previously held item if there is one)
+        Drop(out _);
+        holding = toPickUp;
+
+        // Disable physics while picked up
+        SetPhysicsInteractions(holding, false);
+        // Later on I might have a different thing to create a physics joint if the object is much larger)
+
+        // Orient object relative to throw socket
+        holding.transform.SetParent(hand);
+
+        Vector3 startPosition = holding.transform.localPosition;
+        Quaternion startRotation = holding.transform.localRotation;
+
+        float timer = 0;
+        while (timer < 1)
+        {
+            //Debug.Log(timer);
+            timer += Time.deltaTime / pickupTime;
+            timer = Mathf.Clamp01(timer);
+
+            Vector3 position = -holding.centerOfMass;
+            holding.transform.localPosition = Vector3.Lerp(startPosition, position, timer);
+            holding.transform.localRotation = Quaternion.Lerp(startRotation, Quaternion.identity, timer);
+
+            yield return null;
+        }
+
+        onPickup.Invoke(toPickUp);
+    }
+
     public void Pickup(Rigidbody toPickUp)
     {
         // Assign reference (and drop the previously held item if there is one)
@@ -50,6 +83,9 @@ public class ThrowHandler : MonoBehaviour
 
         onPickup.Invoke(toPickUp);
     }
+
+    
+
     public bool Drop(out Rigidbody detached)
     {
         detached = holding;

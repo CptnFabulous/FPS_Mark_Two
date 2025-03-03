@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 public class PropCarryingHandler : MonoBehaviour
 {
     public float maxWeight = 5;
+    public float pickupTime = 0.15f;
+    public float cooldown = 0.5f;
     public InteractionHandler interactionHandler;
     public ThrowHandler throwHandler;
     public SingleInput throwInput;
@@ -21,6 +23,13 @@ public class PropCarryingHandler : MonoBehaviour
     bool autoDrawLastWeaponOnDrop;
 
     WeaponHandler weaponHandler => throwHandler.user.weaponHandler;
+
+
+    // TO DO:
+    // Remove throw input, since that will be done by the offhand attack handler
+    // Add an input to automatically drop the item and end the ability, if the player presses the fire button while their weapon is holstered.
+    // When mode is enabled, store the previous offhand attack, and switch back to that once the object is thrown/dropped
+
 
     private void Awake()
     {
@@ -53,21 +62,37 @@ public class PropCarryingHandler : MonoBehaviour
 
         return true;
     }
+    
     public void Pickup(Rigidbody target)
     {
-        // TO DO: Check the size of the object: if it's small enough, add to inventory of quick throwables
+        // TO DO: Check the size of the object: if it's small enough, add to inventory of quick throwables instead
+
+        // Reference offhand attack list, set active one to this
+
+        StartCoroutine(PickupSequence(target));
+    }
+    
+
+    public IEnumerator PickupSequence(Rigidbody target)
+    {
         
-        // Holster current weapon
-        // (for now, later on I might have code for one-handing a gun with smaller objects, simply reducing accuracy instead)
-        weaponHandler.SetCurrentWeaponActive(false);
-        // Trigger pickup
-        throwHandler.Pickup(target);
+        // Put away weapon (if it's two-handed)
+        // This code is done in OffhandAttackHandler, but only when actually throwing. I added it here as well just in case
+        if (weaponHandler.CurrentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
 
         heldItem = target;
         frameOfLastPickup = Time.frameCount;
 
+        // Trigger pickup
+        yield return throwHandler.PickupSequence(target, pickupTime);
+
+
         onPickup.Invoke(target);
     }
+
+
+
+
     void Drop(bool frameCheck, bool autoDrawLastWeapon)
     {
         // A small hack fix to prevent the game from dropping an item the player just picked up due to the same input
@@ -102,5 +127,13 @@ public class PropCarryingHandler : MonoBehaviour
         autoDrawLastWeaponOnDrop = false;
 
         onDrop.Invoke(dropped);
+    }
+
+    private void OnDisable()
+    {
+        // Drop currently held item
+        Drop(false, false);
+
+        // TO DO: Switch back to last offhand attack
     }
 }
