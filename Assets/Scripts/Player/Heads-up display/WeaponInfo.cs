@@ -15,6 +15,6 @@ public class WeaponInfo : MonoBehaviour
     private void LateUpdate()
     {
         mainHand.mode = (weapons.CurrentWeapon != null) ? weapons.CurrentWeapon.CurrentMode : null;
-        offHand.mode = weapons.offhand;
+        offHand.mode = weapons.offhandAttacks.currentAbility;
     }
 }

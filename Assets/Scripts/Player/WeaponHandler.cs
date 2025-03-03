@@ -10,7 +10,7 @@ public class WeaponHandler : MonoBehaviour
 
     [Header("Weapons")]
     public List<Weapon> equippedWeapons;
-    public WeaponMode offhand;
+    public OffhandAttackHandler offhandAttacks;
 
     [Header("Stats")]
     public AmmunitionInventory ammo;

@@ -588,8 +588,7 @@ Transform:
   m_LocalPosition: {x: -0.381, y: -0.34, z: 0.398}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1415286900305160407}
+  m_Children: []
   m_Father: {fileID: 3204820704988356969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4863112170679811523
@@ -1153,7 +1152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 5952785220977947003}
   equippedWeapons: []
-  offhand: {fileID: 8388067693965976358}
+  offhandAttacks: {fileID: 2532039744584986819}
   ammo: {fileID: 7479822334647491782}
   swayHandler: {fileID: 395139178566883132}
   holdingSocket: {fileID: 5952785222623807978}
@@ -2450,7 +2449,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3590176935287167125}
-  - component: {fileID: 1763439088410150207}
+  - component: {fileID: 2532039744584986819}
+  - component: {fileID: 8008712026701254658}
   m_Layer: 6
   m_Name: Offhand attacks
   m_TagString: Untagged
@@ -2475,7 +2475,7 @@ Transform:
   - {fileID: 8388067693965976361}
   m_Father: {fileID: 1184233747240851141}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1763439088410150207
+--- !u!114 &2532039744584986819
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2484,12 +2484,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 7069200260884035135}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad8f5a9188714604fabca8d7a08661b5, type: 3}
+  m_Script: {fileID: 11500000, guid: eb7466097e44ec34fa2b73670470eba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rootEntity: {fileID: 5952785220977947003}
-  current: {fileID: 0}
-  onSetActive:
+  abilities:
+  - {fileID: 8388067693965976358}
+  input: {fileID: 8008712026701254658}
+  weaponHandler: {fileID: 4579184524127900838}
+--- !u!114 &8008712026701254658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069200260884035135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 728cebbb5f5ccbb4488cddda0d7d291c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapName: On foot
+  actionName: Offhand Attack
+  guiPrompt: {fileID: 0}
+  onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7272602597539615770
@@ -3114,76 +3131,6 @@ MonoBehaviour:
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
---- !u!1001 &1574396793026447732
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 9086804113655461420}
-    m_Modifications:
-    - target: {fileID: 467664512072868258, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_Name
-      value: Smoke Grenade
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868258, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
---- !u!4 &1415286900305160407 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 467664512072868259, guid: 8b7fc942520852644bb9047f17940a55, type: 3}
-  m_PrefabInstance: {fileID: 1574396793026447732}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3456559260714099667
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3808,62 +3755,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1689957453527395858, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1782801155607509475}
-    - targetCorrespondingSourceObject: {fileID: 1689957453527395858, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5470462884205702586}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
 --- !u!114 &8388067693965976358 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1689957453527395868, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
   m_PrefabInstance: {fileID: 7141451689911094586}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8388067693965976360}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948948b5819f66c4f84202c313519b56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &8388067693965976360 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1689957453527395858, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
-  m_PrefabInstance: {fileID: 7141451689911094586}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1782801155607509475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8388067693965976360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25f7fce493784a14d8e2b6af94304d0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attack: {fileID: 8388067693965976358}
-  input: {fileID: 5470462884205702586}
---- !u!114 &5470462884205702586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8388067693965976360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 728cebbb5f5ccbb4488cddda0d7d291c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapName: On foot
-  actionName: Offhand Attack
-  guiPrompt: {fileID: 0}
-  onActionPerformed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &8388067693965976361 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1689957453527395859, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
