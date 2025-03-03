@@ -193,8 +193,8 @@ public class WeaponHandler : MonoBehaviour
     {
         // If the desired state is already met, do nothing
         if (weaponDrawn == drawn) yield break;
-        // If there's no weapon to draw, do nothing
-        if (drawn == true && CurrentWeapon == null) yield break;
+        // If there's no weapon to draw/holster, do nothing
+        if (CurrentWeapon == null) yield break;
 
         // If a weapon is active, holster it
         // If a current weapon is selected but not active, draw it
