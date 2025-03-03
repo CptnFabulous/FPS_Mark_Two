@@ -9,6 +9,7 @@ public class Weapon : MonoBehaviour
     public Sprite hudGraphic;
     
     [Header("Attack modes")]
+    public bool oneHanded;
     public WeaponMode[] modes;
     public int currentModeIndex;
 
