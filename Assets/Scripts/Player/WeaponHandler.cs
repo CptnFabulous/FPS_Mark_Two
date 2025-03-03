@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 public class WeaponHandler : MonoBehaviour
 {
     public Player controller;
+    public SingleInput primaryInput;
+    public SingleInput secondaryInput;
 
     [Header("Weapons")]
     public List<Weapon> equippedWeapons;

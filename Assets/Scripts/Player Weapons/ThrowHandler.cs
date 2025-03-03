@@ -88,6 +88,8 @@ public class ThrowHandler : MonoBehaviour
 
     public bool Drop(out Rigidbody detached)
     {
+        Debug.Log($"Dropping {holding}");
+
         detached = holding;
         holding = null;
         if (detached == null) return false;

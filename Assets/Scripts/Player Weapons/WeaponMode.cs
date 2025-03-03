@@ -14,8 +14,8 @@ public abstract class WeaponMode : MonoBehaviour
     protected Coroutine currentAttack;
 
     Character _user;
-    public bool PrimaryHeld { get; protected set; }
-    public bool SecondaryHeld { get; protected set; }
+    public bool PrimaryHeld { get; protected set; } = false;
+    public bool SecondaryHeld { get; protected set; } = false;
 
     public Weapon attachedTo => _attachedTo ??= GetComponentInParent<Weapon>();
     public Character User
@@ -45,9 +45,11 @@ public abstract class WeaponMode : MonoBehaviour
     public abstract bool CanAttack();
     protected abstract IEnumerator AttackSequence();
     public abstract void OnAttack();
-
-    protected virtual void OnPrimaryInputChanged(bool held)
+    public void SetPrimaryInput(bool held)
     {
+        Debug.Log($"{this}: Setting primary input to {held}, frame {Time.frameCount}");
+        PrimaryHeld = held;
+        
         if (enabled == false) return;
         if (held == false) return;
 
@@ -56,21 +58,17 @@ public abstract class WeaponMode : MonoBehaviour
 
         currentAttack = StartCoroutine(AttackSequence());
     }
-    protected abstract void OnSecondaryInputChanged(bool held);
-    public abstract void OnTertiaryInput();
-    protected virtual void OnInterrupt() { }
-
-
-    public void SetPrimaryInput(bool held)
-    {
-        PrimaryHeld = held;
-        OnPrimaryInputChanged(held);
-    }
     public void SetSecondaryInput(bool active)
     {
         SecondaryHeld = active;
         OnSecondaryInputChanged(active);
     }
+    protected abstract void OnSecondaryInputChanged(bool held);
+    public abstract void OnTertiaryInput();
+    protected virtual void OnInterrupt() { }
+
+
+    
 
     private void OnDisable()
     {

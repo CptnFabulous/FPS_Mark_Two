@@ -241,7 +241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2621040523332529740
 Transform:
   m_ObjectHideFlags: 0
@@ -1151,6 +1151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 5952785220977947003}
+  primaryInput: {fileID: 1324250409528470411}
+  secondaryInput: {fileID: 899306883574438364}
   equippedWeapons: []
   offhandAttacks: {fileID: 2532039744584986819}
   ammo: {fileID: 7479822334647491782}
@@ -2179,10 +2181,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a4ab125092e0ae43898aa5426e83e21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attachedTo: {fileID: 0}
+  description: '[PLACEHOLDER]'
+  icon: {fileID: 0}
+  switchSpeed: 0
+  onSwitch:
+    m_PersistentCalls:
+      m_Calls: []
   maxWeight: 2
+  pickupTime: 0.15
+  cooldown: 0.5
   interactionHandler: {fileID: 6329320551191257722}
   throwHandler: {fileID: 1145182430858350181}
-  throwInput: {fileID: 899306883574438364}
   onPickup:
     m_PersistentCalls:
       m_Calls: []

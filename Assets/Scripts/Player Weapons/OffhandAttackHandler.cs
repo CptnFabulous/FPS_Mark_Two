@@ -17,7 +17,26 @@ public class OffhandAttackHandler : MonoBehaviour
 
     Coroutine currentAction;
 
-    public WeaponMode currentAbility { get; set; }
+    WeaponMode _current;
+
+    public WeaponMode currentAbility
+    {
+        get => _current;
+        set
+        {
+            if (_current == value) return;
+
+            if (currentAction != null)
+            {
+                StopCoroutine(currentAction);
+                currentAction = null;
+            }
+
+            if (_current != null) _current.enabled = false;
+
+            _current = value;
+        }
+    }
 
     private void Awake()
     {
@@ -36,19 +55,26 @@ public class OffhandAttackHandler : MonoBehaviour
 
     public IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
     {
+        Debug.Log("Performing offhand attack - " +  offhandAbility);
         // Put away current weapon (if two-handed)
         if (weaponHandler.CurrentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
 
-        // Deploy offhand weapon (if deploy animation is present)
+        // Deploy offhand weapon
+        offhandAbility.enabled = true;
+        yield return offhandAbility.SwitchTo();
 
         // Perform offhand action
+        Debug.Log("Starting attack");
         offhandAbility.SetPrimaryInput(true);
         // Wait until attack is complete
         yield return new WaitUntil(() => !buttonHeld || !offhandAbility.inAttack);
+        Debug.Log("Ending attack");
         offhandAbility.SetPrimaryInput(false); // Reset input for next time
         yield return new WaitUntil(() => !offhandAbility.inAttack);
 
         // Put away offhand weapon
+        yield return offhandAbility.SwitchFrom();
+        offhandAbility.enabled = false;
 
         // Ensure current weapon is deployed
         currentAction = null;
