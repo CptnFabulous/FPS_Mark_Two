@@ -33,9 +33,6 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     public override LayerMask attackMask => hitDetection;
 
-    public override void OnSwitchFrom() { }
-    public override void OnSwitchTo() { }
-
     protected override void OnSecondaryInputChanged(bool held)
     {
         // Block/parry

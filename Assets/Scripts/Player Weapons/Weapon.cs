@@ -52,29 +52,34 @@ public class Weapon : MonoBehaviour
 
     public IEnumerator Draw()
     {
+        // Do necessary stuff to disable mode (but don't switch away from it)
         //yield return new WaitUntil(() => isSwitching == false);
-        CurrentMode.OnSwitchFrom();
+        CurrentMode.enabled = false;
+
         isSwitching = true;
+
         gameObject.SetActive(true);
         onDraw.Invoke();
 
+        // Wait to switch
         yield return new WaitForSeconds(switchSpeed);
 
-        CurrentMode.OnSwitchTo();
+        // Enable current mode so it does all the necessary stuff it needs to do when first activated
+        CurrentMode.enabled = true;
+
         isSwitching = false;
     }
     public IEnumerator Holster()
     {
         //yield return new WaitUntil(() => InAction == false);
-        if (InAction == true)
-        {
-            yield break;
-        }
+        if (InAction == true) yield break;
 
         isSwitching = true;
-        CurrentMode.OnSwitchFrom();
-        onHolster.Invoke();
 
+        // Do necessary stuff to disable mode (but don't switch away from it)
+        CurrentMode.enabled = false;
+
+        onHolster.Invoke();
         yield return new WaitForSeconds(switchSpeed);
 
         gameObject.SetActive(false);
@@ -86,13 +91,19 @@ public class Weapon : MonoBehaviour
         if (newModeIndex == currentModeIndex) yield break;
 
         isSwitching = true;
-        CurrentMode.OnSwitchFrom();
+
+        // End current mode
+        yield return CurrentMode.SwitchFrom();
+        CurrentMode.enabled = false;
+
+        // Officially switch modes
         currentModeIndex = newModeIndex;
         CurrentMode.onSwitch.Invoke();
 
-        yield return new WaitForSeconds(CurrentMode.switchSpeed);
+        // Switch to new mode
+        yield return CurrentMode.SwitchTo();
+        CurrentMode.enabled = true;
 
-        CurrentMode.OnSwitchTo();
         isSwitching = false;
     }
 }

@@ -22,16 +22,11 @@ public class GunMagazine : MonoBehaviour
     public bool ReloadActive { get; private set; }
     IEnumerator currentSequence;
 
-    RangedAttack mode;
+    public RangedAttack modeServing;
 
-    AmmunitionInventory inventory => (mode != null) ? mode.ammo : null;
-    AmmunitionType type => mode.stats.ammoType;
+    AmmunitionInventory inventory => (modeServing != null) ? modeServing.ammo : null;
+    AmmunitionType type => modeServing.stats.ammoType;
 
-    public void Initialise(RangedAttack currentMode)
-    {
-        mode = currentMode;
-        enabled = true;
-    }
     private void OnEnable()
     {
         if (inventory != null)
@@ -41,7 +36,7 @@ public class GunMagazine : MonoBehaviour
     }
     private void Update()
     {
-        if (mode == null)
+        if (modeServing == null)
         {
             enabled = false;
             return;
@@ -50,7 +45,7 @@ public class GunMagazine : MonoBehaviour
         //if (mode.InAction) return;
 
         // If there isn't enough ammo in the magazine to fire another shot
-        if (ammo.current < mode.stats.ammoPerShot && ReloadActive == false)
+        if (ammo.current < modeServing.stats.ammoPerShot && ReloadActive == false)
         {
             TryReload();
         }
@@ -99,7 +94,7 @@ public class GunMagazine : MonoBehaviour
         ReloadActive = true;
 
         // If user is currently aiming down sights, cancel it
-        GunADS ads = mode.optics;
+        GunADS ads = modeServing.optics;
         if (ads != null && ads.IsAiming)
         {
             ads.IsAiming = false;

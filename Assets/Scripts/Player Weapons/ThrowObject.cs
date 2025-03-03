@@ -61,14 +61,4 @@ public class ThrowObject : WeaponMode
         readyToThrow.enabled = false;
         readyToThrow.gameObject.SetActive(true);
     }
-    
-    public override void OnSwitchTo()
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    public override void OnSwitchFrom()
-    {
-        //throw new System.NotImplementedException();
-    }
 }

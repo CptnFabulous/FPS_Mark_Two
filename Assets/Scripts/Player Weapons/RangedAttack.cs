@@ -32,18 +32,29 @@ public class RangedAttack : WeaponMode
     public AmmunitionInventory ammo => (User != null && User.weaponHandler != null) ? User.weaponHandler.ammo : null;
     public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
-    public override void OnSwitchTo()
+
+    private void OnEnable()
     {
         if (optics != null) optics.enabled = true;
 
-        magazine.Initialise(this);
+        magazine.modeServing = this;
+        magazine.enabled = true;
     }
-    public override void OnSwitchFrom()
+    private void OnDisable()
     {
         optics.enabled = false;
         magazine.enabled = false;
     }
-    
+    /*
+    public override IEnumerator SwitchTo()
+    {
+        yield return base.SwitchTo();
+    }
+    public override IEnumerator SwitchFrom()
+    {
+        return base.SwitchFrom();
+    }
+    */
     protected override void OnSecondaryInputChanged(bool held)
     {
         if (optics == null) return;
