@@ -31,22 +31,11 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     [SerializeField] string cooldownTrigger = "Cooldown";
     [SerializeField] string interruptTrigger = "Interrupted";
 
-    Coroutine currentAttack;
-
     public override LayerMask attackMask => hitDetection;
-    public override bool InAction => currentAttack != null;
 
     public override void OnSwitchFrom() { }
     public override void OnSwitchTo() { }
 
-    protected override void OnPrimaryInputChanged(bool held)
-    {
-        //Debug.Log($"{this}: input changed to {held}");
-        if (held == false) return;
-        if (currentAttack != null) return;
-        // Attack
-        currentAttack = StartCoroutine(AttackSequence());
-    }
     protected override void OnSecondaryInputChanged(bool held)
     {
         // Block/parry
@@ -55,15 +44,8 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     public override bool CanAttack() => User.stamina.values.current > staminaConsumption;
     public override void OnAttack() => User.stamina.Deplete(staminaConsumption);
 
-    IEnumerator AttackSequence()
+    protected override IEnumerator AttackSequence()
     {
-        if (CanAttack() == false)
-        {
-            currentAttack = null;
-            yield break;
-        }
-
-        
         #region Windup
         //Debug.Log($"{this}: winding up");
         // Play windup animation
@@ -173,9 +155,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     public override void OnTertiaryInput() { }
 
     protected override void OnInterrupt()
-    {
-        StopCoroutine(currentAttack);
-        currentAttack = null;
+    {      
         if (animator != null) animator.SetTrigger(interruptTrigger);
     }
 }

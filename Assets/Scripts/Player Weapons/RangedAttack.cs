@@ -10,39 +10,31 @@ public class RangedAttack : WeaponMode
     public GunADS optics;
 
     public override LayerMask attackMask => stats.projectilePrefab.detection;
-    public bool isFiring { get; private set; }
     public int shotsInBurst { get; private set; }
 
-    public override bool InAction
+    public override bool inSecondaryAction
     {
         get
         {
-            if (isFiring) return true;
-            if (NotReloading == false) return true;
+            if (currentlyReloading) return true;
 
             if (optics != null)
             {
                 // If player is currently aiming down sights, or still transitioning back to hipfiring
-                if (optics.IsAiming == true || optics.IsTransitioning == true)
-                {
-                    return true;
-                }
+                if (optics.IsAiming || optics.IsTransitioning) return true;
             }
 
             return false;
         }
     }
-    public bool NotReloading => magazine == null || magazine.ReloadActive == false;
+    public bool currentlyReloading => magazine != null && magazine.ReloadActive;
 
     public AmmunitionInventory ammo => (User != null && User.weaponHandler != null) ? User.weaponHandler.ammo : null;
     public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
     public override void OnSwitchTo()
     {
-        if (optics != null)
-        {
-            optics.enabled = true;
-        }
+        if (optics != null) optics.enabled = true;
 
         magazine.Initialise(this);
     }
@@ -51,15 +43,7 @@ public class RangedAttack : WeaponMode
         optics.enabled = false;
         magazine.enabled = false;
     }
-    protected override void OnPrimaryInputChanged(bool held)
-    {
-        if (enabled == false) return;
-        if (held == false) return;
-        if (isFiring) return;
-        if (NotReloading == false) return;
-
-        StartCoroutine(FireBurst());
-    }
+    
     protected override void OnSecondaryInputChanged(bool held)
     {
         if (optics == null) return;
@@ -74,17 +58,12 @@ public class RangedAttack : WeaponMode
         magazine.OnReloadPressed();
     }
 
-    protected override void OnInterrupt()
-    {
-        throw new System.NotImplementedException();
-    }
 
     /// <summary>
     /// Continuously fires shots until the burst timer is reached, the gun runs out of ammo, or the player lets go of the trigger.
     /// </summary>
-    IEnumerator FireBurst()
+    protected override IEnumerator AttackSequence()
     {
-        isFiring = true;
         shotsInBurst = 0;
         float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer to infinity, to ensure it always sends a message on the first shot.
 
@@ -104,7 +83,7 @@ public class RangedAttack : WeaponMode
 
         // Reset shot timer
         shotsInBurst = 0;
-        isFiring = false;
+        currentAttack = null;
     }
     /// <summary>
     /// Fires a single shot and increments the burst counter.
@@ -165,6 +144,4 @@ public class RangedAttack : WeaponMode
 
         timeOfLastMessage = Time.time; // Resets time
     }
-
-    
 }

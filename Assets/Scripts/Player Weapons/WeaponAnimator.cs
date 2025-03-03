@@ -60,7 +60,7 @@ public class WeaponAnimator : MonoBehaviour
         RangedAttack rm = weaponToAnimate.CurrentMode as RangedAttack;
         if (rm != null)
         {
-            bool isReloading = (rm.magazine != null && rm.magazine.ReloadActive == true);
+            bool isReloading = rm.currentlyReloading;
             controller.SetBool(reloadActiveString, isReloading);
         }
 

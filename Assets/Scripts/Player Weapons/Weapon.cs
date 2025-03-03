@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
 {
     public Entity parentEntity;
     public Sprite hudGraphic;
-    
+
     [Header("Attack modes")]
     public bool oneHanded;
     public WeaponMode[] modes;
@@ -44,7 +44,8 @@ public class Weapon : MonoBehaviour
         get
         {
             if (isSwitching) return true;
-            if (CurrentMode.InAction) return true;
+            if (CurrentMode.inAttack) return true;
+            if (CurrentMode.inSecondaryAction) return true;
             return false;
         }
     }

@@ -17,7 +17,6 @@ public class ThrowObject : WeaponMode
     Throwable readyToThrow;
 
     public override LayerMask attackMask => throwHandler.attackMask;
-    public override bool InAction => throwHandler.currentlyThrowing;
 
     void Awake()
     {
@@ -31,17 +30,10 @@ public class ThrowObject : WeaponMode
     public override bool CanAttack() => User.weaponHandler.ammo.GetStock(ammunitionType) > 0;
     public override void OnAttack() => User.weaponHandler.ammo.Spend(ammunitionType, 1);
 
-    protected override void OnPrimaryInputChanged(bool held)
+    protected override IEnumerator AttackSequence()
     {
-        // Check if the player made a new input and didn't just release the last one
-        if (PrimaryHeld == false) return;
-        // Check if there's something to throw
-        if (CanAttack() == false) return;
-
         SpawnNewThrowable();
-
-
-
+        
         Debug.Log($"{this}: throwing");
         // Prep and throw the object, and clear 'readyToThrow'
         readyToThrow.enabled = true;
@@ -51,16 +43,11 @@ public class ThrowObject : WeaponMode
         OnAttack();
 
         //SpawnNewThrowable();
-    }
-    
-    protected override void OnInterrupt()
-    {
-        // Stop throw coroutine
-        //StopCoroutine(throwCoroutine);
-        
+
+        currentAttack = null;
+        yield break;
     }
 
-    
     void SpawnNewThrowable()
     {
         // Assign an object in 'readyToThrow' if ammunition is present (disable otherwise)

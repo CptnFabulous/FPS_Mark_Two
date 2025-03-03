@@ -188,26 +188,22 @@ public class WeaponHandler : MonoBehaviour
     }
 
 
-    public void SetCurrentWeaponActive(bool drawn)
+    public void SetCurrentWeaponActive(bool drawn) => StartCoroutine(SetCurrentWeaponDrawn(drawn));
+    public IEnumerator SetCurrentWeaponDrawn(bool drawn)
     {
         // If the desired state is already met, do nothing
-        if (weaponDrawn == drawn) return;
+        if (weaponDrawn == drawn) yield break;
         // If there's no weapon to draw, do nothing
-        if (drawn == true && CurrentWeapon == null) return;
+        if (drawn == true && CurrentWeapon == null) yield break;
+
         // If a weapon is active, holster it
         // If a current weapon is selected but not active, draw it
-        StartCoroutine(drawn ? Draw() : Holster());
-    }
-    IEnumerator Holster()
-    {
-        onHolster.Invoke(CurrentWeapon);
-        yield return CurrentWeapon.Holster();
-    }
-    IEnumerator Draw()
-    {
-        // Switch index to the new weapon and draw it
-        onDraw.Invoke(CurrentWeapon);
-        yield return CurrentWeapon.Draw();
+        UnityEvent<Weapon> toInvoke = drawn ? onDraw : onHolster;
+        IEnumerator coroutine = drawn ? CurrentWeapon.Draw() : CurrentWeapon.Holster();
+        toInvoke.Invoke(CurrentWeapon);
+        yield return coroutine;
+        //(drawn ? onDraw : onHolster).Invoke(CurrentWeapon);
+        //yield return (drawn ? CurrentWeapon.Draw() : CurrentWeapon.Holster());
     }
     IEnumerator SwitchWeapon(int newIndex)
     {
@@ -225,13 +221,10 @@ public class WeaponHandler : MonoBehaviour
 
         isSwitching = true;
         onSwitchWeapon.Invoke(equippedWeapons[newIndex]);
-
-        // Wait for the current weapon to be holstered
-        if (weaponDrawn) yield return Holster();
-        // Switch index to the new weapon
-        equippedWeaponIndex = newIndex;
-        // Wait while new weapon draws
-        yield return Draw();
+        
+        yield return SetCurrentWeaponDrawn(false); // Wait to holster current weapon
+        equippedWeaponIndex = newIndex; // Switch to new weapon index
+        yield return SetCurrentWeaponDrawn(true); // Wait to draw new weapon
 
         isSwitching = false;
     }
