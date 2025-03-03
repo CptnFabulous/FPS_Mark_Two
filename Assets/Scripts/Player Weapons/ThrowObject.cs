@@ -12,7 +12,7 @@ public class ThrowObject : WeaponMode
     //[SerializeField] float startingVelocity = 50;
     //[SerializeField] float range = 50;
     //[SerializeField] float delayBeforeLaunch = 0.25f;
-    //[SerializeField] float cooldown = 0.5f;
+    [SerializeField] float cooldown = 0.5f;
 
     Throwable readyToThrow;
 
@@ -41,6 +41,8 @@ public class ThrowObject : WeaponMode
         readyToThrow.OnThrow();
         readyToThrow = null;
         OnAttack();
+
+        yield return new WaitForSeconds(cooldown);
 
         //SpawnNewThrowable();
 
