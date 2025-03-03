@@ -19,6 +19,7 @@ public class SmokeGrenade : Throwable
         //Debug.Log($"{this}: disabled at time {Time.time}");
         //smoke.activelyEmitting = false;
     }
+    /*
     void Update()
     {
         if (smoke.emitting == false)
@@ -31,4 +32,5 @@ public class SmokeGrenade : Throwable
         //Debug.Log("Remaining duration = " + remainingDuration);
         smoke.emitting = remainingDuration > 0;
     }
+    */
 }
