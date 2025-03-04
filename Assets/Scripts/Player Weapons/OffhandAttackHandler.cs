@@ -49,6 +49,8 @@ public class OffhandAttackHandler : MonoBehaviour
         buttonHeld = context.ReadValueAsButton();
         if (buttonHeld == false) return;
         if (currentAction != null) return;
+
+        if (currentAbility.CanAttack() == false) return;
         currentAction = StartCoroutine(PerformOffhandAbility(currentAbility));
     }
 
@@ -56,8 +58,10 @@ public class OffhandAttackHandler : MonoBehaviour
     public IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
     {
         Debug.Log("Performing offhand attack - " +  offhandAbility);
+
         // Put away current weapon (if two-handed)
-        if (weaponHandler.CurrentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
+        Weapon currentWeapon = weaponHandler.CurrentWeapon;
+        if (currentWeapon != null && currentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
 
         // Deploy offhand weapon
         offhandAbility.enabled = true;

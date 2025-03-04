@@ -44,12 +44,17 @@ public class ThrowHandler : MonoBehaviour
         // Orient object relative to throw socket
         holding.transform.SetParent(hand);
 
+        onPickup.Invoke(toPickUp);
+
         Vector3 startPosition = holding.transform.localPosition;
         Quaternion startRotation = holding.transform.localRotation;
 
         float timer = 0;
         while (timer < 1)
         {
+            // Cancel function if item was dropped before picking-up animation finished
+            if (holding == null) yield break;
+            
             //Debug.Log(timer);
             timer += Time.deltaTime / pickupTime;
             timer = Mathf.Clamp01(timer);
@@ -60,8 +65,6 @@ public class ThrowHandler : MonoBehaviour
 
             yield return null;
         }
-
-        onPickup.Invoke(toPickUp);
     }
 
     public void Pickup(Rigidbody toPickUp)
@@ -88,8 +91,6 @@ public class ThrowHandler : MonoBehaviour
 
     public bool Drop(out Rigidbody detached)
     {
-        Debug.Log($"Dropping {holding}");
-
         detached = holding;
         holding = null;
         if (detached == null) return false;

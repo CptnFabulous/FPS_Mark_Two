@@ -18,8 +18,11 @@ public class PropCarryingHandler : WeaponMode
 
     int frameOfLastPickup = 0;
 
-    Rigidbody heldItem;
-    bool pickupFinished;
+    Rigidbody heldItem => throwHandler.holding;
+
+    Rigidbody toPickUp;
+    
+    //bool pickupFinished => toPickUp == null;
 
     bool autoDrawLastWeaponOnDrop;
 
@@ -45,17 +48,16 @@ public class PropCarryingHandler : WeaponMode
         // Add listener to drop the current item if the player deliberately switches weapons
         weaponHandler.onSwitchWeapon.AddListener((_) => Drop(false, false));
     }
-    
     private void OnDisable()
     {
         // Drop currently held item (if there is one)
         Drop(false, false);
 
-        // TO DO:
-        // Switch back to last offhand attack
-        offhandAttackHandler.currentAbility = previousOffhandAbility;
+        // If a previous offhand ability was stored, switch back to that
+        if (previousOffhandAbility != null) offhandAttackHandler.currentAbility = previousOffhandAbility;
     }
 
+    // Picking up object
     public bool CanPickUpObject(Rigidbody target)
     {
         // Check that:
@@ -73,14 +75,11 @@ public class PropCarryingHandler : WeaponMode
 
         return true;
     }
-
-    public override bool CanAttack() => heldItem != null; // TO DO: add stamina check later
-
     public void Pickup(Rigidbody target)
     {
         // TO DO: Check the size of the object: if it's small enough, add to inventory of quick throwables instead
 
-        heldItem = target;
+        toPickUp = target;
         frameOfLastPickup = Time.frameCount;
 
         // Reference offhand attack list, set active one to this
@@ -90,28 +89,23 @@ public class PropCarryingHandler : WeaponMode
 
         StartCoroutine(SwitchTo());
     }
-    
     public override IEnumerator SwitchTo()
     {
-        if (heldItem != null && pickupFinished) yield break;
+        if (heldItem != null) yield break;
 
-        pickupFinished = false;
         // Put away weapon (if it's two-handed)
         // This code is done in OffhandAttackHandler, but only when actually throwing. I added it here as well just in case
-        if (weaponHandler.CurrentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
+        Weapon currentWeapon = weaponHandler.CurrentWeapon;
+        if (currentWeapon != null && currentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
 
-        /*
-        heldItem = target;
-        frameOfLastPickup = Time.frameCount;
-        */
-        
         // Trigger pickup
-        yield return throwHandler.PickupSequence(heldItem, pickupTime);
-
-        pickupFinished = true;
+        yield return throwHandler.PickupSequence(toPickUp, pickupTime);
+        toPickUp = null;
         onPickup.Invoke(heldItem);
     }
-
+    
+    // Throwing/dropping object
+    public override bool CanAttack() => heldItem != null; // TO DO: add stamina check later
     protected override IEnumerator AttackSequence()
     {
         Debug.Log("Throwing physics object");
@@ -149,18 +143,18 @@ public class PropCarryingHandler : WeaponMode
     }
     void OnDrop(Rigidbody dropped)
     {
-        if (dropped != heldItem) return;
-
+        if (enabled == false) return;
+        
         // If specified prior, switch to the previous weapon
         // (can be disabled in case this code was run due to holstering current weapon)
         if (autoDrawLastWeaponOnDrop) weaponHandler.SetCurrentWeaponActive(true);
 
         // Clear values
-        heldItem = null;
+        toPickUp = null;
         autoDrawLastWeaponOnDrop = false;
 
         onDrop.Invoke(dropped);
-        pickupFinished = false;
+
         enabled = false;
     }
 
