@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 2324363274852508006}
   - component: {fileID: 1605707709270375206}
   - component: {fileID: 6243661796819697137}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Status Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2130,6 +2130,10 @@ PrefabInstance:
       value: Targeting beam
       objectReference: {fileID: 0}
     - target: {fileID: 2676210108333167654, guid: 9a4ab9f87f1c26c48ae2dea4b7b0a290, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2676210108333167654, guid: 9a4ab9f87f1c26c48ae2dea4b7b0a290, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -2181,10 +2185,6 @@ PrefabInstance:
     - target: {fileID: 7039242936282612645, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7039242936282612645, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7039242936282612645, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2258,10 +2258,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7778758533985661154, guid: 2ba3fd149b93cd940aa33ab846bbf746, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -3171215574586982828, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
