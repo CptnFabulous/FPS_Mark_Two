@@ -17,5 +17,5 @@ public class InteractWithObject : Objective
         toInteractWith.onInteract.AddListener((_) => completed = true);
     }
 
-    public override Vector3 location => toInteractWith.collider.bounds.center;
+    public override Vector3? location => toInteractWith.collider.bounds.center;
 }

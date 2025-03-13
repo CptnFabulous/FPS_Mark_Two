@@ -9,7 +9,7 @@ public class AvoidDyingObjective : Objective
 
     int deaths => checkpointManager.deathCount;
 
-    public override Vector3 location => Vector3.zero;
+    public override Vector3? location => null;
 
 
     public override string formattedProgress

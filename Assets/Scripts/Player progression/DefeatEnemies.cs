@@ -61,10 +61,13 @@ public class DefeatEnemies : Objective
         }
     }
 
-    public override Vector3 location
+    public override Vector3? location
     {
         get
         {
+            return null;
+
+            // TO DO: add bounds data later
             Bounds b = enemies[0].bounds;
             for (int i = 1; i < enemies.Count; i++)
             {

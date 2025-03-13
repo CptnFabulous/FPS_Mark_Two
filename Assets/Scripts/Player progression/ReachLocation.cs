@@ -37,7 +37,7 @@ public class ReachLocation : Objective
     /// <summary>
     /// Is the player inside the bounds for success?
     /// </summary>
-    protected override bool DetermineSuccess() => GetAreaBounds().Intersects(targetPlayer.bounds);
+    protected override bool DetermineSuccess() => targetPlayer != null && GetAreaBounds().Intersects(targetPlayer.bounds);
     protected override string GetSerializedProgress()
     {
         return "";
@@ -49,5 +49,5 @@ public class ReachLocation : Objective
         //throw new System.NotImplementedException();
     }
 
-    public override Vector3 location => GetAreaBounds().center;
+    public override Vector3? location => GetAreaBounds().center;
 }

@@ -102,7 +102,7 @@ public abstract class Objective : MonoBehaviour
     /// <summary>
     /// The specified location of the objective, for setting markers.
     /// </summary>
-    public abstract Vector3 location { get; }
+    public abstract Vector3? location { get; }
 
     /// <summary>
     /// Updates the current objective to reflect the player's saved progress.
