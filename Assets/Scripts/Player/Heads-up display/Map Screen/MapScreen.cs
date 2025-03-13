@@ -26,10 +26,22 @@ public class MapScreen : MonoBehaviour
     [Header("Icons")]
     [SerializeField] Sprite playerIcon;
 
+    [Header("Doors")]
+    [SerializeField] Mesh doorMesh;
+    [SerializeField] Material doorMaterial;
+    [SerializeField] Vector3 doorSize = Vector3.one;
+    [SerializeField] Color doorColour = Color.green;
+    [SerializeField] Color doorLockedColour = Color.red;
+    [SerializeField] Color doorBlockedColour = Color.grey;
+
     [Header("Objective markers")]
     [SerializeField] Sprite objectiveMarker;
 
     Vector2Int lastResolution;
+
+    MaterialPropertyBlock openDoor;
+    MaterialPropertyBlock lockedDoor;
+    MaterialPropertyBlock blockedDoor;
 
     public RenderTexture outputTexture { get; private set; }
     int renderLayer => mapRenderer.gameObject.layer;
@@ -39,6 +51,13 @@ public class MapScreen : MonoBehaviour
     private void Awake()
     {
         terrainMap.playerTransform = player.transform;
+
+        openDoor = new MaterialPropertyBlock();
+        openDoor.SetColor("_Color", doorColour);
+        lockedDoor = new MaterialPropertyBlock();
+        lockedDoor.SetColor("_Color", doorLockedColour);
+        blockedDoor = new MaterialPropertyBlock();
+        blockedDoor.SetColor("_Color", doorBlockedColour);
     }
     private void OnEnable()
     {
@@ -88,6 +107,27 @@ public class MapScreen : MonoBehaviour
         }
 
         RenderIcon(playerIcon, Color.white, player.transform.position, Vector2.one);
+
+        foreach (Door door in terrainMap.doorsInScene)
+        {
+            // Check if the door's position on the map is filled in
+            Vector3 worldPosition = door.transform.position;
+
+            // Don't show the door if it's not in an area the player has explored
+            Vector3Int gridPosition = terrainMap.TextureCoordinatesFromWorldPosition(worldPosition);
+            if (terrainMap.autoMapped == false && terrainMap.GetFill(gridPosition) <= 0) continue;
+            
+            // Calculate transform data
+            Vector3 position = mapRenderer.transform.TransformPoint(worldPosition);
+            Quaternion rotation = door.transform.rotation * mapRenderer.transform.rotation;
+            Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, doorSize);
+
+            // Calculate correct colour to use
+            MaterialPropertyBlock propertyBlock = door.isLocked ? (door.lockingMechanism == null ? blockedDoor : lockedDoor) : openDoor;
+
+            // Draw icon for door
+            Graphics.DrawMesh(doorMesh, matrix, doorMaterial, renderLayer, camera, 0, propertyBlock);
+        }
 
         // Draw objective markers
         foreach (Objective objective in ObjectiveHandler.current.allObjectives)
