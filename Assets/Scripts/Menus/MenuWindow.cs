@@ -22,10 +22,10 @@ public class MenuWindow : MonoBehaviour
     CanvasGroup visualElements;
     RectTransform rt;
     
-    MenuWindow[] parents;
-    MenuWindow immediateParent;
-    MenuWindow root;
-    MenuWindow[] children;
+    public MenuWindow[] parents { get; private set; }
+    public MenuWindow[] children { get; private set; }
+    public MenuWindow immediateParent { get; private set; }
+    public MenuWindow root { get; private set; }
 
 
     Player attachedTo;

@@ -18,14 +18,23 @@ public class PlayerStateHandler : MonoBehaviour
     public Player controlling;
     [SerializeField] PlayerState state = PlayerState.Active;
 
-    [Header("Menus")]
+    [Header("Gameplay")]
     public Canvas headsUpDisplay;
     public string gameplayControls = "On foot";
     public UnityEvent onResume;
+
+    [Header("Pausing")]
     public Canvas pauseMenu;
+    public MenuWindow pauseWindow;
     public string menuControls = "UI";
     public Button resumeButton;
     public UnityEvent onPause;
+
+    [Header("Extra menus")]
+    public Canvas sideMenu;
+    public UnityEvent onEnterSideMenu;
+
+    [Header("Game over")]
     public Canvas gameOverMenu;
     public UnityEvent onDeath;
     
@@ -60,12 +69,13 @@ public class PlayerStateHandler : MonoBehaviour
                     navigatingMenus = false;
 
                     break;
-                    /*
+                    
                 case PlayerState.InMenus:
                     navigatingMenus = true;
-                    // TO DO: display appropriate menu
+                    SwitchMenu(sideMenu);
+                    onEnterSideMenu.Invoke();
                     break;
-                    */
+                    
                 /*
                 case PlayerState.CompletedLevel:
                     Time.timeScale = 1;
@@ -100,6 +110,7 @@ public class PlayerStateHandler : MonoBehaviour
     /// </summary>
     void OnPause()
     {
+        Debug.Log("Toggling pause menu");
         switch (CurrentState)
         {
             case PlayerState.Active: CurrentState = PlayerState.Paused; break;
@@ -111,13 +122,37 @@ public class PlayerStateHandler : MonoBehaviour
     /// </summary>
     void OnEnterMenu()
     {
+        Debug.Log("Toggling side menu");
+        switch (CurrentState)
+        {
+            case PlayerState.Active: CurrentState = PlayerState.InMenus; break;
+            case PlayerState.InMenus: CurrentState = PlayerState.Active; break;
+        }
+    }
+    void OnCancel()
+    {
+        Debug.Log("Attempting exiting menu");
+        switch (CurrentState)
+        {
+            case PlayerState.Paused:
 
+                // TO DO: fix this, it can sometimes work even if not at the root menu
+                if (pauseWindow.root.menuIsActive && pauseWindow.parents.Length <= 0)
+                {
+                    CurrentState = PlayerState.Active;
+                }
+
+
+                break;
+            case PlayerState.InMenus: CurrentState = PlayerState.Active; break;
+        }
     }
 
     void SwitchMenu(Canvas currentMenu)
     {
         headsUpDisplay.gameObject.SetActive(false);
         pauseMenu.gameObject.SetActive(false);
+        sideMenu.gameObject.SetActive(false);
         gameOverMenu.gameObject.SetActive(false);
 
         currentMenu.gameObject.SetActive(true);
