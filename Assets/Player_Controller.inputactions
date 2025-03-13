@@ -36,7 +36,7 @@
                     "name": "Crouch",
                     "type": "Button",
                     "id": "9bd7f301-5377-4712-8598-8694767bd32b",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
@@ -63,7 +63,7 @@
                     "name": "ADS",
                     "type": "Button",
                     "id": "4c0284d6-46c1-491f-93b9-f79904551889",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
@@ -72,7 +72,7 @@
                     "name": "Reload",
                     "type": "Button",
                     "id": "35b55014-76cf-41d1-bf95-825d415f6e10",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -117,7 +117,7 @@
                     "name": "Pause",
                     "type": "Button",
                     "id": "de704e52-d302-43da-931f-8b464c48f8e9",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -135,7 +135,7 @@
                     "name": "Offhand Attack",
                     "type": "Button",
                     "id": "2c4fb4ee-1d42-43ae-abad-7ed75f2f487f",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
@@ -148,6 +148,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Toggle Thermal Vision",
+                    "type": "Button",
+                    "id": "64997456-f20e-4d8f-9e6b-7e57e5127a4d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle Flashlight",
+                    "type": "Button",
+                    "id": "2068e0e2-0296-44c7-9fa3-0f15b4e5aab8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -623,6 +641,50 @@
                     "action": "Scroll Vision Modes",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "47dc9347-ee17-4f6e-b0c3-f662e3a7e27f",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Toggle Thermal Vision",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fac6f0ed-b5d4-4795-b56a-977eb9b03aa1",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Toggle Thermal Vision",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d216cd8f-713d-4163-a940-bf90629fd192",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Toggle Flashlight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "944d1375-b331-4b00-8d71-5cdb953e4678",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Toggle Flashlight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -643,7 +705,7 @@
                     "name": "Submit",
                     "type": "Button",
                     "id": "bdc70f5a-aff7-4605-9457-f2ba44671255",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -652,7 +714,7 @@
                     "name": "Cancel",
                     "type": "Button",
                     "id": "2fa171a2-0e68-41e1-a4cc-c2229bc5fb6a",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false

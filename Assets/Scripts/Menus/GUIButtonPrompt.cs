@@ -24,8 +24,14 @@ public abstract class GUIButtonPromptBase : MonoBehaviour
     }
 
 
-    //private void OnEnable() => player.onControlsChanged += DetermineCurrentBinding;
-    //private void OnDisable() => player.onControlsChanged -= DetermineCurrentBinding;
+    protected virtual void OnEnable()
+    {
+        //player.onControlsChanged += DetermineCurrentBinding;
+    }
+    private void OnDisable()
+    {
+        //player.onControlsChanged -= DetermineCurrentBinding;
+    }
     private void LateUpdate() => DetermineCurrentBinding();
 
     public void AssignAction(InputAction newInput, PlayerInput newPlayer)

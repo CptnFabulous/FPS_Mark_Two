@@ -10,12 +10,13 @@ public class MultiAxisButtonPrompt : GUIButtonPromptBase
     [SerializeField] GUIButtonPrompt yPositive;
     [SerializeField] GUIButtonPrompt yNegative;
 
-    private void Awake()
+    protected override void OnEnable()
     {
         if (positive != null) positive.enabled = false;
         if (negative != null) negative.enabled = false;
         if (yPositive != null) yPositive.enabled = false;
         if (yNegative != null) yNegative.enabled = false;
+        base.OnEnable();
     }
 
     protected override void DetermineCurrentBinding()
