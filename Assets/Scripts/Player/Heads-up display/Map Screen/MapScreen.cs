@@ -23,6 +23,12 @@ public class MapScreen : MonoBehaviour
     [SerializeField] string shaderBoundsMax = "_Local_Bounds_Max";
     [SerializeField] string shader3DTexture = "_Areas_filled";
 
+    [Header("Icons")]
+    [SerializeField] Sprite playerIcon;
+
+    [Header("Objective markers")]
+    [SerializeField] Sprite objectiveMarker;
+
     Vector2Int lastResolution;
 
     public RenderTexture outputTexture { get; private set; }
@@ -80,5 +86,12 @@ public class MapScreen : MonoBehaviour
             outputTextureDisplay.texture = outputTexture;
             lastResolution = currentResolution;
         }
+
+        RenderIcon(playerIcon, Color.white, player.transform.position, Vector2.one);
+    }
+    void RenderIcon(Sprite sprite, Color colour, Vector3 position, Vector2 scale)
+    {
+        Vector3 iconPosition = position + (Vector3.up * scale.y);
+        WorldSpaceIconDrawer.DrawIcon(sprite, colour, mapRenderer.transform, iconPosition, scale, renderLayer);
     }
 }
