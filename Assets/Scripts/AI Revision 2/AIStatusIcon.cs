@@ -9,13 +9,6 @@ public class AIStatusIcon : MonoBehaviour
     [SerializeField] Animator animationController;
     [SerializeField] string trigger = "Display Icon";
     
-    private void LateUpdate()
-    {
-        // I wanted something better than this, to account for there potentially being more than one camera
-        Transform ct = Camera.main.transform;
-        transform.rotation = Quaternion.LookRotation(transform.position - ct.position, ct.up);
-    }
-    
     public void TriggerAnimation(Sprite newSprite)
     {
         if (newSprite != null)
