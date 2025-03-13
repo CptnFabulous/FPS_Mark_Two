@@ -12,7 +12,7 @@ public class MapScreen : MonoBehaviour
     public Player player;
 
     [Header("Rendering")]
-    public Camera camera;
+    public MapCameraController cameraController;
     public RawImage outputTextureDisplay;
 
     [Header("Terrain")]
@@ -27,6 +27,7 @@ public class MapScreen : MonoBehaviour
 
     public RenderTexture outputTexture { get; private set; }
     int renderLayer => mapRenderer.gameObject.layer;
+    public Camera camera => cameraController.camera;
     Camera playerCamera => player.movement.lookControls.worldViewCamera;
 
     private void Awake()
@@ -45,6 +46,20 @@ public class MapScreen : MonoBehaviour
         m.SetVector(shaderBoundsMin, gridMinAsVector4);
         m.SetVector(shaderBoundsMax, gridMaxAsVector4);
         m.SetTexture(shader3DTexture, terrainMap.progressTexture);
+
+        // Limit camera clip plane to reduce processing overhead
+        camera.farClipPlane = (cameraController.targetBounds.extents.magnitude + cameraController.boundsMargin) * 2;
+
+        // Set 'centre' values for camera control so it resets to the player's position
+        Vector3 cameraPos = player.LookTransform.position - (10 * player.transform.forward);
+        cameraController.defaultPosition = cameraPos;
+        cameraController.defaultRotation = Quaternion.LookRotation(player.transform.position - cameraPos, Vector3.up);
+
+        // Then reset camera
+        Camera playerWorldCamera = player.movement.lookControls.worldViewCamera;
+        cameraController.cameraTransform.localPosition = playerWorldCamera.transform.position;
+        cameraController.cameraTransform.localRotation = playerWorldCamera.transform.rotation;
+        cameraController.RecentreCamera();
 
         //RenderPipelineManager.beginCameraRendering += RenderIcons;
         camera.enabled = true;
