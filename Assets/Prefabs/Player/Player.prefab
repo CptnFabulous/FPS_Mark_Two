@@ -547,6 +547,38 @@ MonoBehaviour:
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &2603121131986852891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1442140132922592919}
+  m_Layer: 0
+  m_Name: Camera Axis
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1442140132922592919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2603121131986852891}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6848972556705823866}
+  m_Father: {fileID: 8687911682538984253}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2774374767548576367
 GameObject:
   m_ObjectHideFlags: 0
@@ -2407,7 +2439,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6848972556705823866}
+  - {fileID: 1442140132922592919}
   m_Father: {fileID: 7213440832378628518}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1965944631907676757
@@ -2454,6 +2486,7 @@ MonoBehaviour:
   target: {fileID: 6050357537588872174}
   targetFilter: {fileID: 7810933453631146233}
   camera: {fileID: 7935174601871134040}
+  cameraAxisTransform: {fileID: 1442140132922592919}
   cameraLerpSpeed: 5
   panSensitivityX: 0.5
   panSensitivityY: 0.5
@@ -3695,11 +3728,11 @@ Transform:
   m_GameObject: {fileID: 8792524528608012907}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.000000029802315, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8687911682538984253}
+  m_Father: {fileID: 1442140132922592919}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &7935174601871134040
 Camera:

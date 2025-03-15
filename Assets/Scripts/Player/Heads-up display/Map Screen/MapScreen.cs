@@ -76,14 +76,18 @@ public class MapScreen : MonoBehaviour
         camera.farClipPlane = (cameraController.targetBounds.extents.magnitude + cameraController.boundsMargin) * 2;
 
         // Set 'centre' values for camera control so it resets to the player's position
-        Vector3 cameraPos = player.LookTransform.position - (10 * player.transform.forward);
-        cameraController.defaultPosition = cameraPos;
-        cameraController.defaultRotation = Quaternion.LookRotation(player.transform.position - cameraPos, Vector3.up);
+        Transform playerWorldCameraTransform = player.movement.lookControls.worldViewCamera.transform;
+        cameraController.defaultPosition = playerWorldCameraTransform.position;
+        cameraController.defaultRotation = playerWorldCameraTransform.rotation;
 
         // Then reset camera
-        Camera playerWorldCamera = player.movement.lookControls.worldViewCamera;
-        cameraController.cameraTransform.localPosition = playerWorldCamera.transform.position;
-        cameraController.cameraTransform.localRotation = playerWorldCamera.transform.rotation;
+        Transform cameraAxisTransform = cameraController.cameraAxisTransform;
+        /*
+        Vector3 positionOffset = mapRenderer.transform.InverseTransformDirection(cameraAxisTransform.position - cameraController.camera.transform.position);
+        cameraAxisTransform.localPosition = playerWorldCameraTransform.position + positionOffset;
+        */
+        cameraAxisTransform.localPosition = playerWorldCameraTransform.position;
+        cameraAxisTransform.localRotation = playerWorldCameraTransform.rotation;
         cameraController.RecentreCamera();
 
         //RenderPipelineManager.beginCameraRendering += RenderIcons;

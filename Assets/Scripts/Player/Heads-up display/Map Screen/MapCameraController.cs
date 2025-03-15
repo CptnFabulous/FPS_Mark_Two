@@ -11,6 +11,7 @@ public class MapCameraController : MonoBehaviour
 
     [Header("Camera")]
     public Camera camera;
+    public Transform cameraAxisTransform;
     public float cameraLerpSpeed = 5;
 
     [Header("Panning")]
@@ -35,7 +36,6 @@ public class MapCameraController : MonoBehaviour
     public Quaternion defaultRotation { get; set; } = Quaternion.identity;
 
     public Transform targetTransform => target.transform;
-    public Transform cameraTransform => camera.transform;
     public Bounds targetBounds => targetFilter.mesh.bounds;
     public float boundsMargin => targetBounds.extents.magnitude;
     public Vector3 desiredCameraPosition
@@ -96,8 +96,8 @@ public class MapCameraController : MonoBehaviour
         
         // Smoothly transition towards desired position
         float t = cameraLerpSpeed * Time.unscaledDeltaTime;
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, desiredCameraPosition, t);
-        cameraTransform.localRotation = Quaternion.Lerp(cameraTransform.localRotation, desiredCameraRotation, t);
+        cameraAxisTransform.localPosition = Vector3.Lerp(cameraAxisTransform.localPosition, desiredCameraPosition, t);
+        cameraAxisTransform.localRotation = Quaternion.Lerp(cameraAxisTransform.localRotation, desiredCameraRotation, t);
     }
 
     public void PanAndZoom(Vector3 pan)
@@ -109,7 +109,7 @@ public class MapCameraController : MonoBehaviour
         pan.z *= zoomSensitivity;
         pan *= targetBounds.extents.magnitude + boundsMargin;
 
-        Vector3 direction = cameraTransform.TransformDirection(pan);
+        Vector3 direction = cameraAxisTransform.TransformDirection(pan);
         direction = targetTransform.InverseTransformDirection(direction);
         desiredCameraPosition += direction * Time.unscaledDeltaTime;
     }
