@@ -143,7 +143,17 @@ public class MapCameraController : MonoBehaviour
             }
         }
 
-        // TO DO: check if rotation would make camera upside down. If so, 
+        // TO DO: check if rotation would make camera upside down. If so, clamp it.
+        Vector3 currentForward = _desiredCameraRotation * Vector3.forward;
+        currentForward = Vector3.ProjectOnPlane(currentForward, Vector3.up);
+        Quaternion previousMovementForward = Quaternion.LookRotation(currentForward, Vector3.up);
+
+        float cameraVerticalAngleLimit = 90;
+        float angle = Quaternion.Angle(_desiredCameraRotation, previousMovementForward);
+        if (angle > cameraVerticalAngleLimit)
+        {
+            _desiredCameraRotation = Quaternion.RotateTowards(_desiredCameraRotation, previousMovementForward, angle - cameraVerticalAngleLimit);
+        }
 
         // Clamp camera rotation so it's still upright
         _desiredCameraRotation = Quaternion.LookRotation(_desiredCameraRotation * Vector3.forward, Vector3.up);
