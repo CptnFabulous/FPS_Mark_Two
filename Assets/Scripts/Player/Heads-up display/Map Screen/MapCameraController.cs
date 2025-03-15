@@ -37,7 +37,7 @@ public class MapCameraController : MonoBehaviour
 
     public Transform targetTransform => target.transform;
     public Bounds targetBounds => targetFilter.mesh.bounds;
-    public float boundsMargin => targetBounds.extents.magnitude;
+    public float boundsMargin => 0;//targetBounds.extents.magnitude;
     public Vector3 desiredCameraPosition
     {
         get => _desiredCameraPosition;
@@ -141,16 +141,6 @@ public class MapCameraController : MonoBehaviour
             {
                 _desiredCameraPosition = Vector3.MoveTowards(_desiredCameraPosition, closestPoint, distance - boundsMargin);
             }
-
-            /*
-            // Clamp rotation so the camera can't look completely away from the object
-            Quaternion towardsBounds = Quaternion.LookRotation(closestPoint - _desiredCameraPosition, Vector3.up);
-            float angle = Quaternion.Angle(_desiredCameraRotation, towardsBounds);
-            if (angle > angleMargin)
-            {
-                _desiredCameraRotation = Quaternion.RotateTowards(_desiredCameraRotation, towardsBounds, angle - angleMargin);
-            }
-            */
         }
 
         // TO DO: check if rotation would make camera upside down. If so, 
