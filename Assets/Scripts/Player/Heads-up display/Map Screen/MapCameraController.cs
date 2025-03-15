@@ -15,16 +15,13 @@ public class MapCameraController : MonoBehaviour
     public float cameraLerpSpeed = 5;
 
     [Header("Panning")]
-    //public SingleInput panControls;
     public float panSensitivityX = 5;
     public float panSensitivityY = 5;
 
     [Header("Zooming")]
-    //public SingleInput zoomControls;
     public float zoomSensitivity = 5;
 
     [Header("Rotation")]
-    //public SingleInput rotateControls;
     public Vector2 rotateSensitivity = new Vector2(90, 90);
     public float angleMargin = 15;
 
@@ -63,26 +60,21 @@ public class MapCameraController : MonoBehaviour
         Vector2 xy = input.Get<Vector2>();
         panInput.x = xy.x;
         panInput.y = xy.y;
-        //Debug.Log($"Pan input, {panInput}");
     }
     void OnScrollWheel(InputValue input)
     {
         float zoomInput = input.Get<Vector2>().y;
         panInput.z = zoomInput;
         zoomInput = Mathf.Clamp(zoomInput, -1, 1);
-        //panZoomInput.z = zoomInput;
-        //Debug.Log($"Zoom input, {zoomInput}, frame {Time.frameCount}");
         PanAndZoom(new Vector3(0, 0, zoomInput));
     }
     void OnPointerDelta(InputValue input)
     {
         Vector2 camera = input.Get<Vector2>();
-        //Debug.Log($"Rotate input, {camera}");
         Rotate(camera);
     }
     void OnTertiaryAction()
     {
-        Debug.Log("Tertiary input");
         RecentreCamera();
     }
 
@@ -92,9 +84,6 @@ public class MapCameraController : MonoBehaviour
 
         ClampCameraOrientation();
 
-        //Debug.Log($"{cameraTransform.localPosition}, {desiredCameraPosition}, frame {Time.frameCount}");
-        //Debug.Log($"{cameraTransform.localRotation}, {desiredCameraRotation}, frame {Time.frameCount}");
-        
         // Smoothly transition towards desired position
         float t = cameraLerpSpeed * deltaTime;
         cameraAxisTransform.localPosition = Vector3.Lerp(cameraAxisTransform.localPosition, desiredCameraPosition, t);
@@ -124,7 +113,6 @@ public class MapCameraController : MonoBehaviour
     }
     public void RecentreCamera()
     {
-        Debug.Log("Resetting map camera");
         desiredCameraPosition = defaultPosition;
         desiredCameraRotation = defaultRotation;
     }
@@ -158,5 +146,4 @@ public class MapCameraController : MonoBehaviour
         // Clamp camera rotation so it's still upright
         _desiredCameraRotation = Quaternion.LookRotation(_desiredCameraRotation * Vector3.forward, Vector3.up);
     }
-
 }
