@@ -56,6 +56,7 @@ public class MapCameraController : MonoBehaviour
             //ClampCameraOrientation();
         }
     }
+    public float deltaTime => Time.unscaledDeltaTime;
 
     void OnNavigate(InputValue input)
     {
@@ -95,7 +96,7 @@ public class MapCameraController : MonoBehaviour
         //Debug.Log($"{cameraTransform.localRotation}, {desiredCameraRotation}, frame {Time.frameCount}");
         
         // Smoothly transition towards desired position
-        float t = cameraLerpSpeed * Time.unscaledDeltaTime;
+        float t = cameraLerpSpeed * deltaTime;
         cameraAxisTransform.localPosition = Vector3.Lerp(cameraAxisTransform.localPosition, desiredCameraPosition, t);
         cameraAxisTransform.localRotation = Quaternion.Lerp(cameraAxisTransform.localRotation, desiredCameraRotation, t);
     }
@@ -111,14 +112,14 @@ public class MapCameraController : MonoBehaviour
 
         Vector3 direction = cameraAxisTransform.TransformDirection(pan);
         direction = targetTransform.InverseTransformDirection(direction);
-        desiredCameraPosition += direction * Time.unscaledDeltaTime;
+        desiredCameraPosition += direction * deltaTime;
     }
     public void Rotate(Vector2 input)
     {
         input.x *= rotateSensitivity.x;
         input.y *= rotateSensitivity.y;
         input.y = -input.y;
-        input *= Time.unscaledDeltaTime;
+        input *= deltaTime;
         desiredCameraRotation *= Quaternion.Euler(input.y, input.x, 0);
     }
     public void RecentreCamera()
