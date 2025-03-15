@@ -11,8 +11,7 @@ public class MapCameraController : MonoBehaviour
 
     [Header("Camera")]
     public Camera camera;
-    public float cameraShiftSpeed = 5;
-    public float cameraRotateSpeed = 60;
+    public float cameraLerpSpeed = 5;
 
     [Header("Panning")]
     //public SingleInput panControls;
@@ -96,13 +95,9 @@ public class MapCameraController : MonoBehaviour
         //Debug.Log($"{cameraTransform.localRotation}, {desiredCameraRotation}, frame {Time.frameCount}");
         
         // Smoothly transition towards desired position
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, desiredCameraPosition, cameraShiftSpeed * Time.unscaledDeltaTime);
-        // Smoothly transition towards desired rotation
-        float rt = cameraRotateSpeed * Time.unscaledDeltaTime;
-        if (rt > Mathf.Epsilon)
-        {
-            cameraTransform.localRotation = Quaternion.Lerp(cameraTransform.localRotation, desiredCameraRotation, rt);
-        }
+        float t = cameraLerpSpeed * Time.unscaledDeltaTime;
+        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, desiredCameraPosition, t);
+        cameraTransform.localRotation = Quaternion.Lerp(cameraTransform.localRotation, desiredCameraRotation, t);
     }
 
     public void PanAndZoom(Vector3 pan)
