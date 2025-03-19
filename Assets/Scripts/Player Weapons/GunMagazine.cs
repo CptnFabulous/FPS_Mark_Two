@@ -19,7 +19,7 @@ public class GunMagazine : MonoBehaviour
     public UnityEvent onReloadEnd;
     public float endTransitionDelay;
 
-    public bool ReloadActive { get; private set; }
+    public bool currentlyReloading { get; private set; }
     IEnumerator currentSequence;
 
     public RangedAttack modeServing;
@@ -45,29 +45,17 @@ public class GunMagazine : MonoBehaviour
         //if (mode.InAction) return;
 
         // If there isn't enough ammo in the magazine to fire another shot
-        if (ammo.current < modeServing.stats.ammoPerShot && ReloadActive == false)
+        if (ammo.current < modeServing.stats.ammoPerShot && currentlyReloading == false)
         {
             TryReload();
         }
     }
-    public void OnReloadPressed()
+    public void TryReload()
     {
-        if (!ReloadActive)
-        {
-            TryReload();
-        }
-        else
-        {
-            CancelReload();
-        }
-    }
-    void TryReload()
-    {
-        if (CanReload)
-        {
-            currentSequence = ReloadSequence();
-            StartCoroutine(currentSequence);
-        }
+        if (CanReload == false) return;
+
+        currentSequence = ReloadSequence();
+        StartCoroutine(currentSequence);
     }
 
 
@@ -91,7 +79,7 @@ public class GunMagazine : MonoBehaviour
 
     IEnumerator ReloadSequence()
     {
-        ReloadActive = true;
+        currentlyReloading = true;
 
         // If user is currently aiming down sights, cancel it
         GunADS ads = modeServing.optics;
@@ -106,24 +94,63 @@ public class GunMagazine : MonoBehaviour
         yield return new WaitForSeconds(startTransitionDelay);
 
         // If reload sequence has not been cancelled, magazine is not full and there is still ammo to reload with
-        while (CanReload && ReloadActive == true)
+        while (CanReload && currentlyReloading == true)
         {
-            onIncrementStart.Invoke();
-            yield return new WaitForSeconds(delayBetweenLoads);
-            // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
-            int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(type));
-            ammo.Increment(amountToAdd, out _);
-            onIncrementEnd.Invoke();
+            yield return IncrementReload();
         }
         // Once all rounds are reloaded, ammo is depleted or player deliberately cancels reload
-        ReloadActive = false;
+        currentlyReloading = false;
         onReloadEnd.Invoke();
         yield return new WaitForSeconds(endTransitionDelay);
         EndSequence();
     }
+
+    IEnumerator IncrementReload()
+    {
+        onIncrementStart.Invoke();
+        //yield return new WaitForSeconds(delayBetweenLoads);
+
+        bool cancelledDuringOperation = false;
+
+        yield return MiscFunctions.WaitOnLerp(delayBetweenLoads, (ref float t) =>
+        {
+            if (CanReload) return;
+            if (currentlyReloading) return;
+
+            t = 1;
+            cancelledDuringOperation = true;
+        });
+
+        if (cancelledDuringOperation)
+        {
+            onIncrementEnd.Invoke();
+            yield break;
+        }
+
+        /*
+        float t = 0;
+        do
+        {
+            if (CanReload == false) yield break;
+            if (currentlyReloading == false) yield break;
+
+            t += Time.deltaTime / delayBetweenLoads;
+            t = Mathf.Clamp01(t);
+            // Update GUI to show load progress
+            yield return t;
+        }
+        while (t < 1);
+        */
+
+        // Checks how much ammo is remaining. If less is available than what would normally be reloaded, only reload that amount
+        int amountToAdd = Mathf.Min(roundsReloadedAtOnce, ReservedAmmo(type));
+        ammo.Increment(amountToAdd, out _);
+        onIncrementEnd.Invoke();
+    }
+
     public void CancelReload()
     {
-        ReloadActive = false;
+        currentlyReloading = false;
     }
     void EndSequence()
     {

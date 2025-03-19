@@ -27,7 +27,7 @@ public class RangedAttack : WeaponMode
             return false;
         }
     }
-    public bool currentlyReloading => magazine != null && magazine.ReloadActive;
+    public bool currentlyReloading => magazine != null && magazine.currentlyReloading;
 
     public AmmunitionInventory ammo => (User != null && User.weaponHandler != null) ? User.weaponHandler.ammo : null;
     public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
@@ -66,7 +66,16 @@ public class RangedAttack : WeaponMode
     public override void OnTertiaryInput()
     {
         if (magazine == null) return;
-        magazine.OnReloadPressed();
+        //magazine.OnReloadPressed();
+
+        if (!magazine.currentlyReloading)
+        {
+            magazine.TryReload();
+        }
+        else
+        {
+            magazine.CancelReload();
+        }
     }
 
 
@@ -75,6 +84,12 @@ public class RangedAttack : WeaponMode
     /// </summary>
     protected override IEnumerator AttackSequence()
     {
+        if (magazine != null && magazine.currentlyReloading)
+        {
+            magazine.CancelReload();
+            yield break;
+        }
+        
         shotsInBurst = 0;
         float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer to infinity, to ensure it always sends a message on the first shot.
 
@@ -111,16 +126,9 @@ public class RangedAttack : WeaponMode
         if ((PrimaryHeld || controls.WillBurst(shotsInBurst)) == false) return false;
         
         if (controls.CanBurst(shotsInBurst) == false) return false;
-        
-        // If gun feeds from a magazine, and there isn't enough ammo in the magazine to fire
-        if (magazine != null)
-        {
-            // If not enough ammunition is in magazine to shoot, or the player is currently reloading
-            if (magazine.ammo.current < stats.ammoPerShot || magazine.ReloadActive)
-            {
-                return false;
-            }
-        }
+
+        // Don't shoot if there's not enough ammo in the magazine
+        if (magazine != null && magazine.ammo.current < stats.ammoPerShot) return false;
 
         // If the weapon consumes ammunition, but there isn't enough to fire
         if (consumesAmmo && ammo.GetStock(stats.ammoType) < stats.ammoPerShot)

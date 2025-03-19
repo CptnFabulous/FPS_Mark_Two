@@ -77,15 +77,17 @@ public readonly struct MiscFunctions
     #endregion
 
     #region IEnumerators
-    public static IEnumerator WaitOnLerp(float secondsToWait, Action<float> frameAction)
+    public delegate void LerpLoop(ref float t);
+    public static IEnumerator WaitOnLerp(float secondsToWait, LerpLoop frameAction)
     {
         float t = 0;
         do
         {
             t += Time.deltaTime / secondsToWait;
             t = Mathf.Clamp01(t);
-            frameAction.Invoke(t);
-            yield return null;
+            frameAction.Invoke(ref t);
+            if (t > 1) yield break;
+            yield return t;
         }
         while (t < 1);
     }

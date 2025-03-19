@@ -78,7 +78,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
             Quaternion startingRotation = User.lookController.lookRotation;
             AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
             // TO DO: disable standard look controls
-            yield return MiscFunctions.WaitOnLerp(attackTime, (t) =>
+            yield return MiscFunctions.WaitOnLerp(attackTime, (ref float t) =>
             {
                 Vector3 aimDirection = target.bounds.center - User.LookTransform.position;
                 Quaternion desiredRotation = Quaternion.LookRotation(aimDirection, User.transform.up);
