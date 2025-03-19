@@ -134,12 +134,15 @@ public class MapScreen : MonoBehaviour
         }
 
         // Draw objective markers
-        foreach (Objective objective in ObjectiveHandler.current.allObjectives)
+        if (ObjectiveHandler.current != null)
         {
-            if (objective.status != ObjectiveStatus.Active) continue;
-            if (objective.location == null) continue;
+            foreach (Objective objective in ObjectiveHandler.current.allObjectives)
+            {
+                if (objective.status != ObjectiveStatus.Active) continue;
+                if (objective.location == null) continue;
 
-            RenderIcon(objectiveMarker, Color.white, objective.location.Value, Vector2.one);
+                RenderIcon(objectiveMarker, Color.white, objective.location.Value, Vector2.one);
+            }
         }
     }
     void RenderIcon(Sprite sprite, Color colour, Vector3 position, Vector2 scale)
