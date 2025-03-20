@@ -7,6 +7,7 @@ public class ThrowHandler : MonoBehaviour
 {
     public Character user;
     public Transform hand;
+    public TrajectoryRenderer arcRenderer;
 
     [Header("Throwing stats")]
     public float startingVelocity = 50;
@@ -108,12 +109,45 @@ public class ThrowHandler : MonoBehaviour
 
         return true;
     }
-    public void Throw()
+    public IEnumerator Throw(System.Func<bool> buttonHoldInput)
     {
-        if (holding == null) return;
+        if (holding == null) yield break;
 
         currentlyThrowing = true;
 
+        #region Wind-up
+
+        // Activate trajectory handler
+        arcRenderer.gameObject.SetActive(true);
+        arcRenderer.AssignValues(holding.mass, /*0.1f, */attackMask);
+
+        // Wait while throw input is held (and update start/velocity for arc renderer)
+        while (buttonHoldInput.Invoke())
+        {
+            CalculateObjectLaunch(out Vector3 origin, out Vector3 direction);
+            arcRenderer.startPosition = origin;
+            arcRenderer.startVelocity = direction * startingVelocity;
+            yield return null;
+        }
+        arcRenderer.gameObject.SetActive(false);
+
+        #endregion
+
+        holding.gameObject.SetActive(true);
+
+        // Calculate origin and direction for final launch
+        CalculateObjectLaunch(out Vector3 throwOrigin, out Vector3 throwDirection);
+        // Detach object and apply velocity
+        Drop(out Rigidbody toThrow);
+        AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
+        // Update the last time thrown for the user's health, so the player can't be damaged by an object they just threw due to wacky physics
+        user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
+
+        onThrow.Invoke(toThrow);
+        currentlyThrowing = false;
+    }
+    void CalculateObjectLaunch(out Vector3 throwOrigin, out Vector3 throwDirection)
+    {
         // Create an exceptions list that accounts for the colliders of both the user and the held item
         // Making a new list for every throw does create garbage, but it's not like this function runs every frame
         List<Collider> exceptions = new List<Collider>(user.colliders);
@@ -122,23 +156,10 @@ public class ThrowHandler : MonoBehaviour
         // Calculate directions for initial cast
         Vector3 aimOrigin = user.LookTransform.position;
         Vector3 aimDirection = user.LookTransform.forward;
-        Vector3 throwOrigin = holding.transform.position;
-        // Calculate the direction to throw the object in
-        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, attackMask, exceptions, out Vector3 throwDirection, out _, out _, out _);
+        throwOrigin = holding.worldCenterOfMass;
+
+        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, attackMask, exceptions, out throwDirection, out _, out _, out _);
         throwDirection = throwDirection.normalized;
-        //Debug.DrawRay(throwOrigin, throwDirection * range, Color.blue, 5);
-
-        // Detach object and apply velocity
-        Drop(out Rigidbody toThrow);
-        //toThrow.AddForce(throwDirection * startingVelocity, ForceMode.Impulse);
-        //toThrow.AddForceAtPosition(throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
-        AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
-        // Update the last time thrown for the user's health, so the player can't be damaged by an object they just threw due to wacky physics
-        user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
-
-        onThrow.Invoke(toThrow);
-
-        currentlyThrowing = false;
     }
 
     public static void AddForceToRigidbodyChain(Rigidbody toThrow, Vector3 force, Vector3 position, ForceMode mode)
@@ -158,12 +179,10 @@ public class ThrowHandler : MonoBehaviour
     {
         target.detectCollisions = active;
         target.isKinematic = !active;
-        
         foreach (Rigidbody rb in PhysicsCache.GetChildRigidbodies(target))
         {
             rb.detectCollisions = active;
             //rb.isKinematic = !active;
         }
-        
     }
 }

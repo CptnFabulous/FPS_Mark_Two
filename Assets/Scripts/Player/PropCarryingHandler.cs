@@ -110,13 +110,16 @@ public class PropCarryingHandler : WeaponMode
     public override bool CanAttack() => heldItem != null; // TO DO: add stamina check later
     protected override IEnumerator AttackSequence()
     {
-        Debug.Log("Throwing physics object");
+        Debug.Log("Preparing to throw physics object");
         Rigidbody thrown = throwHandler.holding;
-        throwHandler.Throw();
         weaponHandler.SetCurrentWeaponActive(true);
+        yield return throwHandler.Throw(() => PrimaryHeld);
+        Debug.Log("Throwing physics object");
         onThrow.Invoke(thrown);
 
         OnAttack();
+        currentAttack = null;
+
         yield break;
     }
     public override void OnAttack()
