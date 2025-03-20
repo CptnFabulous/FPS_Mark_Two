@@ -40,21 +40,13 @@ public class RangedAttack : WeaponMode
         magazine.modeServing = this;
         magazine.enabled = true;
     }
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         optics.enabled = false;
         magazine.enabled = false;
     }
-    /*
-    public override IEnumerator SwitchTo()
-    {
-        yield return base.SwitchTo();
-    }
-    public override IEnumerator SwitchFrom()
-    {
-        return base.SwitchFrom();
-    }
-    */
+
     protected override void OnSecondaryInputChanged(bool held)
     {
         if (optics == null) return;
@@ -131,10 +123,7 @@ public class RangedAttack : WeaponMode
         if (magazine != null && magazine.ammo.current < stats.ammoPerShot) return false;
 
         // If the weapon consumes ammunition, but there isn't enough to fire
-        if (consumesAmmo && ammo.GetStock(stats.ammoType) < stats.ammoPerShot)
-        {
-            return false;
-        }
+        if (consumesAmmo && ammo.GetStock(stats.ammoType) < stats.ammoPerShot) return false;
 
         return true;
     }
