@@ -37,10 +37,11 @@ public class SmokeCloud : MonoBehaviour
         int maxParticles = particleSystem.main.maxParticles;
         particleArray = new ParticleSystem.Particle[maxParticles];
         colliderArray = new SphereCollider[maxParticles];
-        /*
+        
         ParticleSystem.MainModule main = particleSystem.main;
-        main.startColor = Color.green;
-        */
+        main.playOnAwake = false;
+        //main.startColor = Color.green;
+
         //ParticleSystem.CollisionModule collision = particleSystem.collision;
         //collision.collidesWith = MiscFunctions.GetPhysicsLayerMask(collisionLayer);
 

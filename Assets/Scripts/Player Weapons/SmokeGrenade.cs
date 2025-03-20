@@ -5,32 +5,17 @@ using UnityEngine;
 public class SmokeGrenade : Throwable
 {
     public SmokeCloud smoke;
-    public float remainingDuration = 10;
 
-    public override void OnThrow() { }
-
-    private void OnEnable()
+    private void Awake()
     {
-        //Debug.Log($"{this}: enabled at time {Time.time}");
-        smoke.emitting = true;
+        smoke.emitting = false;
     }
     private void OnDisable()
     {
-        //Debug.Log($"{this}: disabled at time {Time.time}");
-        //smoke.activelyEmitting = false;
+        smoke.emitting = false;
     }
-    /*
-    void Update()
+    public override void OnThrow()
     {
-        if (smoke.emitting == false)
-        {
-            enabled = false;
-            return;
-        }
-
-        remainingDuration = Mathf.Max(remainingDuration - Time.deltaTime, 0);
-        //Debug.Log("Remaining duration = " + remainingDuration);
-        smoke.emitting = remainingDuration > 0;
+        smoke.emitting = true;
     }
-    */
 }
