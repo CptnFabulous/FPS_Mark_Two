@@ -13,12 +13,12 @@ public class OffhandAttackHandler : MonoBehaviour
     public InteractionHandler interactionHandler;
 
     int abilityIndex = 0;
-
     bool buttonHeld;
-
-    Coroutine currentAction;
+    int frameChanged = int.MinValue;
 
     WeaponMode _current;
+    Coroutine currentAction;
+
 
     public WeaponMode currentAbility
     {
@@ -30,6 +30,7 @@ public class OffhandAttackHandler : MonoBehaviour
             CancelCurrentAction();
 
             _current = value;
+            frameChanged = Time.frameCount;
         }
     }
 
@@ -84,6 +85,8 @@ public class OffhandAttackHandler : MonoBehaviour
 
     void CancelCurrentAction(bool isSwitchingWeapons = false)
     {
+        if (Time.frameCount <= frameChanged) return;
+
         if (currentAction != null)
         {
             StopCoroutine(currentAction);
