@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
@@ -29,14 +28,12 @@ public class Projectile : MonoBehaviour
     {
         transform.LookAt(transform.position + velocity);
 
-        if (Physics.SphereCast(transform.position, diameter, velocity, out surfaceHit, DetectionLength, detection))
-        {
-            OnHit(surfaceHit);
-        }
-        
-        // Move bullet
-        transform.Translate(velocity.normalized * DetectionLength, Space.World);
-        velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
+        Vector3 position = transform.position;
+
+        bool thingHit = CalculateTrajectoryDelta(ref position, ref velocity, weight, diameter, Time.deltaTime, detection, out surfaceHit);
+        if (thingHit) OnHit(surfaceHit);
+
+        transform.position = position;
     }
     public void OnHit(RaycastHit thingHit)
     {
@@ -88,4 +85,34 @@ public class Projectile : MonoBehaviour
     }
     #endregion
 
+    public static bool CalculateTrajectoryDelta(ref Vector3 position, ref Vector3 velocity, float mass, float radius, float deltaTime, LayerMask hitDetection, out RaycastHit rh)
+    {
+        float detectionLength = velocity.magnitude * deltaTime;
+
+        bool surfaceHit = Physics.SphereCast(position, radius, velocity, out rh, detectionLength, hitDetection);
+
+        if (surfaceHit)
+        {
+            // TO DO: update position and velocity differently in response to surface hit
+            // Determine whether to penetrate, ricochet or stop completely
+
+            // As of yet, ignore that stuff and just stop movement as soon as we hit something
+            return true;
+        }
+        else
+        {
+            // Move bullet linearly as expected
+            position += velocity.normalized * detectionLength;
+        }
+
+        // Alter velocity based on external factors
+        Vector3 velocityChange = Vector3.zero;
+        velocityChange += Physics.gravity * deltaTime; // Gravity
+        // To do: wind
+        // To do: modify velocity change based on drag
+
+        velocity += velocityChange;
+
+        return surfaceHit;
+    }
 }
