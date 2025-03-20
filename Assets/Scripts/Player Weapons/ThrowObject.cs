@@ -29,15 +29,31 @@ public class ThrowObject : WeaponMode
 
     public override bool CanAttack() => User.weaponHandler.ammo.GetStock(ammunitionType) > 0;
     public override void OnAttack() => User.weaponHandler.ammo.Spend(ammunitionType, 1);
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+
+        throwHandler.CancelThrow();
+
+        // If disabled before object was thrown, disable it.
+        // It should only offically be released if the throw operation finishes
+        if (readyToThrow != null)
+        {
+            readyToThrow.gameObject.SetActive(false);
+            readyToThrow.transform.SetParent(transform);
+            readyToThrow.transform.position = throwHandler.hand.transform.position;
+        }
+    }
 
     protected override IEnumerator AttackSequence()
     {
         SpawnNewThrowable();
         
-        Debug.Log($"{this}: throwing");
+        // Prepare to throw the object
+        yield return throwHandler.Throw(() => PrimaryHeld);
+
         // Prep and throw the object, and clear 'readyToThrow'
         readyToThrow.enabled = true;
-        throwHandler.Throw();
         readyToThrow.OnThrow();
         readyToThrow = null;
         OnAttack();
@@ -47,7 +63,6 @@ public class ThrowObject : WeaponMode
         //SpawnNewThrowable();
 
         currentAttack = null;
-        yield break;
     }
 
     void SpawnNewThrowable()
@@ -56,9 +71,10 @@ public class ThrowObject : WeaponMode
         if (readyToThrow == null)
         {
             readyToThrow = Instantiate(throwablePrefab, throwHandler.hand);
-            throwHandler.Pickup(readyToThrow.rb);
         }
+        throwHandler.Pickup(readyToThrow.rb);
         readyToThrow.enabled = false;
+        //readyToThrow.gameObject.SetActive(false);
         readyToThrow.gameObject.SetActive(true);
     }
 }

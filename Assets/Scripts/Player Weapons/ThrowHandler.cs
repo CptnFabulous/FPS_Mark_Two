@@ -21,10 +21,8 @@ public class ThrowHandler : MonoBehaviour
 
     public Rigidbody holding { get; private set; } = null;
     public bool currentlyThrowing { get; private set; } = false;
-    //Coroutine throwCoroutine;
 
     public LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(holding.gameObject.layer);
-    public bool InAction => currentlyThrowing;
 
     private void Awake()
     {
@@ -67,9 +65,10 @@ public class ThrowHandler : MonoBehaviour
             yield return null;
         }
     }
-
     public void Pickup(Rigidbody toPickUp)
     {
+        if (toPickUp == holding) return;
+
         // Assign reference (and drop the previously held item if there is one)
         Drop(out _);
         holding = toPickUp;
@@ -87,8 +86,6 @@ public class ThrowHandler : MonoBehaviour
 
         onPickup.Invoke(toPickUp);
     }
-
-    
 
     public bool Drop(out Rigidbody detached)
     {
@@ -146,6 +143,12 @@ public class ThrowHandler : MonoBehaviour
         onThrow.Invoke(toThrow);
         currentlyThrowing = false;
     }
+    public void CancelThrow()
+    {
+        Drop(out _);
+        arcRenderer.gameObject.SetActive(false);
+    }
+
     void CalculateObjectLaunch(out Vector3 throwOrigin, out Vector3 throwDirection)
     {
         // Create an exceptions list that accounts for the colliders of both the user and the held item
@@ -174,7 +177,6 @@ public class ThrowHandler : MonoBehaviour
             rb.AddForceAtPosition(force * fraction, position, mode);
         }
     }
-
     public static void SetPhysicsInteractions(Rigidbody target, bool active)
     {
         target.detectCollisions = active;

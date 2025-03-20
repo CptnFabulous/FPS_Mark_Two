@@ -10,6 +10,7 @@ public class OffhandAttackHandler : MonoBehaviour
 
     public SingleInput input;
     public WeaponHandler weaponHandler;
+    public InteractionHandler interactionHandler;
 
     int abilityIndex = 0;
 
@@ -26,13 +27,7 @@ public class OffhandAttackHandler : MonoBehaviour
         {
             if (_current == value) return;
 
-            if (currentAction != null)
-            {
-                StopCoroutine(currentAction);
-                currentAction = null;
-            }
-
-            if (_current != null) _current.enabled = false;
+            CancelCurrentAction();
 
             _current = value;
         }
@@ -42,6 +37,9 @@ public class OffhandAttackHandler : MonoBehaviour
     {
         currentAbility = abilities[abilityIndex];
         input.onActionPerformed.AddListener(OnAttack);
+
+        weaponHandler.onSwitchWeapon.AddListener((_) => CancelCurrentAction(true));
+        interactionHandler.input.onActionPerformed.AddListener((_) => CancelCurrentAction());
     }
 
     void OnAttack(InputAction.CallbackContext context)
@@ -53,7 +51,6 @@ public class OffhandAttackHandler : MonoBehaviour
         if (currentAbility.CanAttack() == false) return;
         currentAction = StartCoroutine(PerformOffhandAbility(currentAbility));
     }
-
 
     public IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
     {
@@ -70,7 +67,7 @@ public class OffhandAttackHandler : MonoBehaviour
         // Perform offhand action
         Debug.Log("Starting attack");
         offhandAbility.SetPrimaryInput(true);
-        // Wait until attack is complete
+        // Wait until player finishes attack
         yield return new WaitUntil(() => !buttonHeld || !offhandAbility.inAttack);
         Debug.Log("Ending attack");
         offhandAbility.SetPrimaryInput(false); // Reset input for next time
@@ -83,5 +80,19 @@ public class OffhandAttackHandler : MonoBehaviour
         // Ensure current weapon is deployed
         currentAction = null;
         weaponHandler.SetCurrentWeaponActive(true);
+    }
+
+    void CancelCurrentAction(bool isSwitchingWeapons = false)
+    {
+        if (currentAction != null)
+        {
+            StopCoroutine(currentAction);
+            currentAction = null;
+        }
+
+        if (_current != null) _current.enabled = false;
+
+        // Auto-deploy the last weapon, but not if this action was triggered by switching to a new one
+        if (!isSwitchingWeapons) weaponHandler.SetCurrentWeaponActive(true);
     }
 }

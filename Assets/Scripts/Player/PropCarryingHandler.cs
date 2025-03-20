@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 
 public class PropCarryingHandler : WeaponMode
 {
@@ -24,36 +23,24 @@ public class PropCarryingHandler : WeaponMode
     
     //bool pickupFinished => toPickUp == null;
 
-    bool autoDrawLastWeaponOnDrop;
-
     WeaponMode previousOffhandAbility;
 
     WeaponHandler weaponHandler => throwHandler.user.weaponHandler;
     OffhandAttackHandler offhandAttackHandler => weaponHandler.offhandAttacks;
     public override LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(heldItem.gameObject.layer);
 
-    // TO DO:
-    // Add an input to automatically drop the item and end the ability, if the player presses the fire button while their weapon is holstered.
-
     private void Awake()
     {
-        // Add input to drop object
-        interactionHandler.input.onActionPerformed.AddListener((_) => Drop(true, true));
         // Ensure that correct code runs after dropping an item. The item drop code can be triggered from elsewhere
         throwHandler.onDrop.AddListener(OnDrop);
-
-        //weaponHandler.primaryInput.onActionPerformed.AddListener(CheckToDropAndSwitchBackToWeapon);
-        //weaponHandler.secondaryInput.onActionPerformed.AddListener(CheckToDropAndSwitchBackToWeapon);
-
-        // Add listener to drop the current item if the player deliberately switches weapons
-        weaponHandler.onSwitchWeapon.AddListener((_) => Drop(false, false));
+        enabled = false;
     }
     protected override void OnDisable()
     {
         base.OnDisable();
 
         // Drop currently held item (if there is one)
-        Drop(false, false);
+        throwHandler.CancelThrow();
 
         // If a previous offhand ability was stored, switch back to that
         if (previousOffhandAbility != null) offhandAttackHandler.currentAbility = previousOffhandAbility;
@@ -110,66 +97,30 @@ public class PropCarryingHandler : WeaponMode
     public override bool CanAttack() => heldItem != null; // TO DO: add stamina check later
     protected override IEnumerator AttackSequence()
     {
-        Debug.Log("Preparing to throw physics object");
         Rigidbody thrown = throwHandler.holding;
-        weaponHandler.SetCurrentWeaponActive(true);
         yield return throwHandler.Throw(() => PrimaryHeld);
-        Debug.Log("Throwing physics object");
         onThrow.Invoke(thrown);
 
         OnAttack();
         currentAttack = null;
-
-        yield break;
     }
     public override void OnAttack()
     {
         // TO DO: potentially consume stamina
     }
-    /*
-    void CheckToDropAndSwitchBackToWeapon(InputAction.CallbackContext context)
-    {
-        // This check only need apply to two-handed weapons, as they're the only ones being disabled
-        if (weaponHandler.CurrentWeapon.oneHanded) return;
 
-        if (context.ReadValueAsButton() == false) return;
-        
-        Drop(false, true);
-    }
-    */
-
-    void Drop(bool frameCheck, bool autoDrawLastWeapon)
-    {
-        // A small hack fix to prevent the game from dropping an item the player just picked up due to the same input
-        if (frameCheck && frameOfLastPickup == Time.frameCount) return;
-
-        autoDrawLastWeaponOnDrop = autoDrawLastWeapon;
-        throwHandler.Drop(out _);
-    }
     void OnDrop(Rigidbody dropped)
     {
         if (enabled == false) return;
         
-        // If specified prior, switch to the previous weapon
-        // (can be disabled in case this code was run due to holstering current weapon)
-        if (autoDrawLastWeaponOnDrop) weaponHandler.SetCurrentWeaponActive(true);
-
         // Clear values
         toPickUp = null;
-        autoDrawLastWeaponOnDrop = false;
 
         onDrop.Invoke(dropped);
 
         enabled = false;
     }
 
-    protected override void OnSecondaryInputChanged(bool held)
-    {
-        
-    }
-
-    public override void OnTertiaryInput()
-    {
-        
-    }
+    protected override void OnSecondaryInputChanged(bool held) { }
+    public override void OnTertiaryInput() { }
 }
