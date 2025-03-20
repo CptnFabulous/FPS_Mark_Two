@@ -151,8 +151,9 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     public override void OnTertiaryInput() { }
 
-    protected override void OnInterrupt()
-    {      
+    protected override void OnDisable()
+    {
+        base.OnDisable();
         if (animator != null) animator.SetTrigger(interruptTrigger);
     }
 }

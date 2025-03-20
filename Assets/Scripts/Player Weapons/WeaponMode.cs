@@ -49,7 +49,7 @@ public abstract class WeaponMode : MonoBehaviour
     {
         Debug.Log($"{this}: Setting primary input to {held}, frame {Time.frameCount}");
         PrimaryHeld = held;
-        
+
         if (enabled == false) return;
         if (held == false) return;
 
@@ -65,12 +65,8 @@ public abstract class WeaponMode : MonoBehaviour
     }
     protected abstract void OnSecondaryInputChanged(bool held);
     public abstract void OnTertiaryInput();
-    protected virtual void OnInterrupt() { }
-
-
     
-
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         SetPrimaryInput(false);
         SetSecondaryInput(false);
@@ -80,8 +76,6 @@ public abstract class WeaponMode : MonoBehaviour
             StopCoroutine(currentAttack);
             currentAttack = null;
         }
-
-        OnInterrupt();
     }
 
 }

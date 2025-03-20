@@ -48,8 +48,10 @@ public class PropCarryingHandler : WeaponMode
         // Add listener to drop the current item if the player deliberately switches weapons
         weaponHandler.onSwitchWeapon.AddListener((_) => Drop(false, false));
     }
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
+
         // Drop currently held item (if there is one)
         Drop(false, false);
 
