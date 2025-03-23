@@ -12,17 +12,10 @@ public class TrajectoryRenderer : MonoBehaviour
 
     Vector3[] positions;
 
-    public Vector3 startPosition { get; set; }
-    public Vector3 startVelocity { get; set; }
-    public float mass { get; private set; }
-    public LayerMask hitDetection { get; private set; }
+    public System.Func<(Vector3, Vector3)> getStartPositionAndVelocity { get; set; }
+    public float mass { get; set; }
+    public LayerMask hitDetection { get; set; }
     
-    public void AssignValues(float mass, LayerMask hitDetection)
-    {
-        this.mass = mass;
-        this.hitDetection = hitDetection;
-    }
-
     private void Awake()
     {
         lineRenderer.useWorldSpace = true;
@@ -30,7 +23,13 @@ public class TrajectoryRenderer : MonoBehaviour
     }
     private void LateUpdate()
     {
-        // Don't do anything if there's no valid velocity to calculate from
+        // Cancel if there's no data assigned.
+        if (getStartPositionAndVelocity == null) return;
+
+        // Get starting position and velocity. Don't proceed if there's no velocity to form a trajectory.
+        (Vector3, Vector3) startValues = getStartPositionAndVelocity.Invoke();
+        Vector3 startPosition = startValues.Item1;
+        Vector3 startVelocity = startValues.Item2;
         if (startVelocity.magnitude <= 0) return;
 
         bool surfaceHit = false;

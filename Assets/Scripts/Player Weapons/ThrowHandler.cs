@@ -114,18 +114,20 @@ public class ThrowHandler : MonoBehaviour
 
         #region Wind-up
 
-        // Activate trajectory handler
+        // Activate trajectory handler, and assign values so it can calculate the correct trajectory
         arcRenderer.gameObject.SetActive(true);
-        arcRenderer.AssignValues(holding.mass, /*0.1f, */attackMask);
-
-        // Wait while throw input is held (and update start/velocity for arc renderer)
-        while (buttonHoldInput.Invoke())
+        arcRenderer.mass = holding.mass;
+        arcRenderer.hitDetection = attackMask;
+        // (A delegate is set up so we don't have to repeatedly input data from our end)
+        arcRenderer.getStartPositionAndVelocity = () =>
         {
             CalculateObjectLaunch(out Vector3 origin, out Vector3 direction);
-            arcRenderer.startPosition = origin;
-            arcRenderer.startVelocity = direction * startingVelocity;
-            yield return null;
-        }
+            return (origin, direction * startingVelocity);
+        };
+
+        // Wait while throw input is held
+        yield return new WaitWhile(buttonHoldInput.Invoke);
+        
         arcRenderer.gameObject.SetActive(false);
 
         #endregion
