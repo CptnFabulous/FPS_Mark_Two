@@ -24,7 +24,7 @@ public class MapScreen : MonoBehaviour
     [SerializeField] string shader3DTexture = "_Areas_filled";
 
     [Header("Icons")]
-    [SerializeField] Sprite playerIcon;
+    [SerializeField] Transform playerIndicator;
 
     [Header("Doors")]
     [SerializeField] Mesh doorMesh;
@@ -90,13 +90,11 @@ public class MapScreen : MonoBehaviour
         cameraAxisTransform.localRotation = playerWorldCameraTransform.rotation;
         cameraController.RecentreCamera();
 
-        //RenderPipelineManager.beginCameraRendering += RenderIcons;
         camera.enabled = true;
     }
     private void OnDisable()
     {
         camera.enabled = false;
-        //RenderPipelineManager.beginCameraRendering -= RenderIcons;
     }
     private void LateUpdate()
     {
@@ -110,7 +108,8 @@ public class MapScreen : MonoBehaviour
             lastResolution = currentResolution;
         }
 
-        RenderIcon(playerIcon, Color.white, player.transform.position, Vector2.one);
+        playerIndicator.localPosition = player.transform.position;
+        playerIndicator.localRotation = player.transform.rotation;
 
         foreach (Door door in terrainMap.doorsInScene)
         {
