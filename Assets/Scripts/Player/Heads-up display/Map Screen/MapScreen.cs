@@ -120,10 +120,9 @@ public class MapScreen : MonoBehaviour
             Vector3Int gridPosition = terrainMap.TextureCoordinatesFromWorldPosition(worldPosition);
             if (terrainMap.autoMapped == false && terrainMap.GetFill(gridPosition) <= 0) continue;
             
-            // Calculate transform data
-            Vector3 position = mapRenderer.transform.TransformPoint(worldPosition);
-            Quaternion rotation = door.transform.rotation * mapRenderer.transform.rotation;
-            Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, doorSize);
+            worldPosition.y += doorSize.y * 0.5f;
+            Matrix4x4 matrix = Matrix4x4.TRS(worldPosition, door.transform.rotation, doorSize);
+            matrix = mapRenderer.transform.localToWorldMatrix * matrix;
 
             // Calculate correct colour to use
             MaterialPropertyBlock propertyBlock = door.isLocked ? (door.lockingMechanism == null ? blockedDoor : lockedDoor) : openDoor;
