@@ -35,6 +35,7 @@ public abstract class WeaponMode : MonoBehaviour
     public bool inAttack => currentAttack != null;
     public virtual bool inSecondaryAction => false;
     public abstract LayerMask attackMask { get; }
+    public abstract string hudInfo { get; }
 
     public virtual IEnumerator SwitchTo()
     {

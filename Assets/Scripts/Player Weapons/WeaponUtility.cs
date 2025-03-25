@@ -14,7 +14,7 @@ public static class WeaponUtility
         // Check the dot product in case the hit point is behind the muzzle (e.g. if the player is shooting into a wall)
         hitPointIsBehindMuzzle = successfulCast && Vector3.Dot(launchDirection, direction) < 0;
     }
-    public static string AmmoCounterHUDDisplay(RangedAttack rangedAttack, string infiniteText = "")
+    public static string AmmoCounterHUDDisplay(RangedAttack rangedAttack, string infiniteText = "\u221E")
     {
         bool consumesAmmo = rangedAttack.consumesAmmo;
         int totalAmmo = Mathf.RoundToInt(rangedAttack.User.weaponHandler.ammo.GetValues(rangedAttack.stats.ammoType).current);

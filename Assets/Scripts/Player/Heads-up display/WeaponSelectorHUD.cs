@@ -93,19 +93,16 @@ public class WeaponSelectorHUD : MonoBehaviour
     {
         handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
         WeaponMode mode = handler.equippedWeapons[weaponIndex].modes[firingModeIndex];
-        if (mode is RangedAttack r)
-        {
-            DisplayRangedAttackInfo(r);
-        }
-    }
-    void DisplayRangedAttackInfo(RangedAttack mode)
-    {
+
         firingModeName.text = mode.name;
         weaponName.text = mode.attachedTo.name;
 
-        AmmunitionType ammoType = mode.stats.ammoType;
-        ammoIcon.sprite = (ammoType != null) ? ammoType.icon : null;
+        if (mode is RangedAttack r)
+        {
+            AmmunitionType ammoType = r.stats.ammoType;
+            ammoIcon.sprite = (ammoType != null) ? ammoType.icon : null;
+        }
 
-        ammoCapacity.text = WeaponUtility.AmmoCounterHUDDisplay(mode, "INFINITE");
+        ammoCapacity.text = mode.hudInfo;
     }
 }

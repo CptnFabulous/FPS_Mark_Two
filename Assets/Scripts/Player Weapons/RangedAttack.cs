@@ -32,6 +32,8 @@ public class RangedAttack : WeaponMode
     public AmmunitionInventory ammo => (User != null && User.weaponHandler != null) ? User.weaponHandler.ammo : null;
     public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
+    public override string hudInfo => WeaponUtility.AmmoCounterHUDDisplay(this);
+
 
     private void OnEnable()
     {
@@ -52,8 +54,10 @@ public class RangedAttack : WeaponMode
         if (optics == null) return;
         WeaponHandler handler = User.weaponHandler;
         if (handler == null) return;
-        
-        optics.IsAiming = (!handler.disableADS) && MiscFunctions.GetToggleableInput(optics.IsAiming, held, handler.toggleADS);
+
+        bool desiredState = MiscFunctions.GetToggleableInput(optics.IsAiming, held, handler.toggleADS);
+        Debug.Log($"Attempting to set ADS to {desiredState}, disabled = {handler.disableADS}");
+        optics.IsAiming = (!handler.disableADS) && desiredState;
     }
     public override void OnTertiaryInput()
     {

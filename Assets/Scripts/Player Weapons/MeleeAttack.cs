@@ -32,6 +32,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     [SerializeField] string interruptTrigger = "Interrupted";
 
     public override LayerMask attackMask => hitDetection;
+    public override string hudInfo => null;
 
     protected override void OnSecondaryInputChanged(bool held)
     {

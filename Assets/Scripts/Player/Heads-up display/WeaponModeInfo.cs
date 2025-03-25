@@ -38,6 +38,11 @@ public class WeaponModeInfo : MonoBehaviour
         if (weaponModeName != null) weaponModeName.text = mode.name;
         if (weaponModeIcon != null) weaponModeIcon.sprite = mode.icon;
 
+        string info = mode.hudInfo;
+        ammoText.text = info;
+        ammoText.gameObject.SetActive(info != null);
+
+        /*
         // Perform different actions based on the mode
         switch (mode)
         {
@@ -48,6 +53,7 @@ public class WeaponModeInfo : MonoBehaviour
                 UpdateThrowableInfo(t);
                 break;
         }
+        */
     }
 
     void UpdateAmmoText(RangedAttack rangedAttack)
