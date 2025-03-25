@@ -50,7 +50,7 @@ public class MapScreen : MonoBehaviour
 
     private void Awake()
     {
-        terrainMap.playerTransform = player.transform;
+        terrainMap.player = player;
 
         openDoor = new MaterialPropertyBlock();
         openDoor.SetColor("_Color", doorColour);

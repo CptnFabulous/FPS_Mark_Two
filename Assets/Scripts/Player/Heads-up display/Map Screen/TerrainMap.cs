@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class TerrainMap : MonoBehaviour
 {
-    public Transform playerTransform;
+    public Player player;
+    public Transform playerTransform => player.transform;
     public bool autoMapped;
 
     [Header("Fill texture")]
@@ -87,10 +88,11 @@ public class TerrainMap : MonoBehaviour
             fill = Mathf.Clamp01(fill);
             if (fill <= oldFill) return pixelColour;
 
+            // TO DO: fix this, it's too stingy and ignores a lot of stuff the player should be able to see/reach
             /*
             // Ensure line of sight between player and point
             Vector3 worldPosition = WorldPositionFromTextureCoordinates(coordinates);
-            bool lineOfSight = AIAction.LineOfSight(player.lookOrigin, worldPosition, geometryDetection, player.colliders);
+            bool lineOfSight = AIAction.LineOfSight(player.LookTransform.position, worldPosition, player.lookMask, player.colliders);
             if (lineOfSight == false) return pixelColour;
             */
 
