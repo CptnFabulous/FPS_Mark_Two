@@ -28,6 +28,7 @@ public class PropCarryingHandler : WeaponMode
     WeaponHandler weaponHandler => throwHandler.user.weaponHandler;
     OffhandAttackHandler offhandAttackHandler => weaponHandler.offhandAttacks;
     public override LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(heldItem.gameObject.layer);
+    public override string hudInfo => null;
 
     private void Awake()
     {
