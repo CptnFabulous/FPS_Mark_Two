@@ -23,7 +23,6 @@ public class ThrowObject : WeaponMode
         get
         {
             AmmunitionInventory ammoInv = User.weaponHandler.ammo;
-            //int totalAmmo = Mathf.RoundToInt(mode.User.weaponHandler.ammo[throwData.ammunitionType].current);
             int totalAmmo = Mathf.RoundToInt(ammoInv.GetValues(ammunitionType).current);
             return $"{totalAmmo}";
         }
