@@ -7,9 +7,11 @@ using UnityEngine.InputSystem;
 public class MapCameraController : MonoBehaviour
 {
     public MeshRenderer target;
+    //public MapScreen mapScreen;
     public MeshFilter targetFilter;
 
     [Header("Camera")]
+    public PlayerInput playerInput;
     public Camera camera;
     public Transform cameraAxisTransform;
     public float cameraLerpSpeed = 5;
@@ -23,9 +25,11 @@ public class MapCameraController : MonoBehaviour
 
     [Header("Rotation")]
     public Vector2 rotateSensitivity = new Vector2(90, 90);
-    public float angleMargin = 15;
+    public float cameraVerticalAngleLimit = 75;
+    //public float angleMargin = 15;
 
     Vector3 panInput;
+    Vector2 rotateInput;
     Vector3 _desiredCameraPosition = Vector3.zero;
     Quaternion _desiredCameraRotation = Quaternion.identity;
 
@@ -54,6 +58,7 @@ public class MapCameraController : MonoBehaviour
         }
     }
     public float deltaTime => Time.unscaledDeltaTime;
+    public bool usingGamepad => playerInput.currentControlScheme.Contains("Gamepad");
 
     void OnNavigate(InputValue input)
     {
@@ -64,13 +69,23 @@ public class MapCameraController : MonoBehaviour
     void OnScrollWheel(InputValue input)
     {
         float zoomInput = input.Get<Vector2>().y;
-        panInput.z = zoomInput;
         zoomInput = Mathf.Clamp(zoomInput, -1, 1);
-        PanAndZoom(new Vector3(0, 0, zoomInput));
+
+        // If zooming using scroll wheel, don't allow input to get to zero from here (input is gradually reduced to zero in LateUpdate())
+        if (!usingGamepad && Mathf.Abs(zoomInput) <= 0) return;
+        // Assign new value
+        panInput.z = zoomInput;
     }
     void OnPointerDelta(InputValue input)
     {
         Vector2 camera = input.Get<Vector2>();
+        if (usingGamepad)
+        {
+            rotateInput = camera;
+            return;
+        }
+
+        rotateInput = Vector2.zero;
         Rotate(camera);
     }
     void OnTertiaryAction()
@@ -81,13 +96,22 @@ public class MapCameraController : MonoBehaviour
     private void LateUpdate()
     {
         PanAndZoom(panInput);
+        Rotate(rotateInput);
 
+        if (!usingGamepad)
+        {
+            float scrollZoomReductionTime = 0.5f;
+            panInput.z = Mathf.MoveTowards(panInput.z, 0, deltaTime / scrollZoomReductionTime);
+        }
+        
         ClampCameraOrientation();
 
         // Smoothly transition towards desired position
         float t = cameraLerpSpeed * deltaTime;
         cameraAxisTransform.localPosition = Vector3.Lerp(cameraAxisTransform.localPosition, desiredCameraPosition, t);
         cameraAxisTransform.localRotation = Quaternion.Lerp(cameraAxisTransform.localRotation, desiredCameraRotation, t);
+        // Clamp camera rotation so it's still upright
+        //cameraAxisTransform.localRotation = Quaternion.LookRotation(cameraAxisTransform.localRotation * Vector3.forward, Vector3.up);
     }
 
     public void PanAndZoom(Vector3 pan)
@@ -135,8 +159,6 @@ public class MapCameraController : MonoBehaviour
         Vector3 currentForward = _desiredCameraRotation * Vector3.forward;
         currentForward = Vector3.ProjectOnPlane(currentForward, Vector3.up);
         Quaternion previousMovementForward = Quaternion.LookRotation(currentForward, Vector3.up);
-
-        float cameraVerticalAngleLimit = 90;
         float angle = Quaternion.Angle(_desiredCameraRotation, previousMovementForward);
         if (angle > cameraVerticalAngleLimit)
         {
