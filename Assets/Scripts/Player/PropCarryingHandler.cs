@@ -15,8 +15,6 @@ public class PropCarryingHandler : WeaponMode
     public UnityEvent<Rigidbody> onDrop;
     public UnityEvent<Rigidbody> onThrow;
 
-    int frameOfLastPickup = 0;
-
     Rigidbody heldItem => throwHandler.holding;
 
     Rigidbody toPickUp;
@@ -70,10 +68,14 @@ public class PropCarryingHandler : WeaponMode
         // TO DO: Check the size of the object: if it's small enough, add to inventory of quick throwables instead
 
         toPickUp = target;
-        frameOfLastPickup = Time.frameCount;
 
         // Reference offhand attack list, set active one to this
-        previousOffhandAbility = offhandAttackHandler.currentAbility;
+        WeaponMode currentlySelectedAbility = offhandAttackHandler.currentAbility;
+        if (currentlySelectedAbility != null)
+        {
+            previousOffhandAbility = currentlySelectedAbility;
+        }
+        //previousOffhandAbility = offhandAttackHandler.currentAbility;
         offhandAttackHandler.currentAbility = this;
         enabled = true;
 
