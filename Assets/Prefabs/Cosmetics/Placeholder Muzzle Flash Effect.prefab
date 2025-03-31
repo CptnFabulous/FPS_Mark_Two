@@ -97,6 +97,8 @@ GameObject:
   - component: {fileID: 8131579087375356498}
   - component: {fileID: 5128913925094710110}
   - component: {fileID: 8839884144639869782}
+  - component: {fileID: -8146174376690808747}
+  - component: {fileID: 1283677236341800509}
   m_Layer: 0
   m_Name: Placeholder Muzzle Flash Effect
   m_TagString: Untagged
@@ -367,3 +369,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18659aaac2bb11f4cbc9cdb2677296ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8146174376690808747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9107673828613777602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+--- !u!114 &1283677236341800509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9107673828613777602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b04208d9df46a7c4e934278bef8d8312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  degreesCelsius: 1200
