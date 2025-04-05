@@ -59,7 +59,7 @@ public class MovementController : MonoBehaviour
     public UnityEvent onJump;
     public UnityEvent<RaycastHit> onLand;
 
-    public RaycastHit groundingData;
+    public RaycastHit groundingData { get; private set; }
     float lastTimeJumped;
 
     void OnJump()
@@ -77,18 +77,15 @@ public class MovementController : MonoBehaviour
         onJump.Invoke();
         lastTimeJumped = Time.time;
     }
-    void SetGroundingData()
+    public static void GetGroundingData(CapsuleCollider collider, float groundingRayLength, out RaycastHit newGroundingData)
     {
+        Transform transform = collider.transform;
+        LayerMask collisionMask = MiscFunctions.GetPhysicsLayerMask(collider.gameObject.layer);
+
         Vector3 rayOrigin = transform.position + transform.up * (collider.height / 2);
         float distance = groundingRayLength + Vector3.Distance(transform.position, rayOrigin);
         float radius = collider.radius * 0.9f;
-        Physics.SphereCast(rayOrigin, radius, -transform.up, out RaycastHit newGroundingData, distance, collisionMask);
-        if (newGroundingData.collider != null && groundingData.collider == null)
-        {
-            //Debug.Log("Landing on ground on frame " + Time.frameCount);
-            onLand.Invoke(newGroundingData);
-        }
-        groundingData = newGroundingData; // Update grounding data
+        Physics.SphereCast(rayOrigin, radius, -transform.up, out newGroundingData, distance, collisionMask);
     }
     #endregion
 
@@ -101,7 +98,12 @@ public class MovementController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        SetGroundingData();
+        GetGroundingData(collider, groundingRayLength, out RaycastHit newGroundingData);
+        if (newGroundingData.collider != null && groundingData.collider == null)
+        {
+            onLand.Invoke(newGroundingData);
+        }
+        groundingData = newGroundingData; // Update grounding data
 
         /*
         if (movementInput.sqrMagnitude > 0)

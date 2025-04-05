@@ -9,6 +9,7 @@ public class PhysicsAffectedAI : MonoBehaviour
     [SerializeField] AI rootAI;
     [SerializeField] Rigidbody rigidbody;
     [SerializeField] CapsuleCollider collider;
+    [SerializeField] float groundingRayLength = 0.01f;
     public Ragdoll ragdoll;
 
     NavMeshAgent navMeshAgent => rootAI.agent;
@@ -106,16 +107,21 @@ public class PhysicsAffectedAI : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        // Update physics collider size to match NavMeshAgent size
+        collider.radius = navMeshAgent.radius;
+        collider.height = navMeshAgent.height;
+
+        // Check if AI is animated, and standing grounded on a valid NavMesh. Disable gravity if so.
+        MovementController.GetGroundingData(collider, groundingRayLength, out RaycastHit groundingData);
+        bool agentMoving = !ragdollActive && groundingData.collider != null;
+        rigidbody.useGravity = !agentMoving;
+
         // If the ragdoll is active, ensure the AI's orientation lines up with the ragdoll's (they're only separated so the physics don't bug out)
         if (ragdollActive)
         {
             UpdateBasePositionToMatchRagdoll();
             return;
         }
-
-        // Update physics collider size to match NavMeshAgent size
-        collider.radius = navMeshAgent.radius;
-        collider.height = navMeshAgent.height;
 
         // Instead of letting the agent directly modify the position, retrieve the desired movement changes and apply them to the rigidbody
         Vector3 currentPosition = rigidbody.transform.position;
@@ -126,7 +132,6 @@ public class PhysicsAffectedAI : MonoBehaviour
             rigidbody.MovePosition(currentPosition + (Time.fixedDeltaTime * velocity));
         }
     }
-
 
     void UpdateBasePositionToMatchRagdoll()
     {

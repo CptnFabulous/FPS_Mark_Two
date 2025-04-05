@@ -120,13 +120,25 @@ public readonly struct MiscFunctions
         return list;
     }
     public static bool IsLayerInLayerMask(LayerMask mask, int layer) => mask == (mask | (1 << layer));
+
+    static Dictionary<int, LayerMask> physicsLayerDictionary = new Dictionary<int, LayerMask>();
+
     public static LayerMask GetPhysicsLayerMask(int currentLayer)
     {
+        if (physicsLayerDictionary.ContainsKey(currentLayer))
+        {
+            return physicsLayerDictionary[currentLayer];
+        }
+
         int finalMask = 0;
         for (int i = 0; i < 32; i++)
         {
-            if (!Physics.GetIgnoreLayerCollision(currentLayer, i)) finalMask = finalMask | (1 << i);
+            bool ignore = Physics.GetIgnoreLayerCollision(currentLayer, i);
+            if (!ignore) finalMask = finalMask | (1 << i);
         }
+
+        physicsLayerDictionary[currentLayer] = finalMask;
+
         return finalMask;
     }
     public static Vector3 GetAverageCollisionNormal(Collision collision)
