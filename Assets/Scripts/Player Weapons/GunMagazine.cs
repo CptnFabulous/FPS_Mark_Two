@@ -26,6 +26,7 @@ public class GunMagazine : MonoBehaviour
 
     AmmunitionInventory inventory => (modeServing != null) ? modeServing.ammo : null;
     AmmunitionType type => modeServing.stats.ammoType;
+    public bool inSequence => currentSequence != null;
 
     private void OnEnable()
     {
@@ -82,13 +83,7 @@ public class GunMagazine : MonoBehaviour
         currentlyReloading = true;
 
         // If user is currently aiming down sights, cancel it
-        GunADS ads = modeServing.optics;
-        if (ads != null && ads.IsAiming)
-        {
-            ads.IsAiming = false;
-            yield return new WaitUntil(() => !ads.IsAiming && !ads.IsTransitioning);
-        }
-
+        if (modeServing.adsPresent) yield return modeServing.adsHandler.ChangeADSAsync(false);
 
         onReloadStart.Invoke();
         yield return new WaitForSeconds(startTransitionDelay);

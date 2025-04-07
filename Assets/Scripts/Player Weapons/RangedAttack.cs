@@ -9,6 +9,8 @@ public class RangedAttack : WeaponMode
     public GunMagazine magazine;
     public GunADS optics;
 
+    public ADSHandler adsHandler => (User != null && User.weaponHandler != null) ? User.weaponHandler.adsHandler : null;
+    public bool adsPresent => optics != null && adsHandler != null;
     public override LayerMask attackMask => stats.projectilePrefab.detection;
     public int shotsInBurst { get; private set; }
 
@@ -16,13 +18,11 @@ public class RangedAttack : WeaponMode
     {
         get
         {
+            // If in the middle of reloading weapon
             if (currentlyReloading) return true;
 
-            if (optics != null)
-            {
-                // If player is currently aiming down sights, or still transitioning back to hipfiring
-                if (optics.IsAiming || optics.IsTransitioning) return true;
-            }
+            // If player is currently aiming down sights, or still transitioning back to hipfiring
+            if (adsPresent && (adsHandler.currentlyAiming || adsHandler.betweenStates)) return true;
 
             return false;
         }
@@ -37,27 +37,32 @@ public class RangedAttack : WeaponMode
 
     private void OnEnable()
     {
-        if (optics != null) optics.enabled = true;
+        if (magazine != null)
+        {
+            magazine.modeServing = this;
+            magazine.enabled = true;
+        }
 
-        magazine.modeServing = this;
-        magazine.enabled = true;
+        if (adsHandler != null) adsHandler.currentAttack = this;
     }
     protected override void OnDisable()
     {
         base.OnDisable();
-        optics.enabled = false;
-        magazine.enabled = false;
+        if (magazine != null) magazine.enabled = false;
+
+        if (adsHandler != null && adsHandler.currentAttack == this) adsHandler.currentAttack = null;
     }
 
     protected override void OnSecondaryInputChanged(bool held)
     {
-        if (optics == null) return;
+        if (User == null) return;
         WeaponHandler handler = User.weaponHandler;
         if (handler == null) return;
 
-        bool desiredState = MiscFunctions.GetToggleableInput(optics.IsAiming, held, handler.toggleADS);
-        Debug.Log($"Attempting to set ADS to {desiredState}, disabled = {handler.disableADS}");
-        optics.IsAiming = (!handler.disableADS) && desiredState;
+        if (!adsPresent) return;
+        if (adsHandler.currentAttack != this) adsHandler.currentAttack = this;
+        bool desiredState = MiscFunctions.GetToggleableInput(handler.adsHandler.currentlyAiming, held, handler.toggleADS);
+        handler.adsHandler.currentlyAiming = desiredState;
     }
     public override void OnTertiaryInput()
     {
@@ -155,5 +160,25 @@ public class RangedAttack : WeaponMode
         Notification<AttackMessage>.Transmit(newMessage);
 
         timeOfLastMessage = Time.time; // Resets time
+    }
+
+    public override IEnumerator SwitchFrom()
+    {
+        Debug.Log("Switching away from " + this);
+        // Cancel reload
+        if (magazine != null)
+        {
+            Debug.Log("Cancelling reload");
+            magazine.CancelReload();
+            yield return new WaitWhile(() => magazine.inSequence);
+        }
+        
+        if (optics != null)
+        {
+            Debug.Log("Cancelling ADS");
+            yield return adsHandler.ChangeADSAsync(false);
+        }
+
+        yield return base.SwitchFrom();
     }
 }

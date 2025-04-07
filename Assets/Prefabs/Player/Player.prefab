@@ -1379,6 +1379,7 @@ MonoBehaviour:
   offhandAttacks: {fileID: 2532039744584986819}
   ammo: {fileID: 7479822334647491782}
   swayHandler: {fileID: 395139178566883132}
+  adsHandler: {fileID: 519165876174519061}
   holdingSocket: {fileID: 5952785222623807978}
   weaponSelector: {fileID: 1942817378809579715}
   selectorInfo: {fileID: 7605556675667947530}
@@ -1415,6 +1416,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   onSwitchWeapon:
+    m_PersistentCalls:
+      m_Calls: []
+  onWeaponModeSwitch:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &745592948619609687
@@ -1748,6 +1752,7 @@ GameObject:
   - component: {fileID: 395139178566883132}
   - component: {fileID: 2802680270846931}
   - component: {fileID: 6034779799005031584}
+  - component: {fileID: 519165876174519061}
   m_Layer: 6
   m_Name: Aim Axis
   m_TagString: Untagged
@@ -2005,6 +2010,19 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &519165876174519061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785221988775329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8742bf3c19cc7534b8d96ef51766d937, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 5952785220977947003}
 --- !u!1 &5952785222623807981
 GameObject:
   m_ObjectHideFlags: 0
@@ -3103,8 +3121,8 @@ MonoBehaviour:
   m_MiddleClickAction: {fileID: 2194633782185906745, guid: 03310ca5cf395c649aa62c1937201b43, type: 3}
   m_RightClickAction: {fileID: 3337835109438569371, guid: 03310ca5cf395c649aa62c1937201b43, type: 3}
   m_ScrollWheelAction: {fileID: -7557945217216626100, guid: 03310ca5cf395c649aa62c1937201b43, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6847071602830790610, guid: 03310ca5cf395c649aa62c1937201b43, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7719453476654581767, guid: 03310ca5cf395c649aa62c1937201b43, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 0}
+  m_TrackedDeviceOrientationAction: {fileID: 0}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0

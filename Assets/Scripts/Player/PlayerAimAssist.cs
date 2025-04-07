@@ -56,7 +56,7 @@ public class PlayerAimAssist : MonoBehaviour
         if (shouldUse == false) return;
 
         // Check if the user is hip-firing. If the sights are set to only activate during ADS, cancel.
-        bool usingAds = currentAttack.optics != null && currentAttack.optics.IsAiming;
+        bool usingAds = weaponHandler.IsUsingADS(out _);
         if (disableWhileHipfiring && !usingAds) return;
         #endregion
 

@@ -115,7 +115,9 @@ public class LookController : MonoBehaviour, ICharacterLookController
 
         Vector2 value = rawAimInput; // Get raw input value
         bool usingGamepad = this.usingGamepad;
-        bool inADS = weaponHandler != null && weaponHandler.IsUsingADS;
+
+        RangedAttack currentMode = null;
+        bool inADS = weaponHandler != null && weaponHandler.IsUsingADS(out currentMode);
 
         #region Aim acceleration
         // If player is using a gamepad and out of ADS, apply mouse acceleration
@@ -142,7 +144,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
         {
             value *= usingGamepad ? gamepadMultiplierWhileAiming : mouseMultiplierWhileAiming;
             // Reduced further based on magnification
-            value /= (weaponHandler.CurrentWeapon.CurrentMode as RangedAttack).optics.magnification;
+            value /= currentMode.optics.magnification;
         }
         #endregion
 

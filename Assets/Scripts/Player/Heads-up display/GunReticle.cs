@@ -20,6 +20,7 @@ public class GunReticle : MonoBehaviour
     float currentAngle = float.MinValue;
 
     Camera playerCamera => handler.controller.movement.lookControls.worldViewCamera;
+    ADSHandler adsHandler => handler.adsHandler;
     RangedAttack mode
     {
         get
@@ -117,23 +118,30 @@ public class GunReticle : MonoBehaviour
         // Do not show reticle if currently in the weapon selector
         if (handler.weaponSelector.menuIsOpen) return 0;
 
-        if (ads != null)
-        {
-            // If the reticle is never meant to be visible, show nothing
-            if (ads.hideMainReticle) return 0;
-            // If ADS does show reticle normally, have it lerp in visibility based on the ADS value.
-            return Mathf.Lerp(0, 1, animationCurveForADS.Evaluate(ads.timer));
-        }
+        // if no ADS, just make the reticle fully visible.
+        if (ads == null) return 1;
 
-        return 1; // Make the reticle fully visible.
+        // If the reticle is never meant to be visible, show nothing
+        if (ads.hideMainReticle) return 0;
+        // If ADS does show reticle normally, have it lerp in visibility based on the ADS value.
+        return Mathf.Lerp(0, 1, animationCurveForADS.Evaluate(adsHandler.timer));
     }
     float ReticleAngle()
     {
         float angle = handler.aimSwayAngle + mode.stats.shotSpread;
 
-        //if (ads != null) angle = Mathf.Lerp(angle, 0, ads.timer);
-        if (ads != null) angle = Mathf.Lerp(0, angle, animationCurveForADS.Evaluate(ads.timer));
+        if (ads == null) return angle;
+
+        // If ADS is present, animate angle so it shrinks when player activates it
+        return Mathf.Lerp(0, angle, animationCurveForADS.Evaluate(adsHandler.timer));
+        /*
+        if (ads != null)
+        {
+            //angle = Mathf.Lerp(angle, 0, ads.timer);
+            angle = Mathf.Lerp(0, angle, animationCurveForADS.Evaluate(ads.timer));
+        }
 
         return angle;
+        */
     }
 }

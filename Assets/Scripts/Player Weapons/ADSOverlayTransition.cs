@@ -19,10 +19,10 @@ public class ADSOverlayTransition : MonoBehaviour
     {
         ads.onADSLerp.AddListener(OnLerp);
         overlayCanvas.planeDistance = planeDistance;
-        OnLerp(0);
+        OnLerp(null, 0);
     }
 
-    public void OnLerp(float t)
+    public void OnLerp(ADSHandler handler, float t)
     {
         // Hide canvas completely if ADS is not active
         overlayCanvas.gameObject.SetActive(t > 0);
@@ -31,10 +31,12 @@ public class ADSOverlayTransition : MonoBehaviour
         // Enable overlay and disable weapon visuals, if past the desired threshold
         bool showOverlay = t > switchThreshold;
 
+        // Check if the weapon mode our ADS function is attached to is being used by a player.
+
         // If the ADS function is attached to a gun that's currently being used by a player, assign the world camera to the canvas
-        if (showOverlay && ads.enabled && !ads.notSetupProperly)
+        if (showOverlay && handler.enabled)
         {
-            overlayCanvas.worldCamera = ads.lookControls.headsUpDisplayCamera;
+            overlayCanvas.worldCamera = handler.lookControls.headsUpDisplayCamera;
         }
 
         // Set visibility of overlay and weapon model

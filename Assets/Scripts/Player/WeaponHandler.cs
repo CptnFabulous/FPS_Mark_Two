@@ -19,6 +19,7 @@ public class WeaponHandler : MonoBehaviour
     public AimSwayHandler swayHandler;
 
     [Header("Accessibility")]
+    public ADSHandler adsHandler;
     public Transform holdingSocket;
     public RadialMenu weaponSelector;
     public WeaponSelectorHUD selectorInfo;
@@ -44,14 +45,12 @@ public class WeaponHandler : MonoBehaviour
     /// <summary>
     /// Is the player currently in ADS on a particular weapon?
     /// </summary>
-    public bool IsUsingADS
+    public bool IsUsingADS(out RangedAttack r)
     {
-        get
-        {
-            if (CurrentWeapon == null) return false;
-            RangedAttack r = CurrentWeapon.CurrentMode as RangedAttack;
-            return r != null && r.optics != null && r.optics.IsAiming;
-        }
+        r = adsHandler.currentAttack;
+        if (r == null) return false;
+
+        return adsHandler.currentlyAiming;
     }
     public bool WeaponReady
     {

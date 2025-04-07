@@ -53,7 +53,7 @@ public class PlayerThermalVision : StateFunction
         if (rangedAttack == null) return;
 
         if (rangedAttack.optics == null) return;
-        rangedAttack.optics.IsAiming = false;
+        player.weaponHandler.adsHandler.currentlyAiming = false;
     }
     private void OnDisable()
     {
