@@ -2963,8 +2963,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6088402614731734234}
   - {fileID: 4959695925424120059}
+  - {fileID: 6088402614731734234}
   m_Father: {fileID: 4122616872743097398}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2984,7 +2984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ff8d2c0423edb449ce6d56e3171e7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  propCarrier: {fileID: 0}
+  throwHandler: {fileID: 0}
   throwGUI: {fileID: 3645874246328105794}
 --- !u!114 &7289821381744850340
 MonoBehaviour:
@@ -3823,6 +3823,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3645874246328105794}
     m_Modifications:
+    - target: {fileID: 494504312178736077, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 495351008913381250, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -3833,7 +3837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 495351008913381250, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100.47
+      value: 93.49
       objectReference: {fileID: 0}
     - target: {fileID: 495351008913381250, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3859,9 +3863,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4283170069590342104, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4655294580705030818, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: actionNameDisplay
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5632244139362270133, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6007850466803219594, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_text
+      value: Cancel
       objectReference: {fileID: 0}
     - target: {fileID: 6293359534163153940, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_text
@@ -3878,6 +3894,10 @@ PrefabInstance:
     - target: {fileID: 7007861455728887789, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_Name
       value: 'Tutorial prompt: Interact'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7228348856183676685, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_Pivot.x
@@ -3909,7 +3929,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150.47
+      value: 143.48999
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_SizeDelta.y
@@ -3945,11 +3965,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 85.235
+      value: 81.744995
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3981,6 +4001,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3645874246328105794}
     m_Modifications:
+    - target: {fileID: 494504312178736077, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 495351008913381250, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -3991,7 +4015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 495351008913381250, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100.47
+      value: 83.03
       objectReference: {fileID: 0}
     - target: {fileID: 495351008913381250, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -4017,6 +4041,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4283170069590342104, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4655294580705030818, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: actionName
       value: Offhand attack
@@ -4024,6 +4052,14 @@ PrefabInstance:
     - target: {fileID: 4655294580705030818, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: actionNameDisplay
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5632244139362270133, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6007850466803219594, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_text
+      value: Throw
       objectReference: {fileID: 0}
     - target: {fileID: 6293359534163153940, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_text
@@ -4040,6 +4076,10 @@ PrefabInstance:
     - target: {fileID: 7007861455728887789, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_Name
       value: 'Tutorial prompt: Offhand Attack'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7228348856183676685, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_Pivot.x
@@ -4071,7 +4111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150.47
+      value: 133.03
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_SizeDelta.y
@@ -4107,11 +4147,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 85.235
+      value: 76.515
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -80
+      value: -30
       objectReference: {fileID: 0}
     - target: {fileID: 8077564058226496968, guid: 557ff3b0325d38f468522f337207c16c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
