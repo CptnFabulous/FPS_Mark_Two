@@ -10,7 +10,7 @@ public class SingleInput : MonoBehaviour
 {
     [SerializeField] string mapName;
     [SerializeField] string actionName;
-    [SerializeField, Tooltip("Optional, to directly assign a visual prompt")] GUIButtonPromptBase guiPrompt;
+    [SerializeField, Tooltip("Optional, to directly assign a visual prompt")] InputPrompt inputPrompt;
 
     public UnityEvent<InputAction.CallbackContext> onActionPerformed;
 
@@ -33,9 +33,9 @@ public class SingleInput : MonoBehaviour
         //Debug.Log(action);
         action.performed += onActionPerformed.Invoke;
 
-        if (guiPrompt != null)
+        if (inputPrompt != null)
         {
-            guiPrompt.AssignAction(action, player);
+            inputPrompt.AssignAction(action, player);
         }
     }
 }

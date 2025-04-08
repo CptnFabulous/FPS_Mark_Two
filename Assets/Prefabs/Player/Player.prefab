@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Scroll Vision Modes
-  guiPrompt: {fileID: 0}
+  inputPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -468,7 +468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Fire
-  guiPrompt: {fileID: 0}
+  inputPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -574,7 +574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Toggle Thermal Vision
-  guiPrompt: {fileID: 7302251407855957413}
+  inputPrompt: {fileID: 6043884764307537164}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -1418,9 +1418,6 @@ MonoBehaviour:
   onSwitchWeapon:
     m_PersistentCalls:
       m_Calls: []
-  onWeaponModeSwitch:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &745592948619609687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2243,7 +2240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: ADS
-  guiPrompt: {fileID: 0}
+  inputPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2708,7 +2705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Toggle Flashlight
-  guiPrompt: {fileID: 5610505858182977078}
+  inputPrompt: {fileID: 1650575306266163144}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2778,7 +2775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Offhand Attack
-  guiPrompt: {fileID: 0}
+  inputPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -2990,7 +2987,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Melee Attack
-  guiPrompt: {fileID: 0}
+  inputPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -3400,7 +3397,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Interact
-  guiPrompt: {fileID: 0}
+  inputPrompt: {fileID: 0}
   onActionPerformed:
     m_PersistentCalls:
       m_Calls: []
@@ -4540,6 +4537,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e07351237cd1de842ad42565d411ad21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1650575306266163144 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9026046894894531074, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c93bbafbdbc5b494ab71afad3bdfe2e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1881373689726421184 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8192342176099384586, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -4572,17 +4580,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2415393206806800414, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5610505858182977078 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2771532298272433148, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1e1599028f55ac458446f26fd41c75f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!223 &5952785221938061819 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 4122616872743097393, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -4593,15 +4590,15 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4122616872743097398, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7302251407855957413 stripped
+--- !u!114 &6043884764307537164 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1079806582716088431, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4056267174510086342, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1e1599028f55ac458446f26fd41c75f, type: 3}
+  m_Script: {fileID: 11500000, guid: c93bbafbdbc5b494ab71afad3bdfe2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &7605556675667947530 stripped

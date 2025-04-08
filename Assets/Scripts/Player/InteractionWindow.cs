@@ -17,7 +17,8 @@ public class InteractionWindow : MonoBehaviour
     public RectTransform highlight;
     public TMP_Text interactableName;
     public TMP_Text action;
-    public GUIButtonPrompt prompt;
+    public InputPrompt prompt;
+    //public GUIButtonPrompt prompt;
     public Image progressBar;
 
     [Header("Physics interaction")]

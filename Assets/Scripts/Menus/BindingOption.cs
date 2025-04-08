@@ -12,21 +12,13 @@ public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandl
     public Button buttonToRebind;
     public RectTransform rectTransform;
 
-
-
-
     InputAction action;
     int bindingIndex;
     string currentPathInMenu;
     ControlOptions baseMenu;
 
-    InputBinding binding
-    {
-        get
-        {
-            return action.bindings[bindingIndex];
-        }
-    }
+    InputBinding binding => action.bindings[bindingIndex];
+
     static readonly List<char> bindingPunctuationToAddSpaces = new List<char>
     {
         '&'
@@ -54,7 +46,6 @@ public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandl
             bindingName.text = displayBindingGroups;
         }
         
-        shownBinding.enabled = false;
         buttonToRebind.onClick.AddListener(()=> menu.SetPending(this));
     }
     public void Refresh()

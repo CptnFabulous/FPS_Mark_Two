@@ -4,53 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-
-
-public abstract class GUIButtonPromptBase : MonoBehaviour
+public class GUIButtonPrompt : MonoBehaviour
 {
-    [SerializeField] bool _inputDisabled;
-
-    protected InputAction assignedInput;
-    protected PlayerInput player;
-
-    public bool inputDisabled
-    {
-        get => _inputDisabled;
-        set
-        {
-            _inputDisabled = value;
-            //DetermineCurrentBinding(player);
-        }
-    }
-
-
-    protected virtual void OnEnable()
-    {
-        //player.onControlsChanged += DetermineCurrentBinding;
-    }
-    private void OnDisable()
-    {
-        //player.onControlsChanged -= DetermineCurrentBinding;
-    }
-    private void LateUpdate() => DetermineCurrentBinding();
-
-    public void AssignAction(InputAction newInput, PlayerInput newPlayer)
-    {
-        assignedInput = newInput;
-        player = newPlayer;
-
-        bool active = assignedInput != null && player != null;
-        gameObject.SetActive(active);
-        if (active == false) return;
-
-        DetermineCurrentBinding();
-    }
-    protected abstract void DetermineCurrentBinding();
-}
-
-public class GUIButtonPrompt : GUIButtonPromptBase
-{
-    //[SerializeField] bool _inputDisabled;
+    public bool inputDisabled;
 
     [Header("GUI elements")]
     [SerializeField] Image graphic;
@@ -96,6 +52,7 @@ public class GUIButtonPrompt : GUIButtonPromptBase
         {"<Mouse>/rightButton", mouseRight },
         {"<Mouse>/middleButton", mouseMiddle },
         {"<Pointer>/delta", mouseMove },
+        {"<Mouse>/scroll", mouseScrollWheel },
         {"<Mouse>/scroll/y", mouseScrollWheel },
 
         {"<Gamepad>/leftStick", leftStickMove },
@@ -122,16 +79,9 @@ public class GUIButtonPrompt : GUIButtonPromptBase
         {"<Gamepad>/select", select },
     };
 
-    protected override void DetermineCurrentBinding()
+    public void Refresh(InputBinding binding) => Refresh(binding.effectivePath);
+    public void Refresh(string path)
     {
-        graphic.enabled = player != null;
-        if (player == null)
-        {
-            graphic.sprite = null;
-            keyNameText.text = "";
-            return;
-        }
-
         if (inputDisabled)
         {
             graphic.sprite = disabled;
@@ -139,27 +89,10 @@ public class GUIButtonPrompt : GUIButtonPromptBase
             return;
         }
 
-        // Check if an available binding matches the current control scheme
-        foreach (InputBinding b in assignedInput.bindings)
-        {
-            bool match = b.groups.Contains(player.currentControlScheme);
-            if (match == false) continue;
-            Refresh(b);
-            return;
-        }
-
-        // Show that a binding was not found
-        Debug.Log("Undefined");
-        Refresh(null);
-    }
-    public void Refresh(InputBinding binding) => Refresh(binding.effectivePath);
-    public void Refresh(string path)
-    {
         // If a binding wasn't found, display the appropriate text
         if (path == null)
         {
             Debug.Log("Undefined path");
-            Debug.Log(assignedInput);
             graphic.sprite = undefined;
             keyNameText.text = "";
             return;

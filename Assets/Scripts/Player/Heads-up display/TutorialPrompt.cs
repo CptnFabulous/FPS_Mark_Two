@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class TutorialPrompt : MonoBehaviour
 {
-    public GUIButtonPrompt input;
+    public InputPrompt bindingDisplay;
     public TMP_Text actionNameDisplay;
 
     string namePrefix = "Tutorial prompt: ";
@@ -35,7 +35,10 @@ public class TutorialPrompt : MonoBehaviour
         if (action == null) return;
 
         name = namePrefix + action.name;
-        if (runtime) input.AssignAction(action, targetedPlayer);
+        if (runtime)
+        {
+            bindingDisplay.AssignAction(action, targetedPlayer);
+        }
 
         if (actionNameDisplay != null) actionNameDisplay.text = action.name;
     }
