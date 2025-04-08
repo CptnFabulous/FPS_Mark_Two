@@ -53,6 +53,7 @@ public class InputPrompt : MonoBehaviour
                 {
                     // Bind just one of the graphics and disable the others
                     positive.gameObject.SetActive(true);
+                    positive.inputDisabled = inputDisabled;
                     positive.Refresh(binding);
                     negative.gameObject.SetActive(false);
                     yPositive.gameObject.SetActive(false);
@@ -77,6 +78,7 @@ public class InputPrompt : MonoBehaviour
             if (prompt == null) continue;
 
             prompt.gameObject.SetActive(true);
+            prompt.inputDisabled = inputDisabled;
             prompt.Refresh(binding);
         }
     }
