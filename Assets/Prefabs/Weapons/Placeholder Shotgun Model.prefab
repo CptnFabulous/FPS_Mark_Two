@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 1866577818699590852}
   - component: {fileID: 3878389066073242437}
   - component: {fileID: 6109594086077682620}
+  - component: {fileID: 1004255261275299458}
   m_Layer: 0
   m_Name: Shell Ejection
   m_TagString: Untagged
@@ -3964,7 +3965,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 1503
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -5002,6 +5003,19 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &1004255261275299458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851114888754034927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b04208d9df46a7c4e934278bef8d8312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  degreesCelsius: 260
 --- !u!1 &2913566223726966525
 GameObject:
   m_ObjectHideFlags: 0
@@ -5146,10 +5160,6 @@ MonoBehaviour:
   onADSLerp:
     m_PersistentCalls:
       m_Calls: []
-  viewingCamera: {fileID: 0}
-  sightPicture: {fileID: 0}
-  sightTextureDimensions: {x: 512, y: 512}
-  sightTextureDepthBuffer: 1
   hipFireOrientation: {fileID: 0}
   modelOrientationTransform: {fileID: 0}
   modelPivot: {fileID: 4638640600411629617}
