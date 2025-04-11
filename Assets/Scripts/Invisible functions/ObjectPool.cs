@@ -78,12 +78,21 @@ public static class ObjectPool
     /// <returns></returns>
     public static T RequestObject<T>(T prefab, bool activeByDefault = true, int maxPrefabs = 0) where T : Component
     {
+        // Only this function needs to have a generic type, because each prefab is separated by being dictionary keys anyway.
+        // I tried setting it up to use completely generic types, but this meant having to declare the type each time ObjectPool is referenced.
+
+        // Don't do anything if there's no prefab specified
+        if (prefab == null) return null;
+
         // Make sure a dictionary actually exists
         if (dictionary == null) dictionary = new Dictionary<Component, IndividualObjectPool>();
+
+        // TO DO: delete pools whose original prefabs have been destroyed
 
         // Check if a pool already exists for this prefab
         if (dictionary.ContainsKey(prefab) == false)
         {
+            // If not, create one
             dictionary.Add(prefab, new IndividualObjectPool(prefab));
         }
 
@@ -98,6 +107,9 @@ public static class ObjectPool
     /// <param name="toDismiss">The component whose GameObject you want to get rid of.</param>
     public static void DismissObject(Component toDismiss)
     {
+        // Don't proceed if there's nothing to dismiss
+        if (toDismiss == null) return;
+
         // Iterate through the pools to see if it's part of one of them. If so, delete and end the function
         foreach (IndividualObjectPool pool in dictionary.Values)
         {
