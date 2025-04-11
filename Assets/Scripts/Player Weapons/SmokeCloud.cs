@@ -9,8 +9,8 @@ public class SmokeCloud : MonoBehaviour
     ParticleSystem.Particle[] particleArray;
     SphereCollider[] colliderArray;
 
-    static Queue<SphereCollider> colliderPool; // Contains all inactive colliders
-    static Transform poolParent; // The parent for all colliders, so smoke plumes with rigidbody physics don't behave weirdly
+    static SphereCollider smokeColliderPrefab;
+    static Transform activeSmokeCloudParent;
 
     public bool emitting
     {
@@ -40,24 +40,13 @@ public class SmokeCloud : MonoBehaviour
         
         ParticleSystem.MainModule main = particleSystem.main;
         main.playOnAwake = false;
-        //main.startColor = Color.green;
-
         //ParticleSystem.CollisionModule collision = particleSystem.collision;
         //collision.collidesWith = MiscFunctions.GetPhysicsLayerMask(collisionLayer);
-
-        // Set up object pool handlers (runs here to minimise the amount of checks)
-        if (colliderPool == null) colliderPool = new Queue<SphereCollider>();
-        if (poolParent == null)
-        {
-            poolParent = new GameObject("SmokeCloud collider pool parent").transform;
-            Object.DontDestroyOnLoad(poolParent);
-        }
     }
     void FixedUpdate()
     {
         if (emitting == false && particleSystem.particleCount <= 0)
         {
-            Debug.Log($"Disabling {this} as there is currently no smoke to manage");
             enabled = false;
             return;
         }
@@ -71,35 +60,17 @@ public class SmokeCloud : MonoBehaviour
             // If we've accounted for all the particles, place all excess colliders back in the pool
             if (i >= particleSystem.particleCount)
             {
-                #region Remove excess collider from array and proceed to next entry
-                if (c != null)
-                {
-                    c.gameObject.SetActive(false);
-                    colliderPool.Enqueue(c);
-                    colliderArray[i] = null;
-                }
+                ObjectPool.DismissObject(c);
+                colliderArray[i] = null;
                 continue;
-                #endregion
             }
-            else if (c == null) // If a collider is required but not assigned, get one
-            {
-                #region Get a collider
-                // Get one from the pool. If there aren't any more, create one.
-                if (colliderPool.Count > 0)
-                {
-                    c = colliderPool.Dequeue();
-                }
-                else
-                {
-                    GameObject g = new GameObject("Smoke Collider");
-                    g.transform.parent = poolParent;
-                    c = g.AddComponent<SphereCollider>();
-                }
 
+            // If a collider is required but not assigned, get one
+            if (c == null)
+            {
+                c = SpawnParticleCollider();
                 colliderArray[i] = c;
                 c.gameObject.layer = collisionLayer;
-                c.gameObject.SetActive(true);
-                #endregion
             }
 
             // Assign collider variables
@@ -107,5 +78,34 @@ public class SmokeCloud : MonoBehaviour
             c.radius = p.GetCurrentSize(particleSystem) / 2;
             c.transform.position = p.position;
         }
+    }
+    private void OnDisable()
+    {
+        // Ensure all colliders are deactivated and returned to the pool
+        for (int i = 0; i < colliderArray.Length; i++)
+        {
+            ObjectPool.DismissObject(colliderArray[i]);
+            colliderArray[i] = null;
+        }
+    }
+
+    static SphereCollider SpawnParticleCollider()
+    {
+        if (smokeColliderPrefab == null)
+        {
+            smokeColliderPrefab = new GameObject("Smoke Collider").AddComponent<SphereCollider>();
+            Object.DontDestroyOnLoad(smokeColliderPrefab);
+        }
+        if (activeSmokeCloudParent == null)
+        {
+            activeSmokeCloudParent = new GameObject("Active Smoke Cloud Parent").transform;
+            Object.DontDestroyOnLoad(activeSmokeCloudParent);
+        }
+
+        SphereCollider c = ObjectPool.RequestObject(smokeColliderPrefab);
+        // Contains active particle colliders so they behave consistently
+        // (regardless of what crazy stuff the parent particle system is doing)
+        c.transform.SetParent(activeSmokeCloudParent);
+        return c;
     }
 }
