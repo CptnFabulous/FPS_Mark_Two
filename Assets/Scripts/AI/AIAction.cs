@@ -62,16 +62,20 @@ public abstract class AIAction : Action
 
 
 
+    static RaycastHit[] resultArray = new RaycastHit[100];
+    static List<RaycastHit> resultList = new List<RaycastHit>();
+
     public static bool RaycastWithExceptions(Ray ray, out RaycastHit hit, float distance, LayerMask layerMask, params IEnumerable<Collider>[] exceptionLists)
     {
         // Run RaycastAll to get all colliders in the path of the object
-        List<RaycastHit> results = new List<RaycastHit>(Physics.RaycastAll(ray, distance, layerMask));
+        resultList.Clear();
+        resultList.AddRange(Physics.RaycastAll(ray, distance, layerMask));
         // Sort by distance
-        MiscFunctions.SortListWithOnePredicate(results, (rh) => rh.distance);
+        MiscFunctions.SortListWithOnePredicate(resultList, (rh) => rh.distance);
 
         // Iterate through the options
         // Return the first result that isn't one of the exceptions
-        foreach (RaycastHit rh in results)
+        foreach (RaycastHit rh in resultList)
         {
             if (IsExceptionCollider(rh.collider, exceptionLists)) continue;
 
@@ -81,45 +85,44 @@ public abstract class AIAction : Action
         }
 
         // If nothing else was found, return the first exception collider (or a blank value if nothing was hit at all)
-        hit = results.Count > 0 ? results[0] : new RaycastHit();
+        hit = resultList.Count > 0 ? resultList[0] : new RaycastHit();
         return false;
     }
 
     public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, params IEnumerable<Collider>[] exceptionLists)
     {
+        // Run RaycastAll to get all colliders in the path of the object
         // Calculate direction and use magnitude for distance
         Vector3 direction = to - from;
+        int numberOfResults = Physics.RaycastNonAlloc(from, direction, resultArray, direction.magnitude, detection);
+        for (int i = 0; i < numberOfResults; i++)
+        {
+            // Check each collider to see if it's an exception
+            RaycastHit rh = resultArray[i];
+            if (IsExceptionCollider(rh.collider, exceptionLists)) continue;
+            // If not, that means line of sight is blocked
+            Debug.DrawLine(from, to, Color.red);
+            return false;
+        }
 
-        // Run RaycastAll to get all colliders in the path of the object
-        List<RaycastHit> results = new List<RaycastHit>(Physics.RaycastAll(from, direction, direction.magnitude, detection));
-        // Remove all results that are mentioned in the exceptions arrays
-        results.RemoveAll((rh) => IsExceptionCollider(rh.collider, exceptionLists));
-
-        // If the results array, minus the exception colliders, is greater than zero, then it means something is blocking line of sight
-        bool nothingBlocking = results.Count <= 0;
-        Debug.DrawLine(from, to, nothingBlocking ? Color.green : Color.red);
-        return nothingBlocking;
+        Debug.DrawLine(from, to, Color.green);
+        return true;
     }
     public static bool LineOfSightToTarget(Ray ray, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, params IEnumerable<Collider>[] exceptionLists)
     {
-        RaycastHit[] hits = Physics.RaycastAll(ray, viewRange, viewDetection);
-        foreach (RaycastHit rh in hits)
+        int numberOfResults = Physics.RaycastNonAlloc(ray, resultArray, viewRange, viewDetection);
+        for (int i = 0; i < numberOfResults; i++)
         {
-            // If it hit one of the desired colliders, return true
-            if (MiscFunctions.ArrayContains(targetColliders, rh.collider))
-            {
-                hit = rh;
-                return true;
-            }
-            // If it's neither a target nor an exception, line of sight is blocked.
-            if (IsExceptionCollider(rh.collider, exceptionLists) == false)
-            {
-                hit = rh;
-                return false;
-            }
-            // If the collider was one of the exceptions, ignore and proceed to the next value
+            hit = resultArray[i];
+            // If it hit one of the desired colliders, line of sight is confirmed
+            if (MiscFunctions.ArrayContains(targetColliders, hit.collider)) return true;
+            // If it hit an exception, ignore and continue to the next collider
+            if (IsExceptionCollider(hit.collider, exceptionLists)) continue;
+            // If object hit was neither a target nor an exception, that means line of sight is blocked.
+            return false;
         }
 
+        // Target not hit at all somehow
         hit = new RaycastHit();
         return false;
     }

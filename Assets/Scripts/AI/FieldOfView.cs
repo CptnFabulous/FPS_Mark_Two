@@ -21,13 +21,18 @@ public class FieldOfView : MonoBehaviour
     AI _root;
     static List<Vector2Int> gridPointsToCheck = new List<Vector2Int>(); // A cached collection of grid points to check, allowing the checks to fan out in a desired order but without wasting memory on new lists for each call
 
+    static Collider[] overlapSphereResults = new Collider[1024];
+
     public AI rootAI => _root ??= GetComponentInParent<AI>();
 
-    public T FindObjectInFieldOfView<T>(System.Predicate<T> criteria, out RaycastHit hit) where T : Entity
+    public T FindObjectInFieldOfView<T>(System.Predicate<T> criteria, LayerMask cullingMask, out RaycastHit hit) where T : Entity
     {
-        Collider[] overlapSphere = Physics.OverlapSphere(transform.position, viewRange, viewDetection);
-        foreach (Collider c in overlapSphere)
+        int numberOfResults = Physics.OverlapSphereNonAlloc(transform.position, viewRange, overlapSphereResults, cullingMask);
+        //Debug.Log($"Checking for single object, number = {numberOfResults}");
+        for (int i = 0; i < numberOfResults; i++)
         {
+            Collider c = overlapSphereResults[i];
+
             // Check that an entity exists
             T e = EntityCache<T>.GetEntity(c.gameObject);
             if (e == null) continue;
@@ -39,15 +44,19 @@ public class FieldOfView : MonoBehaviour
             // We've found one!
             return e;
         }
+
         hit = new RaycastHit();
         return null;
     }
-    public List<T> FindObjectsInFieldOfView<T>(System.Predicate<T> criteria) where T : Entity
+    public List<T> FindObjectsInFieldOfView<T>(System.Predicate<T> criteria, LayerMask cullingMask) where T : Entity
     {
-        Collider[] overlapSphere = Physics.OverlapSphere(transform.position, viewRange, viewDetection);
+        int numberOfResults = Physics.OverlapSphereNonAlloc(transform.position, viewRange, overlapSphereResults, cullingMask);
+        //Debug.Log($"Checking for multiple objects, number = {numberOfResults}");
         List<T> entities = new List<T>();
-        foreach (Collider c in overlapSphere)
+        for (int i = 0; i < numberOfResults; i++)
         {
+            Collider c = overlapSphereResults[i];
+
             // Check that an entity exists
             T e = EntityCache<T>.GetEntity(c.gameObject);
             if (e == null) continue;

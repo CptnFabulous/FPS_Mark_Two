@@ -5,6 +5,7 @@ using UnityEngine;
 public class AITargetManager : MonoBehaviour
 {
     public Character target;
+    public LayerMask detectionMask = ~0;
 
     [Header("AI data")]
     public AI controlling;
@@ -26,7 +27,7 @@ public class AITargetManager : MonoBehaviour
         RaycastHit hit;
         if (targetExists == false)
         {
-            target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, out hit);
+            target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, detectionMask, out hit);
             canSeeTarget = targetExists ? ViewStatus.Visible : ViewStatus.NotPresent;
         }
         else
