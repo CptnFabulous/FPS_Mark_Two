@@ -12,22 +12,26 @@ public class LevelArea : MonoBehaviour
     {
         get
         {
-            if (boundsGenerated) return b;
-
-            Collider[] children = GetComponentsInChildren<Collider>();
-            if (children == null) return new Bounds();
-
-            b = children[0].bounds;
-            for (int i = 1; i < children.Length; i++)
-            {
-                Collider c = children[i];
-                if (MiscFunctions.IsLayerInLayerMask(AIGridPoints.Current.environmentMask, c.gameObject.layer) == false) continue;
-                b.Encapsulate(c.bounds);
-            }
-
-            boundsGenerated = true;
+            if (!boundsGenerated) GenerateBounds();
             return b;
         }
+    }
+
+    [ContextMenu("Regenerate bounds")]
+    void GenerateBounds()
+    {
+        Collider[] children = GetComponentsInChildren<Collider>();
+        if (children == null) b = new Bounds();
+
+        b = children[0].bounds;
+        for (int i = 1; i < children.Length; i++)
+        {
+            Collider c = children[i];
+            if (MiscFunctions.IsLayerInLayerMask(AIGridPoints.Current.environmentMask, c.gameObject.layer) == false) continue;
+            b.Encapsulate(c.bounds);
+        }
+
+        boundsGenerated = true;
     }
 
     public bool Contains(Entity e) => Contains(e.transform.position);
