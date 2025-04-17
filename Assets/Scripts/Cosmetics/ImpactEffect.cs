@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CptnFabulous.ObjectPool;
 
 [CreateAssetMenu(fileName = "New Impact Effect", menuName = "ScriptableObjects/Impact Effect", order = 0)]
 public class ImpactEffect : ScriptableObject
