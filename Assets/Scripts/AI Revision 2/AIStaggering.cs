@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Events;
 
-public class AIStaggering : AIProcedure
+public class AIStaggering : AIStateFunction
 {
     [Header("Stun data")]
     public float staggerTime = 3;
@@ -24,11 +23,8 @@ public class AIStaggering : AIProcedure
         staggerTime = staggerStateInfo.length;
     }
     */
-    protected override IEnumerator Procedure()
+    public override IEnumerator AsyncProcedure()
     {
-        // Ensure this code switches to the AI's previous state
-        toSwitchToOnEnd = controller.previousState;
-
         // Disable agent pathing (but save original path)
         existingPath = navMeshAgent.path;
         navMeshAgent.ResetPath();
@@ -39,6 +35,7 @@ public class AIStaggering : AIProcedure
         navMeshAgent.path = existingPath;
         existingPath = null;
 
+        // Switch back to the AI's previous state
         stunHandler.ReturnToNormalFunction();
     }
 }

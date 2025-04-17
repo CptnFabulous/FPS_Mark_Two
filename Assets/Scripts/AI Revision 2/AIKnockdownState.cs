@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Events;
 
-public class AIKnockdownState : AIProcedure
+public class AIKnockdownState : AIStateFunction
 {
+    public StateFunction toSwitchToOnEnd;
+
     [Header("Standing up")]
     [SerializeField] float timeBeforeStandingUp = 2;
     [SerializeField] float standUpTime = 2;
@@ -32,7 +33,7 @@ public class AIKnockdownState : AIProcedure
         stunHandler.onStunApplied.AddListener(CheckToStunlock);
     }
 
-    protected override IEnumerator Procedure()
+    public override IEnumerator AsyncProcedure()
     {
         currentlyStandingUp = false;
         if (ragdollLerpHandler != null) ragdollLerpHandler.enabled = false;
@@ -79,11 +80,13 @@ public class AIKnockdownState : AIProcedure
         yield return new WaitForSeconds(standUpTime);
 
         stunHandler.ReturnToNormalFunction();
+
+        if (toSwitchToOnEnd != null) controller.SwitchToState(toSwitchToOnEnd);
+        yield return base.AsyncProcedure();
     }
-    protected override void OnDisable()
+    void OnDisable()
     {
         rootAI.DebugLog("Exiting knockdown state");
-        base.OnDisable();
         EndKnockdown();
     }
 
@@ -97,7 +100,7 @@ public class AIKnockdownState : AIProcedure
         currentlyStandingUp = false;
         if (ragdollLerpHandler != null) ragdollLerpHandler.enabled = false;
 
-        if (existingPath != null)
+        if (existingPath != null && navMeshAgent.enabled)
         {
             navMeshAgent.path = existingPath;
             existingPath = null;
@@ -115,7 +118,7 @@ public class AIKnockdownState : AIProcedure
         if (stunHandler.currentStun < stunlockThreshold) return;
 
         rootAI.DebugLog("Resetting knockdown due to stunlock");
-        ResetProcedure();
+        controller.RestartCurrentState();
     }
     bool RagdollCanStandUp(out NavMeshHit solidGround)
     {

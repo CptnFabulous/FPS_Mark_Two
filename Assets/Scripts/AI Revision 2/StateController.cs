@@ -70,13 +70,7 @@ public class StateController : StateFunction
         // Trigger events that need to occur to match the controller's active state
         onSetActive.Invoke(false);
     }
-    /*
-    public override IEnumerator AsyncEnter()
-    {
-        yield return EnterCurrentStateIfPresentButDisabled();
-        onSetActive.Invoke(true);
-    }
-    */
+
     public override IEnumerator AsyncProcedure()
     {
         yield return EnterCurrentStateIfPresentButDisabled();
@@ -89,6 +83,12 @@ public class StateController : StateFunction
     public override void SwitchToState(StateFunction newState)
     {
         StartCoroutine(TrySwitchState(newState));
+    }
+    public void RestartCurrentState()
+    {
+        StopCurrentCoroutine();
+        // Start new coroutine (and wait on it to finish)
+        currentCoroutine = StartCoroutine(current.AsyncProcedure());
     }
     /// <summary>
     /// Attempts to switch to a new state, but checks if it's necessary first so it doesn't override any current actions.
@@ -175,11 +175,7 @@ public class StateController : StateFunction
         if (current.enabled) yield break;
 
         //rootEntity.DebugLog($"{this}: entering current state {current}");
-        /*
-        // Wait for new state to run its enter function
-        IEnumerator enter = current.AsyncEnter();
-        if (enter != null) yield return enter;
-        */
+        
         // Officially enable new state
         current.enabled = true;
 
@@ -214,4 +210,5 @@ public class StateController : StateFunction
             currentCoroutine = null;
         }
     }
+
 }
