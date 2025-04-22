@@ -9,6 +9,7 @@ public class TrajectoryRenderer : MonoBehaviour
     [SerializeField] Transform reticleEndTransform;
     [SerializeField] int maxVertexCount = 100;
     [SerializeField] float lengthPerSegment;
+    [SerializeField] string velocityMaterialProperty = "_Velocity";
 
     Vector3[] positions;
 
@@ -60,6 +61,9 @@ public class TrajectoryRenderer : MonoBehaviour
         }
         lineRenderer.positionCount = positionCount;
         lineRenderer.SetPositions(positions);
+
+        // Set material animation speed to match velocity
+        lineRenderer.material.SetFloat(velocityMaterialProperty, startVelocity.magnitude);
 
         // Enable/disable and orient reticle for point of impact
         reticleEndTransform.gameObject.SetActive(surfaceHit);
