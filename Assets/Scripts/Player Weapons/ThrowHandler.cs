@@ -119,10 +119,11 @@ public class ThrowHandler : MonoBehaviour
         arcRenderer.mass = holding.mass;
         arcRenderer.hitDetection = attackMask;
         // (A delegate is set up so we don't have to repeatedly input data from our end)
+        float startVelocityAccountingForWeight = startingVelocity / PhysicsCache.TotalMassOfConnectedRigidbodies(holding);
         arcRenderer.getStartPositionAndVelocity = () =>
         {
             CalculateObjectLaunch(out Vector3 origin, out Vector3 direction);
-            return (origin, direction * startingVelocity);
+            return (origin, direction * startVelocityAccountingForWeight);
         };
 
         // Wait while throw input is held
