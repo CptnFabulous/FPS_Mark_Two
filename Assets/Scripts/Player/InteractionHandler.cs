@@ -30,9 +30,13 @@ public class InteractionHandler : MonoBehaviour
     Vector3 aimOrigin => referenceCamera.transform.position;
     Vector3 aimDirection => referenceCamera.transform.forward;
 
-    private void Awake()
+    private void OnEnable()
     {
         input.onActionPerformed.AddListener((_) => AttemptInteraction());
+    }
+    private void OnDisable()
+    {
+        input.onActionPerformed.RemoveListener((_) => AttemptInteraction());
     }
     private void Update()
     {
@@ -42,7 +46,6 @@ public class InteractionHandler : MonoBehaviour
         string msg = null;
 
         bool angleCheck = AngleCheck.CheckForObjectsInCone(aimOrigin, aimDirection, detectionAngle, interactionRange, detectionMask, out returnedValues, out rh, ColliderIsInteractable);
-
 
         // Cache the data on whatever we hit this frame
         targetedInteractable = returnedValues.Item1;
