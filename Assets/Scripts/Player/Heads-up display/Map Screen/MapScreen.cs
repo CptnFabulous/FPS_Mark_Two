@@ -48,6 +48,8 @@ public class MapScreen : MonoBehaviour
     public Camera camera => cameraController.camera;
     Camera playerCamera => player.movement.lookControls.worldViewCamera;
 
+    TerrainGrid terrainGrid => TerrainGrid.current;
+
     private void Awake()
     {
         terrainMap.player = player;
@@ -62,11 +64,11 @@ public class MapScreen : MonoBehaviour
     private void OnEnable()
     {
         // Assign mesh to renderer
-        mapMeshFilter.mesh = terrainMap.mapMesh;
+        mapMeshFilter.mesh = terrainGrid.mapMesh;
 
         // Assign values to map material
-        Vector4 gridMinAsVector4 = new Vector4(terrainMap.boundsMin.x, terrainMap.boundsMin.y, terrainMap.boundsMin.z, 0);
-        Vector4 gridMaxAsVector4 = new Vector4(terrainMap.boundsMax.x, terrainMap.boundsMax.y, terrainMap.boundsMax.z, 0);
+        Vector4 gridMinAsVector4 = new Vector4(terrainGrid.gridBoundsMin.x, terrainGrid.gridBoundsMin.y, terrainGrid.gridBoundsMin.z, 0);
+        Vector4 gridMaxAsVector4 = new Vector4(terrainGrid.gridBoundsMax.x, terrainGrid.gridBoundsMax.y, terrainGrid.gridBoundsMax.z, 0);
         Material m = mapRenderer.material;
         m.SetVector(shaderBoundsMin, gridMinAsVector4);
         m.SetVector(shaderBoundsMax, gridMaxAsVector4);
@@ -111,13 +113,13 @@ public class MapScreen : MonoBehaviour
         playerIndicator.localPosition = player.transform.position;
         playerIndicator.localRotation = player.transform.rotation;
 
-        foreach (Door door in terrainMap.doorsInScene)
+        foreach (Door door in terrainGrid.doorsInScene)
         {
             // Check if the door's position on the map is filled in
             Vector3 worldPosition = door.transform.position;
 
             // Don't show the door if it's not in an area the player has explored
-            Vector3Int gridPosition = terrainMap.TextureCoordinatesFromWorldPosition(worldPosition);
+            Vector3Int gridPosition = terrainGrid.TextureCoordinatesFromWorldPosition(worldPosition);
             if (terrainMap.autoMapped == false && terrainMap.GetFill(gridPosition) <= 0) continue;
             
             worldPosition.y += doorSize.y * 0.5f;

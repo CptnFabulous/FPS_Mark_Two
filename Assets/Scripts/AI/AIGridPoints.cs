@@ -43,12 +43,13 @@ public class AIGridPoints : MonoBehaviour
     public float halfCoverHeight = 0.9f;
     public int numberOfDirectionChecksForCover = 8;
 
+    public Bounds bounds => levelBounds;
     public Vector2Int GridSize
     {
         get
         {
-            int x = Mathf.FloorToInt(levelBounds.size.x / gridSpacing);
-            int z = Mathf.FloorToInt(levelBounds.size.z / gridSpacing);
+            int x = Mathf.FloorToInt(bounds.size.x / gridSpacing);
+            int z = Mathf.FloorToInt(bounds.size.z / gridSpacing);
             return new Vector2Int(x, z);
         }
     }
@@ -82,7 +83,7 @@ public class AIGridPoints : MonoBehaviour
     public void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(levelBounds.center, levelBounds.size);
+        Gizmos.DrawWireCube(bounds.center, bounds.size);
 
         if (gridPoints != null)
         {
@@ -110,7 +111,7 @@ public class AIGridPoints : MonoBehaviour
         {
             levelBounds = GetNavMeshBounds();
         }
-        _points = GenerateGrid(levelBounds);
+        _points = GenerateGrid(bounds);
     }
     List<GridPoint> GenerateGrid(Bounds levelBounds)
     {
