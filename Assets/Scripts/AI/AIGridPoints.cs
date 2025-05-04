@@ -30,10 +30,7 @@ public class AIGridPoints : MonoBehaviour
     [Header("Casting criteria")]
     public LayerMask environmentMask = ~0;
     public Bounds levelBounds = new Bounds(Vector3.zero, Vector3.one * 50);
-    /// <summary>
-    /// (BUGGED, sometimes fails to get certain sections on the edges of the NavMesh) If true, automatically obtains the size of the bounds to check in based on the size of the NavMesh.
-    /// </summary>
-    public bool autoCalculateBounds;
+    
     public Vector3 floorEulerAngles;
     
     public float gridSpacing = 1;
@@ -42,6 +39,8 @@ public class AIGridPoints : MonoBehaviour
     [Header("Cover")]
     public float halfCoverHeight = 0.9f;
     public int numberOfDirectionChecksForCover = 8;
+
+    List<GridPoint> _points = null;
 
     public Bounds bounds => levelBounds;
     public Vector2Int GridSize
@@ -56,8 +55,6 @@ public class AIGridPoints : MonoBehaviour
     public Quaternion floorRotation => Quaternion.Euler(floorEulerAngles);
     public Vector3 floorNormal => floorRotation * Vector3.up;
 
-    float raycastHeightPadding = 5f; // For if the bounds are too small to have the raycasts actually register because they're spawning inside the colliders. Can happen with perfectly flat environments.
-    List<GridPoint> _points = null;
 
     float coverCheckRaycastDistance => MiscFunctions.LengthOfDiagonal(gridSpacing, gridSpacing);
     public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
@@ -107,16 +104,10 @@ public class AIGridPoints : MonoBehaviour
     [ContextMenu("Force regeneration")]
     public void Generate()
     {
-        if (autoCalculateBounds)
-        {
-            levelBounds = GetNavMeshBounds();
-        }
         _points = GenerateGrid(bounds);
     }
     List<GridPoint> GenerateGrid(Bounds levelBounds)
     {
-        //levelBounds.extents += new Vector3(raycastHeightPadding, raycastHeightPadding, raycastHeightPadding);
-
         List<GridPoint> newPoints = new List<GridPoint>();
 
         for (int x = 0; x < GridSize.x; x++)
@@ -241,20 +232,5 @@ public class AIGridPoints : MonoBehaviour
     {
         if (rootArea == null) return null;
         return gridPoints.FindAll((p) => rootArea.Contains(p.position));
-    }
-
-    
-
-
-    public static Bounds GetNavMeshBounds()
-    {
-        NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
-        Bounds bounds = new Bounds();
-        bounds.center = triangulation.vertices[0];
-        foreach (Vector3 vertex in triangulation.vertices)
-        {
-            bounds.Encapsulate(vertex);
-        }
-        return bounds;
     }
 }
