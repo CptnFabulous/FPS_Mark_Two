@@ -42,6 +42,8 @@ public class AIGridPoints : MonoBehaviour
 
     List<GridPoint> _points = null;
 
+    float raycastHeightPadding = 5;
+
     public Bounds bounds => levelBounds;
     public Vector2Int GridSize
     {
