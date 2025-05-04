@@ -21,10 +21,8 @@ public class RenderThermalVision : ScriptableRendererFeature
         Material backgroundMaterial;
         LayerMask smokeLayers;
         float smokeAlpha = 0.1f;
-        FilteringSettings opaqueForOpaques;
-        FilteringSettings opaqueForTransparents;
-        FilteringSettings transparentForOpaques;
-        FilteringSettings transparentForTransparents;
+        FilteringSettings opaqueFiltering;
+        FilteringSettings transparentFiltering;
 
         string m_ProfilerTag = "Thermal Render Pass";
         LayerMask renderLayers;
@@ -50,10 +48,9 @@ public class RenderThermalVision : ScriptableRendererFeature
             // Get a mask of everything that needs to have an effect over it, minus what needs to be rendered separately as transparent.
             this.renderLayers = renderLayers;
             LayerMask opaqueMask = renderLayers & ~smokeLayers;
-            opaqueForOpaques = new FilteringSettings(RenderQueueRange.opaque, opaqueMask);
-            opaqueForTransparents = new FilteringSettings(RenderQueueRange.transparent, opaqueMask);
-            transparentForOpaques = new FilteringSettings(RenderQueueRange.opaque, smokeLayers);
-            transparentForTransparents = new FilteringSettings(RenderQueueRange.transparent, smokeLayers);
+
+            opaqueFiltering = new FilteringSettings(RenderQueueRange.all, opaqueMask);
+            transparentFiltering = new FilteringSettings(RenderQueueRange.all, smokeLayers);
 
             // Set the more cosmetic values
             this.thermalVisionMaterial = thermalVisionMaterial;
@@ -133,21 +130,16 @@ public class RenderThermalVision : ScriptableRendererFeature
                 Debug.Log("Drawing initial opaque pass");
                 DrawingSettings depthPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
                 depthPassSettings.overrideMaterial = depthPassMaterial;
-                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForOpaques);
-                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueForTransparents);
+                context.DrawRenderers(renderingData.cullResults, ref depthPassSettings, ref opaqueFiltering);
             }
 
             // Figure out ambient heat value, and draw as a base over everything that doesn't need unique data shown
-            DrawingSettings ambientPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
-            ambientPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
-            context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForOpaques);
-            context.DrawRenderers(renderingData.cullResults, ref ambientPassSettings, ref opaqueForTransparents);
-
+            DrawingSettings passSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
+            passSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, 1);
+            context.DrawRenderers(renderingData.cullResults, ref passSettings, ref opaqueFiltering);
             // Draw another similar pass, for transparent objects with no heat value assigned
-            DrawingSettings ambientTransparentPassSettings = CreateDrawingSettings(shaderTags, ref renderingData, sortFlags);
-            ambientTransparentPassSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, smokeAlpha);
-            context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForOpaques);
-            context.DrawRenderers(renderingData.cullResults, ref ambientTransparentPassSettings, ref transparentForTransparents);
+            passSettings.overrideMaterial = GetMaterial(ObjectHeat.ambientTemperature, smokeAlpha);
+            context.DrawRenderers(renderingData.cullResults, ref passSettings, ref transparentFiltering);
 
             // Then render specific objects that have unique heat data
             foreach (ObjectHeat heat in ObjectHeat.activeHeatSources)
