@@ -189,10 +189,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5669ed4f3e0ccd143b28c07c36ce1338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolutionScale: 1
   terrainDetection:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1152
+  boundsMargins: {x: 1, y: 1, z: 1}
+  resolutionScale: 1
   debugTerrainTexture: {fileID: 0}
 --- !u!114 &4690164596860252419
 MonoBehaviour:
@@ -208,11 +209,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   environmentMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1152
   levelBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 25, y: 25, z: 25}
-  autoCalculateBounds: 0
   floorEulerAngles: {x: 0, y: 0, z: 0}
   gridSpacing: 1
   minAgentHeight: 2
