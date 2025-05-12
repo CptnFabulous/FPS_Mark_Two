@@ -49,13 +49,16 @@ public readonly struct MiscFunctions
         }
         return -1;
     }
-    public static Vector3Int IndexOfIn3DArray<T>(Array array, T data)
+    public static Vector3Int IndexOfIn3DArray(Array array, object data)
     {
-        for (int x = 0; x < array.GetLength(0); x++)
+        int xLength = array.GetLength(0);
+        int yLength = array.GetLength(1);
+        int zLength = array.GetLength(2);
+        for (int x = 0; x < xLength; x++)
         {
-            for (int y = 0; y < array.GetLength(1); y++)
+            for (int y = 0; y < yLength; y++)
             {
-                for (int z = 0; z < array.GetLength(2); z++)
+                for (int z = 0; z < zLength; z++)
                 {
                     if (array.GetValue(x, y, z).Equals(data)) return new Vector3Int(x, y, z);
                 }
@@ -63,35 +66,30 @@ public readonly struct MiscFunctions
         }
         return -Vector3Int.one;
     }
-    public static void IterateThrough3DGrid(Array array, Action<int, int, int> action)
+    public static void IterateThroughGrid(Vector3Int dimensions, Action<int, int, int> action)
     {
-        if (array.Rank != 3) return;
-
-        for (int x = 0; x < array.GetLength(0); x++)
+        for (int x = 0; x < dimensions.x; x++)
         {
-            for (int y = 0; y < array.GetLength(1); y++)
+            for (int y = 0; y < dimensions.y; y++)
             {
-                for (int z = 0; z < array.GetLength(2); z++)
+                for (int z = 0; z < dimensions.z; z++)
                 {
                     action.Invoke(x, y, z);
                 }
             }
         }
     }
-    
-    public static bool IsIndexOutsideArray(Array array, Vector3Int indices) => IsIndexOutsideArray(array, indices.x, indices.y, indices.z);
-    public static bool IsIndexOutsideArray(Array array, params int[] indices)
+    public static bool IsIndexOutsideArray(Vector3Int dimensions, Vector3Int indices)
     {
-        for (int i = 0; i < array.Rank; i++)
+        for (int i = 0; i < 3; i++)
         {
-            int length = array.GetLength(i);
-            int index = indices[i];
-            if (index < 0) return true;
-            if (index >= length) return true;
+            if (indices[i] < 0) return true;
+            if (indices[i] >= dimensions[i]) return true;
         }
 
         return false;
     }
+
     public static void ShuffleList<T>(IList<T> list)
     {
         for (int i = 0; i < list.Count; i++)

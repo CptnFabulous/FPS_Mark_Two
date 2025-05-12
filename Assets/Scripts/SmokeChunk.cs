@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,7 +55,7 @@ public class SmokeChunk : MonoBehaviour
     float[,,] _oldGrid;
     Vector3Int _chunkPositionInGrid;
 
-    public Vector3Int gridSize { get; private set; }
+    public Vector3Int size => TerrainGrid.current.chunkSize;
     public Vector3Int chunkPositionInGrid => _chunkPositionInGrid;
     public bool smokeIsPresent { get; private set; } = false;
 
@@ -67,11 +68,33 @@ public class SmokeChunk : MonoBehaviour
     private void Awake()
     {
         parentGrid = GetComponentInParent<SimulatedSmokeGrid>();
-        Vector3Int size = TerrainGrid.current.chunkSize;
-        gridSize = size;
         grid = new float[size.x, size.y, size.z];
         _oldGrid = new float[size.x, size.y, size.z];
         _chunkPositionInGrid = MiscFunctions.IndexOfIn3DArray(parentGrid.chunks, this);
+    }
+    void OnDrawGizmos()
+    {
+        if (!smokeIsPresent) return;
+
+        Gizmos.color = Color.blue;
+        Vector3 boundsScale = size / gridScale;
+        Gizmos.DrawWireCube(transform.position + boundsScale * 0.5f, boundsScale);
+
+        IterateThroughGrid((x, y, z) =>
+        {
+            float density = grid[x, y, z];
+            float oldDensity = _oldGrid[x, y, z];
+            float fillRatio = density / maxDensityPerSpace;
+            Color c = fillRatio > 1 ? Color.red : Color.gray;
+
+            Vector3Int gridPosition = terrainData.ChunkToGridCoords(chunkPositionInGrid, new Vector3Int(x, y, z));
+            Vector3 position = terrainData.GridToWorldPosition(gridPosition);
+            Vector3 scale = Vector3.one / gridScale;
+            scale *= Mathf.Clamp01(fillRatio);
+
+            Gizmos.color = c;
+            Gizmos.DrawCube(position, scale);
+        });
     }
 
     public float GetDensity(Vector3Int position) => grid[position.x, position.y, position.z];
@@ -81,7 +104,7 @@ public class SmokeChunk : MonoBehaviour
         smokeIsPresent = true;
     }
 
-    public void PrepareForSimulationStep()
+    public void PrepareForStep()
     {
 
         if (smokeIsPresent == false) return;
@@ -96,8 +119,7 @@ public class SmokeChunk : MonoBehaviour
             grid[x, y, z] = 0;
         });
     }
-
-    public void SimulationStep()
+    public void DissipationStep()
     {
         if (smokeIsPresent == false) return;
 
@@ -110,10 +132,7 @@ public class SmokeChunk : MonoBehaviour
         });
 
         // Smoke density of all spaces decays over time, so if new smoke isn't introduced everything dissipates
-        IterateThroughGrid((x, y, z) =>
-        {
-            grid[x, y, z] = Mathf.MoveTowards(grid[x, y, z], 0, decaySpeed * deltaTime);
-        });
+        IterateThroughGrid((x, y, z) => grid[x, y, z] = Mathf.MoveTowards(grid[x, y, z], 0, decaySpeed * deltaTime));
 
         // Put script to sleep if there's no smoke to simulate.
         // When more smoke is introduced, that'll automatically wake it up
@@ -123,10 +142,12 @@ public class SmokeChunk : MonoBehaviour
             if (grid[x, y, z] > 0) smokeIsPresent = true;
         });
     }
+    public void Clear() => IterateThroughGrid((x, y, z) => grid[x, y, z] = 0);
+
     /// <summary>
     /// Spreads smoke from spaces with an overly high pressure, then returns the corrected value for that space.
     /// </summary>
-    public void CheckToDissipatePressure(int x, int y, int z, out float density)
+    void CheckToDissipatePressure(int x, int y, int z, out float density)
     {
         // Do nothing if there's no smoke
         density = _oldGrid[x, y, z];
@@ -152,7 +173,7 @@ public class SmokeChunk : MonoBehaviour
             // If space is not part of the terrain grid, treat it as empty.
             // If a space is occupied by solid terrain, don't allow smoke in
             Vector3Int neighbourOnGrid = terrainData.ChunkToGridCoords(chunkPositionInGrid, neighbour);
-            bool outside = MiscFunctions.IsIndexOutsideArray(terrainData.containsTerrain, neighbourOnGrid.x, neighbourOnGrid.y, neighbourOnGrid.z);
+            bool outside = MiscFunctions.IsIndexOutsideArray(terrainData.gridSize, neighbourOnGrid);
             if (!outside && terrainData.containsTerrain[neighbourOnGrid.x, neighbourOnGrid.y, neighbourOnGrid.z]) continue;
 
             // Add to list of valid neighbours
@@ -184,14 +205,14 @@ public class SmokeChunk : MonoBehaviour
             // Add portion of smoke to neighbouring space
             // If space is outside chunk, search for neighbouring chunks
             Vector3Int n = availableNeighboursNonAlloc[i];
-            if (MiscFunctions.IsIndexOutsideArray(_oldGrid, n.x, n.y, n.z))
+            if (MiscFunctions.IsIndexOutsideArray(size, n))
             {
                 // Find adjacent grid
                 n = terrainData.ChunkToGridCoords(chunkPositionInGrid, n);
                 terrainData.GridToChunkCoords(n, out Vector3Int chunkPosition, out Vector3Int positionInChunk);
 
                 // Do nothing if chunk cannot be found (on edge of grid, let smoke disappear)
-                if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunks, chunkPosition)) continue;
+                if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) continue;
 
                 SmokeChunk neighbouringChunk = parentGrid.chunks[chunkPosition.x, chunkPosition.y, chunkPosition.z];
                 // Find correct chunk and introduce smoke there instead
@@ -205,32 +226,9 @@ public class SmokeChunk : MonoBehaviour
         density -= toSpreadThisStep;
         density += split;
     }
-    void OnDrawGizmos()
-    {
-        if (!smokeIsPresent) return;
+    
+    
 
-        Gizmos.color = Color.blue;
-        Vector3 boundsScale = gridSize / gridScale;
-        Gizmos.DrawWireCube(transform.position + boundsScale * 0.5f, boundsScale);
 
-        IterateThroughGrid((x, y, z) =>
-        {
-            float density = grid[x, y, z];
-            float oldDensity = _oldGrid[x, y, z];
-            float fillRatio = density / maxDensityPerSpace;
-            Color c = fillRatio > 1 ? Color.red : Color.gray;
-
-            Vector3Int gridPosition = terrainData.ChunkToGridCoords(chunkPositionInGrid, new Vector3Int(x, y, z));
-            Vector3 position = terrainData.GridToWorldPosition(gridPosition);
-            Vector3 scale = Vector3.one / gridScale;
-            scale *= Mathf.Clamp01(fillRatio);
-
-            Gizmos.color = c;
-            Gizmos.DrawCube(position, scale);
-        });
-    }
-
-    public void Clear() => IterateThroughGrid((x, y, z) => grid[x, y, z] = 0);
-
-    void IterateThroughGrid(System.Action<int, int, int> action) => MiscFunctions.IterateThrough3DGrid(grid, action);
+    void IterateThroughGrid(System.Action<int, int, int> action) => MiscFunctions.IterateThroughGrid(size, action);
 }

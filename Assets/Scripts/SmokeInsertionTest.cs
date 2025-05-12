@@ -8,7 +8,6 @@ public class SmokeInsertionTest : MonoBehaviour
     public float smokePerSecond = 1;
     public float burstAmount = 100;
 
-
     private void Update()
     {
         smokeGrid.IntroduceSmoke(transform.position, smokePerSecond * Time.deltaTime);
