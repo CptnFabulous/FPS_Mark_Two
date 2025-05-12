@@ -45,10 +45,52 @@ public readonly struct MiscFunctions
     {
         for (int i = 0; i < array.Count; i++)
         {
-            if (!array[i].Equals(data)) continue;
-            return i;
+            if (array[i].Equals(data)) return i;
         }
         return -1;
+    }
+    public static Vector3Int IndexOfIn3DArray<T>(Array array, T data)
+    {
+        for (int x = 0; x < array.GetLength(0); x++)
+        {
+            for (int y = 0; y < array.GetLength(1); y++)
+            {
+                for (int z = 0; z < array.GetLength(2); z++)
+                {
+                    if (array.GetValue(x, y, z).Equals(data)) return new Vector3Int(x, y, z);
+                }
+            }
+        }
+        return -Vector3Int.one;
+    }
+    public static void IterateThrough3DGrid(Array array, Action<int, int, int> action)
+    {
+        if (array.Rank != 3) return;
+
+        for (int x = 0; x < array.GetLength(0); x++)
+        {
+            for (int y = 0; y < array.GetLength(1); y++)
+            {
+                for (int z = 0; z < array.GetLength(2); z++)
+                {
+                    action.Invoke(x, y, z);
+                }
+            }
+        }
+    }
+    
+    public static bool IsIndexOutsideArray(Array array, Vector3Int indices) => IsIndexOutsideArray(array, indices.x, indices.y, indices.z);
+    public static bool IsIndexOutsideArray(Array array, params int[] indices)
+    {
+        for (int i = 0; i < array.Rank; i++)
+        {
+            int length = array.GetLength(i);
+            int index = indices[i];
+            if (index < 0) return true;
+            if (index >= length) return true;
+        }
+
+        return false;
     }
     public static void ShuffleList<T>(IList<T> list)
     {
