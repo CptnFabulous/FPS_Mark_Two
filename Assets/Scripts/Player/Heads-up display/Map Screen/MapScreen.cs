@@ -33,6 +33,7 @@ public class MapScreen : MonoBehaviour
     [SerializeField] Color doorColour = Color.green;
     [SerializeField] Color doorLockedColour = Color.red;
     [SerializeField] Color doorBlockedColour = Color.grey;
+    //[SerializeField] RectTransform doorLegend;
 
     [Header("Objective markers")]
     [SerializeField] Sprite objectiveMarker;
@@ -63,12 +64,14 @@ public class MapScreen : MonoBehaviour
     }
     private void OnEnable()
     {
+        //terrainMap.UpdateTextureToMatch3DArray();
+        
         // Assign mesh to renderer
         mapMeshFilter.mesh = terrainGrid.mapMesh;
 
         // Assign values to map material
-        Vector4 gridMinAsVector4 = new Vector4(terrainGrid.gridBoundsMin.x, terrainGrid.gridBoundsMin.y, terrainGrid.gridBoundsMin.z, 0);
-        Vector4 gridMaxAsVector4 = new Vector4(terrainGrid.gridBoundsMax.x, terrainGrid.gridBoundsMax.y, terrainGrid.gridBoundsMax.z, 0);
+        Vector4 gridMinAsVector4 = new Vector4(terrainGrid.worldBoundsMin.x, terrainGrid.worldBoundsMin.y, terrainGrid.worldBoundsMin.z, 0);
+        Vector4 gridMaxAsVector4 = new Vector4(terrainGrid.worldBoundsMax.x, terrainGrid.worldBoundsMax.y, terrainGrid.worldBoundsMax.z, 0);
         Material m = mapRenderer.material;
         m.SetVector(shaderBoundsMin, gridMinAsVector4);
         m.SetVector(shaderBoundsMax, gridMaxAsVector4);
@@ -119,7 +122,7 @@ public class MapScreen : MonoBehaviour
             Vector3 worldPosition = door.transform.position;
 
             // Don't show the door if it's not in an area the player has explored
-            Vector3Int gridPosition = terrainGrid.TextureCoordinatesFromWorldPosition(worldPosition);
+            Vector3Int gridPosition = terrainGrid.WorldToGridPosition(worldPosition);
             if (terrainMap.autoMapped == false && terrainMap.GetFill(gridPosition) <= 0) continue;
             
             worldPosition.y += doorSize.y * 0.5f;
@@ -132,6 +135,12 @@ public class MapScreen : MonoBehaviour
             // Draw icon for door
             Graphics.DrawMesh(doorMesh, matrix, doorMaterial, renderLayer, camera, 0, propertyBlock);
         }
+        /*
+        Matrix4x4 doorLegendMatrix = doorLegend.localToWorldMatrix;
+        doorLegendMatrix *= Matrix4x4.TRS(Vector3.zero, Quaternion.identity, doorSize);
+        Graphics.DrawMesh(doorMesh, doorLegendMatrix, doorMaterial, renderLayer, camera, 0, lockedDoor);
+        */
+        //Graphics.Dr
 
         // Draw objective markers
         if (ObjectiveHandler.current != null)

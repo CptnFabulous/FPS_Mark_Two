@@ -20,8 +20,8 @@ public class TerrainMap : MonoBehaviour
     Vector3 lastPosition;
 
     static TerrainGrid terrainGrid => TerrainGrid.current;
-    Vector3Int textureResolution => terrainGrid.textureResolution;
-
+    Vector3Int textureResolution => terrainGrid.gridSize;
+    
     private void OnEnable()
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -30,13 +30,26 @@ public class TerrainMap : MonoBehaviour
         sceneOfMap = currentScene;
         GenerateMap();
     }
+
+    void GenerateMap()
+    {
+        progressTexture = new Texture3D(textureResolution.x, textureResolution.y, textureResolution.z, textureFormat, false);
+        //fillMap = new float[textureResolution.x, textureResolution.y, textureResolution.z];
+        progressTexture.name = $"Progress texture for {playerTransform.name}";
+        progressTexture.filterMode = filterMode;
+
+        // Reset entire texture to be clear
+        // TO DO: once saving and loading are implemented properly, have this data be assigned from the save file
+        UpdateTexture(Vector3Int.zero, textureResolution, (_, _, _) => Color.clear);
+    }
+
     private void Update()
     {
         if (playerTransform.position == lastPosition) return;
         lastPosition = playerTransform.position;
 
         // Get position of player, in map's local space
-        Vector3Int playerLocalPosition = terrainGrid.TextureCoordinatesFromWorldPosition(playerTransform.position);
+        Vector3Int playerLocalPosition = terrainGrid.WorldToGridPosition(playerTransform.position);
 
         int detectionRadius = Mathf.RoundToInt(fillRadiusCurve[fillRadiusCurve.length - 1].time);
 
@@ -87,18 +100,7 @@ public class TerrainMap : MonoBehaviour
         });
     }
     
-    void GenerateMap()
-    {
-        
-        progressTexture = new Texture3D(textureResolution.x, textureResolution.y, textureResolution.z, textureFormat, false);
-        //fillMap = new float[textureResolution.x, textureResolution.y, textureResolution.z];
-        progressTexture.name = $"Progress texture for {playerTransform.name}";
-        progressTexture.filterMode = filterMode;
-
-        // Reset entire texture to be clear
-        // TO DO: once saving and loading are implemented properly, have this data be assigned from the save file
-        UpdateTexture(Vector3Int.zero, textureResolution, (_, _, _) => Color.clear);
-    }
+    
     void UpdateTexture(Vector3Int min, Vector3Int max, System.Func<int, int, int, Color> colourAssignment)
     {
         for (int x = min.x; x < max.x; x++)
