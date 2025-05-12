@@ -104,14 +104,15 @@ public class SmokeChunk : MonoBehaviour
         smokeIsPresent = true;
     }
 
+    /// <summary>
+    /// Move current data into old grid, and clear main grid to be populated.
+    /// Each time an operation is performed that affects multiple spaces/chunks at once, this function needs to be run on every chunk.
+    /// Otherwise the 'old' values are changed partway through updating, resulting in inconsistencies.
+    /// </summary>
     public void PrepareForStep()
     {
-
         if (smokeIsPresent == false) return;
-        // TO DO: I think that data is being moved into adjacent squares before data is shifted from newGrid to oldGrid.
-        // I think I need to do the data shifting in each chunk, before I start changing things.
-
-
+        
         // Move current data into old grid, and clear main grid to be populated
         IterateThroughGrid((x, y, z) =>
         {
@@ -119,14 +120,14 @@ public class SmokeChunk : MonoBehaviour
             grid[x, y, z] = 0;
         });
     }
-    public void DissipationStep()
+    public void SpreadStep()
     {
         if (smokeIsPresent == false) return;
 
         // Spread smoke
         IterateThroughGrid((x, y, z) =>
         {
-            CheckToDissipatePressure(x, y, z, out float newPressure);
+            CheckToSpreadSmoke(x, y, z, out float newPressure);
             // Value is added rather than replaced, so that smoke donated from other spaces isn't overwritten.
             grid[x, y, z] += newPressure;
         });
@@ -147,7 +148,7 @@ public class SmokeChunk : MonoBehaviour
     /// <summary>
     /// Spreads smoke from spaces with an overly high pressure, then returns the corrected value for that space.
     /// </summary>
-    void CheckToDissipatePressure(int x, int y, int z, out float density)
+    void CheckToSpreadSmoke(int x, int y, int z, out float density)
     {
         // Do nothing if there's no smoke
         density = _oldGrid[x, y, z];

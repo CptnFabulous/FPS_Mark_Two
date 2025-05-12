@@ -48,6 +48,8 @@ public class SimulatedSmokeGrid : MonoBehaviour
     {
         float timeSinceLastSimulation = Time.time - lastTimeSimulated;
         int missedSteps = Mathf.FloorToInt(timeSinceLastSimulation / timestep);
+        if (missedSteps <= 0) return;
+
         for (int i = 0; i < missedSteps; i++)
         {
             SimulationStep();
@@ -58,12 +60,16 @@ public class SimulatedSmokeGrid : MonoBehaviour
     }
     void SimulationStep()
     {
-        // TO DO: prep for simulation step again
+        // TO DO: I think that data is being moved into adjacent squares before data is shifted from newGrid to oldGrid.
+        // I think I need to do the data shifting in each chunk, before I start changing things.
+
+        // TO DO: prep for simulation step
         // TO DO: move smoke based on velocity
 
-        // Iterate through all chunks with smoke in them, and run their simulation step
+        // Prep for simulation step again (this needs to be done each time an operation is performed that affects multiple spaces/chunks at once)
         MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].PrepareForStep());
-        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].DissipationStep());
+        // Dissipate smoke
+        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].SpreadStep());
     }
 
     public void IntroduceSmoke(Vector3 worldPosition, float amount)
