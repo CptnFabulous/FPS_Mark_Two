@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class SimulatedSmokeGrid : MonoBehaviour
 {
-    [SerializeField] float timestep = 0.01f;
+    [SerializeField] float _timestep = 0.01f;
     [SerializeField] float maxDensityPerWorldUnit = 1;
     [SerializeField] float spreadSpeed = 1;
     [SerializeField] float decaySpeed = 0.2f;
     [SerializeField] SmokeChunk chunkPrefab;
+    public bool showDebugData;
 
     float lastTimeSimulated = 0;
     SmokeChunk[,,] _chunks = null;
@@ -20,7 +21,7 @@ public class SimulatedSmokeGrid : MonoBehaviour
     public int gridScale => terrainData.resolutionScale;
     public float decaySpeedPerSpace => decaySpeed / gridScale;
     public float maxDensityPerSpace => maxDensityPerWorldUnit / gridScale;
-    public float deltaTime => timestep;
+    public float timestep => _timestep;
     
     private void OnEnable()
     {
@@ -57,6 +58,7 @@ public class SimulatedSmokeGrid : MonoBehaviour
         }
 
         // TO DO: update mesh
+        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].UpdateMesh());
     }
     void SimulationStep()
     {
