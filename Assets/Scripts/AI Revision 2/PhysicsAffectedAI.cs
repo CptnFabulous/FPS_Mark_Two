@@ -71,8 +71,8 @@ public class PhysicsAffectedAI : MonoBehaviour
             // Transfer the ragdoll velocity back to the base rigidbody
             rigidbody.velocity = ragdoll.totalVelocity;
             rigidbody.angularVelocity = ragdoll.totalAngularVelocity;
-            ragdoll.totalVelocity = Vector3.zero;
-            ragdoll.totalAngularVelocity = Vector3.zero;
+            //ragdoll.totalVelocity = Vector3.zero;
+            //ragdoll.totalAngularVelocity = Vector3.zero;
 
             // Reset the ragdoll's transform to zero, but preserve the position of the base bone relative to the AI itself (for animation purposes)
             Transform ragdollTransform = ragdoll.transform;
