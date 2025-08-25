@@ -8,7 +8,7 @@ public static class WeaponUtility
     {
         bool successfulCast = MiscFunctions.RaycastWithExceptions(aimOrigin, direction, out rh, range, detection, exceptions);
         // Calculate where the projectile needs to go
-        castHitPoint = successfulCast ? rh.point : aimOrigin + (direction * range);
+        castHitPoint = successfulCast ? rh.point : aimOrigin + (direction.normalized * range);
         // Calculate the direction the projectile needs to move in
         launchDirection = castHitPoint - launchOrigin;
         // Check the dot product in case the hit point is behind the muzzle (e.g. if the player is shooting into a wall)
