@@ -108,6 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 60
+  windupTime: 0
   minBurst: 0
   maxBurst: 0
   burstCooldown: 0
@@ -294,7 +295,9 @@ MonoBehaviour:
   active: Active
   mode: Mode
   modeSwitchTrigger: Switching Mode
+  windupTrigger: Windup
   attackTrigger: Firing
+  isShooting: Currently firing
   reloadActiveString: Reload Active
   reloadIncrementTrigger: Reload Incremented
   soundPlayer: {fileID: 3275955952633922249}
@@ -372,6 +375,12 @@ MonoBehaviour:
   controls: {fileID: 2738000295939891605}
   magazine: {fileID: 8068031674473056488}
   optics: {fileID: 8069376859422086606}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &3275955952836653049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,11 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3aed7b96db32914c9f4ad76621cde9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 948392074443090780}
-  projectileCount: 9
-  muzzle: {fileID: 424194289574318883}
   sway: 1.2
-  shotSpread: 2
   range: 300
   ammoType: {fileID: 11400000, guid: d450133976532494a9ca9ecf16dd1804, type: 2}
   ammoPerShot: 1
@@ -418,6 +423,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   recoilTime: 0.25
+  shotSpread: 2
+  projectilePrefab: {fileID: 948392074443090780}
+  projectileCount: 9
+  muzzle: {fileID: 424194289574318883}
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:
@@ -512,6 +521,12 @@ MonoBehaviour:
   controls: {fileID: 0}
   magazine: {fileID: 8068031674473056488}
   optics: {fileID: 0}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5302939852179752584
 GameObject:
   m_ObjectHideFlags: 0

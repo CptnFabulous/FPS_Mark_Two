@@ -5041,11 +5041,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3aed7b96db32914c9f4ad76621cde9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 8052518943785051574}
-  projectileCount: 1
-  muzzle: {fileID: 5737478537211503178}
   sway: 2
-  shotSpread: 0.5
   range: 100
   ammoType: {fileID: 11400000, guid: 3790a818e1c48494c8a1afd8bbfae7e5, type: 2}
   ammoPerShot: 1
@@ -5075,6 +5071,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   recoilTime: 0.1
+  shotSpread: 0.5
+  projectilePrefab: {fileID: 8052518943785051574}
+  projectileCount: 1
+  muzzle: {fileID: 5737478537211503178}
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:
@@ -5196,7 +5196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5670246309027933432}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.043619405, w: 0.9990483}
   m_LocalPosition: {x: 0.17300057, y: -0.271, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5205,7 +5205,7 @@ Transform:
   - {fileID: 3927382034641861063}
   - {fileID: 1329504880690076324}
   m_Father: {fileID: 5737478536426011707}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 5}
 --- !u!1 &5737478536109170960
 GameObject:
   m_ObjectHideFlags: 0
@@ -5274,6 +5274,12 @@ MonoBehaviour:
   controls: {fileID: 5737478536109170962}
   magazine: {fileID: 945332396599903746}
   optics: {fileID: 132752674950433329}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5737478536109170962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5287,6 +5293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 1200
+  windupTime: 0
   minBurst: 0
   maxBurst: 0
   burstCooldown: 0
@@ -5417,7 +5424,9 @@ MonoBehaviour:
   active: Active
   mode: Mode
   modeSwitchTrigger: Switching Mode
+  windupTrigger: Windup
   attackTrigger: Firing
+  isShooting: Currently firing
   reloadActiveString: Reload Active
   reloadIncrementTrigger: Reload Incremented
   soundPlayer: {fileID: 0}
@@ -5493,6 +5502,12 @@ MonoBehaviour:
   controls: {fileID: 5737478536963907844}
   magazine: {fileID: 945332396599903746}
   optics: {fileID: 132752674950433329}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5737478536963907844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5506,6 +5521,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 900
+  windupTime: 0
   minBurst: 0
   maxBurst: 1
   burstCooldown: 0
@@ -5578,6 +5594,12 @@ MonoBehaviour:
   controls: {fileID: 2323923526664211679}
   magazine: {fileID: 945332396599903746}
   optics: {fileID: 132752674950433329}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2323923526664211679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5591,6 +5613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 2400
+  windupTime: 0
   minBurst: 3
   maxBurst: 3
   burstCooldown: 0.375

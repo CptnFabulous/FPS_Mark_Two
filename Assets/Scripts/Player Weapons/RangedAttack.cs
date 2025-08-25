@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RangedAttack : WeaponMode
 {
-    public GunGeneralStats stats;
+    public RangedAttackFiringData stats;
     public GunFireController controls;
     public GunMagazine magazine;
     public GunADS optics;
 
+    public UnityEvent onWindup;
+    public UnityEvent<bool> onStartStopFiring;
+
+
     public ADSHandler adsHandler => (User != null && User.weaponHandler != null) ? User.weaponHandler.adsHandler : null;
     public bool adsPresent => optics != null && adsHandler != null;
-    public override LayerMask attackMask => stats.projectilePrefab.detection;
+    public override LayerMask attackMask => stats.hitDetection;
     public int shotsInBurst { get; private set; }
 
     public override bool inSecondaryAction
@@ -33,7 +38,10 @@ public class RangedAttack : WeaponMode
     public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
     public override string hudInfo => WeaponUtility.AmmoCounterHUDDisplay(this);
+    public override Resource displayedResource => ammo.GetValues(stats.ammoType);
 
+    //Check that the fire button is still held (or that the minimum burst hasn't yet completed)
+    bool shootingIntended => (PrimaryHeld || controls.WillBurst(shotsInBurst));
 
     private void OnEnable()
     {
@@ -43,7 +51,11 @@ public class RangedAttack : WeaponMode
             magazine.enabled = true;
         }
 
-        if (adsHandler != null) adsHandler.currentAttack = this;
+        stats.user = User;
+
+
+        // TO DO: only have this run if the weapon is stored in the weapon handler
+        if (adsHandler != null && User.weaponHandler.equippedWeapons.Contains(attachedTo)) adsHandler.currentAttack = this;
     }
     protected override void OnDisable()
     {
@@ -90,20 +102,53 @@ public class RangedAttack : WeaponMode
             magazine.CancelReload();
             yield break;
         }
-        
-        shotsInBurst = 0;
-        float timeOfLastMessage = Mathf.NegativeInfinity; // Sets up the message timer to infinity, to ensure it always sends a message on the first shot.
 
-        while (CanAttack()) // Check stuff like fire button held, ammo remaining
+        // Resets burst
+        shotsInBurst = 0;
+        // Sets up the message timer to infinity, to ensure it always sends a message on the first shot.
+        float timeOfLastMessage = Mathf.NegativeInfinity;
+
+        // Windup before shooting
+        float windupTime = controls.windupTime;
+        if (windupTime > 0)
         {
-            TrySendMessage(ref timeOfLastMessage);
-            
-            yield return SingleShot(); // Fire shot and increment burst timer
+            stats.TrySendMessage(this, ref timeOfLastMessage);
+            onWindup.Invoke();
+
+            float startOfWindup = Time.time;
+            // Wait for the windup duration or until fire button is released
+            yield return new WaitUntil(() =>
+            {
+                if (PrimaryHeld == false) return true;
+                return (Time.time - startOfWindup) >= windupTime;
+            });
         }
 
-        // Wait for the cooldown, if applicable
-        float cooldown = controls.burstCooldown;
-        if (cooldown > 0) yield return new WaitForSeconds(cooldown);
+        // If player is still committing to the attack after the windup
+        if (PrimaryHeld)
+        {
+            // Activate anything that should happen continuously while gun is firing
+            // TO DO: set up enemy attack code so it also activates these continuous elements
+            SetContinuousElementsActive(true);
+
+            while (shootingIntended && CanAttack()) // Check stuff like fire button held, ammo remaining
+            {
+                stats.TrySendMessage(this, ref timeOfLastMessage);
+
+                //SetContinuousElementsActive(true);
+
+                yield return SingleShot(); // Fire shot and increment burst timer
+            }
+
+            // Turn off continuous actions
+            SetContinuousElementsActive(false);
+
+            // Wait for the cooldown, if applicable
+            float cooldown = controls.burstCooldown;
+            if (cooldown > 0) yield return new WaitForSeconds(cooldown);
+        }
+
+        
 
         // Wait until the fire button is released
         yield return new WaitUntil(() => PrimaryHeld == false);
@@ -117,15 +162,12 @@ public class RangedAttack : WeaponMode
     /// </summary>
     public IEnumerator SingleShot()
     {
-        stats.Shoot(User);
+        stats.Shoot();
         OnAttack();
         yield return new WaitForSeconds(controls.ShotDelay);
     }
     public override bool CanAttack()
     {
-        //Check that the fire button is still held (or that the minimum burst hasn't yet completed)
-        if ((PrimaryHeld || controls.WillBurst(shotsInBurst)) == false) return false;
-        
         if (controls.CanBurst(shotsInBurst) == false) return false;
 
         // Don't shoot if there's not enough ammo in the magazine
@@ -148,19 +190,15 @@ public class RangedAttack : WeaponMode
         }
         shotsInBurst++;
     }
-    void TrySendMessage(ref float timeOfLastMessage)
+
+
+    void SetContinuousElementsActive(bool active)
     {
-        // Transmit telegraph message to AI, if it's the first shot or enough time has passed since the previous message transmission
-        if (Time.time - timeOfLastMessage <= controls.messageDelay) return;
-        
-        int damage = stats.projectilePrefab.damageStats.damage;
-        float spread = stats.shotSpread + User.weaponHandler.aimSwayAngle;
-
-        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, stats.range, spread, stats.projectilePrefab.detection);
-        Notification<AttackMessage>.Transmit(newMessage);
-
-        timeOfLastMessage = Time.time; // Resets time
+        stats.enabled = active;
+        onStartStopFiring.Invoke(active);
     }
+
+    
 
     public override IEnumerator SwitchFrom()
     {

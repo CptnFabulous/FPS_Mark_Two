@@ -5,6 +5,7 @@ using UnityEngine;
 public class GunFireController : MonoBehaviour
 {
     public float roundsPerMinute = 600;
+    public float windupTime = 0;
     public int minBurst = 0;
     public int maxBurst = 1;
     public float burstCooldown = 0f;

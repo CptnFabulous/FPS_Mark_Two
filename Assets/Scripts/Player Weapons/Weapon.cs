@@ -72,8 +72,8 @@ public class Weapon : MonoBehaviour
     public IEnumerator Holster()
     {
         //yield return new WaitUntil(() => InAction == false);
-        if (InAction == true) yield break;
-
+        //if (InAction) yield break;
+        
         isSwitching = true;
 
         // Do necessary stuff to disable mode (but don't switch away from it)

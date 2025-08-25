@@ -361,6 +361,12 @@ MonoBehaviour:
   controls: {fileID: 8446451414953748140}
   magazine: {fileID: 4014451460124246442}
   optics: {fileID: 4172257215662619747}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8446451414953748140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,6 +380,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 600
+  windupTime: 0
   minBurst: 0
   maxBurst: 1
   burstCooldown: 0
@@ -504,7 +511,9 @@ MonoBehaviour:
   active: Weapon Active
   mode: Firing Mode Index
   modeSwitchTrigger: Mode Switch Triggered
+  windupTrigger: Windup
   attackTrigger: Firing
+  isShooting: Currently firing
   reloadActiveString: Reload Active
   reloadIncrementTrigger: Next reload stage triggered
   soundPlayer: {fileID: 0}
@@ -580,6 +589,12 @@ MonoBehaviour:
   controls: {fileID: 8446451415843841722}
   magazine: {fileID: 4014451460124246442}
   optics: {fileID: 4172257215662619747}
+  onWindup:
+    m_PersistentCalls:
+      m_Calls: []
+  onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8446451415843841722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -593,6 +608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roundsPerMinute: 600
+  windupTime: 0
   minBurst: 0
   maxBurst: 0
   burstCooldown: 0
@@ -643,11 +659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3aed7b96db32914c9f4ad76621cde9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 6154177461571150366}
-  projectileCount: 1
-  muzzle: {fileID: 3321402550516367603}
   sway: 0.5
-  shotSpread: 0
   range: 400
   ammoType: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
   ammoPerShot: 1
@@ -677,6 +689,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   recoilTime: 0.25
+  shotSpread: 0
+  projectilePrefab: {fileID: 6154177461571150366}
+  projectileCount: 1
+  muzzle: {fileID: 3321402550516367603}
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:

@@ -7,6 +7,7 @@ public class WeaponAnimator : MonoBehaviour
 {
     public Weapon weaponToAnimate;
     public Animator controller;
+    //public RuntimeAnimatorController animationController;
 
     [Header("General Animator variables")]
     public string active = "Weapon Active";
@@ -14,7 +15,9 @@ public class WeaponAnimator : MonoBehaviour
     public string modeSwitchTrigger = "Mode Switch Triggered";
 
     [Header("RangedAttack variables")]
+    public string windupTrigger  = "Windup";
     public string attackTrigger = "Firing";
+    public string isShooting = "Currently firing";
     public string reloadActiveString = "Reload Active";
     public string reloadIncrementTrigger = "Next reload stage triggered";
 
@@ -25,30 +28,38 @@ public class WeaponAnimator : MonoBehaviour
     [Header("Events")]
     public UnityEvent onEjection;
 
+    //Transform weaponRoot => weaponToAnimate != null ? weaponToAnimate.transform : transform;
+    Transform weaponRoot => weaponToAnimate.transform;
 
     private void Awake()
     {
-        weaponToAnimate.onDraw.AddListener(()=> controller.SetBool(active, true));
-        weaponToAnimate.onHolster.AddListener(()=> controller.SetBool(active, false));
+        weaponToAnimate.onDraw.AddListener(() => controller.SetBool(active, true));
+        weaponToAnimate.onHolster.AddListener(() => controller.SetBool(active, false));
         
-        for (int i = 0; i < weaponToAnimate.modes.Length; i++)
+        foreach (WeaponMode m in weaponToAnimate.modes)
         {
             // Assign mode switch trigger to each mode
-            WeaponMode m = weaponToAnimate.modes[i];
             m.onSwitch.AddListener(() => controller.SetTrigger(modeSwitchTrigger));
             // Assign shoot trigger to each firing mode
-            RangedAttack rm = m as RangedAttack;
-            if (rm != null)
+            if (m is RangedAttack rm)
             {
-                rm.stats.effectsOnFire.AddListener(() => controller.SetTrigger(attackTrigger));
+                rm.onWindup.AddListener(() => controller.SetTrigger(windupTrigger));
+                rm.onStartStopFiring.AddListener((b) => controller.SetBool(isShooting, b));
             }
         }
 
-        // Assign reload trigger to each magazine in the weapon
-        GunMagazine[] gm = weaponToAnimate.GetComponentsInChildren<GunMagazine>(true);
-        for (int i = 0; i < gm.Length; i++)
+        // Assign attack trigger to each kind of attack
+        foreach (RangedAttackFiringData firingData in weaponRoot.GetComponentsInChildren<GunGeneralStats>(true))
         {
-            gm[i].onIncrementStart.AddListener(() => controller.SetTrigger(reloadIncrementTrigger));
+            if ((firingData is GunGeneralStats stats) == false) continue;
+            stats.effectsOnFire.AddListener(() => controller.SetTrigger(attackTrigger));
+        }
+
+
+        // Assign reload trigger to each magazine in the weapon
+        foreach (GunMagazine gm in weaponRoot.GetComponentsInChildren<GunMagazine>(true))
+        {
+            gm.onIncrementStart.AddListener(() => controller.SetTrigger(reloadIncrementTrigger));
         }
 
     }
