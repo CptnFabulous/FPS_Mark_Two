@@ -63,9 +63,9 @@ public class HeadsUpDisplay : MonoBehaviour
 
         Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
         Vector3 canvasPosition = MiscFunctions.ScreenToAnchoredPosition(meterScreenPosition, enemyHealthMeter.rectTransform, rt);//MiscFunctions.ScreenToRectTransformSpace(meterScreenPosition, rt);
-        enemyHealthMeter.gameObject.SetActive(true);
         enemyHealthMeter.rectTransform.anchoredPosition = canvasPosition;
-        enemyHealthMeter.Refresh(enemyHealth.data);
+        enemyHealthMeter.obtainValues = () => enemyHealth.data;
+        //enemyHealthMeter.Refresh(enemyHealth.data);
     }
 
     [Header("Damage")]
@@ -93,6 +93,7 @@ public class HeadsUpDisplay : MonoBehaviour
     {
         canvas = GetComponent<Canvas>();
         rt = GetComponent<RectTransform>();
+
 
         Notification<DamageMessage>.Receivers += CheckToPlayDamageEffects;
     }

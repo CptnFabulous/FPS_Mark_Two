@@ -20,7 +20,8 @@ public class PlayerHealthHUD : MonoBehaviour
     {
         playerTracking = GetComponentInParent<Player>();
 
-        healthMeter.Refresh(playerTracking.health.data);
+        //healthMeter.Refresh(playerTracking.health.data);
+        healthMeter.obtainValues = () => playerTracking.health.data;
         Notification<DamageMessage>.Receivers += CheckToRunEffects;
 
         indicatorPrefab.gameObject.SetActive(false);
@@ -36,7 +37,7 @@ public class PlayerHealthHUD : MonoBehaviour
             return;
         }
 
-        healthMeter.Refresh(playerTracking.health.data);
+        //healthMeter.Refresh(playerTracking.health.data);
 
         if (message.damage < 0)
         {

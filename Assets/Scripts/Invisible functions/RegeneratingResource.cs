@@ -15,6 +15,11 @@ public class RegeneratingResource : MonoBehaviour
 
     float regenDelayTimer;
 
+    private void Start()
+    {
+        if (guiMeter != null) guiMeter.obtainValues = () => values;
+    }
+
     public void Deplete(float value)
     {
         values.Increment(-value);
@@ -32,8 +37,10 @@ public class RegeneratingResource : MonoBehaviour
             values.Increment(Time.deltaTime / regenTime);
         }
     }
+    /*
     private void LateUpdate()
     {
         if (guiMeter != null) guiMeter.Refresh(values);
     }
+    */
 }

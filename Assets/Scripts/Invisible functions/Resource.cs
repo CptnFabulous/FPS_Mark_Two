@@ -40,4 +40,12 @@ public struct Resource
         }
         current = Mathf.Clamp(current, 0, max);
     }
+
+    public override bool Equals(object obj)
+    {
+        return base.Equals(obj);
+    }
+
+    public static bool operator ==(Resource left, Resource right) => left.Equals(right);
+    public static bool operator !=(Resource left, Resource right) => !left.Equals(right);
 }
