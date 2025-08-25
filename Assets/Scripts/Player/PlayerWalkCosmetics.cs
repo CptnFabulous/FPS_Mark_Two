@@ -7,6 +7,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
 {
     public MovementController controller;
     public Transform upperBodyAnimationTransform;
+    public Transform leftHand;
     
     [Header("Walk Cycle")]
     public float strideLength = 1;
@@ -36,8 +37,10 @@ public class PlayerWalkCosmetics : MonoBehaviour
     public float torsoRotationUpdateTime = 0.1f;
 
     Vector3 torsoPosition;
+    Vector3 leftHandPosition;
     Quaternion torsoRotation;
     Vector3 torsoMovementVelocity;
+    Vector3 leftHandMovementVelocity;
     float torsoAngularVelocityTimer;
 
     Vector3 movementVelocity => /*controller.rigidbody.velocity*/controller.movementVelocity;
@@ -45,6 +48,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
     private void LateUpdate()
     {
         torsoPosition = Vector3.zero;
+        leftHandPosition = Vector3.zero;
         torsoRotation = Quaternion.identity;
 
         #region Walk cycle
@@ -83,6 +87,18 @@ public class PlayerWalkCosmetics : MonoBehaviour
             float bobX = walkBobX.Evaluate(walkCycleTimer) * bobExtents.x;
             float bobY = walkBobY.Evaluate(walkCycleTimer) * bobExtents.y;
             torsoPosition += new Vector3(bobY, bobX, 0);
+            //leftHandPosition += new Vector3(bobY, -bobX, 0);
+            //leftHandPosition += new Vector3(-bobY, bobX, 0);
+            leftHandPosition += new Vector3(-bobY, -bobX, 0);
+
+            /*
+            float offhandWalkCycleTimer = MiscFunctions.Loop(walkCycleTimer - 0.5f, 0, 1);
+            float leftHandBobX = walkBobX.Evaluate(offhandWalkCycleTimer) * bobExtents.x;
+            float leftHandBobY = walkBobY.Evaluate(offhandWalkCycleTimer) * bobExtents.y;
+            leftHandPosition += new Vector3(leftHandBobY, leftHandBobX, 0);
+            */
+
+
         }
         else
         {
@@ -98,7 +114,9 @@ public class PlayerWalkCosmetics : MonoBehaviour
         float dragIntensity = Mathf.Clamp01(movementVelocity.magnitude / speedForMaxDrag);
         Vector3 dragOffset = -upperBodyDragDistance * dragIntensity * movementVelocity.normalized;
         //Vector3 dragOffset = Vector3.Lerp(Vector3.zero, -upperBodyDragDistance * TotalVelocity.normalized, dragIntensity);
-        torsoPosition += controller.lookControls.aimAxis.InverseTransformDirection(dragOffset);
+        dragOffset = controller.lookControls.aimAxis.InverseTransformDirection(dragOffset);
+        torsoPosition += dragOffset;
+        leftHandPosition += dragOffset;
 
         #endregion
 
@@ -124,7 +142,10 @@ public class PlayerWalkCosmetics : MonoBehaviour
         #endregion
 
         upperBodyAnimationTransform.localPosition = Vector3.SmoothDamp(upperBodyAnimationTransform.localPosition, torsoPosition, ref torsoMovementVelocity, torsoPositionUpdateTime);
+        leftHand.localPosition = Vector3.SmoothDamp(leftHand.localPosition, leftHandPosition, ref leftHandMovementVelocity, torsoPositionUpdateTime);
+        
         float timer = Mathf.SmoothDamp(0f, 1f, ref torsoAngularVelocityTimer, torsoRotationUpdateTime);
         upperBodyAnimationTransform.localRotation = Quaternion.Slerp(upperBodyAnimationTransform.localRotation, torsoRotation, timer);
+        leftHand.localRotation = Quaternion.Slerp(leftHand.localRotation, torsoRotation, timer);
     }
 }
