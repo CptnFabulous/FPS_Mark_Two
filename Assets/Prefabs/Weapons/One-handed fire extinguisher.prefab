@@ -110,13 +110,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2312072592109376899}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd02eba2fae1ce74c9e7d3daaa3236aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sway: 0.2
   range: 300
+  muzzle: {fileID: 5843609438384008487}
   ammoType: {fileID: 11400000, guid: 94d66c6dd982d794791278b0d9dfaa2b, type: 2}
   ammoPerShot: 1
   recoilMagnitude: 0
@@ -127,7 +128,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   recoilTime: 0.5
-  muzzle: {fileID: 5843609438384008487}
   _hitDetection:
     serializedVersion: 2
     m_Bits: 1247
@@ -135,18 +135,6 @@ MonoBehaviour:
   onActiveSet:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3760565547444351062}
-        m_TargetAssemblyTypeName: SmokeCloud, Assembly-CSharp
-        m_MethodName: set_emitting
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 4734100015213950236}
         m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
         m_MethodName: set_enabled
@@ -172,7 +160,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2312072592109376899}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 556247033b6283a4cb98c357cbb6620d, type: 3}
   m_Name: 
@@ -191,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8ddee4d0d61eae4f811fc23b3eeb2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roundsPerMinute: 600
+  roundsPerMinute: 1200
   windupTime: 0
   minBurst: 0
   maxBurst: 0
@@ -849,7 +837,19 @@ MonoBehaviour:
       m_Calls: []
   onStartStopFiring:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5783999923086794141}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2442529970897025860
 MonoBehaviour:
   m_ObjectHideFlags: 0

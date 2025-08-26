@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CptnFabulous.ObjectPool;
-using UnityEngine.InputSystem.HID;
 
 public class RangedAttackSmokeEmitter : MonoBehaviour
 {
@@ -10,15 +9,9 @@ public class RangedAttackSmokeEmitter : MonoBehaviour
     public SmokeCloud smokeCloudPrefab;
 
     SmokeCloud assignedSmokeCloud;
-
-    private void Awake()
-    {
-        if (smokeCloudPrefab != null)
-        {
-            attachedTo.onEnable.AddListener(RequestParticleSystem);
-            attachedTo.onDisable.AddListener(DismissParticleSystem);
-        }
-    }
+    
+    private void OnEnable() => RequestParticleSystem();
+    private void OnDisable() => DismissParticleSystem();
 
     void RequestParticleSystem()
     {
