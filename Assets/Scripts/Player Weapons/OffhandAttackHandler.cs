@@ -5,8 +5,7 @@ using UnityEngine.InputSystem;
 
 public class OffhandAttackHandler : MonoBehaviour
 {
-    public WeaponMode[] abilities;
-
+    public List<WeaponMode> abilities;
 
     public SingleInput input;
     public WeaponHandler weaponHandler;
@@ -18,7 +17,6 @@ public class OffhandAttackHandler : MonoBehaviour
 
     WeaponMode _current;
     Coroutine currentAction;
-
 
     public WeaponMode currentAbility
     {
@@ -41,6 +39,12 @@ public class OffhandAttackHandler : MonoBehaviour
 
         weaponHandler.onSwitchWeapon.AddListener((_) => CancelCurrentAction(true));
         interactionHandler.input.onActionPerformed.AddListener((_) => CancelCurrentAction());
+
+        foreach (WeaponMode ability in abilities)
+        {
+            Weapon w = ability.attachedTo;
+            if (w != null) w.gameObject.SetActive(false);
+        }
     }
 
     void OnAttack(InputAction.CallbackContext context)
@@ -61,22 +65,45 @@ public class OffhandAttackHandler : MonoBehaviour
         Weapon currentWeapon = weaponHandler.CurrentWeapon;
         if (currentWeapon != null && currentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
 
-        // Deploy offhand weapon
-        offhandAbility.enabled = true;
-        yield return offhandAbility.SwitchTo();
+        // TO DO: check if the offhand ability is standalone or attached to a weapon
+        Weapon w = offhandAbility.attachedTo;
+        if (w != null)
+        {
+            // Draw the weapon then switch to its mode
+            w.gameObject.SetActive(true);
+            yield return w.Draw();
+            yield return w.SwitchMode(MiscFunctions.IndexOfInArray(w.modes, offhandAbility));
 
-        // Perform offhand action
-        Debug.Log("Starting attack");
-        offhandAbility.SetPrimaryInput(true);
-        // Wait until player finishes attack
-        yield return new WaitUntil(() => !buttonHeld || !offhandAbility.inAttack);
-        Debug.Log("Ending attack");
-        offhandAbility.SetPrimaryInput(false); // Reset input for next time
-        yield return new WaitUntil(() => !offhandAbility.inAttack);
+            // Set input, and wait until input and action are finished
+            offhandAbility.SetPrimaryInput(true);
+            yield return new WaitUntil(() => !buttonHeld || !offhandAbility.inAttack);
+            // Let go of current input, and wait for action to end
+            offhandAbility.SetPrimaryInput(false);
+            yield return new WaitUntil(() => !offhandAbility.inAttack);
 
-        // Put away offhand weapon
-        yield return offhandAbility.SwitchFrom();
-        offhandAbility.enabled = false;
+            // Put away weapon
+            yield return w.Holster();
+            w.gameObject.SetActive(false);
+        }
+        else
+        {
+            // Deploy offhand weapon
+            offhandAbility.enabled = true;
+            yield return offhandAbility.SwitchTo();
+
+            // Perform offhand action
+            Debug.Log("Starting attack");
+            offhandAbility.SetPrimaryInput(true);
+            // Wait until player finishes attack
+            yield return new WaitUntil(() => !buttonHeld || !offhandAbility.inAttack);
+            Debug.Log("Ending attack");
+            offhandAbility.SetPrimaryInput(false); // Reset input for next time
+            yield return new WaitUntil(() => !offhandAbility.inAttack);
+
+            // Put away offhand weapon
+            yield return offhandAbility.SwitchFrom();
+            offhandAbility.enabled = false;
+        }
 
         // Ensure current weapon is deployed
         currentAction = null;
