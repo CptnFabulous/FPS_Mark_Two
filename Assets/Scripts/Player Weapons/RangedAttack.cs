@@ -13,7 +13,6 @@ public class RangedAttack : WeaponMode
     public UnityEvent onWindup;
     public UnityEvent<bool> onStartStopFiring;
 
-
     public ADSHandler adsHandler => (User != null && User.weaponHandler != null) ? User.weaponHandler.adsHandler : null;
     public bool adsPresent => optics != null && adsHandler != null;
     public override LayerMask attackMask => stats.hitDetection;

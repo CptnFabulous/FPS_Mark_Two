@@ -6,7 +6,6 @@ using UnityEngine.Events;
 public class ContinuousRangedAttackData : RangedAttackFiringData
 {
     [Header("Muzzle alignment")]
-    public Transform muzzle;
     [SerializeField] LayerMask _hitDetection = ~0;
     public float muzzleRotationShiftPerSecond = 30;
 

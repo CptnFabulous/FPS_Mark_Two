@@ -6,6 +6,7 @@ public abstract class RangedAttackFiringData : MonoBehaviour
 {
     public float sway = 0.2f;
     public float range = 300;
+    public Transform muzzle;
 
     [Header("Ammunition")]
     public AmmunitionType ammoType;

@@ -5,13 +5,10 @@ using UnityEngine.Events;
 
 public class GunGeneralStats : RangedAttackFiringData
 {
-    public float shotSpread = 0;
-
     [Header("Projectile")]
     public Projectile projectilePrefab;
     public int projectileCount = 1;
-    public Transform muzzle;
-
+    public float shotSpread = 0;
     public UnityEvent effectsOnFire;
 
     public override LayerMask hitDetection => projectilePrefab.detection;
@@ -56,8 +53,4 @@ public class GunGeneralStats : RangedAttackFiringData
 
         ApplyRecoil();
     }
-
-
-
-    
 }
