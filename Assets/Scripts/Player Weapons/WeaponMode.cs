@@ -36,6 +36,7 @@ public abstract class WeaponMode : MonoBehaviour
     public virtual bool inSecondaryAction => false;
     public abstract LayerMask attackMask { get; }
     public abstract string hudInfo { get; }
+    public virtual Resource displayedResource => new Resource(1, 1, 0);
 
     public virtual IEnumerator SwitchTo()
     {
@@ -48,7 +49,7 @@ public abstract class WeaponMode : MonoBehaviour
     public abstract void OnAttack();
     public void SetPrimaryInput(bool held)
     {
-        Debug.Log($"{this}: Setting primary input to {held}, frame {Time.frameCount}");
+        //Debug.Log($"{this}: Setting primary input to {held}, frame {Time.frameCount}");
         PrimaryHeld = held;
 
         if (enabled == false) return;

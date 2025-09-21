@@ -16,17 +16,22 @@ public class ThrowObject : WeaponMode
 
     Throwable readyToThrow;
 
+    AmmunitionInventory ammoInventory => User.weaponHandler.ammo;
+
     public override LayerMask attackMask => throwHandler.attackMask;
 
     public override string hudInfo
     {
         get
         {
-            AmmunitionInventory ammoInv = User.weaponHandler.ammo;
-            int totalAmmo = Mathf.RoundToInt(ammoInv.GetValues(ammunitionType).current);
-            return $"{totalAmmo}";
+            int ammo = Mathf.RoundToInt(ammoInventory.GetStock(ammunitionType));
+            //int maxAmmo = ammoInventory.GetMax(ammunitionType);
+            return $"{ammo}";
+            //return $"{ammo}/{maxAmmo}";
         }
     }
+    public override Resource displayedResource => ammoInventory.GetValues(ammunitionType);
+
     void Awake()
     {
         throwablePrefab.enabled = false;
@@ -34,7 +39,10 @@ public class ThrowObject : WeaponMode
     }
 
     protected override void OnSecondaryInputChanged(bool held) { }
-    public override void OnTertiaryInput() { }
+    public override void OnTertiaryInput()
+    {
+        // TO DO: add code to cancel throw
+    }
 
     public override bool CanAttack() => User.weaponHandler.ammo.GetStock(ammunitionType) > 0;
     public override void OnAttack() => User.weaponHandler.ammo.Spend(ammunitionType, 1);
