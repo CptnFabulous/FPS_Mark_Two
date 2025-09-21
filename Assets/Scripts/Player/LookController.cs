@@ -55,8 +55,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
             return Quaternion.Euler(-input.y, input.x, 0) * mainBodyTransform.rotation;
         }
     }
-    public bool usingGamepad => mainInput.currentControlScheme.Contains("Gamepad");
-
+    
     public Vector2 lookAngles
     {
         get
@@ -115,7 +114,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
         if (rawAimInput.sqrMagnitude <= 0) return rawAimInput;
 
         Vector2 value = rawAimInput; // Get raw input value
-        bool usingGamepad = this.usingGamepad;
+        bool usingGamepad = cameraInput.usingGamepad;
 
         RangedAttack currentMode = null;
         bool inADS = weaponHandler != null && weaponHandler.IsUsingADS(out currentMode);

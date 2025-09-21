@@ -52,7 +52,7 @@ public class PlayerAimAssist : MonoBehaviour
         if (currentAttack == null) return;
 
         // Check if aim assist should be active, based on what input device the player is using
-        bool shouldUse = lookController.usingGamepad ? enabledForController : enabledForMouseAndKeyboard;
+        bool shouldUse = lookController.cameraInput.usingGamepad ? enabledForController : enabledForMouseAndKeyboard;
         if (shouldUse == false) return;
 
         // Check if the user is hip-firing. If the sights are set to only activate during ADS, cancel.

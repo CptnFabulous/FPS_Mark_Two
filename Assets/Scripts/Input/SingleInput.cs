@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.UI;
-using UnityEngine.EventSystems;
 
 public class SingleInput : MonoBehaviour
 {
@@ -19,6 +17,8 @@ public class SingleInput : MonoBehaviour
     public PlayerInput player { get; private set; }
     public InputAction action { get; private set; }
     public InputActionMap map { get; private set; }
+
+    public bool usingGamepad => player.currentControlScheme.Contains("Gamepad");
 
     private void Awake()
     {
