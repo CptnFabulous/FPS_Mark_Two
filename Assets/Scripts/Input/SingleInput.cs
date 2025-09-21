@@ -23,19 +23,21 @@ public class SingleInput : MonoBehaviour
         if (string.IsNullOrEmpty(mapName)) return;
         if (string.IsNullOrEmpty(actionName)) return;
 
-        //Debug.Log(mapName);
         player = GetComponentInParent<PlayerInput>();
-
-        //Debug.Log(player);
         map = player.actions.FindActionMap(mapName);
-        //Debug.Log(map);
         action = map.FindAction(actionName);
-        //Debug.Log(action);
-        action.performed += onActionPerformed.Invoke;
 
         if (inputPrompt != null)
         {
             inputPrompt.AssignAction(action, player);
         }
+    }
+    private void OnEnable()
+    {
+        action.performed += onActionPerformed.Invoke;
+    }
+    private void OnDisable()
+    {
+        action.performed -= onActionPerformed.Invoke;
     }
 }
