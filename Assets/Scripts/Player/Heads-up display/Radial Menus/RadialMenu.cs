@@ -13,46 +13,43 @@ public class RadialMenu : MonoBehaviour
 
     [Header("Cosmetics")]
     [SerializeField] RectTransform selectorAxis;
-    [SerializeField] Image optionPrefab;
+    [SerializeField] Transform iconParent;
+    //[SerializeField] Image optionPrefab;
+    [SerializeField] RadialMenuSlice slicePrefab;
+    //[SerializeField] RadialMenuSlice highlight;
     [SerializeField] bool optionRotationsMatchAngle;
 
     CanvasGroup elements;
-    RectTransform[] options = new RectTransform[0];
+    RadialMenuSlice[] _options = new RadialMenuSlice[0];
     List<RectTransform> visualElements = new List<RectTransform>();
 
     int cachedIndex; // Don't edit this directly except from inside 'value' setter
+    System.Func<int> calculateCurrentIndex;
     Vector2 cursorDirection;
     HeadsUpDisplay ph;
 
-    public bool menuIsOpen { get; private set; }
-    public int value
+    //public bool menuIsOpen { get; private set; }
+    public int currentValue
     {
         get => cachedIndex;
-        set
-        {
-            // Should I put this code in InputDirection() instead?
-            // I might also want to set up EnterMenu() to use InputDirection() as well since there's a lot of overlap.
-            
-            value = Mathf.Clamp(value, 0, options.Length - 1);
-            if (cachedIndex == value) return;// Only perform updating code if value is changed
-
-            cachedIndex = value;
-            onValueChanged.Invoke(cachedIndex);
-        }
+        set => SetCurrentValue(value, false);
     }
-    public int numberOfOptions => options.Length;
-    public bool optionsPresent => options != null && options.Length > 0;
-    float radius => Vector2.Distance(optionPrefab.rectTransform.anchoredPosition, Vector2.zero);
-    float segmentSize => optionsPresent ? (360 / options.Length) : 360;
+    public IReadOnlyList<RadialMenuSlice> options => _options;
+    public int numberOfOptions => options.Count;
+    public bool optionsPresent => options != null && options.Count > 0;
+    //public float radius => Vector2.Distance(optionPrefab.rectTransform.anchoredPosition, Vector2.zero);
+    public float segmentSize => optionsPresent ? (360 / options.Count) : 360;
     HeadsUpDisplay parentHUD => ph ??= GetComponentInParent<HeadsUpDisplay>();
 
     #region Setup
     private void Awake()
     {
         elements = GetComponent<CanvasGroup>();
-        optionPrefab.gameObject.SetActive(false);
-        SetActiveState(false);
+        //if (optionPrefab != null) optionPrefab.gameObject.SetActive(false);
+        if (slicePrefab != null) slicePrefab.gameObject.SetActive(false);
+        //SetActiveState(false);
     }
+    /*
     void SetActiveState(bool enabled)
     {
         menuIsOpen = enabled;
@@ -60,14 +57,16 @@ public class RadialMenu : MonoBehaviour
         elements.interactable = menuIsOpen;
         elements.blocksRaycasts = menuIsOpen;
     }
+    */
     void Clear()
     {
         // Clear options and destroy all instantiated visuals
         // Implementing code to save and repurpose current ones might theoretically improve performance, but I'll wait until it actually causes problems.
         foreach (RectTransform visual in visualElements) Destroy(visual.gameObject);
         visualElements.Clear();
+        calculateCurrentIndex = null;
 
-        options = new RectTransform[0]; // Set length to zero
+        _options = new RadialMenuSlice[0]; // Set length to zero
     }
     void SetSelectorAngle(float angle) => selectorAxis.localRotation = Quaternion.Euler(0, 0, -angle);
     #endregion
@@ -77,19 +76,40 @@ public class RadialMenu : MonoBehaviour
     /// Populates the radial menu with a series of options.
     /// </summary>
     /// <param name="icons"></param>
-    public void Refresh(Sprite[] icons)
+    public void Refresh(Sprite[] icons, System.Func<int> calculateCurrentIndex)
     {
         Clear();
+        this.calculateCurrentIndex = calculateCurrentIndex;
 
+        //Refresh(icons, calculateCurrentIndex, optionPrefab);
+        AddOptions(icons, calculateCurrentIndex, slicePrefab);
+    }
+    /*
+    void AddOptions(Sprite[] icons, System.Func<int> calculateCurrentIndex, Image optionPrefab)
+    {
         options = new RectTransform[icons.Length];
         for (int i = 0; i < options.Length; i++)
         {
-            Image newOption = Instantiate(optionPrefab, transform);
+            Image newOption = Instantiate(optionPrefab, iconParent);
             newOption.sprite = icons[i];
             AddVisualEffect(newOption.rectTransform, i, 1, optionRotationsMatchAngle);
             options[i] = newOption.rectTransform;
         }
     }
+    */
+    void AddOptions(Sprite[] icons, System.Func<int> calculateCurrentIndex, RadialMenuSlice slicePrefab)
+    {
+        _options = new RadialMenuSlice[icons.Length];
+        for (int i = 0; i < options.Count; i++)
+        {
+            RadialMenuSlice newSlice = Instantiate(slicePrefab, iconParent);
+            newSlice.sprite = icons[i];
+            AddSegment(newSlice, i);
+            newSlice.UpdateSegmentSize(segmentSize);
+            _options[i] = newSlice;
+        }
+    }
+    /*
     /// <summary>
     /// Adds another visual element to the radial menu.
     /// </summary>
@@ -104,9 +124,26 @@ public class RadialMenu : MonoBehaviour
         Vector3 position = radius * distance * (rotation * Vector3.up);
 
         // Parents the object transform and sets up its position and rotation
-        objectTransform.SetParent(transform);
+        objectTransform.SetParent(iconParent);
         objectTransform.anchoredPosition = position; // Sets position
         objectTransform.localRotation = preserveAngle ? rotation : Quaternion.identity; // If preserveAngle is false, object retains an upright rotation
+
+        // Activates the visual and ensures the radial menu recognises it.
+        visualElements.Add(objectTransform);
+        objectTransform.gameObject.SetActive(true);
+    }
+    */
+    public void AddSegment(RadialMenuSlice newSlice, float orderIndex)
+    {
+        // Size segment to match angle
+        // Assign icon
+        //newSlice.segmentSize = segmentSize;
+
+        // Parents the object transform and sets up its position and rotation
+        RectTransform objectTransform = newSlice.rectTransform;
+        objectTransform.SetParent(iconParent);
+        objectTransform.anchoredPosition = Vector2.zero;
+        objectTransform.localRotation = Quaternion.Euler(0, 0, -segmentSize * orderIndex);
 
         // Activates the visual and ensures the radial menu recognises it.
         visualElements.Add(objectTransform);
@@ -121,8 +158,8 @@ public class RadialMenu : MonoBehaviour
     /// <param name="inputVector"></param>
     public void InputDirection(Vector2 inputVector, bool usingMouse)
     {
-        if (!menuIsOpen) return;
-
+        //if (!menuIsOpen) return;
+        
         // Input mouse/analog stick movement
         if (usingMouse)
         {
@@ -132,6 +169,8 @@ public class RadialMenu : MonoBehaviour
         {
             cursorDirection = inputVector;
         }
+
+        // Normalise mouse magnitude so the player can easily change direction with a slight movement
         if (cursorDirection.magnitude > 1) cursorDirection.Normalize();
 
         // Calculate a 0-360 degree angle based off the vector
@@ -140,8 +179,8 @@ public class RadialMenu : MonoBehaviour
 
         // Calculate the correct index for the angle
         int valueToSet = Mathf.RoundToInt(selectionAngle / segmentSize);
-        if (valueToSet >= options.Length) valueToSet = 0;
-        value = valueToSet;
+        if (valueToSet >= options.Count) valueToSet = 0;
+        currentValue = valueToSet;
 
         SetSelectorAngle(selectionAngle);
     }
@@ -149,37 +188,50 @@ public class RadialMenu : MonoBehaviour
     /// Opens the radial menu and updates it to the current selection.
     /// </summary>
     /// <param name="index"></param>
-    public void EnterMenu(int newIndex)
+    public void EnterMenu()
     {
         if (optionsPresent == false) return;
 
         // Force-update the index
-        cachedIndex = newIndex;
-        onValueChanged.Invoke(cachedIndex);
+        SetCurrentValue(calculateCurrentIndex.Invoke(), true);
         
         cursorDirection = Vector2.zero;
         SetSelectorAngle(segmentSize * cachedIndex);
-        SetActiveState(true);
+        //SetActiveState(true);
     }
     /// <summary>
     /// Closes the menu and applies the selection.
     /// </summary>
-    public void ExitMenu()
+    public void ExitMenu(bool applySelection = true)
     {
-        SetActiveState(false);
-        onValueConfirmed.Invoke(value);
+        //SetActiveState(false);
+        if (applySelection) onValueConfirmed.Invoke(currentValue);
+    }
+
+
+    public void SetCurrentValue(int newIndex, bool forceRefresh = false)
+    {
+        // Should I put this code in InputDirection() instead?
+        // I might also want to set up EnterMenu() to use InputDirection() as well since there's a lot of overlap.
+
+        newIndex = Mathf.Clamp(newIndex, 0, options.Count - 1);
+        if (cachedIndex == newIndex && !forceRefresh) return;// Only perform updating code if value is changed (unless set to refresh anyway)
+
+        cachedIndex = newIndex;
+        onValueChanged.Invoke(cachedIndex);
     }
     #endregion
 
     #region Cosmetic functions
     public void PositionHighlight(RectTransform selectionHighlight)
     {
-        selectionHighlight.anchoredPosition = options[value].anchoredPosition;
-        selectionHighlight.rotation = options[value].rotation;
+        RectTransform rt = options[currentValue].rectTransform;
+        selectionHighlight.anchoredPosition = rt.anchoredPosition;
+        selectionHighlight.rotation = rt.rotation;
     }
     public void RotateToIndexAngle(Transform toRotate)
     {
-        float angle = value * segmentSize;
+        float angle = currentValue * segmentSize;
         toRotate.localRotation = Quaternion.Euler(0, 0, -angle);
     }
     public void PlayOneShotAnimation(Animation animation) => animation.Play();
