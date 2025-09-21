@@ -128,7 +128,7 @@ public class GunReticle : MonoBehaviour
     }
     float ReticleAngle()
     {
-        float angle = handler.aimSwayAngle + mode.stats.shotSpread;
+        float angle = mode.stats.spread;
 
         if (ads == null) return angle;
 
