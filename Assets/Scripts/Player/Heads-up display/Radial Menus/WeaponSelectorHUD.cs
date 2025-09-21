@@ -6,18 +6,18 @@ using UnityEngine.UI;
 public class WeaponSelectorHUD : MonoBehaviour
 {
     [SerializeField] RadialMenu radialMenu;
-
+    
+    /*
     [Header("Dividers")]
     [SerializeField] RectTransform dividerPrefab;
     [SerializeField] bool rotateDividers;
-
+    */
+    
     [Header("Weapon graphics")]
     [SerializeField] Image weaponGraphicPrefab;
-    //[SerializeField] float weaponGraphicRotationOffset;
+    [SerializeField] RadialMenuSlice weaponIconSlicePrefab;
     [SerializeField] bool rotateWeaponGraphics;
     [SerializeField] float graphicDistanceFromCentre = 0.5f;
-    [SerializeField] Vector3 rotationOffset = new Vector3(0, 0, 90);
-    [SerializeField] Vector3 rotationOffsetIfUpsideDown = new Vector3(180, 0, 0);
 
     [Header("Info on selected firing mode")]
     //public Image weaponImage;
@@ -30,8 +30,9 @@ public class WeaponSelectorHUD : MonoBehaviour
 
     private void Awake()
     {
-        dividerPrefab.gameObject.SetActive(false);
-        weaponGraphicPrefab?.gameObject.SetActive(false);
+        //if (dividerPrefab != null) dividerPrefab.gameObject.SetActive(false);
+        if (weaponGraphicPrefab != null) weaponGraphicPrefab.gameObject.SetActive(false);
+        if (weaponIconSlicePrefab != null) weaponIconSlicePrefab.gameObject.SetActive(false);
 
         radialMenu.onValueChanged.AddListener(DisplayInfoOnSelectedMode);
     }
@@ -39,43 +40,45 @@ public class WeaponSelectorHUD : MonoBehaviour
     public void Refresh(WeaponHandler newHandler)
     {
         handler = newHandler;
-        
+
         #region Add options
+
+        // Get all the icons from all the firing modes, and put them in a list
         List<Sprite> icons = new List<Sprite>();
-        foreach (Weapon w in handler.equippedWeapons) // Get all the icons from all the firing modes
+        foreach (Weapon w in handler.equippedWeapons)
         {
-            foreach (WeaponMode m in w.modes)
-            {
-                icons.Add(m.icon);
-            }
+            foreach (WeaponMode m in w.modes) icons.Add(m.icon);
         }
-        radialMenu.Refresh(icons.ToArray());
+        radialMenu.Refresh(icons.ToArray(), CalculateIndex);
+
+        // Update resource values
+        for (int i = 0; i < radialMenu.options.Count; i++)
+        {
+            int index = i;
+            radialMenu.options[index].resourceDisplay.obtainValues = () => GetResourceData(index);
+        }
+
         #endregion
 
         #region Add dividers and weapon icons
+
         int modeIndex = 0; // An index representing the number of modes so far in the foreach loop
         foreach (Weapon w in handler.equippedWeapons)
         {
             int numberOfModes = w.modes.Length;
 
-            if (weaponGraphicPrefab != null) // Set up graphics for each weapon (if prefab is present)
+            // Create slice showing the weapon type under the firing modes.
+            if (weaponIconSlicePrefab != null)
             {
-                // WIP: Positions are bugged out for some reason
-                Image weaponGraphic = Instantiate(weaponGraphicPrefab, radialMenu.transform);
-                weaponGraphic.sprite = w.hudGraphic;
-                float weaponGraphicOrder = modeIndex + ((numberOfModes - 1) * 0.5f);
-                //Debug.Log(weaponGraphicOrder);
-                radialMenu.AddVisualEffect(weaponGraphic.rectTransform, weaponGraphicOrder, graphicDistanceFromCentre, rotateWeaponGraphics);
-                weaponGraphic.rectTransform.SetSiblingIndex(weaponGraphicPrefab.rectTransform.GetSiblingIndex() + 1);
+                RadialMenuSlice newSlice = Instantiate(weaponIconSlicePrefab, radialMenu.transform);
+                newSlice.sprite = w.hudGraphic;
 
-                // Apply extra rotation offsets
-                weaponGraphic.rectTransform.localRotation *= Quaternion.Euler(rotationOffset);
-                if (Vector3.Dot(weaponGraphic.transform.up, radialMenu.transform.up) < 0)
-                {
-                    weaponGraphic.rectTransform.localRotation *= Quaternion.Euler(rotationOffsetIfUpsideDown);
-                }
+                float weaponGraphicOrder = modeIndex + ((numberOfModes - 1) * 0.5f);
+                radialMenu.AddSegment(newSlice, weaponGraphicOrder);
+                newSlice.UpdateSegmentSize(radialMenu.segmentSize * numberOfModes);
             }
             
+            /*
             // Set up dividers
             if (dividerPrefab != null)
             {
@@ -83,12 +86,15 @@ public class WeaponSelectorHUD : MonoBehaviour
                 float dividerOrder = modeIndex - 0.5f;
                 radialMenu.AddVisualEffect(divider, dividerOrder, 1, rotateDividers);
             }
+            */
             
             modeIndex += numberOfModes;
         }
+
         #endregion
     }
 
+    int CalculateIndex() => handler.SelectorIndexFromWeaponAndMode(handler.equippedWeaponIndex, handler.CurrentWeapon.currentModeIndex);
     void DisplayInfoOnSelectedMode(int index)
     {
         handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
@@ -104,5 +110,12 @@ public class WeaponSelectorHUD : MonoBehaviour
         }
 
         ammoCapacity.text = mode.hudInfo;
+    }
+
+    Resource GetResourceData(int index)
+    {
+        handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
+        WeaponMode mode = handler.equippedWeapons[weaponIndex].modes[firingModeIndex];
+        return mode.displayedResource;
     }
 }

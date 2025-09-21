@@ -116,7 +116,7 @@ public class GunReticle : MonoBehaviour
     float ReticleOpacity()
     {
         // Do not show reticle if currently in the weapon selector
-        if (handler.weaponSelector.menuIsOpen) return 0;
+        if (handler.attackSelectors.menuIsOpen) return 0;
 
         // if no ADS, just make the reticle fully visible.
         if (ads == null) return 1;

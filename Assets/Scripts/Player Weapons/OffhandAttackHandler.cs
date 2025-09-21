@@ -10,6 +10,7 @@ public class OffhandAttackHandler : MonoBehaviour
     public SingleInput input;
     public WeaponHandler weaponHandler;
     public InteractionHandler interactionHandler;
+    public OffhandSelectorHUD selectorInfo;
 
     int abilityIndex = 0;
     bool buttonHeld;
@@ -45,6 +46,9 @@ public class OffhandAttackHandler : MonoBehaviour
             Weapon w = ability.attachedTo;
             if (w != null) w.gameObject.SetActive(false);
         }
+
+        selectorInfo.radialMenu.onValueConfirmed.AddListener((index) => currentAbility = abilities[index]);
+        selectorInfo.PopulateMenu(this);
     }
 
     void OnAttack(InputAction.CallbackContext context)
