@@ -12,7 +12,9 @@ public class SingleInput : MonoBehaviour
     [SerializeField] string actionName;
     [SerializeField, Tooltip("Optional, to directly assign a visual prompt")] InputPrompt inputPrompt;
 
+    public UnityEvent<InputAction.CallbackContext> onActionStarted;
     public UnityEvent<InputAction.CallbackContext> onActionPerformed;
+    public UnityEvent<InputAction.CallbackContext> onActionCancelled;
 
     public PlayerInput player { get; private set; }
     public InputAction action { get; private set; }
@@ -34,10 +36,14 @@ public class SingleInput : MonoBehaviour
     }
     private void OnEnable()
     {
+        action.started += onActionStarted.Invoke;
         action.performed += onActionPerformed.Invoke;
+        action.canceled += onActionCancelled.Invoke;
     }
     private void OnDisable()
     {
+        action.started -= onActionStarted.Invoke;
         action.performed -= onActionPerformed.Invoke;
+        action.canceled -= onActionCancelled.Invoke;
     }
 }
