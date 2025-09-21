@@ -8,6 +8,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
     public static float SignWithZero(float input) => (input != 0) ? Mathf.Sign(input) : 0;
 
     public PlayerInput mainInput;
+    public SingleInput cameraInput;
     public WeaponHandler weaponHandler;
 
     [Header("Aiming")]
@@ -51,7 +52,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
         get
         {
             Vector2 input = GetProcessedAimInput();
-            return Quaternion.Euler(-input.y, input.x, 0) * transform.rotation;
+            return Quaternion.Euler(-input.y, input.x, 0) * mainBodyTransform.rotation;
         }
     }
     public bool usingGamepad => mainInput.currentControlScheme.Contains("Gamepad");
@@ -157,19 +158,20 @@ public class LookController : MonoBehaviour, ICharacterLookController
         return value;
     }
 
+    /*
+    void OnLook(InputValue input) => RegisterLookInput(input.Get<Vector2>());
+    */
     /// <summary>
     /// Register raw input values and aim start time (for aim acceleration)
     /// </summary>
     /// <param name="input"></param>
-    void OnLook(InputValue input)
+    void RegisterLookInput(Vector2 newInput)
     {
         if (!canLook)
         {
             rawAimInput = Vector2.zero;
             return;
         }
-
-        Vector2 newInput = input.Get<Vector2>();
 
         // Reset player aim time on start or direction change, for aim acceleration calculations
         if (SignWithZero(newInput.x) != SignWithZero(rawAimInput.x)) aimStartTime = Time.time;
@@ -179,6 +181,8 @@ public class LookController : MonoBehaviour, ICharacterLookController
 
     void Start()
     {
+        cameraInput.onActionPerformed.AddListener((ctx) => RegisterLookInput(ctx.ReadValue<Vector2>()));
+        cameraInput.onActionCancelled.AddListener((ctx) => RegisterLookInput(ctx.ReadValue<Vector2>()));
         currentFieldOfView = fieldOfView;
     }
     void Update()
