@@ -24,8 +24,6 @@ public class ADSHandler : MonoBehaviour
             enabled = _currentWeapon != null;
         }
     }
-
-
     public WeaponHandler weaponHandler => player.weaponHandler;
     public GunADS adsData => currentAttack != null ? currentAttack.optics : null;
     public LookController lookControls => player.movement.lookControls;
@@ -42,7 +40,7 @@ public class ADSHandler : MonoBehaviour
         get => _aiming;
         set
         {
-            //bool desiredValue = value;
+            bool desiredValue = value;
 
             // Don't allow it if weapon handler is currently disabling ADS
             value = (!weaponHandler.disableADS) && value;
@@ -60,20 +58,13 @@ public class ADSHandler : MonoBehaviour
     public bool betweenStates => timerLastFrame != targetValue;
     float targetValue => currentlyAiming ? 1 : 0;
 
-    private void Awake()
-    {
-        currentAttack = currentAttack;
-    }
-    private void OnEnable()
-    {
-        timerLastFrame = timer;
-    }
-    void OnDisable()
-    {
-        CancelADSImmediately();
-    }
+    private void Awake() => currentAttack = currentAttack;
+    private void OnEnable() => timerLastFrame = timer;
+    void OnDisable() => CancelADSImmediately();
     private void Update()
     {
+        if (adsData == null) return;
+
         // If timer is different from desired value, lerp and update it
         timerLastFrame = timer;
         timer = Mathf.MoveTowards(timer, targetValue, Time.deltaTime / adsData.transitionTime);
@@ -81,10 +72,9 @@ public class ADSHandler : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (currentlyAiming || betweenStates)
-        {
-            LerpADSCosmetics(timer);
-        }
+        if (adsData == null) return;
+
+        if (currentlyAiming || betweenStates) LerpADSCosmetics(timer);
     }
 
     /// <summary>
@@ -100,16 +90,13 @@ public class ADSHandler : MonoBehaviour
 
         Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, swayHandler.aimDirection, timer);
         upperBody.LookAt(upperBody.position + cameraDirection, aimAxis.up);
-
+        
         // Lerp sway to change weapon accuracy while aiming down sights
-        if (timer <= 0)
-        {
-            Debug.LogWarning("Value set to zero, if ADS is being disabled the hipfire sway multiplier should be set to something neutral. Fix this later.");
-        }
-        swayHandler.swayMultipliers[swayHandler.adsMultiplierReference] = Mathf.Lerp(adsData.hipfireSwayMultiplier, swayHandler.adsMultiplier, timer);
+        float sway = Mathf.Lerp(adsData.hipfireSwayMultiplier, swayHandler.adsMultiplier, timer);
+        swayHandler.swayMultipliers[swayHandler.adsMultiplierReference] = sway;
     }
     /// <summary>
-    /// Lerps appropriate cosmetic features between standard and ADS modes.
+    /// Functions similarly to LerpADS, but runs in LateUpdate() for animations and visuals.
     /// </summary>
     /// <param name="timer"></param>
     void LerpADSCosmetics(float timer)
@@ -148,17 +135,17 @@ public class ADSHandler : MonoBehaviour
 
         adsData.onADSLerp.Invoke(this, timer);
     }
-
     void CancelADSImmediately()
     {
-        if (_currentWeapon == null) return;
+        if (currentAttack == null || adsData == null) return;
 
         currentlyAiming = false;
         timer = 0;
+
         LerpADS(0);
         LerpADSCosmetics(0);
+        swayHandler.swayMultipliers[swayHandler.adsMultiplierReference] = 1;
     }
-
     public IEnumerator ChangeADSAsync(bool activate)
     {
         currentlyAiming = activate;
