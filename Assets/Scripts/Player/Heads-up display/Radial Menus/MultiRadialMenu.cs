@@ -83,11 +83,20 @@ public class MultiRadialMenu : MonoBehaviour
 
         if (context.ReadValueAsButton() == false) return;
 
-        // Switch between the different active menus
-        int index = menus.IndexOf(currentMenu);
-        index = MiscFunctions.LoopIndex(index + 1, menus.Count);
+        // Get current menu index
+        int oldIndex = menus.IndexOf(currentMenu);
 
+        // Cycle through menus until one is found with options present
+        int index = oldIndex;
+        for (int i = 0; i < menus.Count; i++)
+        {
+            index = MiscFunctions.LoopIndex(index + 1, menus.Count);
+            // End loop once one is found
+            if (menus[index].optionsPresent) break;
+        }
 
+        // If the only valid menu is the current one, do nothing
+        if (index == oldIndex) return;
 
         SwitchToDifferentMenu(menus[index]);
     }
