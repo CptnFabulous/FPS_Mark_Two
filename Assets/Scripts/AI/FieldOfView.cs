@@ -15,7 +15,7 @@ public class FieldOfView : MonoBehaviour
 {
     public float viewRange = 25;
     public Vector2 viewingAngles = new Vector2(90, 30);
-    public LayerMask viewDetection = ~0;
+    public DetectionProfile viewDetection;
     public float raycastSpacing = 0.25f;
 
     AI _root;
@@ -81,7 +81,7 @@ public class FieldOfView : MonoBehaviour
         // Check angle
         if (AngleCheck(direction, transform, viewingAngles) == false) return ViewStatus.OutsideViewAngle;
         // Check line of sight
-        bool seen = AIAction.LineOfSight(transform.position, position, viewDetection, rootAI.colliders);
+        bool seen = AIAction.LineOfSight(transform.position, position, viewDetection.mask, rootAI.colliders);
         return seen ? ViewStatus.Visible : ViewStatus.BehindCover;
     }
     /// <summary>
@@ -160,7 +160,7 @@ public class FieldOfView : MonoBehaviour
 
             // Run a line of sight check to the target colliders
             float distance = Mathf.Min(direction.magnitude, viewRange);
-            bool lineOfSight = AIAction.LineOfSightToTarget(ray, out hit, distance, viewDetection, targetColliders, rootAI.colliders);
+            bool lineOfSight = AIAction.LineOfSightToTarget(ray, out hit, distance, viewDetection.mask, targetColliders, QueryTriggerInteraction.Collide, rootAI.colliders);
             //Debug.Log(hit.collider);
             // If the raycast hit one of the target's colliders, that means the AI can see it!
             if (lineOfSight) return ViewStatus.Visible;

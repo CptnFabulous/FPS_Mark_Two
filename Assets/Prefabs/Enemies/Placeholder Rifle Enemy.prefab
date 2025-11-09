@@ -852,7 +852,6 @@ MonoBehaviour:
   icon: {fileID: -3171215574586982828, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: Stunned
-  toSwitchToOnEnd: {fileID: 0}
   staggerTime: 2.3
   stunHandler: {fileID: 780700435301158838}
 --- !u!1 &6922549671669234546
@@ -1143,6 +1142,7 @@ MonoBehaviour:
     criticalLevel: 5
   godmode: 0
   deadDescription: dead
+  poise: {fileID: 780700435301158838}
   onDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -1300,10 +1300,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewRange: 30
   viewingAngles: {x: 90, y: 30}
-  viewDetection:
-    serializedVersion: 2
-    m_Bits: 1015
+  viewDetection: {fileID: 11400000, guid: 94ba0f6d41a929643b4211c668d3211b, type: 2}
   raycastSpacing: 0.25
+  blindCheckRadius: 0.1
+  blindCheckDetection:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &5217320388601188730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2189,7 +2191,7 @@ PrefabInstance:
     - target: {fileID: 6268821748223412273, guid: 9a4ab9f87f1c26c48ae2dea4b7b0a290, type: 3}
       propertyPath: attachedTo
       value: 
-      objectReference: {fileID: 3013230456739492696}
+      objectReference: {fileID: 5413707382805136003}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -11,7 +11,7 @@ public class GunGeneralStats : RangedAttackFiringData
     public float shotSpread = 0;
     public UnityEvent effectsOnFire;
 
-    public override LayerMask hitDetection => projectilePrefab.detection;
+    public override LayerMask hitDetection => projectilePrefab.detection.mask;
     public override int damage => projectilePrefab.damageStats.damage;
     public override float spread => shotSpread + base.spread;
 
@@ -36,7 +36,7 @@ public class GunGeneralStats : RangedAttackFiringData
             Vector3 spreadAngles = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * shotSpread;
             Vector3 castDirection = Quaternion.LookRotation(aimDirection, worldUp) * Quaternion.Euler(spreadAngles) * Vector3.forward;
 
-            WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, newProjectile.detection, user.colliders, out _, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
+            WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, hitDetection, user.colliders, out _, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
             if (behindMuzzle)
             {
                 // If muzzle is close enough, projectile has no distance to move. Activate OnHit immediately and proceed to next projectile

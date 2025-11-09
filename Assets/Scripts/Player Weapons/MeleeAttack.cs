@@ -15,7 +15,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     [Header("Detection")]
     [SerializeField] float range = 2;
     [SerializeField] float angle = 45;
-    [SerializeField] LayerMask hitDetection = ~0;
+    [SerializeField] DetectionProfile hitDetection;
     [SerializeField] float backupCastRadius = 0.5f;
     [SerializeField] bool snapTowardsTarget;
 
@@ -31,7 +31,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     [SerializeField] string cooldownTrigger = "Cooldown";
     [SerializeField] string interruptTrigger = "Interrupted";
 
-    public override LayerMask attackMask => hitDetection;
+    public override LayerMask attackMask => hitDetection.mask;
     public override string hudInfo => null;
 
     protected override void OnSecondaryInputChanged(bool held)
@@ -57,7 +57,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         #region Acquire target
         Vector3 origin = User.LookTransform.position;
         Vector3 direction = User.aimDirection;
-        List<Character> targets = WeaponUtility.MeleeDetectMultiple<Character>(origin, direction, range, angle, hitDetection);
+        List<Character> targets = WeaponUtility.MeleeDetectMultiple<Character>(origin, direction, range, angle, attackMask);
         targets.RemoveAll((e) => User.IsHostileTowards(e) == false);
         MiscFunctions.SortListWithOnePredicate(targets, (e) =>
         {
@@ -109,7 +109,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
             normal = -hitDirection;
             //hitData.AttackObject(target.gameObject, User, User, point, hitDirection, -hitDirection);
         }
-        else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, hitDetection))
+        else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, attackMask))
         {
             targetObject = rh.collider.gameObject;
             point = rh.point;

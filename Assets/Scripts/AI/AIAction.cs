@@ -108,9 +108,9 @@ public abstract class AIAction : Action
         Debug.DrawLine(from, to, Color.green);
         return true;
     }
-    public static bool LineOfSightToTarget(Ray ray, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, params IEnumerable<Collider>[] exceptionLists)
+    public static bool LineOfSightToTarget(Ray ray, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, QueryTriggerInteraction detectTriggers, params IEnumerable<Collider>[] exceptionLists)
     {
-        int numberOfResults = Physics.RaycastNonAlloc(ray, resultArray, viewRange, viewDetection);
+        int numberOfResults = Physics.RaycastNonAlloc(ray, resultArray, viewRange, viewDetection, detectTriggers);
         for (int i = 0; i < numberOfResults; i++)
         {
             hit = resultArray[i];
