@@ -755,6 +755,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4914236172249113264}
+  - component: {fileID: 973961155458689339}
   - component: {fileID: 4717014549792466384}
   - component: {fileID: 1343399539019729669}
   - component: {fileID: 2442529970897025860}
@@ -784,6 +785,24 @@ Transform:
   - {fileID: 6138122948483486526}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &973961155458689339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5395543551877665680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showDebugData: 0
+  properName: Fire Extinguisher
+  description: '[PLACEHOLDER]'
+  isUnique: 0
+  health: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!114 &4717014549792466384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -796,7 +815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06403f7bfc1547747a115d1e43ba9968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentEntity: {fileID: 0}
+  parentEntity: {fileID: 973961155458689339}
   hudGraphic: {fileID: 0}
   oneHanded: 1
   modes:
