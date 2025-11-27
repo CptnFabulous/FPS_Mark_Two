@@ -5,10 +5,15 @@ using CptnFabulous.ObjectPool;
 
 public class SmokeCloud : MonoBehaviour
 {
-    [SerializeField] ParticleSystem particleSystem;
+    static List<SmokeCloud> _activeClouds = new List<SmokeCloud>();
 
-    ParticleSystem.Particle[] particleArray;
+    public static IReadOnlyList<SmokeCloud> activeClouds => _activeClouds;
+    
+    [SerializeField] ParticleSystem particleSystem;
+    [HideInInspector, NonSerialized] public ParticleSystem.Particle[] particleArray;
+
     SphereCollider[] colliderArray;
+    [HideInInspector, NonSerialized] public Vector3[] particleOffsetResolvers;
 
     static SphereCollider smokeColliderPrefab;
     static Transform activeSmokeCloudParent;
@@ -31,6 +36,9 @@ public class SmokeCloud : MonoBehaviour
             }
         }
     }
+    public ParticleSystem particleEmitter => particleSystem;
+    //public ParticleSystem.Particle[] particles => particleArray;
+    public int numberOfParticles => particleSystem.particleCount;
     int collisionLayer => particleSystem.gameObject.layer;
 
     private void Awake()
@@ -38,6 +46,7 @@ public class SmokeCloud : MonoBehaviour
         int maxParticles = particleSystem.main.maxParticles;
         particleArray = new ParticleSystem.Particle[maxParticles];
         colliderArray = new SphereCollider[maxParticles];
+        particleOffsetResolvers = new Vector3[maxParticles];
         
         ParticleSystem.MainModule main = particleSystem.main;
         main.playOnAwake = false;
