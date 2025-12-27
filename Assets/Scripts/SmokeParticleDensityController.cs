@@ -26,7 +26,9 @@ public class SmokeParticleDensityController : MonoBehaviour
     }
 
     [SerializeField] float minimumAcceptableDistance = 1.5f;
-    public float resolveVectorMagnitude = 1f;
+    //public float resolveVectorMagnitude = 1f;
+    public float resolveVelocityMagnitude = 10f;
+    public float deceleration = 10f;
 
     Dictionary<Vector3Int, ParticleGridSpace> dictionary = new Dictionary<Vector3Int, ParticleGridSpace>();
     //FixedSizeDictionary<Vector3Int, ParticleGridSpace> gridSpaceDictionary = new FixedSizeDictionary<Vector3Int, ParticleGridSpace>(65536);
@@ -228,14 +230,21 @@ public class SmokeParticleDensityController : MonoBehaviour
                 // If adjacent particle is too close, add a small resolver vector to its corresponding offset.
                 // The direction added should be normalised, as a greater distance would mean a greater push, which is opposite of what makes sense with density.
                 // TO DO: figure out if resolve offset speed should change based on distance from each particle, and how many other particles it's bunched up against.
-                cloudOfAdjacentParticle.particleOffsetResolvers[indexOfAdjacentParticle] += resolveVectorMagnitude * direction.normalized;
+                cloudOfAdjacentParticle.particleOffsetResolvers[indexOfAdjacentParticle] += direction.normalized;
             }
         }
     }
     void ApplyResolverOffset(SmokeCloud cloud, int index)
     {
         Vector3 resolverVector = cloud.particleOffsetResolvers[index];
-        cloud.particleArray[index].position += resolverVector * Time.fixedDeltaTime;
+        
+        // Method 1: position is directly tweaked frame by frame.
+        //cloud.particleArray[index].position += Time.fixedDeltaTime * resolveVectorMagnitude * resolverVector;
+        //cloud.particleArray[index].position += resolverVector * Time.fixedDeltaTime;
+        
+        // Method 2: particle velocity is directly altered.
+        cloud.particleArray[index].velocity = Vector3.MoveTowards(cloud.particleArray[index].velocity, resolveVelocityMagnitude * resolverVector, deceleration * Time.fixedDeltaTime);
+        //cloud.particleArray[index].velocity = Vector3.MoveTowards(cloud.particleArray[index].velocity, resolverVector, deceleration * Time.fixedDeltaTime);
     }
 
     Vector3Int WorldToGridPosition(Vector3 worldPosition, out Vector3 nonRounded)
