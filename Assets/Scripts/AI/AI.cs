@@ -32,7 +32,7 @@ public class AI : Character
     public override Transform LookTransform => aiming.viewAxis;
     public override ICharacterLookController lookController => aiming;
     public override Vector3 aimDirection => LookTransform.forward;
-    public override LayerMask lookMask => visionCone.viewDetection;
+    public override LayerMask lookMask => visionCone.viewDetection.mask;
     public override LayerMask attackMask
     {
         get

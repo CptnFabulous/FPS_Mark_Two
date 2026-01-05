@@ -11,7 +11,8 @@ public class Projectile : MonoBehaviour
     public float weight = 1;
     public float diameter = 0.05f;
     public float startingVelocity = 100;
-    public LayerMask detection = ~0;
+    //public LayerMask detection = ~0;
+    public DetectionProfile detection;
 
     [Header("Impact")]
     public DamageDealer damageStats;
@@ -30,7 +31,7 @@ public class Projectile : MonoBehaviour
 
         Vector3 position = transform.position;
 
-        bool thingHit = CalculateTrajectoryDelta(ref position, ref velocity, weight, diameter, Time.deltaTime, detection, out surfaceHit);
+        bool thingHit = CalculateTrajectoryDelta(ref position, ref velocity, weight, diameter, Time.deltaTime, detection.mask, out surfaceHit);
         if (thingHit) OnHit(surfaceHit);
 
         transform.position = position;
