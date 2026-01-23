@@ -13,8 +13,6 @@ public class InvestigateLocations : AIStateFunction
     [Header("State transitions")]
     [SerializeField] List<StateFunction> statesToSwitchFrom;
 
-    IEnumerator currentCoroutine;
-
     public Vector3 positionToCheck { get; private set; }
     public float priorityLevel { get; private set; }
     public float lastTimeOfTargetChange { get; private set; } = Mathf.NegativeInfinity;
@@ -63,19 +61,13 @@ public class InvestigateLocations : AIStateFunction
         }
     }
 
-    protected override void OnEnable()
-    {
-        base.OnEnable();
-        currentCoroutine = SearchCoroutine();
-        StartCoroutine(currentCoroutine);
-    }
     private void OnDisable()
     {
-        StopCoroutine(currentCoroutine);
         aim.LookInNeutralDirection();
         priorityLevel = 0; // Resets priority value
     }
-    IEnumerator SearchCoroutine()
+
+    public override IEnumerator AsyncProcedure()
     {
         // Go to location of sound.
         // BUG: for some reason the AI sometimes skips this phase and does not actually go to the target's last position (even though all the code plays)
