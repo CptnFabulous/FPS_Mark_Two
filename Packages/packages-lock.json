@@ -5,14 +5,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e69086863ace25f74abbdf7fa2358d91076e157d"
+      "hash": "e8f4cc82c5581cdacfc096f21f6411e954359dae"
     },
     "com.cptnfabulous.shaders": {
       "version": "https://github.com/CptnFabulous/cptnfabulous-urp-shaders.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c0fff0a836c34d6110f470472f4b49a6e4ade62c"
+      "hash": "b1e7d0ef0acb08068e822be74772ede60aaa5631"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -42,6 +42,23 @@
     "com.unity.collab-proxy": {
       "version": "2.5.2",
       "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.collections": {
+      "version": "1.2.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.6.6",
+        "com.unity.test-framework": "1.1.31"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.editorcoroutines": {
+      "version": "1.0.0",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -94,6 +111,19 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.memoryprofiler": {
+      "version": "1.1.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.8.0",
+        "com.unity.collections": "1.2.3",
+        "com.unity.mathematics": "1.2.1",
+        "com.unity.profiling.core": "1.0.0",
+        "com.unity.editorcoroutines": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.postprocessing": {
       "version": "3.4.0",
       "depth": 0,
@@ -112,6 +142,13 @@
         "com.unity.modules.physics": "1.0.0",
         "com.unity.settings-manager": "1.0.3"
       },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.profiling.core": {
+      "version": "1.0.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
