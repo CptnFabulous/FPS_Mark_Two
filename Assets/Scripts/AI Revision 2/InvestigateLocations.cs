@@ -72,7 +72,7 @@ public class InvestigateLocations : AIStateFunction
     private void OnDisable()
     {
         StopCoroutine(currentCoroutine);
-        aim.lookingInDefaultDirection = true;
+        aim.LookInNeutralDirection();
         priorityLevel = 0; // Resets priority value
     }
     IEnumerator SearchCoroutine()
@@ -82,12 +82,15 @@ public class InvestigateLocations : AIStateFunction
         rootAI.DebugLog($"{this}: travelling to suspicious position (frame {Time.frameCount})");
         yield return rootAI.TravelToDestination(positionToCheck);
 
+        /*
         // Look around said position
         rootAI.DebugLog($"{this}: looking around target's last-known position (frame {Time.frameCount})");
-        yield return aim.SweepSurroundings();
+        Quaternion originalRotation = rootAI.transform.rotation;
+        yield return aim.SweepProcedure(() => originalRotation, 360, 180, 0);
+        //yield return aim.SweepSurroundings();
+        */
 
         // If nothing is detected, switch to alternate procedure
-        aim.lookingInDefaultDirection = true;
         SwitchToState(onFail);
     }
 }

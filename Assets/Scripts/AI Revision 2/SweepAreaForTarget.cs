@@ -11,6 +11,11 @@ public class SweepAreaForTarget : AIStateFunction
     public float positionUpdateInterval = 0.5f;
     public float distanceForInstinctCheck = 2;
     public float distanceForVisualCheck = 10;
+    [Range(0, 360)] public float horizontalSweepAngle;
+    [Range(0, 180)] public float verticalSweepAngle;
+    public float delayBetweenSweeps = 0.5f;
+
+    [Header("States")]
     public AIStateFunction successState;
     public AIStateFunction failState;
     public InvestigateLocations investigateState;
@@ -32,7 +37,7 @@ public class SweepAreaForTarget : AIStateFunction
     }
     void Update()
     {
-        aim.LookInNeutralDirection();
+        //.LookInNeutralDirection();
         /*
         // If the AI can see their target, switch to the success state.
         if (targetManager.canSeeTarget == ViewStatus.Visible)
@@ -103,6 +108,18 @@ public class SweepAreaForTarget : AIStateFunction
         
         // Assign a new destination
         GetNextDestination();
+
+        Vector3 lastDirection = rootAI.transform.forward;
+
+        Vector3 LookSweepDirection()
+        {
+            Vector3 velocity = navMeshAgent.desiredVelocity;
+            return velocity.sqrMagnitude > 0 ? velocity : lastDirection;
+        }
+
+        // Set the aiming module so the AI looks around while moving.
+        Vector2 sweepAngles = new Vector2(horizontalSweepAngle, verticalSweepAngle);
+        aim.SweepSightline(LookSweepDirection, sweepAngles, delayBetweenSweeps);
     }
     void GetNextDestination()
     {

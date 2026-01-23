@@ -24,15 +24,14 @@ public class SearchForLastTargetPosition : AIStateFunction
     private void OnDisable()
     {
         StopCoroutine(currentCoroutine);
-
-        aim.lookingInDefaultDirection = true;
+        aim.LookInNeutralDirection();
     }
 
     IEnumerator SearchCoroutine()
     {
         // Look towards the target's last-known position.
         rootAI.DebugLog($"{rootAI}: target lost, checking if outside field of view");
-        yield return aim.RotateTowards(targetManager.lastValidHit.point);
+        yield return aim.RotateTowardsAsync(targetManager.lastValidHit.point);
 
         // The AI now knows the target is blocked by cover. Wait for several seconds
         // (in case the target has simply taken cover, or to allow the player to perform a flanking maneuver) 

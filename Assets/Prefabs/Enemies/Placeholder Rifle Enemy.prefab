@@ -47,6 +47,7 @@ MonoBehaviour:
   icon: {fileID: 690883873600460605, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 6594071849308504864}
   timeToWaitBeforeReacquiringTarget: 5
   onFail: {fileID: 2618743024015922463}
   investigateState: {fileID: 414535660375231210}
@@ -532,10 +533,14 @@ MonoBehaviour:
   icon: {fileID: 514770500111043204, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 4605831353781806781}
   maxSearchDistance: 50
   positionUpdateInterval: 2
   distanceForInstinctCheck: 2
   distanceForVisualCheck: 10
+  horizontalSweepAngle: 180
+  verticalSweepAngle: 90
+  delayBetweenSweeps: 0.5
   successState: {fileID: 8339017120048449204}
   failState: {fileID: 1998196516955973173}
   investigateState: {fileID: 414535660375231210}
@@ -725,6 +730,7 @@ MonoBehaviour:
   icon: {fileID: 1660126055874503159, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 6594071849308504864}
   destinationThreshold: 0.5
   endStateOnceDestinationReached: 1
   currentAttack: {fileID: 3013230456739492696}
@@ -734,6 +740,78 @@ MonoBehaviour:
   coverDistance: 3
   onTargetEliminated: {fileID: 1998196516955973173}
   onTargetLost: {fileID: 5691326587957119647}
+--- !u!1 &4768548187943095004
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8297316782598023100}
+  - component: {fileID: 4605831353781806781}
+  m_Layer: 6
+  m_Name: Patrol look stats
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8297316782598023100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4768548187943095004}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7555169701559161299}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4605831353781806781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4768548187943095004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf36242510483c48ae762a502dacc0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lookSpeed: 90
+  speedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  swayAngle: 0
+  swaySpeed: 0
+  diameterForUnobstructedSight: 0
 --- !u!1 &4988165677026091908
 GameObject:
   m_ObjectHideFlags: 0
@@ -852,6 +930,7 @@ MonoBehaviour:
   icon: {fileID: -3171215574586982828, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: Stunned
+  aimStats: {fileID: 4605831353781806781}
   staggerTime: 2.3
   stunHandler: {fileID: 780700435301158838}
 --- !u!1 &6922549671669234546
@@ -902,6 +981,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 4605831353781806781}
   toSwitchToOnEnd: {fileID: 0}
   timeBeforeStandingUp: 2
   standUpTime: 3
@@ -996,6 +1076,7 @@ MonoBehaviour:
   icon: {fileID: 514770500111043204, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 4605831353781806781}
   investigateState: {fileID: 414535660375231210}
 --- !u!1 &7165764115487162309
 GameObject:
@@ -1044,6 +1125,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 4605831353781806781}
 --- !u!1 &7555169701559161300
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,6 +1171,8 @@ Transform:
   - {fileID: 7498403442610937525}
   - {fileID: 5445444627250922264}
   - {fileID: 2574194501127862913}
+  - {fileID: 8297316782598023100}
+  - {fileID: 2821672243545419042}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7555169701559161296
@@ -1340,48 +1424,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ai: {fileID: 7555169701559161296}
   viewAxis: {fileID: 7555169702278949066}
-  defaultAimStats:
-    lookSpeed: 720
-    speedCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    swayAngle: 0
-    swaySpeed: 0
-    diameterForUnobstructedSight: 0
+  bodyTransform: {fileID: 7555169701559161299}
+  defaultAimStats: {fileID: 6594071849308504864}
   targetThresholdAngle: 0
-  Stats:
-    lookSpeed: 0
-    speedCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    swayAngle: 0
-    swaySpeed: 0
-    diameterForUnobstructedSight: 0
-  lookingInDefaultDirection: 1
+  rotateTorso: 1
 --- !u!1 &7555169703030807958
 GameObject:
   m_ObjectHideFlags: 0
@@ -1588,6 +1634,7 @@ MonoBehaviour:
   icon: {fileID: -7743096449829439135, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
   soundCue: {fileID: 0}
   animationTrigger: 
+  aimStats: {fileID: 4605831353781806781}
   delayBetweenChangingTargetLocation: 10
   onFail: {fileID: 0}
   statesToSwitchFrom:
@@ -1760,6 +1807,78 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8471691940117376614
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2821672243545419042}
+  - component: {fileID: 6594071849308504864}
+  m_Layer: 6
+  m_Name: Combat look stats
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2821672243545419042
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8471691940117376614}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7555169701559161299}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6594071849308504864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8471691940117376614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf36242510483c48ae762a502dacc0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lookSpeed: 360
+  speedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  swayAngle: 0
+  swaySpeed: 0
+  diameterForUnobstructedSight: 0
 --- !u!1001 &670958393230298508
 PrefabInstance:
   m_ObjectHideFlags: 0

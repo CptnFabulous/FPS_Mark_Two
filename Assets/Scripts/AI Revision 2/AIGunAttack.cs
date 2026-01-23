@@ -59,7 +59,7 @@ public class AIGunAttack : MonoBehaviour
         else if (canTarget)
         {
             // Rotate aim
-            aim.RotateLookTowards(currentAimTarget);
+            aim.RotateFreeLookTowards(currentAimTarget);
             if (aimIsCorrect)
             {
                 currentAttackSequence = null;
@@ -67,7 +67,11 @@ public class AIGunAttack : MonoBehaviour
                 StartCoroutine(currentAttackSequence);
             }
         }
-        aim.lookingInDefaultDirection = !inAttack && !canTarget;
+        else
+        {
+            aim.LookInNeutralDirection();
+        }
+        //aim.lookingInDefaultDirection = !inAttack && !canTarget;
     }
     private void OnDisable()
     {
@@ -79,7 +83,7 @@ public class AIGunAttack : MonoBehaviour
             onTelegraphEnd.Invoke();
             onCooldown.Invoke();
             inAttack = false;
-            aim.lookingInDefaultDirection = true;
+            aim.CancelAsyncRoutines();
         }
     }
 
@@ -90,11 +94,13 @@ public class AIGunAttack : MonoBehaviour
         rootAI.DebugLog($"Telegraphing {weapon}");
 
         //currentAimTarget = targetPosition;
-        rootAI.agent.speed = rootAI.baseMovementSpeed * telegraphMoveSpeedMultiplier;
+        SetSpeed(telegraphMoveSpeedMultiplier);
+        //rootAI.agent.speed = rootAI.baseMovementSpeed * telegraphMoveSpeedMultiplier;
         onTelegraph.Invoke();
         yield return new WaitForSeconds(telegraphDelay);
 
-        rootAI.agent.speed = rootAI.baseMovementSpeed * attackMoveSpeedMultiplier;
+        SetSpeed(attackMoveSpeedMultiplier);
+        //rootAI.agent.speed = rootAI.baseMovementSpeed * attackMoveSpeedMultiplier;
         onTelegraphEnd.Invoke();
 
         rootAI.DebugLog($"Executing attack with {weapon}");
@@ -111,10 +117,17 @@ public class AIGunAttack : MonoBehaviour
 
         rootAI.DebugLog($"Cooling down from attack with {weapon}");
 
-        rootAI.agent.speed = rootAI.baseMovementSpeed;
+        // Revert to default speed
+        SetSpeed(1);
+        //rootAI.agent.speed = rootAI.baseMovementSpeed;
         float cooldown = Random.Range(cooldownMin, cooldownMax);
         onCooldown.Invoke();
         yield return new WaitForSeconds(cooldown);
         inAttack = false;
+    }
+
+    void SetSpeed(float multipler)
+    {
+        if (rootAI.agent != null) rootAI.agent.speed = rootAI.baseMovementSpeed * multipler;
     }
 }

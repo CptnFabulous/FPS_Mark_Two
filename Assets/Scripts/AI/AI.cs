@@ -97,7 +97,10 @@ public class AI : Character
     {
         Debug.DrawLine(transform.position, position, Color.cyan, 5);
         agent.SetDestination(position);
-        aiming.lookingInDefaultDirection = true;
+
+
+        // Set the AI to look straight forward
+        aiming.LookInNeutralDirection();
         
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();

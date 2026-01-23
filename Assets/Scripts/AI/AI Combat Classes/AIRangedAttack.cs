@@ -5,8 +5,7 @@ using UnityEngine;
 public class AIRangedAttack : AIAttackBehaviour
 {
     [Header("Aim stats")]
-    public AIAim.AimValues aimStatsWhileTelegraphing;
-    public AIAim.AimValues aimStatsWhileAttacking;
+    //public AIAim.AimValues aimStatsWhileAttacking;
     public float aimBreakThreshold;
     public float minRange = 10;
     public float maxRange = 30;
@@ -18,18 +17,18 @@ public class AIRangedAttack : AIAttackBehaviour
     
     public void Awake()
     {
-        onTelegraph.AddListener(() => actionRunning.Aim.Stats = aimStatsWhileTelegraphing);
-        onTelegraph.AddListener(() => actionRunning.Aim.Stats = aimStatsWhileAttacking);
+        //onTelegraph.AddListener(() => actionRunning.Aim.Stats = aimStatsWhileTelegraphing);
+        //onTelegraph.AddListener(() => actionRunning.Aim.Stats = aimStatsWhileAttacking);
         onTelegraph.AddListener(() => actionRunning.Aim.ResetStatsToDefault());
     }
     public override void Enter()
     {
-        actionRunning.Aim.lookingInDefaultDirection = false;
+        actionRunning.Aim.CancelAsyncRoutines();
     }
     public override void Exit()
     {
         base.Exit();
-        actionRunning.Aim.lookingInDefaultDirection = true;
+        actionRunning.Aim.LookInNeutralDirection();
     }
 
     public override void AcquireTarget()
@@ -39,7 +38,7 @@ public class AIRangedAttack : AIAttackBehaviour
         
         if (lineOfSightEstablished) // If AI has a line of sight to attack the target, shift aim towards target
         {
-            actionRunning.Aim.RotateLookTowards(targetLocation);
+            actionRunning.Aim.RotateFreeLookTowards(targetLocation);
         }
         else
         {
