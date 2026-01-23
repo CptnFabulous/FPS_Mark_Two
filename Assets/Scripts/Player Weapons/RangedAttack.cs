@@ -37,7 +37,24 @@ public class RangedAttack : WeaponMode
     public bool consumesAmmo => ammo != null && stats.ammoType != null && stats.ammoPerShot > 0;
 
     public override string hudInfo => WeaponUtility.AmmoCounterHUDDisplay(this);
-    public override Resource displayedResource => ammo.GetValues(stats.ammoType);
+    public override Resource displayedResource
+    {
+        get
+        {
+            if (magazine != null)
+            {
+                return magazine.ammo;
+            }
+            else if (consumesAmmo)
+            {
+                return ammo.GetValues(stats.ammoType);
+            }
+            else
+            {
+                return base.displayedResource;
+            }
+        }
+    }
 
     //Check that the fire button is still held (or that the minimum burst hasn't yet completed)
     bool shootingIntended => (PrimaryHeld || controls.WillBurst(shotsInBurst));
