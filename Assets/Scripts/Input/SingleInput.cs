@@ -29,6 +29,8 @@ public class SingleInput : MonoBehaviour
         map = player.actions.FindActionMap(mapName);
         action = map.FindAction(actionName);
 
+        //action.performed += onActionPerformed.Invoke;
+
         if (inputPrompt != null)
         {
             inputPrompt.AssignAction(action, player);

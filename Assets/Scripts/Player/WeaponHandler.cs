@@ -9,6 +9,7 @@ public class WeaponHandler : MonoBehaviour
     public Player controller;
     public SingleInput primaryInput;
     public SingleInput secondaryInput;
+    public SingleInput weaponMenuInput;
 
     [Header("Weapons")]
     public List<Weapon> equippedWeapons;
@@ -18,13 +19,17 @@ public class WeaponHandler : MonoBehaviour
     public AmmunitionInventory ammo;
     public AimSwayHandler swayHandler;
 
+    [Header("Selectors")]
+    public MultiRadialMenu attackSelectors;
+    public RadialMenu weaponSelector;
+    public int weaponMenuIndex = 0;
+    public WeaponSelectorHUD selectorInfo;
+    public NumberKeySelector hotkeyHandler;
+
+
     [Header("Accessibility")]
     public ADSHandler adsHandler;
     public Transform holdingSocket;
-    public MultiRadialMenu attackSelectors;
-    public RadialMenu weaponSelector;
-    public WeaponSelectorHUD selectorInfo;
-    public NumberKeySelector hotkeyHandler;
     public bool toggleADS;
     public bool quickSwitchModes = true;
 
@@ -77,15 +82,20 @@ public class WeaponHandler : MonoBehaviour
     private void Awake()
     {
         if (ammo == null) ammo = GetComponent<AmmunitionInventory>();
-        
-        weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
+
+
         // Make it so the current weapon is automatically put away if the player dies
         controller.health.onDeath.AddListener((_) => weaponDrawn = false);
 
-        hotkeyHandler.onSelectionMade.AddListener(OnWeaponHotkey);
-
+        // Primary and secondary fire inputs
         primaryInput.onActionPerformed.AddListener((ctx) => PrimaryFireInput(ctx.ReadValueAsButton()));
         secondaryInput.onActionPerformed.AddListener((ctx) => SecondaryFireInput(ctx.ReadValueAsButton()));
+
+        // Weapon and mode switch inputs
+        if (weaponMenuInput != null) weaponMenuInput.onActionPerformed.AddListener((ctx) => attackSelectors.SetSingleMenuActive(weaponMenuIndex, ctx.ReadValueAsButton()));
+        weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
+        hotkeyHandler.onSelectionMade.AddListener(OnWeaponHotkey);
+
     }
     private void Start()
     {

@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class OffhandAttackHandler : MonoBehaviour
+public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
 {
     public List<WeaponMode> abilities;
 
+    [Header("Inputs")]
     public SingleInput input;
+    public SingleInput selectorMenuInput;
+    public MultiRadialMenu menu;
+    public int selectorMenuIndex = 1;
+
+    [Header("References")]
     public WeaponHandler weaponHandler;
     public InteractionHandler interactionHandler;
     public OffhandSelectorHUD selectorInfo;
@@ -29,6 +35,9 @@ public class OffhandAttackHandler : MonoBehaviour
             CancelCurrentAction();
 
             _current = value;
+
+            //a.runtimeAnimatorController
+
             frameChanged = Time.frameCount;
         }
     }
@@ -40,6 +49,9 @@ public class OffhandAttackHandler : MonoBehaviour
 
         weaponHandler.onSwitchWeapon.AddListener((_) => CancelCurrentAction(true));
         interactionHandler.input.onActionPerformed.AddListener((_) => CancelCurrentAction());
+        //selectorMenuInput.onActionPerformed.AddListener((_) => menu.);
+
+
 
         foreach (WeaponMode ability in abilities)
         {
@@ -47,6 +59,7 @@ public class OffhandAttackHandler : MonoBehaviour
             if (w != null) w.gameObject.SetActive(false);
         }
 
+        if (selectorMenuInput != null) selectorMenuInput.onActionPerformed.AddListener((ctx) => menu.SetSingleMenuActive(selectorMenuIndex, ctx.ReadValueAsButton()));
         selectorInfo.radialMenu.onValueConfirmed.AddListener((index) => currentAbility = abilities[index]);
         selectorInfo.PopulateMenu(this);
     }

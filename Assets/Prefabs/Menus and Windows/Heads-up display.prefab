@@ -761,6 +761,7 @@ MonoBehaviour:
   animator: {fileID: 6755314785909259199}
   menuIndexName: Active Menu
   canvasGroup: {fileID: 1104049076063163293}
+  switchPrompt: {fileID: 8657497912580513928}
 --- !u!95 &6755314785909259199
 Animator:
   serializedVersion: 5
@@ -2096,7 +2097,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -4896,6 +4897,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 7612450880910303634, guid: 7db8644dc153cf44089d64bd86fb8196, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7612450880910303634, guid: 7db8644dc153cf44089d64bd86fb8196, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7612450880910303634, guid: 7db8644dc153cf44089d64bd86fb8196, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7838704176912359708, guid: 7db8644dc153cf44089d64bd86fb8196, type: 3}
       propertyPath: m_Name
       value: Off-hand weapon info
@@ -5402,7 +5415,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1671019460700226348, guid: 4a3cc0e26c489f243b0801f7364d94c1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 89
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1671019460700226348, guid: 4a3cc0e26c489f243b0801f7364d94c1, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -6309,7 +6322,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1671019460700226348, guid: 4a3cc0e26c489f243b0801f7364d94c1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 89
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1671019460700226348, guid: 4a3cc0e26c489f243b0801f7364d94c1, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -6398,7 +6411,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3620068798016533914, guid: 68626e1bdd672f44f8e41cf564f027ea, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 88.93
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3620068798016533914, guid: 68626e1bdd672f44f8e41cf564f027ea, type: 3}
       propertyPath: m_AnchoredPosition.x

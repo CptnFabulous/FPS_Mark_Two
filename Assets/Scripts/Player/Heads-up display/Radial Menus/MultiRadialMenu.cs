@@ -17,35 +17,77 @@ public class MultiRadialMenu : MonoBehaviour
     public Animator animator;
     public string menuIndexName = "Active Menu";
     public CanvasGroup canvasGroup;
+    public GameObject switchPrompt;
 
     RadialMenu currentMenu;
     public bool menuIsOpen { get; private set; } = false;
+    bool onOneSingleMenu = false;
 
     private void Awake()
     {
-        SetMenuActive(false);
+        SetMenuSystemActive(false);
         currentMenu = null;
     }
     private void Start()
     {
-        openMenuInput.onActionPerformed.AddListener(SetMenuActive);
-        menuSwitchInput.onActionPerformed.AddListener(CycleMenus);
+        if (openMenuInput != null) openMenuInput.onActionPerformed.AddListener((ctx) => SetMenuSystemActive(ctx.ReadValueAsButton()));
+        if (menuSwitchInput != null) menuSwitchInput.onActionPerformed.AddListener(CycleMenus);
         directionalInput.onActionPerformed.AddListener(InputDirection);
     }
-
-    void SetMenuActive(InputAction.CallbackContext context) => SetMenuActive(context.ReadValueAsButton());
-    void SetMenuActive(bool active)
+    
+    /// <summary>
+    /// Activates the whole menu system to the last-selected menu, and allows switching between different menus in a single activation
+    /// </summary>
+    /// <param name="active"></param>
+    public void SetMenuSystemActive(bool active)
     {
-        menuIsOpen = active;
+        switchPrompt.SetActive(true);
 
         // If the current menu is null or can't be accessed, check for a menu with options present
-        if (currentMenu == null || !currentMenu.optionsPresent)
+        RadialMenu menu = currentMenu;
+        if (menu == null || !menu.optionsPresent)
         {
-            currentMenu = menus.Find((m) => m.optionsPresent);
+            menu = menus.Find((m) => m.optionsPresent);
         }
 
-        // If no valid menu is found, automatically hide
-        if (currentMenu == null) menuIsOpen = false;
+        // Attempt to switch. If successful, alter functionality and GUI visibility to match
+        if (SetMenuActiveState(menu, active))
+        {
+            switchPrompt.SetActive(true);
+            onOneSingleMenu = false;
+        }
+    }
+    /// <summary>
+    /// Opens one specific menu and doesn't allow it to be switched from until it shuts
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="active"></param>
+    public void SetSingleMenuActive(int index, bool active) => SetSingleMenuActive(menus[index], active);
+    public void SetSingleMenuActive(RadialMenu menu, bool active)
+    {
+        // Attempt to switch. If successful, alter functionality and GUI visibility to match
+        if (SetMenuActiveState(menu, active))
+        {
+            switchPrompt.SetActive(false);
+            onOneSingleMenu = true;
+        }
+    }
+
+    bool SetMenuActiveState(RadialMenu menu, bool active)
+    {
+        // Do nothing if the specified menu is not part of this system
+        if (!menus.Contains(menu)) return false;
+
+        // If a different menu is already open, do nothing with this input and wait for it to close.
+        if (menuIsOpen && currentMenu != menu) return false;
+
+        // Assign menu
+        currentMenu = menu;
+
+        // if the desired menu shouldn't be opened, ensure it's shut.
+        if (currentMenu == null || !currentMenu.optionsPresent) active = false;
+
+        menuIsOpen = active;
 
         // Enable/disable window
         canvasGroup.alpha = menuIsOpen ? 1 : 0;
@@ -59,7 +101,6 @@ public class MultiRadialMenu : MonoBehaviour
         menuSwitchInput.enabled = menuIsOpen;
 
         // Open or close the menu
-        if (currentMenu == null) return;
         if (menuIsOpen)
         {
             SwitchToDifferentMenu(currentMenu);
@@ -69,6 +110,8 @@ public class MultiRadialMenu : MonoBehaviour
         {
             currentMenu.ExitMenu();
         }
+
+        return true;
     }
     void InputDirection(InputAction.CallbackContext context)
     {
@@ -79,6 +122,9 @@ public class MultiRadialMenu : MonoBehaviour
     }
     void CycleMenus(InputAction.CallbackContext context)
     {
+        // TO DO: don't do anything if system is currently exclusively opening a single menu
+        if (onOneSingleMenu) return;
+
         if (currentMenu == null) return;
 
         if (context.ReadValueAsButton() == false) return;

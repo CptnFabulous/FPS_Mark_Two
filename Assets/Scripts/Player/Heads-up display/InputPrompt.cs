@@ -31,7 +31,7 @@ public class InputPrompt : MonoBehaviour
         if (assignedInput == null || player == null) return;
         // Disable object if values aren't present
 
-        // I need to ensure that the existing values 
+        // Pre-emptively disable all graphics to ensure that old ones aren't displayed
         positive.gameObject.SetActive(false);
         negative.gameObject.SetActive(false);
         yPositive.gameObject.SetActive(false);

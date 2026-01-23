@@ -87,6 +87,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Select Gadget",
+                    "type": "Button",
+                    "id": "a7eacf13-9da1-4a82-89f1-d5be2f70ab85",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Scroll Weapon",
                     "type": "Value",
                     "id": "01ef8d88-e531-4ed9-9282-3f1809230c7c",
@@ -435,6 +444,28 @@
                 },
                 {
                     "name": "",
+                    "id": "f2cb08fc-e0cf-4be3-8661-f3838e3807f4",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Select Gadget",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b75f2398-cd0e-4470-b201-9b5474696f0a",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Select Gadget",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e30ce6eb-adf2-43bc-92ac-20e6448307fe",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
@@ -458,7 +489,7 @@
                 {
                     "name": "",
                     "id": "e61e7a3b-f98f-49ab-9691-d2e722fb4060",
-                    "path": "<Keyboard>/tab",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -513,7 +544,7 @@
                 {
                     "name": "",
                     "id": "8e9fdf12-29bb-40e5-8e94-72801fedbef6",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/dpad/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
