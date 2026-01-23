@@ -21,10 +21,12 @@ public abstract class TravelToDestination : AIStateFunction
     {
         base.OnEnable();
 
-        navMeshAgent.isStopped = false;
-
-        NavMeshPath path = GetPath();
-        if (path != null) navMeshAgent.path = path;
+        if (navMeshAgent != null)
+        {
+            navMeshAgent.isStopped = false;
+            NavMeshPath path = GetPath();
+            if (path != null) navMeshAgent.path = path;
+        }
     }
 
 

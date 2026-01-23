@@ -58,7 +58,7 @@ public class AI : Character
     protected override void Awake()
     {
         base.Awake();
-        agent.speed = baseMovementSpeed;
+        if (agent != null) agent.speed = baseMovementSpeed;
     }
 
 
@@ -66,8 +66,11 @@ public class AI : Character
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
-        AIAction.GizmosDrawNavMeshPath(agent.path);
+        if (agent != null)
+        {
+            Gizmos.color = Color.blue;
+            AIAction.GizmosDrawNavMeshPath(agent.path);
+        }
     }
 
 
@@ -95,6 +98,8 @@ public class AI : Character
 
     public IEnumerator TravelToDestination(Vector3 position)
     {
+        if (agent == null) yield break;
+        
         Debug.DrawLine(transform.position, position, Color.cyan, 5);
         agent.SetDestination(position);
 

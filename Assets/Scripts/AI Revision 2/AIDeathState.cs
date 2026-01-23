@@ -15,11 +15,11 @@ public class AIDeathState : AIStateFunction
         // Ragdollise enemy
         //rootAI.aiming.enabled = false;
         //rootAI.targeting.enabled = false;
-        rootAI.physicsHandler.ragdollActive = true;
+        if (rootAI.physicsHandler != null) rootAI.physicsHandler.ragdollActive = true;
     }
     private void OnDisable()
     {
-        rootAI.physicsHandler.ragdollActive = false;
+        if (rootAI.physicsHandler != null) rootAI.physicsHandler.ragdollActive = false;
         //rootAI.aiming.enabled = true;
         //rootAI.targeting.enabled = true;
     }
