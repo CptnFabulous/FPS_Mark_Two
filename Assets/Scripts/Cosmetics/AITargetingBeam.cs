@@ -5,14 +5,14 @@ using UnityEngine.Events;
 
 public class AITargetingBeam : MonoBehaviour
 {
-    public AIGunAttack attachedTo;
+    public RangedAttack attachedTo;
 
     [Header("Beam visuals")]
     public LineRenderer beam;
     public float minLength = 0.5f;
     public float maxLength = 10f;
     public UnityEvent onPlay;
-    LayerMask hitDetection => attachedTo.weapon.attackMask;
+    LayerMask hitDetection => attachedTo.stats.hitDetection;
 
     
     private void Awake()
@@ -26,7 +26,7 @@ public class AITargetingBeam : MonoBehaviour
     {
         // Launch a simple raycast to check roughly what the attack will hit
         Ray ray = new Ray(transform.position, transform.forward);
-        bool raycastHit = AIAction.RaycastWithExceptions(ray, out RaycastHit rh, maxLength, hitDetection, attachedTo.rootAI.colliders);
+        bool raycastHit = AIAction.RaycastWithExceptions(ray, out RaycastHit rh, maxLength, hitDetection, attachedTo.User.colliders);
 
         // Get the distance that the beam travels (use full length if beam hits nothing)
         float distance = raycastHit ? rh.distance : maxLength;
