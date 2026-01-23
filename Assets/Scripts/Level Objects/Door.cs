@@ -11,6 +11,7 @@ public class Door : MonoBehaviour
     public Interactable handleInteractable;
     public float angleForOpen = 30;
     public Vector3 openForce = new Vector3(0, 100, 0);
+    public Transform openDirection;
 
     [Header("Locking")]
     public DoorLock lockingMechanism;
@@ -18,8 +19,10 @@ public class Door : MonoBehaviour
     public Vector3 lockRotation = Vector3.zero;
 
     [Header("External functions")]
-    [SerializeField] string openPrompt = "Open";
-    [SerializeField] string closePrompt = "Close";
+    [SerializeField] string pushPrompt = "Push";
+    [SerializeField] string pullPrompt = "Pull";
+    //[SerializeField] string openPrompt = "Open";
+    //[SerializeField] string closePrompt = "Close";
     [SerializeField] string lockedPrompt = "Locked";
     [SerializeField] string unlockPrompt = "Unlock";
     public UnityEvent<Player> onOpen;
@@ -56,7 +59,14 @@ public class Door : MonoBehaviour
         // If unlocked, return true
         if (isLocked == false)
         {
+            // If player and open direction are same, player pushes open and pulls shut.
+            // If player and open direction are opposite, player pulls open and pushes shut.
+            bool playerAndOpenDirectionAreSame = Vector3.Dot(player.aimDirection, openDirection.forward) > 0;
+            string openPrompt = playerAndOpenDirectionAreSame ? pushPrompt : pullPrompt;
+            string closePrompt = playerAndOpenDirectionAreSame ? pullPrompt : pushPrompt;
+
             message = open ? closePrompt : openPrompt;
+
             return true;
         }
 
