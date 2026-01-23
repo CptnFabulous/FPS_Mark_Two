@@ -5,6 +5,7 @@ using UnityEngine;
 public class ReachLocation : Objective
 {
     public GameObject area;
+    public float defaultDistanceToRegister = 5;
 
     LevelArea level;
     Collider collider;
@@ -12,26 +13,22 @@ public class ReachLocation : Objective
 
     Bounds GetAreaBounds()
     {
-        Bounds b;
-
         if (area.TryGetComponent(out level))
         {
-            b = level.bounds;
+            return level.bounds;
         }
         else if (area.TryGetComponent(out collider))
         {
-            b = collider.bounds;
+            return collider.bounds;
         }
         else if (area.TryGetComponent(out renderer))
         {
-            b = renderer.bounds;
+            return renderer.bounds;
         }
         else
         {
-            b = new Bounds(area.transform.position, Vector3.zero);
+            return new Bounds(area.transform.position, defaultDistanceToRegister * Vector3.one);
         }
-
-        return b;
     }
 
     /// <summary>
