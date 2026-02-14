@@ -8,7 +8,7 @@ public class InteractionHandler : MonoBehaviour
     [Header("Detection")]
     public float interactionRange = 2;
     public float detectionAngle = 60;
-    public LayerMask detectionMask = ~0;
+    public DetectionProfile detection;
 
     [Header("Player data")]
     public Player player;
@@ -45,7 +45,7 @@ public class InteractionHandler : MonoBehaviour
         RaycastHit rh = new RaycastHit();
         string msg = null;
 
-        bool angleCheck = AngleCheck.CheckForObjectsInCone(aimOrigin, aimDirection, detectionAngle, interactionRange, detectionMask, out returnedValues, out rh, ColliderIsInteractable);
+        bool angleCheck = AngleCheck.CheckForObjectsInCone(aimOrigin, aimDirection, detectionAngle, interactionRange, detection.mask, out returnedValues, out rh, ColliderIsInteractable);
 
         // Cache the data on whatever we hit this frame
         targetedInteractable = returnedValues.Item1;
