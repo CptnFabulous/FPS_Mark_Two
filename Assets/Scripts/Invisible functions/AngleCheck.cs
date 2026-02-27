@@ -20,10 +20,13 @@ public static class AngleCheck
     {
         bool InteractionCast(Vector3 dir, out RaycastHit rh) => Physics.Raycast(origin, dir, out rh, range, layerMask);
 
+        // Populate default values
+        hitData = new RaycastHit();
+        returnedValue = default;
+
         // Perform an initial cast, to prioritise whatever the player is directly aiming at
-        bool directCast = InteractionCast(direction, out hitData);
-        bool meetsCriteria = criteria.Invoke(hitData.collider, out returnedValue);
-        if (directCast && meetsCriteria) return true;
+        bool directCast = InteractionCast(direction, out hitData) && criteria.Invoke(hitData.collider, out returnedValue);
+        if (directCast) return true;
 
         // If that didn't return anything, do a sweep for other objects within the desired range and angle
         int colliderCount = Physics.OverlapSphereNonAlloc(origin, range, colliderArray, layerMask); // Get colliders
