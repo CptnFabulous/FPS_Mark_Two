@@ -22,7 +22,10 @@ public abstract class RangedAttackFiringData : MonoBehaviour
     // (I might take the last 3 of these values and make them values in WeaponHandler instead, since these properties most likely won't change from different guns)
 
 
-    [HideInInspector, System.NonSerialized] public Character user;
+    Weapon pw;
+
+    public Weapon parentWeapon => pw ??= GetComponentInParent<Weapon>();
+    public Character user => parentWeapon.user;
 
     public abstract LayerMask hitDetection { get; }
     public abstract int damage { get; }
