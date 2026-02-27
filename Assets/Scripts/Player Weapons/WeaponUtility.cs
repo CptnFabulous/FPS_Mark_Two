@@ -17,30 +17,26 @@ public static class WeaponUtility
     public static string AmmoCounterHUDDisplay(RangedAttack rangedAttack, string infiniteText = "\u221E")
     {
         bool consumesAmmo = rangedAttack.consumesAmmo;
-        int totalAmmo = Mathf.RoundToInt(rangedAttack.User.weaponHandler.ammo.GetValues(rangedAttack.stats.ammoType).current);
-        
-        if (rangedAttack.magazine != null)
+        AmmunitionInventory ammo = rangedAttack.User.weaponHandler.ammo;
+        int totalAmmo = Mathf.RoundToInt(ammo.GetValues(rangedAttack.stats.ammoType).current);
+
+        GunMagazine magazine = rangedAttack.magazine;
+        if (magazine != null)
         {
-            int ammoInMagazine = Mathf.RoundToInt(rangedAttack.magazine.ammo.current);
+            int ammoInMagazine = Mathf.RoundToInt(magazine.ammo.current);
 
             if (consumesAmmo)
             {
                 int reserve = totalAmmo - ammoInMagazine;
                 return $"{ammoInMagazine}/{reserve}";
             }
-            else
-            {
-                return $"{ammoInMagazine}";
-            }
+
+            return $"{ammoInMagazine}";
         }
-        else if (consumesAmmo)
-        {
-            return $"{totalAmmo}";
-        }
-        else
-        {
-            return infiniteText;
-        }
+        
+        if (consumesAmmo) return $"{totalAmmo}";
+
+        return infiniteText;
     }
 
     public static List<T> ExplosionDetect<T>(Vector3 origin, float range, LayerMask hitDetection) where T : Entity
