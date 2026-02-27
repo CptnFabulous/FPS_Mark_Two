@@ -67,7 +67,7 @@ public class ImpactEffect : ScriptableObject
     public static void StickObjectToSurface(Transform objectToStick, Transform surface, Vector3 point, Vector3 normal, Vector3 rotationAxis, float distanceOffSurface = 0)
     {
         objectToStick.position = point + (normal * distanceOffSurface);
-        objectToStick.rotation = Quaternion.FromToRotation(rotationAxis, normal);
+        objectToStick.rotation = Quaternion.LookRotation(normal, Vector3.up);
         objectToStick.parent = surface;
     }
 }
