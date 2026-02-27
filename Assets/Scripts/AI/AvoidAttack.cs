@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/*
 [System.Serializable]
 public class AvoidAttack : MoveToDestination
 {
@@ -63,18 +64,6 @@ public class AvoidAttack : MoveToDestination
         int smallestDamageAmount = Mathf.RoundToInt(Mathf.Infinity);
         float bestPathDistance = Mathf.Infinity;
 
-        /*
-        List<AIGridPoints.GridPoint> points = new(AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, NavMeshAgent.transform.position, minDistance, maxDistance, prioritiseCover));
-        
-        points.Sort((a, b) =>
-        {
-
-        });
-        
-        points.RemoveAll((p) => attack.PositionAtRisk(AI, p.position, damageThresholdForAvoidance));
-        */
-
-        
         AIGridPoints.GridPoint[] points = AIGridPoints.Current.GetSpecificNumberOfPoints(numberOfChecks, NavMeshAgent.transform.position, minDistance, maxDistance);
         for (int i = 0; i < points.Length; i++)
         {
@@ -93,12 +82,12 @@ public class AvoidAttack : MoveToDestination
                 continue;
             }
 
-            /*
-            Somehow sort and prioritise values based on:
-            * If the position is cover (if prioritiseCover is enabled)
-            * How much damage they may take
-            * Distance to a particular location
-            */
+            
+            // Somehow sort and prioritise values based on:
+            // * If the position is cover (if prioritiseCover is enabled)
+            // * How much damage they may take
+            // * Distance to a particular location
+            
 
             // (If AI cares about specifically getting cover) is this position cover?
             if (prioritiseCover && bestPositionIsCover && points[i].isCover == false)
@@ -150,3 +139,4 @@ public class AvoidAttack : MoveToDestination
         
     }
 }
+*/

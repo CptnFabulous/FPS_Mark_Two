@@ -3,37 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class AIAction : Action
+public static class AIAction
 {
-    public AI AI
-    {
-        get
-        {
-            if (ai == null)
-            {
-                ai = host.GetComponent<AI>();
-            }
-            return ai;
-        }
-    }
-    public Combatant CombatAI
-    {
-        get
-        {
-            if (cmbtnt == null)
-            {
-                cmbtnt = host.GetComponent<Combatant>();
-            }
-            return cmbtnt;
-        }
-    }
-    public NavMeshAgent NavMeshAgent => AI.agent;
-    public AIAim Aim => AI.aiming;
-    AI ai;
-    Combatant cmbtnt;
-
-    
-
     public static float NavMeshPathDistance(NavMeshPath path)
     {
         float distance = 0;
@@ -144,15 +115,5 @@ public abstract class AIAction : Action
         //Debug.DrawLine(ai.transform.position, positionToLookFrom, Color.cyan);
         //Debug.DrawLine(positionToLookFrom, positionToLookFrom + offset, Color.cyan);
         return positionToLookFrom + offset;
-    }
-}
-
-public abstract class AIMovement : AIAction
-{
-    public float movementSpeed = 3.5f;
-
-    public override void Enter()
-    {
-        NavMeshAgent.speed = movementSpeed;
     }
 }

@@ -50,7 +50,11 @@ public class AI : Character
         }
     }
     public override Vector3 MovementDirection => agent.velocity;
-    public override Character target => targeting.target;
+    public Character target
+    {
+        get => targeting.target;
+        set => targeting.target = value;
+    }    
     public override WeaponHandler weaponHandler => null;
 
     public bool reachedDestination => agent.remainingDistance < destinationThreshold;

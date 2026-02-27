@@ -6,7 +6,7 @@ public class CombatArea : MonoBehaviour
 {
     //public bool lockExitsUntilCompleted;
     
-    public List<Combatant> remainingEnemies;
+    public List<AI> remainingEnemies;
     public UnityEvent onPlayerEnter;
     public UnityEvent onAllEnemiesDefeated;
     public UnityEvent onPlayerExit;
@@ -17,7 +17,7 @@ public class CombatArea : MonoBehaviour
 
     private void Awake()
     {
-        remainingEnemies = new List<Combatant>(GetComponentsInChildren<Combatant>());
+        remainingEnemies = new List<AI>(GetComponentsInChildren<AI>());
 
         Notification<KillMessage>.Receivers += CheckKills;
     }
@@ -34,7 +34,7 @@ public class CombatArea : MonoBehaviour
         // Aggro enemies towards player
         for (int i = 0; i < remainingEnemies.Count; i++)
         {
-            if (remainingEnemies[i].controlling.IsHostileTowards(playerFighting) && remainingEnemies[i].target == null)
+            if (remainingEnemies[i].IsHostileTowards(playerFighting) && remainingEnemies[i].target == null)
             {
                 remainingEnemies[i].target = playerFighting;
             }
@@ -66,7 +66,7 @@ public class CombatArea : MonoBehaviour
     void CheckKills(KillMessage message)
     {
         // Remove empty entries and entries where enemy is already dead
-        remainingEnemies.RemoveAll((c) => c == null || c.controlling.health.IsAlive == false);
+        remainingEnemies.RemoveAll((c) => c == null || c.health.IsAlive == false);
         if (remainingEnemies.Count <= 0) // If all enemies are defeated
         {
             onAllEnemiesDefeated.Invoke();
