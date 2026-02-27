@@ -48,6 +48,7 @@ public class ImpactEffect : ScriptableObject
             {
                 decalPrefab = new GameObject($"Decal Renderer").AddComponent<SpriteRenderer>();
                 decalPrefab.gameObject.SetActive(false);
+                DontDestroyOnLoad(decalPrefab);
             }
             
             SpriteRenderer sr = ObjectPool.RequestObject(decalPrefab, true, maxNumberOfSpawnedEffects);
