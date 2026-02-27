@@ -100,8 +100,14 @@ public class GunReticle : MonoBehaviour
         */
         // Convert screen positions to the local space of the RectTransform
         Camera cam = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : playerCamera;
+
+
+        //screenPosCentre = MiscFunctions.ScreenToAnchoredPosition(screenPosCentre, reticleBlades[0], rt);
+        //screenPosOffset = MiscFunctions.ScreenToAnchoredPosition(screenPosOffset, reticleBlades[0], rt);
+        
         bool centreSuccess = RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, screenPosCentre, cam, out screenPosCentre);
         bool offsetSuccess = RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, screenPosOffset, cam, out screenPosOffset);
+        
         //Debug.Log($"Centre = {centreSuccess}, {screenPosCentre}, offset = {offsetSuccess}, {screenPosOffset}");
         
         // Then calculate the distance and position reticle blades accordingly
@@ -115,9 +121,6 @@ public class GunReticle : MonoBehaviour
 
     float ReticleOpacity()
     {
-        // Do not show reticle if currently in the weapon selector
-        if (handler.attackSelectors.menuIsOpen) return 0;
-
         // if no ADS, just make the reticle fully visible.
         if (ads == null) return 1;
 
@@ -128,6 +131,9 @@ public class GunReticle : MonoBehaviour
     }
     float ReticleAngle()
     {
+        // If the mode somehow can't recognise its parent weapon (for calculating more precise sway values), return the default sway value
+        if (mode.stats.parentWeapon == null) return handler.aimSwayAngle;
+
         float angle = mode.stats.spread;
 
         if (ads == null) return angle;
