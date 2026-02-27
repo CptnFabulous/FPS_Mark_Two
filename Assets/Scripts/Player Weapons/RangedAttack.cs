@@ -16,7 +16,7 @@ public class RangedAttack : WeaponMode
     public ADSHandler adsHandler => (User != null && User.weaponHandler != null) ? User.weaponHandler.adsHandler : null;
     public bool adsPresent => optics != null && adsHandler != null;
     public override LayerMask attackMask => stats.hitDetection;
-    public int shotsInBurst { get; private set; }
+    public int burstIncrementer { get; private set; }
 
     public override bool inSecondaryAction
     {
@@ -57,7 +57,7 @@ public class RangedAttack : WeaponMode
     }
 
     //Check that the fire button is still held (or that the minimum burst hasn't yet completed)
-    bool shootingIntended => (PrimaryHeld || controls.WillBurst(shotsInBurst));
+    bool shootingIntended => (PrimaryHeld || controls.MustFire(burstIncrementer));
 
     private void OnEnable()
     {
@@ -67,8 +67,8 @@ public class RangedAttack : WeaponMode
             magazine.enabled = true;
         }
 
-        stats.user = User;
-
+        //stats.user = User;
+        burstIncrementer = 0;
 
         // TO DO: only have this run if the weapon is stored in the weapon handler
         if (adsHandler != null && User.weaponHandler.equippedWeapons.Contains(attachedTo)) adsHandler.currentAttack = this;
@@ -120,7 +120,7 @@ public class RangedAttack : WeaponMode
         }
 
         // Resets burst
-        shotsInBurst = 0;
+        burstIncrementer = 0;
         // Sets up the message timer to infinity, to ensure it always sends a message on the first shot.
         float timeOfLastMessage = Mathf.NegativeInfinity;
 
@@ -170,7 +170,7 @@ public class RangedAttack : WeaponMode
         yield return new WaitUntil(() => PrimaryHeld == false);
 
         // Reset shot timer
-        shotsInBurst = 0;
+        burstIncrementer = 0;
         currentAttack = null;
     }
     /// <summary>
@@ -180,11 +180,11 @@ public class RangedAttack : WeaponMode
     {
         stats.Shoot();
         OnAttack();
-        yield return new WaitForSeconds(controls.ShotDelay);
+        yield return new WaitForSeconds(controls.shotDelay);
     }
     public override bool CanAttack()
     {
-        if (controls.CanBurst(shotsInBurst) == false) return false;
+        if (controls.CanFire(burstIncrementer) == false) return false;
 
         // Don't shoot if there's not enough ammo in the magazine
         if (magazine != null && magazine.ammo.current < stats.ammoPerShot) return false;
@@ -204,7 +204,7 @@ public class RangedAttack : WeaponMode
         {
             ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
-        shotsInBurst++;
+        burstIncrementer++;
     }
 
 
