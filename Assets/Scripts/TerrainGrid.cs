@@ -50,7 +50,15 @@ public class TerrainGrid : MonoBehaviour
     public Vector3Int chunkSize => _chunkSize;
     public bool[,,] containsTerrain => _occupiedByTerrain;
 
-    public Door[] doorsInScene { get; private set; }
+    Door[] _doorsInScene;
+    public Door[] doorsInScene
+    {
+        get
+        {
+            if (_doorsInScene == null) _doorsInScene = FindObjectsOfType<Door>();
+            return _doorsInScene;
+        }
+    }
 
     private void Awake()
     {
@@ -67,6 +75,8 @@ public class TerrainGrid : MonoBehaviour
     void GenerateMap()
     {
         if (generated) return;
+
+        _doorsInScene = null;
 
         #region Create mesh from NavMesh data
 
@@ -158,7 +168,6 @@ public class TerrainGrid : MonoBehaviour
 
         #endregion
 
-        doorsInScene = FindObjectsOfType<Door>();
 
         generated = true;
     }
