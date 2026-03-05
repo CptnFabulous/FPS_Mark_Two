@@ -28,6 +28,7 @@ public class Health : MonoBehaviour
     public Resource data = new Resource(100, 100, 20);
     public bool godmode = false;
     public string deadDescription = "dead";
+    public CharacterPoise poise;
 
     public UnityEvent<DamageMessage> onDamage;
     public UnityEvent<DamageMessage> onHeal;
@@ -98,9 +99,18 @@ public class Health : MonoBehaviour
         attachedTo.DebugLog($"{this} ({data.current} health) took{(isCritical ? " a critical" : "")} {damage} damage and {stun} stun");
         data.Increment(-damage);
 
+
         DamageMessage damageMessage = new DamageMessage(attacker, weaponUsed, this, type, damage, isCritical, stun, direction);
         // At this point I think I'd need to delete the previous 'lastSourceOfDamage' if C# meant I didn't have to worry about garbage collection
         lastSourceOfDamage = damageMessage;
+
+
+        if (poise != null && stun > 0)
+        {
+            poise.ApplyStun(damageMessage);
+        }
+
+
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
         Notification<DamageMessage>.Transmit(damageMessage);
 

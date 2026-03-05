@@ -7,9 +7,9 @@ using UnityEngine.Events;
 public class CharacterPoise : MonoBehaviour
 {
     [Header("Stats")]
-    [SerializeField] float staggerThreshold = 10;
-    [SerializeField] float knockdownThreshold = 20;
-    [SerializeField] float recoverSpeed = 3.33f;
+    public float staggerThreshold = 10;
+    public float knockdownThreshold = 20;
+    public float recoverSpeed = 3.33f;
     public UnityEvent<DamageMessage> onStunApplied;
 
     [Header("State transitions")]
@@ -63,11 +63,12 @@ public class CharacterPoise : MonoBehaviour
         }
     }
 
-
+    /*
     void Awake()
     {
         health.onDamage.AddListener(ApplyStun);
     }
+    */
     void Update()
     {
         if (currentStun > 0)
