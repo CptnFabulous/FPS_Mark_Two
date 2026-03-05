@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -29,7 +30,10 @@ public class TerrainGrid : MonoBehaviour
     public Vector3 boundsMargins = Vector3.one;
     public int resolutionScale = 1;
     [SerializeField] Vector3Int _chunkSize = new Vector3Int(10, 10, 10);
+
+#if UNITY_EDITOR
     public Texture3D debugTerrainTexture;
+#endif 
 
     bool generated = false;
 
@@ -148,25 +152,46 @@ public class TerrainGrid : MonoBehaviour
         Debug.Log("Pre-caching terrain grid");
 
         Vector3 checkBoxHalfExtents = 0.5f / resolutionScale * Vector3.one;
-
         _occupiedByTerrain = new bool[gridSize.x, gridSize.y, gridSize.z];
-        debugTerrainTexture = new Texture3D(gridSize.x, gridSize.y, gridSize.z, TextureFormat.ARGB32, false);
-        for (int x = 0; x < gridSize.x; x++)
+        MiscFunctions.IterateThroughGrid(gridSize, (coords) =>
         {
-            for (int y = 0; y < gridSize.y; y++)
-            {
-                for (int z = 0; z < gridSize.z; z++)
-                {
-                    Vector3 worldPos = GridToWorldPosition(new Vector3Int(x, y, z));
-                    bool containsTerrain = Physics.CheckBox(worldPos, checkBoxHalfExtents, Quaternion.identity, terrainDetection);
-                    _occupiedByTerrain[x, y, z] = containsTerrain;
-                    debugTerrainTexture.SetPixel(x, y, z, containsTerrain ? Color.white : Color.clear);
-                }
-            }
+            Vector3 worldPos = GridToWorldPosition(coords);
+            bool containsTerrain = Physics.CheckBox(worldPos, checkBoxHalfExtents, Quaternion.identity, terrainDetection);
+            _occupiedByTerrain[coords.x, coords.y, coords.z] = containsTerrain;
+        });
+
+#if UNITY_EDITOR
+        float GetFillAsFloat(Vector3 coords)
+        {
+            Vector3Int intC = Vector3Int.RoundToInt(coords);
+            intC = MiscFunctions.Vector3IntClamp(intC, Vector3Int.zero, gridSize - Vector3Int.one);
+            return _occupiedByTerrain[intC.x, intC.y, intC.z] ? 1 : 0;
         }
+
+        HashSet<Vector3> edgePoints = new HashSet<Vector3>();
+        SmokeChunk.FindFillEdgesForSignedDistanceField(gridSize, GetFillAsFloat, edgePoints);
+
+
+
+        debugTerrainTexture = new Texture3D(gridSize.x, gridSize.y, gridSize.z, TextureFormat.ARGB32, false);
+        MiscFunctions.IterateThroughGrid(gridSize, (coords) =>
+        {
+            float sdf = SmokeChunk.SignedDistanceFieldInChunk(coords, GetFillAsFloat, edgePoints);
+            sdf /= 2;
+            sdf = Mathf.Clamp01(sdf);
+            //Color c = new Color(1, 1, 1, sdf);
+            Color c = new Color(sdf, sdf, sdf, sdf);
+
+            //Debug.Log(c);
+            debugTerrainTexture.SetPixel(coords.x, coords.y, coords.z, c);
+            
+            //debugTerrainTexture.SetPixel(coords.x, coords.y, coords.z, _occupiedByTerrain[coords.x, coords.y, coords.z] ? Color.white : Color.clear);
+        });
         debugTerrainTexture.Apply();
 
-        #endregion
+#endif
+
+#endregion
 
 
         generated = true;

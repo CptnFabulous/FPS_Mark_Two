@@ -57,6 +57,8 @@ public class SmokeChunk : MonoBehaviour
     //Vector3[,,] oldVelocityGrid;
     VoxelMesh cloudMesh;
 
+    HashSet<Vector3> edgePoints;
+
     public Vector3Int size => TerrainGrid.current.chunkSize;
     public Vector3Int chunkPositionInGrid => _chunkPositionInGrid;
     public bool smokeIsPresent { get; private set; } = false;
@@ -103,7 +105,30 @@ public class SmokeChunk : MonoBehaviour
         });
     }
 
-    public float GetDensity(Vector3Int position) => grid[position.x, position.y, position.z];
+    public float GetDensity(Vector3Int position)// => grid[position.x, position.y, position.z];
+    {
+        CheckForNeighbouringChunk(position, out SmokeChunk chunk, out position);
+        if (chunk == null) return 0;
+        return chunk.grid[position.x, position.y, position.z];
+        /*
+        if (!MiscFunctions.IsIndexOutsideArray(size, neighbour))
+        {
+            return GetDensity(neighbour);
+        }
+
+        // Find adjacent grid
+        Vector3Int gridCoords = terrainData.ChunkToGridCoords(chunkPositionInGrid, neighbour);
+        terrainData.GridToChunkCoords(gridCoords, out Vector3Int chunkPosition, out Vector3Int positionInChunk);
+
+        // Do nothing if chunk cannot be found (on edge of grid, no smoke)
+        if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) return 0;
+
+        // Find correct chunk and introduce smoke there instead
+        SmokeChunk neighbouringChunk = parentGrid.chunks[chunkPosition.x, chunkPosition.y, chunkPosition.z];
+
+        return neighbouringChunk.GetDensity(positionInChunk);
+        */
+    }
     public void AddSmoke(Vector3Int position, float amount)
     {
         // TO DO: When moving into new grid space, lerp between old and new velocity based on the ratio of old to new smoke
@@ -280,27 +305,58 @@ public class SmokeChunk : MonoBehaviour
         density -= toSpreadThisStep;
         density += split;
     }
+
     void MoveSmokeToNeighbour(float toMove, Vector3Int neighbour)
     {
-        // If space is outside chunk, search for neighbouring chunks
-        if (MiscFunctions.IsIndexOutsideArray(size, neighbour))
-        {
-            // Find adjacent grid
-            Vector3Int gridCoords = terrainData.ChunkToGridCoords(chunkPositionInGrid, neighbour);
-            terrainData.GridToChunkCoords(gridCoords, out Vector3Int chunkPosition, out Vector3Int positionInChunk);
-
-            // Do nothing if chunk cannot be found (on edge of grid, let smoke disappear)
-            if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) return;
-
-            // Find correct chunk and introduce smoke there instead
-            SmokeChunk neighbouringChunk = parentGrid.chunks[chunkPosition.x, chunkPosition.y, chunkPosition.z];
-            neighbouringChunk.AddSmoke(positionInChunk, toMove);
-        }
-        else
+        CheckForNeighbouringChunk(neighbour, out SmokeChunk chunk, out Vector3Int position);
+        if (neighbour == null) return;
+        chunk.AddSmoke(position, toMove);
+        /*
+        
+        if (!MiscFunctions.IsIndexOutsideArray(size, neighbour))
         {
             AddSmoke(neighbour, toMove);
+            return;
         }
+
+        // Find adjacent grid
+        Vector3Int gridCoords = terrainData.ChunkToGridCoords(chunkPositionInGrid, neighbour);
+        terrainData.GridToChunkCoords(gridCoords, out Vector3Int chunkPosition, out Vector3Int positionInChunk);
+
+        // Do nothing if chunk cannot be found (on edge of grid, let smoke disappear)
+        if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) return;
+
+        // Find correct chunk and introduce smoke there instead
+        SmokeChunk neighbouringChunk = parentGrid.chunks[chunkPosition.x, chunkPosition.y, chunkPosition.z];
+        neighbouringChunk.AddSmoke(positionInChunk, toMove);
+        */
     }
+
+
+    void CheckForNeighbouringChunk(Vector3Int neighbouringSpace, out SmokeChunk chunkContaining, out Vector3Int positionInChunk)
+    {
+        chunkContaining = null;
+        positionInChunk = Vector3Int.zero;
+
+        // If space is still inside chunk, just return this chunk and the input position
+        if (!MiscFunctions.IsIndexOutsideArray(size, neighbouringSpace))
+        {
+            chunkContaining = this;
+            positionInChunk = neighbouringSpace;
+            return;
+        }
+
+        // Find adjacent grid
+        Vector3Int gridCoords = terrainData.ChunkToGridCoords(chunkPositionInGrid, neighbouringSpace);
+        terrainData.GridToChunkCoords(gridCoords, out Vector3Int chunkPosition, out positionInChunk);
+
+        // Do nothing if chunk cannot be found (on edge of grid)
+        if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) return;
+
+        // Find correct chunk and introduce smoke there instead
+        chunkContaining = parentGrid.chunks[chunkPosition.x, chunkPosition.y, chunkPosition.z];
+    }
+
     void IterateThroughGrid(System.Action<int, int, int> action) => MiscFunctions.IterateThroughGrid(size, action);
 
 
@@ -313,20 +369,163 @@ public class SmokeChunk : MonoBehaviour
 
 
 
-
+    public void UpdateSDFValues()
+    {
+        FindFillEdgesForSignedDistanceField(parentGrid.chunkGridSize, (pos) => VoxelMesh.MidpointBetweenGridSpaces(pos, GetDensity), edgePoints);
+    }
 
 
     public void UpdateMesh()
     {
+
+        float scaleDensityRatioMultiplier = gridScale * gridScale * gridScale;
+
+        float GetCellDensityRatio(Vector3Int position)
+        {
+            float densityInCell = GetDensity(position);
+
+            // Account for different grid scales.
+            // A value of 0.5 in a 1-1 scale grid is obviously 0.5 of a cell.
+            // But if it's a 2-1 scale, each cell is only 1/8th of a world unit in volume. So it only takes 1/8th of the value to fill up a whole cell.
+            return densityInCell * scaleDensityRatioMultiplier;
+        }
+        
         // Do wacky marching cubes stuff
         if (smokeIsPresent)
         {
-            cloudMesh.Calculate(grid, size, gridScale);
+            cloudMesh.Calculate(size, GetCellDensityRatio, SignedDistanceField, gridScale);
+            //cloudMesh.Calculate(size, GetSmokeAccountingForOutsideGrid, gridScale);
         }
         else
         {
             cloudMesh.Clear();
         }
+    }
+
+    public float SignedDistanceField(Vector3 positionInGrid)
+    {
+        return 0;
+        // TO DO: figure out how to check if the closest edge point is outside the current chunk
+        // Do I just literally iterate through every single edge point in every chunk?
+        // Maybe for every chunk I can check its position first, and if it's far away enough that none of the edges within would be closer than what's already present, skip it.
+
+
+
+        float squareMagnitudeToClosest = Mathf.Infinity;
+
+
+        // First, do a regular check just in this chunk (the closest one).
+        // If that doesn't return a result, iterate through other chunks.
+        // If another chunk has edge points, check the distance from the chunk's closest point (relative to this chunk) to the specified position.
+        // If that distance is greater than the current distance, that means that no edge point in that chunk is closer than the current value. This should mean we won't need to waste time checking them.
+
+    }
+
+
+
+
+    public static void FindFillEdgesForSignedDistanceField(Vector3Int dimensions, System.Func<Vector3, float> obtainValue, HashSet<Vector3> edgePoints)
+    {
+        //Debug.Log("Finding edge points");
+        edgePoints.Clear();
+
+        // For each cell in the grid, check if it has a value greater than zero but is next to a square with a value of zero.
+        MiscFunctions.IterateThroughGrid(dimensions, (coords) =>
+        {
+            float cellDensity = obtainValue.Invoke(coords);
+            //Debug.Log($"Checking cell {coords}, {cellDensity}");
+            if (cellDensity <= 0) return;
+
+
+            for (int i = 0; i < 3; i++)
+            {
+                int minusIndex = i * 2;
+                int plusIndex = minusIndex + 1;
+
+                float densityAtMinus = obtainValue.Invoke(coords + VoxelMesh.adjacencies[minusIndex]);
+                float densityAtPlus = obtainValue.Invoke(coords + VoxelMesh.adjacencies[plusIndex]);
+
+                bool minusExists = densityAtMinus > 0;
+                bool plusExists = densityAtPlus > 0;
+
+                //Debug.Log($"{minusExists}, {plusExists}");
+
+                // If both minus and plus are greater than zero, it's a centre value and there won't be any edges on this axis.
+                if (minusExists && plusExists) continue;
+
+
+                // Shift 'max' point between 0 and 1 based on relative strength of both sides.
+                // If minus is filled and plus isn't, shift from 0 to 1.
+                // If the opposite way around, shift from 1 to 0.
+                // If both are equal, have the start point be in the middle.
+                float minPoint = 0.5f;
+                minPoint -= (0.5f * densityAtMinus);
+                minPoint += (0.5f * densityAtPlus);
+                float maxPoint = 0.5f;
+                maxPoint += (0.5f * densityAtMinus);
+                maxPoint -= (0.5f * densityAtPlus);
+
+                // Add a position on either empty side of this axis
+
+                // Position on axis plus (-0.5f + (shift between 'min point' and 'whatever the max point is for this side'))
+                if (minusExists)
+                {
+                    float offsetTowardsMinus = Mathf.Lerp(minPoint, 0, cellDensity);
+                    Vector3 edgeAtMinus = coords;
+                    edgeAtMinus[i] += (-0.5f + offsetTowardsMinus);
+                    edgePoints.Add(edgeAtMinus);
+                }
+                if (plusExists)
+                {
+                    float offsetTowardsPlus = Mathf.Lerp(minPoint, 1, cellDensity);
+                    Vector3 edgeAtPlus = coords;
+                    edgeAtPlus[i] += (-0.5f + offsetTowardsPlus);
+                    edgePoints.Add(edgeAtPlus);
+                }
+            }
+        });
+
+        //Debug.Log(edgePoints.Count);
+    }
+    public static float SignedDistanceFieldInChunk(Vector3 positionInGrid, System.Func<Vector3, float> obtainValue, HashSet<Vector3> edgePoints)
+    {
+        //return obtainValue.Invoke(positionInGrid) - 0.5f;
+
+        // TO DO: figure out how to check if the closest edge point is outside the current chunk
+        // Do I just literally iterate through every single edge point in every chunk?
+        // Maybe for every chunk I can check its position first, and if it's far away enough that none of the edges within would be closer than what's already present, skip it.
+
+
+
+        if (edgePoints.Count <= 0)
+        {
+            //Debug.Log($"SDF at {positionInGrid} = {Mathf.NegativeInfinity}, no edges to compare against");
+            return Mathf.NegativeInfinity;
+        }
+
+        // Iterates through the list, recording the closest distance.
+        // We're using squared magnitudes because they're more performant
+        float squareMagnitudeToClosest = Mathf.Infinity;
+        foreach (Vector3 edgePoint in edgePoints)
+        {
+            float squareMagnitude = (edgePoint - positionInGrid).sqrMagnitude;
+            if (squareMagnitude < squareMagnitudeToClosest)
+            {
+                squareMagnitudeToClosest = squareMagnitude;
+            }
+        }
+
+        // Square root the squared magnitude to get the actual distance
+        float distance = Mathf.Sqrt(squareMagnitudeToClosest);
+
+        // Check if current space is filled or empty, to determine if it's on the inside or outside of the shape.
+        // If position has a value greater than zero, we know it's inside and therefore positive.
+        // If value is zero, we know it's outside and therefore needs to be negative.
+        float valueAtSpace = obtainValue.Invoke(positionInGrid);
+        if (valueAtSpace <= 0) distance = -distance;
+
+        //Debug.Log($"SDF at {positionInGrid} = {distance}, value present = {valueAtSpace}");
+        return distance;
     }
 }
 

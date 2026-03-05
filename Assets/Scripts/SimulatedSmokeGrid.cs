@@ -74,22 +74,23 @@ public class SimulatedSmokeGrid : MonoBehaviour
         MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].SpreadStep());
     }
 
-    public void IntroduceSmoke(Vector3 worldPosition, float amount)
+    public bool IntroduceSmoke(Vector3 worldPosition, float amount)
     {
-        if (amount <= 0) return;
+        if (amount <= 0) return false;
 
         // Find appropriate chunk for that world position (if it exists)
         Vector3Int gridPos = terrainData.WorldToGridPosition(worldPosition);
         terrainData.GridToChunkCoords(gridPos, out Vector3Int chunkCoords, out Vector3Int coordsInChunk);
-        if (MiscFunctions.IsIndexOutsideArray(chunkGridSize, chunkCoords)) return;
+        if (MiscFunctions.IsIndexOutsideArray(chunkGridSize, chunkCoords)) return false;
 
         // Ensure position isn't occupied by terrain
-        if (terrainData.containsTerrain[gridPos.x, gridPos.y, gridPos.z]) return;
+        if (terrainData.containsTerrain[gridPos.x, gridPos.y, gridPos.z]) return false;
 
         // If not, add smoke
         SmokeChunk chunk = chunks[chunkCoords.x, chunkCoords.y, chunkCoords.z];
         chunk.AddSmoke(coordsInChunk, amount);
         //Debug.Log($"Inserting {amount} smoke into {gridPos}, new density = {chunk.GetDensity(coordsInChunk)}");
+        return true;
     }
     
     public void Clear() => MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].Clear());
