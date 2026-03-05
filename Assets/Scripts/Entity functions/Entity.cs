@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    public static IReadOnlyList<Entity> existing => _existing;
+    static List<Entity> _existing = new List<Entity>();
+    
     public bool showDebugData = false;
 
     public string properName = "New Entity";
@@ -15,7 +18,6 @@ public class Entity : MonoBehaviour
 
     IList<Collider> _colliders;
     Rigidbody _rb;
-
     Renderer[] _renderers;
 
     /// <summary>
@@ -62,8 +64,12 @@ public class Entity : MonoBehaviour
     {
         if (!isUnique && !string.IsNullOrEmpty(properName)) gameObject.name = properName;
         if (health != null) health.onDeath.AddListener((_) => Die());
+        _existing.Add(this);
     }
-
+    private void OnDestroy()
+    {
+        _existing.Remove(this);
+    }
 
     protected virtual void Die()
     {
