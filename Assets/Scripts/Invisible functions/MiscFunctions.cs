@@ -30,6 +30,22 @@ public readonly struct MiscFunctions
         }
         return direction;
     }
+    public static Vector3 Vector3Clamp(Vector3 value, Vector3 min, Vector3 max)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            value[i] = Mathf.Clamp(value[i], min[i], max[i]);
+        }
+        return value;
+    }
+    public static Vector3Int Vector3IntClamp(Vector3Int value, Vector3Int min, Vector3Int max)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            value[i] = Mathf.Clamp(value[i], min[i], max[i]);
+        }
+        return value;
+    }
     #endregion
 
     #region IEnumerables
@@ -41,9 +57,10 @@ public readonly struct MiscFunctions
         }
         return false;
     }
-    public static int IndexOfInArray<T>(IList<T> array, T data)
+    public static int IndexOfInArray<T>(IList<T> array, T data) => IndexOfInArray(array, data, 0, array.Count);
+    public static int IndexOfInArray<T>(IList<T> array, T data, int start, int length)
     {
-        for (int i = 0; i < array.Count; i++)
+        for (int i = start; i < start + length; i++)
         {
             if (array[i].Equals(data)) return i;
         }
@@ -79,9 +96,61 @@ public readonly struct MiscFunctions
             }
         }
     }
+    public static void IterateThroughGrid(Vector3Int dimensions, Action<Vector3Int> action)
+    {
+        for (int x = 0; x < dimensions.x; x++)
+        {
+            for (int y = 0; y < dimensions.y; y++)
+            {
+                for (int z = 0; z < dimensions.z; z++)
+                {
+                    action.Invoke(new Vector3Int(x, y, z));
+                }
+            }
+        }
+    }
     public static bool IsIndexOutsideArray(Vector3Int dimensions, Vector3Int indices)
     {
         for (int i = 0; i < 3; i++)
+        {
+            if (indices[i] < 0) return true;
+            if (indices[i] >= dimensions[i]) return true;
+        }
+
+        return false;
+    }
+
+
+
+
+
+
+    public static void IterateThroughGrid(Action<int[]> action, params int[] dimensions)
+    {
+        int[] indices = new int[dimensions.Length];
+        IncrementArrayRank(ref dimensions, 0, ref indices, ref action);
+
+        static void IncrementArrayRank(ref int[] dimensions, int axis, ref int[] indices, ref System.Action<int[]> action)
+        {
+            // If last axis was assigned, invoke the actual action
+            if (axis == dimensions.Length)
+            {
+                action.Invoke(indices);
+                return;
+            }
+
+            // If not, assign the current axis, and nest this function to start iterating through the next one
+            int nextAxis = axis + 1;
+            for (int i = 0; i < dimensions[axis]; i++)
+            {
+                indices[axis] = i;
+                IncrementArrayRank(ref dimensions, nextAxis, ref indices, ref action);
+            }
+        }
+    }
+    public static bool IsIndexOutsideArray(int[] dimensions, int[] indices)
+    {
+        for (int i = 0; i < dimensions.Length; i++)
         {
             if (indices[i] < 0) return true;
             if (indices[i] >= dimensions[i]) return true;
@@ -113,6 +182,31 @@ public readonly struct MiscFunctions
     public static void SortListWithNoPredicate<T>(List<T> list, bool reverse = false) where T : IComparable
     {
         list.Sort((_a, _b) => reverse ? _b.CompareTo(_a) : _a.CompareTo(_b));
+    }
+    public static T GetBest<T>(System.Func<T, IComparable> criteria, bool reverse, params T[] options) => GetBest(options, criteria, reverse);
+    public static T GetBest<T>(IList<T> collection, System.Func<T, IComparable> criteria, bool reverse = false)
+    {
+        //if (options == null || options.Length == 0) return default(T);
+
+
+
+        T best = collection[0];
+        IComparable bestValue = criteria.Invoke(best);
+
+        for (int i = 1; i < collection.Count; i++)
+        {
+            T next = collection[i];
+            IComparable nextValue = criteria.Invoke(next);
+
+            int comparison = reverse ? nextValue.CompareTo(bestValue) : bestValue.CompareTo(nextValue);
+            if (comparison < 0)
+            {
+                best = next;
+                bestValue = nextValue;
+            }
+        }
+
+        return best;
     }
     #endregion
 
@@ -306,6 +400,7 @@ public readonly struct MiscFunctions
         return value;
     }
     public static float LengthOfDiagonal(float width, float height) => Mathf.Sqrt((width * width) + (height * height));
+    public static float CubeRoot(float cube) => Mathf.Pow(cube, 1f / 3f);
     #endregion
 
     #region Formatting text
@@ -315,14 +410,8 @@ public readonly struct MiscFunctions
         //Debug.Log(c + ", " + array + ", " + WithinArray(index, array.Count));
         return WithinArray(index, array.Count);
     }
-    public static bool IsUppercase(char c)
-    {
-        return CharMatches(c, uppercaseLetters);
-    }
-    public static bool IsLowercase(char c)
-    {
-        return CharMatches(c, lowercaseLetters);
-    }
+    public static bool IsUppercase(char c) => CharMatches(c, uppercaseLetters);
+    public static bool IsLowercase(char c) => CharMatches(c, lowercaseLetters);
     public static char Capitalise(char c)
     {
         int lowercaseIndex = lowercaseLetters.IndexOf(c);
@@ -508,6 +597,31 @@ public readonly struct MiscFunctions
     }
     #endregion
 
+
+    public static int ClosestAxis(Vector3 direction)
+    {
+        int bestAxis = 0;
+        float furthestFromZero = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            //Vector3 axis = Vector3.zero;
+            //axis[i] = 1;
+
+            float absDot = Mathf.Abs(Vector3.Dot(direction, axes[i]));
+            if (absDot > furthestFromZero)
+            {
+                bestAxis = i;
+                furthestFromZero = absDot;
+            }
+        }
+
+        return bestAxis;
+    }
+    static readonly Vector3[] axes = new Vector3[]
+    {
+        Vector3.right, Vector3.up, Vector3.forward
+    };
+
     public static bool GetToggleableInput(bool currentState, bool buttonPressed, bool isToggled)
     {
         if (isToggled == false) currentState = buttonPressed;
@@ -515,4 +629,43 @@ public readonly struct MiscFunctions
 
         return currentState;
     }
+
+
+    public static void DebugLogMultiple<T>(params T[] values)
+    {
+        DebugLogMultiple(values, 0, values.Length);
+    }
+    public static void DebugLogMultiple<T>(IList<T> values, int start, int length)
+    {
+        string s = "";
+        for (int i = start; i < start + length; i++)
+        {
+            s += values[i].ToString();
+            s += ", ";
+        }
+        Debug.Log(s);
+    }
+    public static void DrawDebugWireCube(Vector3 position, Vector3 size, Color colour, float duration = 0)
+    {
+        for (int e = 0; e < 12; e++)
+        {
+            Vector3 pos1 = VoxelMesh.corners[VoxelMesh.edges[e].Item1];
+            Vector3 pos2 = VoxelMesh.corners[VoxelMesh.edges[e].Item2];
+
+            Vector3 min = position - (0.5f * size);
+            for (int a = 0; a < 3; a++)
+            {
+                pos1[a] = min[a] + pos1[a] * size[a];
+                pos2[a] = min[a] + pos2[a] * size[a];
+            }
+            Debug.DrawLine(pos1, pos2, colour, duration);
+        }
+    }
+    public static void DrawAngledGizmoFrustum(Vector3 position, float horizontal, float vertical, float minRange, float maxRange)
+    {
+        horizontal = Mathf.Max(horizontal, 0.001f);
+        vertical = Mathf.Max(vertical, 0.001f);
+        Gizmos.DrawFrustum(position, vertical, maxRange, minRange, horizontal / vertical);
+    }
+
 }
