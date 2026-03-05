@@ -11,7 +11,6 @@ public class Projectile : MonoBehaviour
     public float weight = 1;
     public float diameter = 0.05f;
     public float startingVelocity = 100;
-    //public LayerMask detection = ~0;
     public DetectionProfile detection;
 
     [Header("Impact")]
@@ -19,7 +18,6 @@ public class Projectile : MonoBehaviour
 
     public RaycastHit surfaceHit;
     Vector3 velocity;
-    float DetectionLength => velocity.magnitude * Time.deltaTime;
 
     void Start()
     {
@@ -43,20 +41,17 @@ public class Projectile : MonoBehaviour
     }
 
     #region Additional functions
-    public void Ricochet(float velocityDecayMultiplier = 0.75f)
+    public void Ricochet(ref Vector3 position, ref Vector3 velocity, float lengthToTravel, RaycastHit surfaceHit, float velocityDecayMultiplier = 0.75f)
     {
-        Vector3 newDirection = Vector3.Reflect(velocity, surfaceHit.normal).normalized;
-        float outDistance = DetectionLength - surfaceHit.distance;
-        transform.position = surfaceHit.point + newDirection * outDistance;
-        velocity = newDirection * velocity.magnitude * velocityDecayMultiplier;
-        velocity = Vector3.MoveTowards(velocity, Physics.gravity, weight * Time.deltaTime);
-    }
-    public void CheckIfStopped(float velocityThreshold)
-    {
-        if (velocity.magnitude < velocityThreshold)
-        {
-            enabled = false;
-        }
+        position = surfaceHit.point;
+
+        // Change velocity
+        velocity = Vector3.Reflect(velocity, surfaceHit.normal);
+        velocity *= velocityDecayMultiplier;
+        // Check how close the hit point is, and how far the projectile needs to travel after ricocheting
+        float outDistance = lengthToTravel - surfaceHit.distance;
+        // Update position based on position after ricocheting
+        position = surfaceHit.point + outDistance * velocity.normalized;
     }
     public void SpawnObjectAtImpactPoint(GameObject prefab)
     {
@@ -88,14 +83,14 @@ public class Projectile : MonoBehaviour
 
     public static bool CalculateTrajectoryDelta(ref Vector3 position, ref Vector3 velocity, float mass, float radius, float deltaTime, LayerMask hitDetection, out RaycastHit rh)
     {
-        float detectionLength = velocity.magnitude * deltaTime;
+        // TO DO: have different variants of this for regular raycasts, boxcasts, capsulecasts, etc., to count for different object shapes
 
-        bool surfaceHit = Physics.SphereCast(position, radius, velocity, out rh, detectionLength, hitDetection);
-
+        float lengthToTravel = velocity.magnitude * deltaTime;
+        bool surfaceHit = Physics.SphereCast(position, radius, velocity, out rh, lengthToTravel, hitDetection);
         if (surfaceHit)
         {
             // TO DO: update position and velocity differently in response to surface hit
-            // Determine whether to penetrate, ricochet or stop completely
+            // Determine whether to penetrate, ricochet or embed
 
             // As of yet, ignore that stuff and just stop movement as soon as we hit something
             return true;
@@ -103,7 +98,7 @@ public class Projectile : MonoBehaviour
         else
         {
             // Move bullet linearly as expected
-            position += velocity.normalized * detectionLength;
+            position += velocity.normalized * lengthToTravel;
         }
 
         // Alter velocity based on external factors
