@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SmokeParticleDensityController : MonoBehaviour
@@ -16,6 +17,8 @@ public class SmokeParticleDensityController : MonoBehaviour
         public int[] indices;// = new int[4096];
         public int numberOfParticles;
 
+        public float lastTimeUpdated = 0f;
+
         public ParticleGridSpace(Vector3Int gridPosition, Vector3 worldPosition, int maxSize)
         {
             this.gridPosition = gridPosition;
@@ -29,11 +32,9 @@ public class SmokeParticleDensityController : MonoBehaviour
     //public float resolveVectorMagnitude = 1f;
     public float resolveVelocityMagnitude = 10f;
     public float deceleration = 10f;
+    public float gridSpaceInactiveLifetime = 10f;
 
     Dictionary<Vector3Int, ParticleGridSpace> dictionary = new Dictionary<Vector3Int, ParticleGridSpace>();
-    //FixedSizeDictionary<Vector3Int, ParticleGridSpace> gridSpaceDictionary = new FixedSizeDictionary<Vector3Int, ParticleGridSpace>(65536);
-
-    //static readonly Vector3Int neighbourSpaceVolumeToCheck = new Vector3Int(3, 3, 3);
 
     public static readonly Vector3Int[] neighbourOffsets = new Vector3Int[]
     {
@@ -49,11 +50,16 @@ public class SmokeParticleDensityController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Clear grid space data keys, and the values inside each ParticleGridSpace class, but not the classes themselves (since they can be reused)
-        /*
-        for (int i = 0; i < gridSpaceDictionary.Count; i++) gridSpaceDictionary.valueArray[i].numberOfParticles = 0;
-        gridSpaceDictionary.Clear(true);
-        */
+        // Get rid of grid spaces that haven't been updated in a while, to reduce the number of checks per frame
+        // (The garbage collector should automatically handle disposing of the data)
+        for (int i = dictionary.Count - 1; i >= 0; i--)
+        {
+            Vector3Int key = dictionary.Keys.ElementAt(i);
+            ParticleGridSpace gridSpace = dictionary[key];
+            // If time since last update exceeds threshold, remove grid space.
+            float timeSinceLastUpdate = Time.time - gridSpace.lastTimeUpdated;
+            if (timeSinceLastUpdate > gridSpaceInactiveLifetime) dictionary.Remove(key);
+        }
 
         // Clear particle counts
         foreach (ParticleGridSpace gridSpace in dictionary.Values) gridSpace.numberOfParticles = 0;
@@ -75,12 +81,6 @@ public class SmokeParticleDensityController : MonoBehaviour
         {
             cloud.particleEmitter.SetParticles(cloud.particleArray, cloud.numberOfParticles);
         }
-
-        /*
-        int totalParticleCount = 0;
-        IterateThroughParticles((_, _) => totalParticleCount++);
-        Debug.Log(totalParticleCount);
-        */
     }
     private void OnDrawGizmosSelected()
     {
@@ -116,13 +116,6 @@ public class SmokeParticleDensityController : MonoBehaviour
         Vector3Int gridPosition = WorldToGridPosition(realParticle.position, out _);
 
         // Check if an entry is present. If not, create one and create a new ParticleGridSpace to assign to it.
-        /*
-        if (gridSpaceDictionary.TryAddEntry(gridPosition, out int dictionaryIndex))
-        {
-            gridSpaceDictionary.SetValue(dictionaryIndex, new ParticleGridSpace());
-        }
-        ParticleGridSpace gridSpace = gridSpaceDictionary.valueArray[dictionaryIndex];
-        */
         bool spaceExists = dictionary.TryGetValue(gridPosition, out ParticleGridSpace gridSpace);
         if (!spaceExists)
         {
@@ -134,6 +127,8 @@ public class SmokeParticleDensityController : MonoBehaviour
         gridSpace.clouds[gridSpace.numberOfParticles] = cloud;
         gridSpace.indices[gridSpace.numberOfParticles] = index;
         gridSpace.numberOfParticles++;
+        // Check that this grid space was updated, so down the line we can separate occupied spaces from ones that haven't been used in a while.
+        gridSpace.lastTimeUpdated = Time.time;
     }
     void CalculateResolverDirection(SmokeCloud cloud, int index)
     {
@@ -154,7 +149,7 @@ public class SmokeParticleDensityController : MonoBehaviour
         }
 
         // Iterate through each possible neighbour
-        // In this case, each time one of the baase offsets is 'one', it's replaced with the actual offset direction for that axis.
+        // In this case, each time one of the base offsets is 'one', it's replaced with the actual offset direction for that axis.
         for (int i = 0; i < 8; i++)
         {
             Vector3Int neighbour = particleGridPosition + (neighbourOffsets[i] * offsetDirection);
