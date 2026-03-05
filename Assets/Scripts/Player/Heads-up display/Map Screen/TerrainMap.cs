@@ -28,6 +28,9 @@ public class TerrainMap : MonoBehaviour
         if (currentScene == sceneOfMap) return;
 
         sceneOfMap = currentScene;
+
+        if (terrainGrid == null) return;
+
         GenerateMap();
     }
 
@@ -47,6 +50,10 @@ public class TerrainMap : MonoBehaviour
     {
         if (playerTransform.position == lastPosition) return;
         lastPosition = playerTransform.position;
+
+        if (terrainGrid == null) return;
+
+        //return;
 
         // Get position of player, in map's local space
         Vector3Int playerLocalPosition = terrainGrid.WorldToGridPosition(playerTransform.position);
