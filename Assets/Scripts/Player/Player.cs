@@ -32,10 +32,6 @@ public class Player : Character
     public WeaponHandler weapons;
     public HeadsUpDisplay headsUpDisplay;
 
-    public override void Delete()
-    {
-        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null, null, Vector3.zero);
-    }
     protected override void Die()
     {
         base.Die();

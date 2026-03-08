@@ -95,7 +95,19 @@ public class Entity : MonoBehaviour
     public float DeltaTime => Time.deltaTime * timeScale;
     public float FixedDeltaTime => Time.fixedDeltaTime * timeScale;
     */
-    public virtual void Delete() => Destroy(gameObject);
+    public void Delete()
+    {
+        // If this entity has health, pre-emptively kill it to ensure 'on death' events occur properly
+        if (health != null)
+        {
+            int killDamage = health.data.max * 999;
+            health.Damage(killDamage, 0, false, DamageType.DeletionByGame, null, null, Vector3.zero);
+        }
+
+        // Delete the actual object.
+        // (Unless it's a player, don't delete them so the game over screen can play)
+        if (this is Player player == false) Destroy(gameObject);
+    }
 
 
 

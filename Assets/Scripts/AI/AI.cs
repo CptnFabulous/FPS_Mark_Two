@@ -64,10 +64,6 @@ public class AI : Character
         base.Awake();
         if (agent != null) agent.speed = baseMovementSpeed;
     }
-
-
-
-
     private void OnDrawGizmos()
     {
         if (agent != null)
@@ -75,16 +71,6 @@ public class AI : Character
             Gizmos.color = Color.blue;
             AIAction.GizmosDrawNavMeshPath(agent.path);
         }
-    }
-
-
-
-
-    public override void Delete()
-    {
-        // Pre-emptively kills AI to ensure 'on death' events occur properly
-        health.Damage(health.data.max * 999, 0, false, DamageType.DeletionByGame, null, null, Vector3.zero);
-        base.Delete();
     }
     protected override void Die()
     {
