@@ -33,10 +33,43 @@ public abstract class ResourceDisplay : MonoBehaviour
 
         if (animationController != null)
         {
-            animationController.SetFloat(current, values.current);
-            animationController.SetBool(critical, values.isCritical);
-            animationController.SetBool(full, values.isFull);
-            animationController.SetBool(depleted, values.isDepleted);
+            TrySetAnimatorFloat(animationController, current, values.current);
+            TrySetAnimatorBool(animationController, critical, values.isCritical);
+            TrySetAnimatorBool(animationController, full, values.isFull);
+            TrySetAnimatorBool(animationController, depleted, values.isDepleted);
         }
+    }
+
+    public static bool TrySetAnimatorTrigger(Animator animator, string name)
+    {
+        if (!AnimatorParameterExists(animator, name)) return false;
+        animator.SetTrigger(name);
+        return true;
+    }
+    public static bool TrySetAnimatorBool(Animator animator, string name, bool value)
+    {
+        if (!AnimatorParameterExists(animator, name)) return false;
+        animator.SetBool(name, value);
+        return true;
+    }
+    public static bool TrySetAnimatorInteger(Animator animator, string name, int value)
+    {
+        if (!AnimatorParameterExists(animator, name)) return false;
+        animator.SetInteger(name, value);
+        return true;
+    }
+    public static bool TrySetAnimatorFloat(Animator animator, string name, float value)
+    {
+        if (!AnimatorParameterExists(animator, name)) return false;
+        animator.SetFloat(name, value);
+        return true;
+    }
+    public static bool AnimatorParameterExists(Animator animator, string name)
+    {
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            if (parameter.name == name) return true;
+        }
+        return false;
     }
 }
