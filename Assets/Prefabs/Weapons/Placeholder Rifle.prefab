@@ -463,10 +463,10 @@ MonoBehaviour:
   hudGraphic: {fileID: 21300000, guid: c1c20a2005681204c98dab3e04ab387d, type: 3}
   oneHanded: 0
   modes:
-  - {fileID: 6870649952528205445}
   - {fileID: 2556300965256930862}
   currentModeIndex: 0
   switchSpeed: 0.5
+  indexOrder: 2
   onDraw:
     m_PersistentCalls:
       m_Calls: []
@@ -661,6 +661,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sway: 0.5
   range: 400
+  muzzle: {fileID: 3321402550516367603}
   ammoType: {fileID: 11400000, guid: 08a0ef4396758044e8ea2e2c4ac9ec5c, type: 2}
   ammoPerShot: 1
   recoilMagnitude: 1
@@ -689,10 +690,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   recoilTime: 0.25
-  shotSpread: 0
   projectilePrefab: {fileID: 6154177461571150366}
   projectileCount: 1
-  muzzle: {fileID: 3321402550516367603}
+  shotSpread: 0
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:
