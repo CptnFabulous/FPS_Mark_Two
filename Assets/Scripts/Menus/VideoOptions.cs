@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class VideoOptions : OptionsMenu
 {
     [Header("Simple options")]
-    public Dropdown fullscreenMode;
-    public Dropdown graphicsQualityPreset;
-    public Dropdown resolutions;
+    public TMP_Dropdown fullscreenMode;
+    public TMP_Dropdown graphicsQualityPreset;
+    public TMP_Dropdown resolutions;
     public SliderWithField refreshRateTarget;
 
     List<Resolution> resolutionStructs;
@@ -18,6 +19,7 @@ public class VideoOptions : OptionsMenu
     {
         QualitySettings.SetQualityLevel(graphicsQualityPreset.value, applyExpensiveQualityPresetChanges);
         Resolution r = resolutionStructs[resolutions.value];
+        //Screen.SetResolution(r.width, r.height, (FullScreenMode)fullscreenMode.value, RefreshRate.)
         Screen.SetResolution(r.width, r.height, (FullScreenMode)fullscreenMode.value, Mathf.RoundToInt(refreshRateTarget.slider.value));
     }
     public override void ObtainCurrentValues()
@@ -72,7 +74,7 @@ public class VideoOptions : OptionsMenu
         {
             Resolution r = resolutionStructs[i];
             string optionText = r.width + " X " + r.height;
-            resolutions.options.Add(new Dropdown.OptionData(optionText));
+            resolutions.options.Add(new TMP_Dropdown.OptionData(optionText));
 
             if (r.width == Screen.width && r.height == Screen.height)
             {

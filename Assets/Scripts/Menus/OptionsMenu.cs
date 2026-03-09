@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -70,7 +71,7 @@ public abstract class OptionsMenu : MonoBehaviour
     {
         interactable.onValueChanged.AddListener((_) => OnOptionsChanged());
     }
-    public void AddValueChangedEvent(Dropdown interactable)
+    public void AddValueChangedEvent(TMP_Dropdown interactable)
     {
         interactable.onValueChanged.AddListener((_) => OnOptionsChanged());
     }

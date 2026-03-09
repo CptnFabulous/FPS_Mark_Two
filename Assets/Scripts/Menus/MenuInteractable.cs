@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHandler
 {
     public Text title;
+    public TextMeshProUGUI nameText;
     public Sprite graphic;
     [Multiline] public string description = "This is a selectable option.";
 
@@ -16,8 +18,12 @@ public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHand
     {
         // Finds the first text object and designates it as its child.
         // Auto-updates the title text object to match the object's name, for easy editing.
-        title = GetComponentInChildren<Text>();
-        title.text = name;
+        //title = GetComponentInChildren<Text>();
+        nameText.text = name;
+    }
+    void Awake()
+    {
+        nameText.text = name;
     }
     public void OnSelect(BaseEventData eventData)
     {
