@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 public static class AIAction
 {
@@ -16,7 +17,6 @@ public static class AIAction
     }
     public static void DebugDrawNavMeshPath(NavMeshPath path, Color colour, float time = 0)
     {
-        if (path.corners.Length <= 1) return;
         for (int i = 1; i < path.corners.Length; i++)
         {
             Debug.DrawLine(path.corners[i - 1], path.corners[i], colour, time);
@@ -24,90 +24,62 @@ public static class AIAction
     }
     public static void GizmosDrawNavMeshPath(NavMeshPath path)
     {
-        if (path.corners.Length <= 1) return;
         for (int i = 1; i < path.corners.Length; i++)
         {
             Gizmos.DrawLine(path.corners[i - 1], path.corners[i]);
         }
     }
 
+    static RaycastHit[] resultArray = new RaycastHit[8];
+    static GenericComparer<RaycastHit> distanceComparer = new GenericComparer<RaycastHit>((rh) => rh.distance, false);
 
-
-    static RaycastHit[] resultArray = new RaycastHit[100];
-    static List<RaycastHit> resultList = new List<RaycastHit>();
-
-    public static bool RaycastWithExceptions(Ray ray, out RaycastHit hit, float distance, LayerMask layerMask, params IEnumerable<Collider>[] exceptionLists)
+    public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit hit, float distance, LayerMask layerMask, System.Func<RaycastHit, bool> isException, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, bool printDebugMessages = false)
     {
-        // Run RaycastAll to get all colliders in the path of the object
-        resultList.Clear();
-        resultList.AddRange(Physics.RaycastAll(ray, distance, layerMask));
-        // Sort by distance
-        MiscFunctions.SortListWithOnePredicate(resultList, (rh) => rh.distance);
+        if (printDebugMessages) Debug.Log("Line of sight check");
 
-        // Iterate through the options
-        // Return the first result that isn't one of the exceptions
-        foreach (RaycastHit rh in resultList)
+        int numberOfResults = Physics.RaycastNonAlloc(origin, direction, resultArray, distance, layerMask, queryTriggerInteraction);
+        System.Array.Sort(resultArray, 0, numberOfResults, distanceComparer);
+        if (printDebugMessages) Debug.Log(numberOfResults);
+
+        for (int i = 0; i < numberOfResults; i++)
         {
-            if (IsExceptionCollider(rh.collider, exceptionLists)) continue;
+            RaycastHit rh = resultArray[i];
+
+            bool exceptionFound = isException.Invoke(rh);
+            if (printDebugMessages) Debug.Log($"{i}/{numberOfResults}, {rh.collider}, {exceptionFound}");
+            if (exceptionFound) continue;
+
 
             // We found a valid result
             hit = rh;
+            if (printDebugMessages) Debug.Log("True");
+            if (printDebugMessages) Debug.DrawRay(origin, direction, Color.green);
             return true;
         }
 
         // If nothing else was found, return the first exception collider (or a blank value if nothing was hit at all)
-        hit = resultList.Count > 0 ? resultList[0] : new RaycastHit();
+        hit = numberOfResults > 0 ? resultArray[0] : new RaycastHit();
+
+        if (printDebugMessages) Debug.Log("True");
+        if (printDebugMessages) Debug.DrawRay(origin, direction, Color.red);
         return false;
     }
 
-    public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, params IEnumerable<Collider>[] exceptionLists)
+    public static bool LineOfSight(Vector3 from, Vector3 to, Entity fromEntity, Entity toEntity, LayerMask detection, bool printDebugMessages = false)
     {
-        // Run RaycastAll to get all colliders in the path of the object
-        // Calculate direction and use magnitude for distance
+        return LineOfSight(from, to, detection, (rh) => fromEntity.HitOwnCollider(rh) || toEntity.HitOwnCollider(rh), printDebugMessages);
+    }
+    public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, System.Func<RaycastHit, bool> isException, bool printDebugMessages = false)
+    {
         Vector3 direction = to - from;
-        int numberOfResults = Physics.RaycastNonAlloc(from, direction, resultArray, direction.magnitude, detection);
-        for (int i = 0; i < numberOfResults; i++)
-        {
-            // Check each collider to see if it's an exception
-            RaycastHit rh = resultArray[i];
-            if (IsExceptionCollider(rh.collider, exceptionLists)) continue;
-            // If not, that means line of sight is blocked
-            Debug.DrawLine(from, to, Color.red);
-            return false;
-        }
-
-        Debug.DrawLine(from, to, Color.green);
-        return true;
+        return !RaycastWithExceptions(from, direction, out _, direction.magnitude, detection, isException, QueryTriggerInteraction.UseGlobal, printDebugMessages);
     }
-    public static bool LineOfSightToTarget(Ray ray, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, QueryTriggerInteraction detectTriggers, params IEnumerable<Collider>[] exceptionLists)
+    public static bool LineOfSightToTarget(Vector3 origin, Vector3 direction, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, QueryTriggerInteraction detectTriggers, System.Func<RaycastHit, bool> isException)
     {
-        int numberOfResults = Physics.RaycastNonAlloc(ray, resultArray, viewRange, viewDetection, detectTriggers);
-        for (int i = 0; i < numberOfResults; i++)
-        {
-            hit = resultArray[i];
-            // If it hit one of the desired colliders, line of sight is confirmed
-            if (MiscFunctions.ArrayContains(targetColliders, hit.collider)) return true;
-            // If it hit an exception, ignore and continue to the next collider
-            if (IsExceptionCollider(hit.collider, exceptionLists)) continue;
-            // If object hit was neither a target nor an exception, that means line of sight is blocked.
-            return false;
-        }
-
-        // Target not hit at all somehow
-        hit = new RaycastHit();
-        return false;
+        bool raycastHit = RaycastWithExceptions(origin, direction, out hit, viewRange, viewDetection, isException, detectTriggers);
+        return raycastHit && MiscFunctions.ArrayContains(targetColliders, hit.collider);
     }
-    static bool IsExceptionCollider(Collider toCheck, params IEnumerable<Collider>[] exceptionLists)
-    {
-        foreach (IEnumerable<Collider> exceptions in exceptionLists)
-        {
-            if (exceptions == null) continue;
-            if (MiscFunctions.ArrayContains(exceptions, toCheck)) return true;
-        }
-        return false;
-    }
-
-
+    
     public static Vector3 HypotheticalLookOrigin(AI ai, Vector3 positionToLookFrom)
     {
         Vector3 offset = ai.LookTransform.position - ai.transform.position;

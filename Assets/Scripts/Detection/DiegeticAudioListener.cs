@@ -68,12 +68,13 @@ public class DiegeticAudioListener : MonoBehaviour
         // Ignore sounds coming from friendly characters
         if (rootEntity.IsHostileTowards(source) == false) return false;
 
-        // Check how far it takes the sound to travel, based on how the sound would reach the target.
-        // First, check if it's a clear line of sight to the target.
         float travelDistance;
         Vector3 origin = source.CentreOfMass;
         Vector3 destination = transform.position;
-        if (AIAction.LineOfSight(origin, destination, soundLayerMask, source.colliders, rootEntity.colliders))
+
+        // Check how far it takes the sound to travel, based on how the sound would reach the target.
+        // First, check if it's a clear line of sight to the target.
+        if (AIAction.LineOfSight(origin, destination, source, rootEntity, soundLayerMask))
         {
             // Clear shot between the source and destination!
             travelDistance = Vector3.Distance(origin, destination);

@@ -26,6 +26,8 @@ public class CheckpointManager : MonoBehaviour
         // Check positions of later checkpoints, to see if the player is close enough to change the checkpoint
         for (int i = currentCheckpointIndex + 1; i < checkpoints.Length; i++)
         {
+            if (checkpoints[i] == null) continue;
+
             Vector3 checkpointPosition = checkpoints[i].position;
             Vector3 playerPosition = targetPlayer.transform.position;
 
@@ -34,7 +36,7 @@ public class CheckpointManager : MonoBehaviour
             if (distance > proximityToEstablishNewCheckpoint) continue;
 
             // Line of sight check in case the checkpoint is on the other side of a thin wall
-            bool lineOfSight = AIAction.LineOfSight(checkpointPosition, playerPosition, collisionMask, targetPlayer.colliders);
+            bool lineOfSight = AIAction.LineOfSight(checkpointPosition, playerPosition, collisionMask, targetPlayer.HitOwnCollider);
             if (!lineOfSight) continue;
 
             // Update index to represent new checkpoint

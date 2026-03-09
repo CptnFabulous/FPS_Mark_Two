@@ -164,8 +164,15 @@ public class ThrowHandler : MonoBehaviour
         Vector3 aimDirection = user.LookTransform.forward;
         throwOrigin = holding.worldCenterOfMass;
 
-        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, attackMask, exceptions, out throwDirection, out _, out _, out _);
+        WeaponUtility.CalculateObjectLaunch(aimOrigin, throwOrigin, aimDirection, range, attackMask, ColliderIsException, out throwDirection, out _, out _, out _);
         throwDirection = throwDirection.normalized;
+    }
+
+    bool ColliderIsException(RaycastHit rh)
+    {
+        if (user.HitOwnCollider(rh)) return true;
+        if (MiscFunctions.ArrayContains(PhysicsCache.GetChildColliders(holding), rh.collider)) return true;
+        return false;
     }
 
     public static void AddForceToRigidbodyChain(Rigidbody toThrow, Vector3 force, Vector3 position, ForceMode mode)

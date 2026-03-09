@@ -41,7 +41,7 @@ public class ContinuousRangedAttackData : RangedAttackFiringData
 
         Vector3 castDirection = Quaternion.LookRotation(aimDirection, worldUp) * Vector3.forward;
 
-        WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, hitDetection, user.colliders, out Vector3 launchDirection, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
+        WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, hitDetection, user.HitOwnCollider, out Vector3 launchDirection, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
 
         Quaternion desiredMuzzleRotation = Quaternion.LookRotation(launchDirection, worldUp);
         muzzle.rotation = Quaternion.RotateTowards(muzzle.rotation, desiredMuzzleRotation, muzzleRotationShiftPerSecond * Time.deltaTime);

@@ -85,6 +85,12 @@ public class Entity : MonoBehaviour
         
         return attackerChar.affiliation.IsHostileTowards(targetChar.affiliation);
     }
+    /// <summary>
+    /// Quickly checks if a raycast was on one of this entity's colliders.
+    /// </summary>
+    /// <param name="hit"></param>
+    /// <returns></returns>
+    public bool HitOwnCollider(RaycastHit hit) => MiscFunctions.ArrayContains(colliders, hit.collider);
 
     /*
     public float timeScale = 1;

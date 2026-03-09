@@ -4,9 +4,10 @@ using UnityEngine;
 
 public static class WeaponUtility
 {
-    public static void CalculateObjectLaunch(Vector3 aimOrigin, Vector3 launchOrigin, Vector3 direction, float range, LayerMask detection, IList<Collider> exceptions, out Vector3 launchDirection, out Vector3 castHitPoint, out RaycastHit rh, out bool hitPointIsBehindMuzzle)
+    public static void CalculateObjectLaunch(Vector3 aimOrigin, Vector3 launchOrigin, Vector3 direction, float range, LayerMask detection, System.Func<RaycastHit, bool> isException, out Vector3 launchDirection, out Vector3 castHitPoint, out RaycastHit rh, out bool hitPointIsBehindMuzzle)
     {
-        bool successfulCast = MiscFunctions.RaycastWithExceptions(aimOrigin, direction, out rh, range, detection, exceptions);
+        //bool successfulCast = MiscFunctions.RaycastWithExceptions(aimOrigin, direction, out rh, range, detection, exceptions);
+        bool successfulCast = AIAction.RaycastWithExceptions(aimOrigin, direction, out rh, range, detection, isException);
         // Calculate where the projectile needs to go
         castHitPoint = successfulCast ? rh.point : aimOrigin + (direction.normalized * range);
         // Calculate the direction the projectile needs to move in
@@ -56,7 +57,7 @@ public static class WeaponUtility
 
             // Check for blockages between the origin and the hit point
             Vector3 hitLocation = e.bounds.ClosestPoint(origin);
-            bool lineOfSightCheck = AIAction.LineOfSight(origin, hitLocation, hitDetection, e.colliders);
+            bool lineOfSightCheck = AIAction.LineOfSight(origin, hitLocation, hitDetection, e.HitOwnCollider);
             if (lineOfSightCheck == false) continue;
 
             entities.Add(e);

@@ -23,7 +23,7 @@ public class InvestigateLocations : AIStateFunction
         if (statesToSwitchFrom.Count > 0 && statesToSwitchFrom.Contains(root.currentStateInHierarchy) == false) return;
         
         // Ignore if the enemy is already engaging a known target
-        if (targetManager.targetExists && targetManager.canSeeTarget == ViewStatus.Visible)
+        if (targetManager.targetExists && targetManager.viewStatus == ViewStatus.Visible)
         {
             rootAI.DebugLog("Ignored, AI has already found the target");
             return;

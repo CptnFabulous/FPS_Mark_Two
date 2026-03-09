@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class AIGunAttack : MonoBehaviour
@@ -27,51 +28,55 @@ public class AIGunAttack : MonoBehaviour
     public float cooldownMax = 0.2f;
     public UnityEvent onCooldown;
 
-    IEnumerator currentAttackSequence;
-
     bool inAttack;
-    Vector3 currentAimTarget;
+    IEnumerator currentAttackSequence;
 
     AIAim aim => rootAI.aiming;
     Character target => rootAI.target;
-    Vector3 targetPosition => target.bounds.center;
-    bool aimIsCorrect => aim.IsLookingAt(currentAimTarget);
+    bool canTarget => rootAI.targeting.viewStatus == ViewStatus.Visible;
+    Vector3 targetPosition
+    {
+        get
+        {
+            // Check if line of sight is established. If so, aim at the point the AI can see.
+            if (canTarget) return rootAI.targeting.lastValidHit.point;
+            // If not, just aim in the target's general direction.
+            return target.bounds.center;
+        }
+    }
+    bool onTarget => aim.IsLookingAt(targetPosition);
 
     private void Update()
     {
         if (target == null) return;
         if (target.health.IsAlive == false) return;
 
-        // While attacking, rotate aim towards target
-        // While telegraphing and attacking, shift aim towards target at a speed roughly equivalent to their standard movement speed
-        // While cooling down, rotate aim normally
-
-        bool canSee = rootAI.targeting.canSeeTarget == ViewStatus.Visible;
-        currentAimTarget = rootAI.targeting.lastValidHit.point;
-        bool canShoot = AIAction.LineOfSight(aim.LookOrigin, currentAimTarget, weapon.attackMask, rootAI.colliders, target.colliders);
-        bool canTarget = canSee && canShoot;
-        Debug.DrawLine(aim.LookOrigin, currentAimTarget, Color.magenta);
-
+        // If attack has already started, shift aim linearly towards target
         if (inAttack)
         {
             aim.ShiftLookTowards(targetPosition, aimSpeedWhileTelegraphing);
         }
-        else if (canTarget)
-        {
-            // Rotate aim
-            aim.RotateFreeLookTowards(currentAimTarget);
-            if (aimIsCorrect)
-            {
-                currentAttackSequence = null;
-                currentAttackSequence = AttackSequence();
-                StartCoroutine(currentAttackSequence);
-            }
-        }
         else
         {
-            aim.LookInNeutralDirection();
+            // Check that the AI can get line of sight to its target, and that the current attack won't be blocked.
+            bool attackNotBlocked = AttackNotBlocked();
+            if (canTarget && attackNotBlocked)
+            {
+                // if the AI can see the target and its attack isn't blocked, rotate look to fix aim on target.
+                aim.RotateFreeLookTowards(targetPosition);
+                if (onTarget)
+                {
+                    currentAttackSequence = null;
+                    currentAttackSequence = AttackSequence();
+                    StartCoroutine(currentAttackSequence);
+                }
+            }
+            else
+            {
+                // Otherwise, the AI looks straight forward as it moves to its desired vantage point.
+                aim.LookInNeutralDirection();
+            }
         }
-        //aim.lookingInDefaultDirection = !inAttack && !canTarget;
     }
     private void OnDisable()
     {
@@ -130,4 +135,5 @@ public class AIGunAttack : MonoBehaviour
     {
         if (rootAI.agent != null) rootAI.agent.speed = rootAI.baseMovementSpeed * multipler;
     }
+    public bool AttackNotBlocked() => AIAction.LineOfSight(aim.LookOrigin, targetPosition, rootAI, target, weapon.attackMask);
 }

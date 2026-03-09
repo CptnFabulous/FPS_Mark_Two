@@ -46,7 +46,7 @@ public class DiegeticLightSource : MonoBehaviour
 
         // Launch a raycast towards the target to see if anything blocks it, or if it's out of range.
 
-        bool lightReachesTarget = AIAction.LineOfSight(origin, origin + direction, lightSource.cullingMask, targetEntity.colliders);
+        bool lightReachesTarget = AIAction.LineOfSight(origin, origin + direction, lightSource.cullingMask, targetEntity.HitOwnCollider);
         //bool lightReachesTarget = Physics.Raycast(origin, direction, out RaycastHit rh, range, lightSource.cullingMask) && rh.collider.GetComponentInParent<Entity>() == targetEntity;
         if (lightReachesTarget == false) return 0;
 

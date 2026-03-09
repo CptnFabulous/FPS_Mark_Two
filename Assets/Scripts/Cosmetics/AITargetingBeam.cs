@@ -25,8 +25,7 @@ public class AITargetingBeam : MonoBehaviour
     private void LateUpdate()
     {
         // Launch a simple raycast to check roughly what the attack will hit
-        Ray ray = new Ray(transform.position, transform.forward);
-        bool raycastHit = AIAction.RaycastWithExceptions(ray, out RaycastHit rh, maxLength, hitDetection, attachedTo.User.colliders);
+        bool raycastHit = AIAction.RaycastWithExceptions(transform.position, transform.forward, out RaycastHit rh, maxLength, hitDetection, attachedTo.User.HitOwnCollider);
 
         // Get the distance that the beam travels (use full length if beam hits nothing)
         float distance = raycastHit ? rh.distance : maxLength;

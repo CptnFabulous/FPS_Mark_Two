@@ -120,11 +120,6 @@ public readonly struct MiscFunctions
         return false;
     }
 
-
-
-
-
-
     public static void IterateThroughGrid(Action<int[]> action, params int[] dimensions)
     {
         int[] indices = new int[dimensions.Length];
@@ -228,31 +223,6 @@ public readonly struct MiscFunctions
     #endregion
 
     #region Physics interactions
-    public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit rh, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
-    {
-        List<RaycastHit> list = RaycastAllWithExceptions(origin, direction, distance, layerMask, exceptions);
-        bool hit = list.Count > 0;
-
-        if (hit == false)
-        {
-            rh = new RaycastHit();
-            return false;
-        }
-
-        SortListWithOnePredicate(list, (rh) => rh.distance); // Sort entries by distance
-        rh = list[0];
-        return true;
-    }
-    public static List<RaycastHit> RaycastAllWithExceptions(Vector3 origin, Vector3 direction, float distance, LayerMask layerMask, IEnumerable<Collider> exceptions)
-    {
-        List<RaycastHit> list = new List<RaycastHit>(Physics.RaycastAll(origin, direction, distance, layerMask));
-        foreach (Collider c in exceptions)
-        {
-            // Remove all returned values where the collider is part of the exceptions list
-            list.RemoveAll((rh) => rh.collider == c);
-        }
-        return list;
-    }
     public static bool IsLayerInLayerMask(LayerMask mask, int layer) => mask == (mask | (1 << layer));
 
     static Dictionary<int, LayerMask> physicsLayerDictionary = new Dictionary<int, LayerMask>();
