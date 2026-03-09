@@ -464,8 +464,8 @@ public readonly struct MiscFunctions
         string displayName = text.Remove(0, lastSlashBeforeName + 1);
         // Capitalise and format binding name
 
-
-        displayName = Capitalise(displayName[0]) + displayName.Remove(0, 1);
+        //Debug.Log(displayName.Length);
+        if (displayName.Length > 0) displayName = Capitalise(displayName[0]) + displayName.Remove(0, 1);
 
         int displayNameIndex = 1;
         while (displayNameIndex < displayName.Length)
