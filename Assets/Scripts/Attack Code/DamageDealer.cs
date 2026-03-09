@@ -57,7 +57,7 @@ public class DamageDealer
         }
 
         // Play damage effects on surface (e.g. sound, impacts, etc.)
-        impactEffect?.Play(target, attackingWith, point, normal, multiplier);
+        impactEffect?.Play(target, attackingWith, point, normal, attackingWith.transform.up, multiplier);
         onHit.Invoke();
 
         return true;

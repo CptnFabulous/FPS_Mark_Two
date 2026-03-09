@@ -77,7 +77,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
                 SprintController sc = controller.sprintController;
                 if (sc.isSprinting) volume *= sc.footstepVolumeMultiplier;
 
-                footsteps.Play(ground.collider.gameObject, controller.controlling, ground.point, ground.normal, volume);
+                footsteps.Play(ground.collider.gameObject, controller.controlling, ground.point, ground.normal, transform.forward, volume);
                 onStep.Invoke(controller.groundingData);
                 stepTimer = 0;
                 #endregion

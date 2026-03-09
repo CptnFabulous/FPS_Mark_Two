@@ -46,7 +46,7 @@ public class PhysicsObjectEffects : MonoBehaviour
             Transform b = contactPoint.otherCollider.transform;
             if (a.parent == b || b.parent == a) continue;
 
-            impactEffect.Play(collision.collider.gameObject, rootEntity, contactPoint.point, contactPoint.normal, multiplier);
+            impactEffect.Play(collision.collider.gameObject, rootEntity, contactPoint.point, contactPoint.normal, Vector3.up, multiplier);
         }
     }
     /*
