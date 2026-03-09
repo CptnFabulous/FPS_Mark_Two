@@ -29,7 +29,7 @@ public class TerrainGrid : MonoBehaviour
     public LayerMask terrainDetection;
     public Vector3 boundsMargins = Vector3.one;
     public int resolutionScale = 1;
-    [SerializeField] Vector3Int _chunkSize = new Vector3Int(10, 10, 10);
+    //[SerializeField] Vector3Int _chunkSize = new Vector3Int(10, 10, 10);
 
 #if UNITY_EDITOR
     public Texture3D debugTerrainTexture;
@@ -39,8 +39,8 @@ public class TerrainGrid : MonoBehaviour
 
     BoundsInt _worldBounds;
     Vector3Int _gridSize;
-    Vector3Int _chunkGridSize;
-    bool[,,] _occupiedByTerrain;
+    //Vector3Int _chunkGridSize;
+    //bool[,,] _occupiedByTerrain;
     
     public Mesh mapMesh { get; private set; }
     public BoundsInt worldBounds => _worldBounds;
@@ -50,9 +50,9 @@ public class TerrainGrid : MonoBehaviour
 
 
     public Vector3Int gridSize => _gridSize;
-    public Vector3Int chunkGridSize => _chunkGridSize;
-    public Vector3Int chunkSize => _chunkSize;
-    public bool[,,] containsTerrain => _occupiedByTerrain;
+    public Vector3Int chunkGridSize => Vector3Int.zero;
+    public Vector3Int chunkSize => Vector3Int.zero;
+    public bool[,,] containsTerrain => null;
 
     Door[] _doorsInScene;
     public Door[] doorsInScene
@@ -122,6 +122,7 @@ public class TerrainGrid : MonoBehaviour
 
         #endregion
 
+        /*
         #region Sets up appropriate number of chunks for grid size (and increases bounds and grid sizes to match chunks)
 
         Debug.Log("Setting up chunks");
@@ -146,9 +147,11 @@ public class TerrainGrid : MonoBehaviour
         _worldBounds = new BoundsInt(newWorldBoundsMin, newWorldBoundsSize);
 
         #endregion
+        */
 
+        /*
         #region Pre-cache what parts of the level are occupied by terrain
-
+        
         Debug.Log("Pre-caching terrain grid");
 
         Vector3 checkBoxHalfExtents = 0.5f / resolutionScale * Vector3.one;
@@ -190,9 +193,9 @@ public class TerrainGrid : MonoBehaviour
         debugTerrainTexture.Apply();
 
 #endif
-
+        
 #endregion
-
+        */
 
         generated = true;
     }
