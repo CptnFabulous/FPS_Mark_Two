@@ -61,8 +61,8 @@ public abstract class RangedAttackFiringData : MonoBehaviour
         //int damage = projectilePrefab.damageStats.damage;
         //float spread = shotSpread + User.weaponHandler.aimSwayAngle;
 
-        DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, range, spread, hitDetection);
-        Notification<AttackMessage>.Transmit(newMessage);
+        //DirectionalAttackMessage newMessage = new DirectionalAttackMessage(User, damage, User.LookTransform.position, User.aimDirection, range, spread, hitDetection);
+        //Notification<AttackMessage>.Transmit(newMessage);
 
         timeOfLastMessage = Time.time; // Resets time
     }
