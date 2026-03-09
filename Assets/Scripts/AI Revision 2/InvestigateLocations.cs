@@ -39,7 +39,7 @@ public class InvestigateLocations : AIStateFunction
         // Ignore if the enemy has already just acquired a new position to check (and this check does not have authority to override it)
         if (overrideCooldown == false && (Time.time - lastTimeOfTargetChange) < delayBetweenChangingTargetLocation)
         {
-            rootAI.DebugLog("Ignored, it's too soon since the AI acquired a new target");
+            //rootAI.DebugLog("Ignored, it's too soon since the AI acquired a new target");
             return;
         }
 
@@ -69,18 +69,18 @@ public class InvestigateLocations : AIStateFunction
 
     public override IEnumerator AsyncProcedure()
     {
+        rootAI.DebugLog("Investigation started, looking in neutral direction");
+        // Have the AI look in the standard direction.
+        aim.LookInNeutralDirection();
+
         // Go to location of sound.
-        // BUG: for some reason the AI sometimes skips this phase and does not actually go to the target's last position (even though all the code plays)
         rootAI.DebugLog($"{this}: travelling to suspicious position (frame {Time.frameCount})");
         yield return rootAI.TravelToDestination(positionToCheck);
 
-        /*
         // Look around said position
         rootAI.DebugLog($"{this}: looking around target's last-known position (frame {Time.frameCount})");
-        Quaternion originalRotation = rootAI.transform.rotation;
-        yield return aim.SweepProcedure(() => originalRotation, 360, 180, 0);
-        //yield return aim.SweepSurroundings();
-        */
+        Vector3 startDirection = transform.forward;
+        yield return aim.SweepSightlineAsync(() => startDirection, new Vector2(360, 180), 0, false);
 
         // If nothing is detected, switch to alternate procedure
         SwitchToState(onFail);
