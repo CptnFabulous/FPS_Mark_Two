@@ -155,6 +155,6 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     protected override void OnDisable()
     {
         base.OnDisable();
-        if (animator != null) animator.SetTrigger(interruptTrigger);
+        if (animator != null) MiscFunctions.TrySetAnimatorTrigger(animator, interruptTrigger);
     }
 }
