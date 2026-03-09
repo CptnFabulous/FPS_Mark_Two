@@ -86,6 +86,7 @@ public class AIGunAttack : MonoBehaviour
             StopCoroutine(currentAttackSequence);
             currentAttackSequence = null;
             onTelegraphEnd.Invoke();
+            SetSpeed(1);
             onCooldown.Invoke();
             inAttack = false;
             aim.CancelAsyncRoutines();
@@ -100,12 +101,10 @@ public class AIGunAttack : MonoBehaviour
 
         //currentAimTarget = targetPosition;
         SetSpeed(telegraphMoveSpeedMultiplier);
-        //rootAI.agent.speed = rootAI.baseMovementSpeed * telegraphMoveSpeedMultiplier;
         onTelegraph.Invoke();
         yield return new WaitForSeconds(telegraphDelay);
 
         SetSpeed(attackMoveSpeedMultiplier);
-        //rootAI.agent.speed = rootAI.baseMovementSpeed * attackMoveSpeedMultiplier;
         onTelegraphEnd.Invoke();
 
         rootAI.DebugLog($"Executing attack with {weapon}");
@@ -124,7 +123,6 @@ public class AIGunAttack : MonoBehaviour
 
         // Revert to default speed
         SetSpeed(1);
-        //rootAI.agent.speed = rootAI.baseMovementSpeed;
         float cooldown = Random.Range(cooldownMin, cooldownMax);
         onCooldown.Invoke();
         yield return new WaitForSeconds(cooldown);
@@ -133,7 +131,8 @@ public class AIGunAttack : MonoBehaviour
 
     void SetSpeed(float multipler)
     {
-        if (rootAI.agent != null) rootAI.agent.speed = rootAI.baseMovementSpeed * multipler;
+        NavMeshAgent agent = rootAI.agent;
+        if (agent != null) agent.speed = rootAI.baseMovementSpeed * multipler;
     }
     public bool AttackNotBlocked() => AIAction.LineOfSight(aim.LookOrigin, targetPosition, rootAI, target, weapon.attackMask);
 }
