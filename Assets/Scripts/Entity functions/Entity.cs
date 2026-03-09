@@ -73,7 +73,7 @@ public class Entity : MonoBehaviour
 
     protected virtual void Die()
     {
-        Debug.Log($"{this} is now dying");
+        DebugLog($"{this} is now dying");
     }
 
     public bool IsHostileTowards(Entity target)
@@ -126,6 +126,10 @@ public class Entity : MonoBehaviour
     public void DebugLog(string message)
     {
         if (showDebugData) Debug.Log($"{this}: {message}, frame {Time.frameCount}");
+    }
+    public void DebugLogError(string message)
+    {
+        if (showDebugData) Debug.LogError($"{this}: {message}, frame {Time.frameCount}");
     }
     public void DebugLog(object target)
     {
