@@ -64,10 +64,12 @@ public class MenuWindow : MonoBehaviour
             Debug.LogWarning("Selection " + firstSelection + "'s interactability is disabled, and can't be selected by " + name + "!");
         }
 
+        /*
         if (back == null)
         {
             Debug.LogWarning("Button 'back' is null, so " + name + " cannot assign a listener for returning to the previous menu. Have you added one manually, or ensured the player does not need to return to its parent menu?");
         }
+        */
     }
     private void Awake()
     {
@@ -199,8 +201,8 @@ public class MenuWindow : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         //SceneManager.LoadScene(sceneName);
-        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
-        //StartCoroutine(LoadingScreen.LoadSequence(sceneName));
+        //LoadingScreen.instance.LoadScene(sceneName);
+        SceneLoader.instance.LoadScene(sceneName);
     }
 
     

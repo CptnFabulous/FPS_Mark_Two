@@ -86,10 +86,10 @@ public class LevelCompletionScreen : MonoBehaviour
 
         if (nextLevelExists == false)
         {
-            LoadingScreen.ReturnToMainMenu();
+            SceneLoader.instance.ReturnToMainMenu();
             return;
         }
 
-        LoadingScreen.LoadScene(nextLevelName); // Load next level
+        SceneLoader.instance.LoadScene(nextLevelName); // Load next level
     }
 }
