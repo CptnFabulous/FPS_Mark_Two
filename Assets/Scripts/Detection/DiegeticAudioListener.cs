@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -26,17 +25,30 @@ public class DiegeticAudioListener : MonoBehaviour
 {
     static List<DiegeticAudioListener> active = new List<DiegeticAudioListener>();
 
+    static NavMeshPath reverbPath; // A singleton NavMeshPath re-used to save memory when calculating reverb
+    static int _agentID = -1;
+
+    static int agentID
+    {
+        get
+        {
+            if (_agentID == -1)
+            {
+                _agentID = AIAction.GetNavMeshAgentIDByName("Sound propagation");
+            }
+            return _agentID;
+        }
+    }
+
     [SerializeField] float minVolumeToHear = 1;
+    [SerializeField] float maxDistance = 10;
     [SerializeField] LayerMask soundLayerMask = ~0;
     [SerializeField] int soundNavMeshMask = NavMesh.AllAreas;
     public UnityEvent<HeardSound> onSoundHeard;
 
     Entity _root;
-    static NavMeshPath rp = null;
 
     public Entity rootEntity => _root ??= GetComponentInParent<Entity>();
-    static NavMeshPath reverbPath => rp ??= new NavMeshPath(); // A singleton NavMeshPath re-used to save memory when calculating reverb
-
 
     private void OnEnable() => active.Add(this);
     private void OnDisable() => active.Remove(this);
@@ -47,7 +59,7 @@ public class DiegeticAudioListener : MonoBehaviour
         foreach (DiegeticAudioListener listener in active)
         {
             // Check if the listener can hear the sound
-            if (listener.CheckIfListenerCanHearSound(source, decibels, out float heardDecibels) == false) continue;
+            if (listener.CheckIfListenerCanHearSound(sound, source, decibels, out float heardDecibels) == false) continue;
 
             // TO DO POSSIBLY: check if the sound is not being drowned out by other sounds the entity is currently hearing
             // Add each heard sound to a list, and remove all entries whose times are long enough ago for the sound to expire.
@@ -59,7 +71,7 @@ public class DiegeticAudioListener : MonoBehaviour
         }
     }
 
-    bool CheckIfListenerCanHearSound(Entity source, float decibels, out float heardDecibels)
+    bool CheckIfListenerCanHearSound(DiegeticSound sound, Entity source, float decibels, out float heardDecibels)
     {
         heardDecibels = 0;
 
@@ -81,29 +93,55 @@ public class DiegeticAudioListener : MonoBehaviour
         }
         else
         {
-            // Not a straight shot, check if the sound bounces around corners.
-            // Reverb is cheated with a NavMesh path to simulate bouncing.
-            // If the path is incomplete, the sound cannot reach the target
+            // Not a straight shot, check if the sound reaches the target via reverb
+            bool validPath = ReverbPath(origin, destination, maxDistance, soundNavMeshMask, out travelDistance);
+            if (!validPath) return false;
 
             // TO DO POSSIBLY IF I FEEL IT'S NECESSARY: under whatever criteria, get the hit objects from the line of sight check and reduce the sound volume based on the types of objects hit
-
-            // Sample start and end positions on NavMesh, and cancel if start and end points can't be found
-            float maxDistance = 10;
-            bool originSampleCheck = NavMesh.SamplePosition(origin, out NavMeshHit pathStart, maxDistance, soundNavMeshMask);
-            bool destinationSampleCheck = NavMesh.SamplePosition(destination, out NavMeshHit pathEnd, maxDistance, soundNavMeshMask);
-            if (originSampleCheck == false || destinationSampleCheck == false) return false;
-            // Calculate path, cancel if it can't be completed
-            NavMesh.CalculatePath(pathStart.position, pathEnd.position, soundNavMeshMask, reverbPath);
-            if (reverbPath.status != NavMeshPathStatus.PathComplete) return false;
-
-            // Update distance to reflect path corners (plus distance from real to sampled ends)
-            float originToStart = Vector3.Distance(origin, pathStart.position);
-            float endToEars = Vector3.Distance(pathEnd.position, destination);
-            travelDistance = originToStart + AIAction.NavMeshPathDistance(reverbPath) + endToEars;
         }
 
         // Check if the sound is loud enough for the listener to hear it. If not, cancel
         heardDecibels = decibels * MiscFunctions.InverseSquareValueMultiplier(travelDistance);
-        return heardDecibels >= minVolumeToHear;
+        bool canHear = heardDecibels >= minVolumeToHear;
+
+        //rootEntity.DebugLog($"Heard {sound} from {source} = {canHear}. Outgoing volume = {decibels}. Incoming volume {heardDecibels} >= {minVolumeToHear}");
+        Debug.DrawLine(origin, destination, canHear ? Color.cyan : Color.blue, 1);
+
+        return canHear;
+    }
+
+    /// <summary>
+    /// Reverb is cheated with a NavMesh path to simulate bouncing. If the path is incomplete, the sound cannot reach the target.
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="destination"></param>
+    /// <param name="travelDistance"></param>
+    /// <returns></returns>
+    public static bool ReverbPath(Vector3 origin, Vector3 destination, float maxDistance, int navMeshMask, out float travelDistance)
+    {
+        travelDistance = 0;
+
+        // Sample start and end positions on NavMesh, and cancel if start and end points can't be found
+        bool validOrigin = NavMesh.SamplePosition(origin, out NavMeshHit pathStart, maxDistance, navMeshMask);
+        if (!validOrigin) return false;
+        bool validDestination = NavMesh.SamplePosition(destination, out NavMeshHit pathEnd, maxDistance, navMeshMask);
+        if (!validDestination) return false;
+
+        // Generate filter
+        NavMeshQueryFilter filter = new NavMeshQueryFilter();
+        filter.agentTypeID = agentID;
+        filter.areaMask = navMeshMask;
+
+        // Calculate path, cancel if it can't be completed
+        if (reverbPath == null) reverbPath = new NavMeshPath();
+        bool pathCalculated = NavMesh.CalculatePath(pathStart.position, pathEnd.position, filter, reverbPath);
+        if (!pathCalculated) return false;
+        if (reverbPath.status != NavMeshPathStatus.PathComplete) return false;
+
+        // Update distance to reflect path corners (plus distance from real to sampled ends)
+        float originToPathStart = Vector3.Distance(origin, pathStart.position);
+        float pathEndToEars = Vector3.Distance(pathEnd.position, destination);
+        travelDistance = originToPathStart + AIAction.NavMeshPathDistance(reverbPath) + pathEndToEars;
+        return true;
     }
 }

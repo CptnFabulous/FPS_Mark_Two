@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEngine.GraphicsBuffer;
 
 public static class AIAction
 {
@@ -87,5 +86,18 @@ public static class AIAction
         //Debug.DrawLine(ai.transform.position, positionToLookFrom, Color.cyan);
         //Debug.DrawLine(positionToLookFrom, positionToLookFrom + offset, Color.cyan);
         return positionToLookFrom + offset;
+    }
+
+    public static int GetNavMeshAgentIDByName(string name)
+    {
+        int settingsCount = NavMesh.GetSettingsCount();
+        for (int i = 0; i < settingsCount; i++)
+        {
+            NavMeshBuildSettings settings = NavMesh.GetSettingsByIndex(i);
+            int id = settings.agentTypeID;
+            string agentName = NavMesh.GetSettingsNameFromID(id);
+            if (agentName == name) return id;
+        }
+        return -1;
     }
 }
