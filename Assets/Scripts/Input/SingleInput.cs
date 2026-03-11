@@ -38,12 +38,14 @@ public class SingleInput : MonoBehaviour
     }
     private void OnEnable()
     {
+        action.Enable();
         action.started += onActionStarted.Invoke;
         action.performed += onActionPerformed.Invoke;
         action.canceled += onActionCancelled.Invoke;
     }
     private void OnDisable()
     {
+        action.Reset();
         action.started -= onActionStarted.Invoke;
         action.performed -= onActionPerformed.Invoke;
         action.canceled -= onActionCancelled.Invoke;
