@@ -784,7 +784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebf36242510483c48ae762a502dacc0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookSpeed: 90
+  lookSpeed: 180
   speedCurve:
     serializedVersion: 2
     m_Curve:
@@ -1383,7 +1383,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewRange: 30
-  viewingAngles: {x: 90, y: 30}
+  peripheralMultiplier: 0.5
+  viewingAngles: {x: 150, y: 60}
   viewDetection: {fileID: 11400000, guid: 94ba0f6d41a929643b4211c668d3211b, type: 2}
   raycastSpacing: 0.5
 --- !u!114 &5217320388601188730
@@ -1398,7 +1399,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7466f070aaef8a040870f04ced06dd74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minVolumeToHear: 1
+  minVolumeToHear: 0.1
+  maxDistance: 10
   soundLayerMask:
     serializedVersion: 2
     m_Bits: 1527
