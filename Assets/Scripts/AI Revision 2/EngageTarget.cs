@@ -109,10 +109,10 @@ public class EngageTarget : TravelToDestination
         }
 
         // Check if line of sight between destination and target is not compromised
-        Vector3 lookOrigin = AIAction.HypotheticalLookOrigin(rootAI, position);
+        Vector3 lookOriginFromVantagePoint = AIAction.HypotheticalLookOrigin(rootAI, position);
         Debug.DrawLine(target.transform.position, targetBounds.center, Color.cyan);
-        Debug.DrawLine(lookOrigin, targetBounds.center, Color.cyan);
-        bool lineOfSight = currentAttack.AttackNotBlocked();
+        Debug.DrawLine(lookOriginFromVantagePoint, targetBounds.center, Color.cyan);
+        bool lineOfSight = currentAttack.AttackNotBlocked(lookOriginFromVantagePoint);
         if (lineOfSight == false)
         {
             //Debug.Log("Line of sight is broken");

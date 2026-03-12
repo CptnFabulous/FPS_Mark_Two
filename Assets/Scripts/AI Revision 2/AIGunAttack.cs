@@ -59,7 +59,7 @@ public class AIGunAttack : MonoBehaviour
         else
         {
             // Check that the AI can get line of sight to its target, and that the current attack won't be blocked.
-            bool attackNotBlocked = AttackNotBlocked();
+            bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin);
             if (canTarget && attackNotBlocked)
             {
                 // if the AI can see the target and its attack isn't blocked, rotate look to fix aim on target.
@@ -134,5 +134,5 @@ public class AIGunAttack : MonoBehaviour
         NavMeshAgent agent = rootAI.agent;
         if (agent != null) agent.speed = rootAI.baseMovementSpeed * multipler;
     }
-    public bool AttackNotBlocked() => AIAction.LineOfSight(aim.LookOrigin, targetPosition, rootAI, target, weapon.attackMask);
+    public bool AttackNotBlocked(Vector3 hypotheticalOrigin) => AIAction.LineOfSight(hypotheticalOrigin, targetPosition, rootAI, target, weapon.attackMask);
 }
