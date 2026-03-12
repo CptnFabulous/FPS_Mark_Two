@@ -15,6 +15,7 @@ public class Weapon : MonoBehaviour
 
     [Header("Switching")]
     public float switchSpeed;
+    public int indexOrder;
     public UnityEvent onDraw;
     public UnityEvent onHolster;
     public bool isSwitching { get; private set; }

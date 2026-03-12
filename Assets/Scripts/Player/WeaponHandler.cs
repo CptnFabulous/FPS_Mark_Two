@@ -13,6 +13,7 @@ public class WeaponHandler : MonoBehaviour
 
     [Header("Weapons")]
     public List<Weapon> equippedWeapons;
+    public bool sortByOrderIndex = true;
     public OffhandAttackHandler offhandAttacks;
 
     [Header("Stats")]
@@ -193,6 +194,14 @@ public class WeaponHandler : MonoBehaviour
         w.transform.localRotation = Quaternion.identity;
         // Pre-emptively disable weapon object so that switching and setup can play properly
         w.gameObject.SetActive(false);
+
+        // Sort weapons by their index order
+        if (sortByOrderIndex)
+        {
+            equippedWeapons.Sort((a, b) => a.indexOrder.CompareTo(b.indexOrder));
+            w.transform.SetSiblingIndex(equippedWeapons.IndexOf(w));
+        }
+
         // Refresh weapon selector
         if (refreshSelector) selectorInfo.Refresh(this);
 
