@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class AvoidDyingObjective : Objective
 {
-    public CheckpointManager checkpointManager;
     public string deathMessageFormatting = "Deaths: {0}";
+
+    CheckpointManager _checkpointManager;
+
+    public CheckpointManager checkpointManager => _checkpointManager ??= FindAnyObjectByType<CheckpointManager>();
 
     int deaths => checkpointManager.deathCount;
 
