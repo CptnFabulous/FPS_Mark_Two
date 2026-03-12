@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
 
 public class CheckpointManager : MonoBehaviour
 {
-    public Player targetPlayer;
 
     [Header("Checkpoints")]
     public Transform[] checkpoints;
@@ -19,7 +17,11 @@ public class CheckpointManager : MonoBehaviour
     public UnityEvent<Player> onRespawn;
 
     int currentCheckpointIndex = 0;
+    Player _target;
+
     public int deathCount { get; private set; } = 0;
+
+    public Player targetPlayer => _target ??= FindAnyObjectByType<Player>();
 
     void Update()
     {
