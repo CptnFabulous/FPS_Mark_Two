@@ -595,6 +595,7 @@ public readonly struct MiscFunctions
     }
     public static bool AnimatorParameterExists(Animator animator, string name)
     {
+        if (animator == null) return false;
         foreach (AnimatorControllerParameter parameter in animator.parameters)
         {
             if (parameter.name == name) return true;
