@@ -22,7 +22,7 @@ public class DamageDealer
 
         // Check that it's not hitting an ally (do nothing if so)
         Entity targetChar = EntityCache<Entity>.GetEntity(target);
-        if (attacker.IsHostileTowards(targetChar) == false) return false;
+        if (attacker != null && attacker.IsHostileTowards(targetChar) == false) return false;
 
         // Multiply values 
         int d = Mathf.RoundToInt(damage * multiplier);
@@ -35,7 +35,7 @@ public class DamageDealer
             rb.AddForceAtPosition(knockback * multiplier * direction.normalized, point, ForceMode.Impulse);
 
             // Tell the attacker's health script that it just applied velocity to a physics object, to prevent self damage from physics glitches
-            if (attacker.health != null)
+            if (attacker != null && attacker.health != null)
             {
                 attacker.health.timesPhysicsObjectsWereLaunchedByThisEntity[PhysicsCache.GetRootRigidbody(rb).gameObject] = Time.time;
             }
