@@ -129,10 +129,12 @@ MonoBehaviour:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
     hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
   m_RendererFeatures:
+  - {fileID: 595975431976279287}
+  - {fileID: 4510204660454155490}
   - {fileID: 4897767930989420453}
   - {fileID: -7363852587580461393}
   - {fileID: -7147067298726585874}
-  m_RendererFeatureMap: a59fecd6fb5df843afeeec421657ce99ee5997992884d09c
+  m_RendererFeatureMap: f75cce6d7f544508e264ae1a3e77973ea59fecd6fb5df843afeeec421657ce99ee5997992884d09c
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -174,7 +176,30 @@ MonoBehaviour:
   m_CopyDepthMode: 2
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
---- !u!114 &4897767930989420453
+--- !u!114 &595975431976279287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1614fc811f8f184697d9bee70ab9fe5, type: 3}
+  m_Name: DecalRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  m_Settings:
+    technique: 0
+    maxDrawDistance: 1000
+    decalLayers: 0
+    dBufferSettings:
+      surfaceData: 2
+    screenSpaceSettings:
+      normalBlend: 0
+  m_CopyDepthPS: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
+  m_DBufferClear: {fileID: 4800000, guid: f056d8bd2a1c7e44e9729144b4c70395, type: 3}
+--- !u!114 &4510204660454155490
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -184,7 +209,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a60de5f9bf7b2c43a297ebd59746f4d, type: 3}
-  m_Name: Render thermals
+  m_Name: Render entity thermals
   m_EditorClassIdentifier: 
   m_Active: 1
   thermalVisionMaterial: {fileID: 2100000, guid: d5880687d6f1ca04bb9bed00588eff22, type: 2}
@@ -195,7 +220,30 @@ MonoBehaviour:
   smokeAlpha: 0.1
   renderLayers:
     serializedVersion: 2
-    m_Bits: 2015
+    m_Bits: 329
+  renderPassEvent: 500
+--- !u!114 &4897767930989420453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a60de5f9bf7b2c43a297ebd59746f4d, type: 3}
+  m_Name: Render environment thermals
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  thermalVisionMaterial: {fileID: 2100000, guid: 537c1b7fd038efd4e983e35f52be0782, type: 2}
+  backgroundMaterial: {fileID: 0}
+  smokeLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  smokeAlpha: 0.1
+  renderLayers:
+    serializedVersion: 2
+    m_Bits: 1695
   renderPassEvent: 500
 --- !u!114 &8735638441406957083
 MonoBehaviour:

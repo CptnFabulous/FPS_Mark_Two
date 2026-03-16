@@ -17,6 +17,8 @@ public class RenderThermalVision : ScriptableRendererFeature
 
     class ThermalPass : ScriptableRenderPass
     {
+        RenderThermalVision renderFeature;
+
         Material thermalVisionMaterial;
         Material backgroundMaterial;
         LayerMask smokeLayers;
@@ -25,9 +27,9 @@ public class RenderThermalVision : ScriptableRendererFeature
         FilteringSettings transparentFiltering;
 
         string m_ProfilerTag = "Thermal Render Pass";
-        LayerMask renderLayers;
+        LayerMask allAllowedLayers;
         static Material dpm;
-        static Dictionary<(float, float), Material> materialCache = new Dictionary<(float, float), Material>();
+        Dictionary<(float, float), Material> materialCache = new Dictionary<(float, float), Material>();
         //static List<Renderer> everythingToRender = new List<Renderer>();
 
         List<ShaderTagId> shaderTags = new List<ShaderTagId>()
@@ -42,15 +44,22 @@ public class RenderThermalVision : ScriptableRendererFeature
         /// An ultra simple opaque material, drawn to force an initial depth pass.
         /// </summary>
         static Material depthPassMaterial => dpm ??= CoreUtils.CreateEngineMaterial("Unlit/Color");
+        float ambientTempRatio => 0;//Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
 
-        public ThermalPass(Material thermalVisionMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
+        public ThermalPass(RenderThermalVision renderFeature, Material thermalVisionMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
         {
-            // Get a mask of everything that needs to have an effect over it, minus what needs to be rendered separately as transparent.
-            this.renderLayers = renderLayers;
-            LayerMask opaqueMask = renderLayers & ~smokeLayers;
+            this.renderFeature = renderFeature;
 
-            opaqueFiltering = new FilteringSettings(RenderQueueRange.all, opaqueMask);
-            transparentFiltering = new FilteringSettings(RenderQueueRange.all, smokeLayers);
+
+            //renderLayers = ~renderLayers;
+
+
+            this.allAllowedLayers = renderLayers;
+
+            // Get everything that's in the main mask but not a smoke layer.
+            opaqueFiltering = new FilteringSettings(RenderQueueRange.all, renderLayers & ~smokeLayers);
+            // Get everything in the smoke layer that's not being filtered out by the main layer.
+            transparentFiltering = new FilteringSettings(RenderQueueRange.all, smokeLayers & renderLayers);
 
             // Set the more cosmetic values
             this.thermalVisionMaterial = thermalVisionMaterial;
@@ -87,8 +96,7 @@ public class RenderThermalVision : ScriptableRendererFeature
             if (backgroundMaterial != null && camera.clearFlags != CameraClearFlags.Nothing)
             {
                 // Assign values (we don't need to instantiate multiple materials because we're only rendering 1 temperature)
-                float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
-                backgroundMaterial.SetFloat("_Temperature", tempRatio);
+                backgroundMaterial.SetFloat("_Temperature", ambientTempRatio);
                 backgroundMaterial.SetFloat("_Opacity", 1);
                 // Draw using command buffer and immediately execute, to ensure it goes behind everything else
                 cmd.DrawProcedural(Matrix4x4.identity, backgroundMaterial, 0, MeshTopology.Triangles, 3);
@@ -151,9 +159,22 @@ public class RenderThermalVision : ScriptableRendererFeature
 
                     // Don't write data for objects that aren't being viewed by the camera
                     int rendererLayer = r.gameObject.layer;
-                    if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer) == false) continue;
-                    if (MiscFunctions.IsLayerInLayerMask(renderLayers, rendererLayer) == false) continue;
+
+                    bool inCameraCullingMask = MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer);
+                    if (!inCameraCullingMask)
+                    {
+                        //Debug.Log($"{camera.name}, {renderFeature.name}: {r.name} not rendering, not part of camera");
+                        continue;
+                    }
+                    bool inAllowedLayers = MiscFunctions.IsLayerInLayerMask(allAllowedLayers, rendererLayer);
+                    if (!inAllowedLayers)
+                    {
+                        //Debug.Log($"{camera.name}, {renderFeature.name}: {r.name} not rendering, not in allowed layers");
+                        continue;
+                    }
                     //if (MiscFunctions.IsLayerInLayerMask(camera.cullingMask & renderLayers, rendererLayer) == false) continue;
+
+                    //Debug.Log($"{camera.name}, {renderFeature.name}: {r.name} rendering");
 
                     // Determines if renderer should be see-through
                     bool isSmoke = MiscFunctions.IsLayerInLayerMask(smokeLayers, rendererLayer);
@@ -190,6 +211,7 @@ public class RenderThermalVision : ScriptableRendererFeature
             float tempRatio = Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, temperature);
             newMaterial.SetFloat("_Temperature", tempRatio);
             newMaterial.SetFloat("_Opacity", alpha);
+            newMaterial.SetFloat("_Ambient_temperature", ambientTempRatio);
 
             materialCache[key] = newMaterial;
             return newMaterial;
@@ -202,7 +224,7 @@ public class RenderThermalVision : ScriptableRendererFeature
     public override void Create()
     {
         // Create a new pass instance
-        m_ScriptablePass = new ThermalPass(thermalVisionMaterial, backgroundMaterial, renderLayers, smokeLayers, smokeAlpha);
+        m_ScriptablePass = new ThermalPass(this, thermalVisionMaterial, backgroundMaterial, renderLayers, smokeLayers, smokeAlpha);
         m_ScriptablePass.renderPassEvent = renderPassEvent;
     }
 
