@@ -18,7 +18,17 @@ public static class AngleCheck
     /// <returns></returns>
     public static bool CheckForObjectsInCone<T>(Vector3 origin, Vector3 direction, float maxAngle, float range, LayerMask layerMask, out T returnedValue, out RaycastHit hitData, ColliderCheck<T> criteria/*, bool debug = false*/)
     {
+        // Performs different raycasts by changing just one variable, but keeping everything else the same.
         bool InteractionCast(Vector3 dir, out RaycastHit rh) => Physics.Raycast(origin, dir, out rh, range, layerMask);
+
+        // Sorts by both angle and range, so if two targets have very similar angles but one is much closer (or vice versa), it knows how to prioritise them.
+        float SorterComparable(Collider c)
+        {
+            Vector3 point = c.bounds.center;
+            float angle = Vector3.Angle(direction, point - origin);
+            float distance = Vector3.Distance(point, origin);
+            return angle * distance;
+        }
 
         // Populate default values
         hitData = new RaycastHit();
@@ -28,13 +38,13 @@ public static class AngleCheck
         bool directCast = InteractionCast(direction, out hitData) && criteria.Invoke(hitData.collider, out returnedValue);
         if (directCast) return true;
 
-        // If that didn't return anything, do a sweep for other objects within the desired range and angle
-        int colliderCount = Physics.OverlapSphereNonAlloc(origin, range, colliderArray, layerMask); // Get colliders
-        comparer.obtainValue = (c) => Vector3.Angle(direction, c.bounds.center - origin); // Set up comparer to sort by angle
+        // If that didn't return anything, find all colliders within the desired range and sort by angle and distance
+        int colliderCount = Physics.OverlapSphereNonAlloc(origin, range, colliderArray, layerMask);
+        comparer.obtainValue = (c) => SorterComparable(c); // Set up comparer
         System.Array.Sort(colliderArray, 0, colliderCount, comparer); // Do the actual sorting
 
         // Iterate through colliders
-        for (int i = 0; i <  colliderCount; i++)
+        for (int i = 0; i < colliderCount; i++)
         {
             Collider c = colliderArray[i];
 
