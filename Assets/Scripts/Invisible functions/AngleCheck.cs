@@ -16,17 +16,17 @@ public static class AngleCheck
     /// <param name="hitData">Returns more detailed hit data.</param>
     /// <param name="criteria">Weeds out objects that don't meet the desired criteria.</param>
     /// <returns></returns>
-    public static bool CheckForObjectsInCone<T>(Vector3 origin, Vector3 direction, float maxAngle, float range, LayerMask layerMask, out T returnedValue, out RaycastHit hitData, ColliderCheck<T> criteria/*, bool debug = false*/)
+    public static bool CheckForObjectsInCone<T>(Vector3 origin, Vector3 direction, float maxAngle, float maxRange, LayerMask layerMask, out T returnedValue, out RaycastHit hitData, ColliderCheck<T> criteria/*, bool debug = false*/)
     {
         // Performs different raycasts by changing just one variable, but keeping everything else the same.
-        bool InteractionCast(Vector3 dir, out RaycastHit rh) => Physics.Raycast(origin, dir, out rh, range, layerMask);
+        bool InteractionCast(Vector3 dir, out RaycastHit rh) => Physics.Raycast(origin, dir, out rh, maxRange, layerMask);
 
         // Sorts by both angle and range, so if two targets have very similar angles but one is much closer (or vice versa), it knows how to prioritise them.
         float SorterComparable(Collider c)
         {
             Vector3 point = c.bounds.center;
-            float angle = Vector3.Angle(direction, point - origin);
-            float distance = Vector3.Distance(point, origin);
+            float angle = Vector3.Angle(direction, point - origin) / maxAngle;
+            float distance = Vector3.Distance(point, origin) / maxRange;
             return angle * distance;
         }
 
@@ -39,7 +39,7 @@ public static class AngleCheck
         if (directCast) return true;
 
         // If that didn't return anything, find all colliders within the desired range and sort by angle and distance
-        int colliderCount = Physics.OverlapSphereNonAlloc(origin, range, colliderArray, layerMask);
+        int colliderCount = Physics.OverlapSphereNonAlloc(origin, maxRange, colliderArray, layerMask);
         comparer.obtainValue = (c) => SorterComparable(c); // Set up comparer
         System.Array.Sort(colliderArray, 0, colliderCount, comparer); // Do the actual sorting
 
