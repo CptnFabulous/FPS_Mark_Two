@@ -46,6 +46,15 @@ public readonly struct MiscFunctions
         }
         return value;
     }
+    public static bool PointIsInsideCamera(Camera camera, Vector3 worldPoint)
+    {
+        Vector3 viewportPoint = camera.WorldToViewportPoint(worldPoint);
+        if (viewportPoint.x < 0) return false;
+        if (viewportPoint.x > 1) return false;
+        if (viewportPoint.y < 0) return false;
+        if (viewportPoint.y > 1) return false;
+        return true;
+    }
     #endregion
 
     #region IEnumerables

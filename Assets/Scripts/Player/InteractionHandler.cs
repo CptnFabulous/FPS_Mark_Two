@@ -45,7 +45,7 @@ public class InteractionHandler : MonoBehaviour
         RaycastHit rh = new RaycastHit();
         string msg = null;
 
-        bool angleCheck = AngleCheck.CheckForObjectsInCone(aimOrigin, aimDirection, detectionAngle, interactionRange, detection.mask, out returnedValues, out rh, ColliderIsInteractable);
+        bool angleCheck = AngleCheck.CheckForObjectsInCone(aimOrigin, aimDirection, detectionAngle, interactionRange, detection.mask, out returnedValues, out rh, ValidInteractableFound);
 
         // Cache the data on whatever we hit this frame
         targetedInteractable = returnedValues.Item1;
@@ -67,17 +67,18 @@ public class InteractionHandler : MonoBehaviour
         }
     }
 
-    bool ColliderIsInteractable(Collider c, out (Interactable, Rigidbody) returnedValues)
+
+
+    bool ValidInteractableFound(Collider c, out (Interactable, Rigidbody) returnedValues)
     {
-        bool check = ColliderIsInteractable(c, out Interactable i, out Rigidbody rb);
+        bool check = ValidInteractableFound(c, out Interactable i, out Rigidbody rb);
         returnedValues = (i, rb);
         return check;
     }
-    bool ColliderIsInteractable(Collider c, out Interactable i, out Rigidbody rb)
+    bool ValidInteractableFound(Collider c, out Interactable i, out Rigidbody rb)
     {
         // Check for either an Interactable or Rigidbody, ignore if not found
         i = c.GetComponentInParent<Interactable>();
-        rb = null;
         if (objectCarrier != null)
         {
             // Check for a root rigidbody, and then check if the player can pick it up
