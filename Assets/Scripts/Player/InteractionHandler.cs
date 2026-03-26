@@ -77,17 +77,29 @@ public class InteractionHandler : MonoBehaviour
     }
     bool ValidInteractableFound(Collider c, out Interactable i, out Rigidbody rb)
     {
+        i = null;
+        rb = null;
+
+        // Check that the target object can be seen on screen.
+        bool insideCamera = MiscFunctions.PointIsInsideCamera(referenceCamera, c.bounds.center);
+        if (!insideCamera) return false;
+
         // Check for either an Interactable or Rigidbody, ignore if not found
         i = c.GetComponentInParent<Interactable>();
+        if (i != null) return true;
+
         if (objectCarrier != null)
         {
             // Check for a root rigidbody, and then check if the player can pick it up
             rb = c.GetComponentInParent<Rigidbody>();
             rb = PhysicsCache.GetRootRigidbody(rb);
             if (objectCarrier.CanPickUpObject(rb) == false) rb = null;
+            if (rb != null) return true;
         }
 
-        return i != null || rb != null;
+        
+        //return i != null || rb != null;
+        return false;
     }
 
     protected virtual void AttemptInteraction()
