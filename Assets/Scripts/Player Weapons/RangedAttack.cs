@@ -16,7 +16,7 @@ public class RangedAttack : WeaponMode
     public ADSHandler adsHandler => (User != null && User.weaponHandler != null) ? User.weaponHandler.adsHandler : null;
     public bool adsPresent => optics != null && adsHandler != null;
     public override LayerMask attackMask => stats.hitDetection;
-    public int burstIncrementer { get; private set; }
+    public int shotsFired { get; private set; }
 
     public override bool inSecondaryAction
     {
@@ -57,7 +57,7 @@ public class RangedAttack : WeaponMode
     }
 
     //Check that the fire button is still held (or that the minimum burst hasn't yet completed)
-    bool shootingIntended => (PrimaryHeld || controls.MustFire(burstIncrementer));
+    bool shootingIntended => (PrimaryHeld || controls.MustFire(shotsFired));
 
     private void OnEnable()
     {
@@ -68,7 +68,7 @@ public class RangedAttack : WeaponMode
         }
 
         //stats.user = User;
-        burstIncrementer = 0;
+        shotsFired = 0;
 
         // TO DO: only have this run if the weapon is stored in the weapon handler
         if (adsHandler != null && User.weaponHandler.equippedWeapons.Contains(attachedTo)) adsHandler.currentAttack = this;
@@ -120,7 +120,7 @@ public class RangedAttack : WeaponMode
         }
 
         // Resets burst
-        burstIncrementer = 0;
+        shotsFired = 0;
         // Sets up the message timer to infinity, to ensure it always sends a message on the first shot.
         float timeOfLastMessage = Mathf.NegativeInfinity;
 
@@ -132,12 +132,8 @@ public class RangedAttack : WeaponMode
             onWindup.Invoke();
 
             float startOfWindup = Time.time;
-            // Wait for the windup duration or until fire button is released
-            yield return new WaitUntil(() =>
-            {
-                if (PrimaryHeld == false) return true;
-                return (Time.time - startOfWindup) >= windupTime;
-            });
+            // Wait for the windup duration, or until fire button is released
+            yield return new WaitUntil(() => PrimaryHeld == false || (Time.time - startOfWindup) >= windupTime);
         }
 
         // If player is still committing to the attack after the windup
@@ -147,14 +143,44 @@ public class RangedAttack : WeaponMode
             // TO DO: set up enemy attack code so it also activates these continuous elements
             SetContinuousElementsActive(true);
 
+            // Reset shot timer
+            float shotTimer = 0;
+            while (true) // Dangerous to use a fixed true value in a while loop, but the checks to break the loop should be solid.
+            {
+                // shotTimer represents how much time has been spent shooting, in terms of how many shots would have fired with the given shot delay.
+                // If shotTimer hasn't yet reached shotsFired, ignore shot functions and keep yielding (and incrementing shotTimer based on this passage of time) until ready to proceed
+                // If shotTimer has caught up with or passed shotsFired, this means the previous shot has ended, and the next action needs to be triggered immediately.
+                // Based on how much time has passed, the loop will keep iterating without delay until the shot counter has been incremented enough to catch up.
+                // This should ensure the appropriate number of shots are fired even during lag spikes.
+                if (shotTimer < shotsFired)
+                {
+                    yield return null;
+                    shotTimer += Time.deltaTime * controls.shotsPerSecond;
+                    continue;
+                }
+                // TO DO: should I instead store burstStartTime, calculate shotTimer by using Time.time - (burstStartTime * controls.shotsPerSecond), wait until it's caught up using a WaitUntil yield?
+                // I think I would still need to put it inside an if statement, I think it will always wait at least one frame before continuing.
+                // So that would mean two different calculations of shotTimer, and that'll be a huge pain.
+
+                // If we're here it means any waiting after the previous shot is complete, and it's time to either fire the next shot or stop the loop.
+                // Check if the criteria is necessary to shoot the next shot (e.g. player input, burst count, ammo present).
+                // If so, fire another shot. If not, break the loop.
+                bool shootLoopShouldContinue = shootingIntended && CanAttack();
+                if (!shootLoopShouldContinue) break;
+
+                // Fire the next shot, hooray! Then increment the burst counter so more logic can be calculated.
+                stats.TrySendMessage(this, ref timeOfLastMessage);
+                OnAttack();
+                shotsFired++;
+            }
+
+            /*
             while (shootingIntended && CanAttack()) // Check stuff like fire button held, ammo remaining
             {
                 stats.TrySendMessage(this, ref timeOfLastMessage);
-
-                //SetContinuousElementsActive(true);
-
                 yield return SingleShot(); // Fire shot and increment burst timer
             }
+            */
 
             // Turn off continuous actions
             SetContinuousElementsActive(false);
@@ -170,21 +196,21 @@ public class RangedAttack : WeaponMode
         yield return new WaitUntil(() => PrimaryHeld == false);
 
         // Reset shot timer
-        burstIncrementer = 0;
+        shotsFired = 0;
         currentAttack = null;
     }
+    
     /// <summary>
     /// Fires a single shot and increments the burst counter.
     /// </summary>
-    public IEnumerator SingleShot()
+    public IEnumerator SingleShotAsync()
     {
-        stats.Shoot();
         OnAttack();
         yield return new WaitForSeconds(controls.shotDelay);
     }
     public override bool CanAttack()
     {
-        if (controls.CanFire(burstIncrementer) == false) return false;
+        if (controls.CanFire(shotsFired) == false) return false;
 
         // Don't shoot if there's not enough ammo in the magazine
         if (magazine != null && magazine.ammo.current < stats.ammoPerShot) return false;
@@ -196,6 +222,8 @@ public class RangedAttack : WeaponMode
     }
     public override void OnAttack()
     {
+        stats.Shoot();
+
         if (magazine != null)
         {
             magazine.ammo.current -= stats.ammoPerShot;
@@ -204,7 +232,6 @@ public class RangedAttack : WeaponMode
         {
             ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
-        burstIncrementer++;
     }
 
 

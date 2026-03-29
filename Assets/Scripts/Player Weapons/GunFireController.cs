@@ -12,6 +12,7 @@ public class GunFireController : MonoBehaviour
     public float messageDelay = 1;
 
     public float shotDelay => 60 / roundsPerMinute;
+    public float shotsPerSecond => roundsPerMinute / 60;
     public bool CanFire(int numberOfShots) => numberOfShots < maxBurst || maxBurst <= 0;
     public bool MustFire(int numberOfShots) => numberOfShots > 0 && numberOfShots < minBurst;
 }
