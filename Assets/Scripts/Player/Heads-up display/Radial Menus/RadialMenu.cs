@@ -23,7 +23,8 @@ public class RadialMenu : MonoBehaviour
     RadialMenuSlice[] _options = new RadialMenuSlice[0];
     List<RectTransform> visualElements = new List<RectTransform>();
 
-    int cachedIndex; // Don't edit this directly except from inside 'value' setter
+    int _currentIndex; // Don't edit this directly except from inside 'value' setter
+    int previousIndex;
     System.Func<int> calculateCurrentIndex;
     Vector2 cursorDirection;
     HeadsUpDisplay ph;
@@ -31,7 +32,7 @@ public class RadialMenu : MonoBehaviour
     //public bool menuIsOpen { get; private set; }
     public int currentValue
     {
-        get => cachedIndex;
+        get => _currentIndex;
         set => SetCurrentValue(value, false);
     }
     public IReadOnlyList<RadialMenuSlice> options => _options;
@@ -196,7 +197,7 @@ public class RadialMenu : MonoBehaviour
         SetCurrentValue(calculateCurrentIndex.Invoke(), true);
         
         cursorDirection = Vector2.zero;
-        SetSelectorAngle(segmentSize * cachedIndex);
+        SetSelectorAngle(segmentSize * _currentIndex);
         //SetActiveState(true);
     }
     /// <summary>
@@ -211,14 +212,22 @@ public class RadialMenu : MonoBehaviour
 
     public void SetCurrentValue(int newIndex, bool forceRefresh = false)
     {
-        // Should I put this code in InputDirection() instead?
-        // I might also want to set up EnterMenu() to use InputDirection() as well since there's a lot of overlap.
-
         newIndex = Mathf.Clamp(newIndex, 0, options.Count - 1);
-        if (cachedIndex == newIndex && !forceRefresh) return;// Only perform updating code if value is changed (unless set to refresh anyway)
 
-        cachedIndex = newIndex;
-        onValueChanged.Invoke(cachedIndex);
+        // Only perform updating code if value is changed (unless set to refresh anyway)
+        bool differentValue = _currentIndex != newIndex;
+        if (!differentValue && !forceRefresh) return;
+
+        // Only update the previous index if the new value is actually different
+        if (differentValue) previousIndex = _currentIndex;
+        // Finally set the new value
+        _currentIndex = newIndex;
+        onValueChanged.Invoke(_currentIndex);
+    }
+    public void SwapToPreviousValue()
+    {
+        SetCurrentValue(previousIndex);
+        onValueConfirmed.Invoke(currentValue);
     }
     #endregion
 

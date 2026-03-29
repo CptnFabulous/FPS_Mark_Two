@@ -72,6 +72,17 @@ public class MultiRadialMenu : MonoBehaviour
             onOneSingleMenu = true;
         }
     }
+    public void ProcessSingleMenuInput(int index, InputAction.CallbackContext context)
+    {
+        // If input was a tap, quickly swap to the previous value
+        if (context.duration < InputSystem.settings.defaultTapTime)
+        {
+            // TO DO: swap to last value
+            menus[index].SwapToPreviousValue();
+            return;
+        }
+        SetSingleMenuActive(index, context.ReadValueAsButton());
+    }
 
     bool SetMenuActiveState(RadialMenu menu, bool active)
     {

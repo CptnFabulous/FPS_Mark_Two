@@ -93,7 +93,7 @@ public class WeaponHandler : MonoBehaviour
         secondaryInput.onActionPerformed.AddListener((ctx) => SecondaryFireInput(ctx.ReadValueAsButton()));
 
         // Weapon and mode switch inputs
-        if (weaponMenuInput != null) weaponMenuInput.onActionPerformed.AddListener((ctx) => attackSelectors.SetSingleMenuActive(weaponMenuIndex, ctx.ReadValueAsButton()));
+        if (weaponMenuInput != null) weaponMenuInput.onActionPerformed.AddListener((ctx) => attackSelectors.ProcessSingleMenuInput(weaponMenuIndex, ctx));
         weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
         hotkeyHandler.onSelectionMade.AddListener(OnWeaponHotkey);
 

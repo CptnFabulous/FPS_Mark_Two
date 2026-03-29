@@ -51,15 +51,13 @@ public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
         interactionHandler.input.onActionPerformed.AddListener((_) => CancelCurrentAction());
         //selectorMenuInput.onActionPerformed.AddListener((_) => menu.);
 
-
-
         foreach (WeaponMode ability in abilities)
         {
             Weapon w = ability.attachedTo;
             if (w != null) w.gameObject.SetActive(false);
         }
 
-        if (selectorMenuInput != null) selectorMenuInput.onActionPerformed.AddListener((ctx) => menu.SetSingleMenuActive(selectorMenuIndex, ctx.ReadValueAsButton()));
+        if (selectorMenuInput != null) selectorMenuInput.onActionPerformed.AddListener((ctx) => menu.ProcessSingleMenuInput(selectorMenuIndex, ctx));
         selectorInfo.radialMenu.onValueConfirmed.AddListener((index) => currentAbility = abilities[index]);
         selectorInfo.PopulateMenu(this);
     }
