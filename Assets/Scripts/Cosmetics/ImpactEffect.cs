@@ -19,11 +19,11 @@ public class ImpactEffect : ScriptableObject
     public Vector2 decalSize = new Vector2(0.02f, 0.02f);
     public bool playSoundAtMaxVolume = false;
 
-    static SpriteRenderer decalPrefab;
+    //static SpriteRenderer decalPrefab;
     static DecalProjector decalProjector;
     static int maxNumberOfSpawnedEffects = 100;
 
-    public void Play(GameObject surfaceCollider, Entity sourceEntity, Vector3 point, Vector3 normal, Vector3 up, float intensity = 1)
+    public void Play(GameObject surfaceCollider, Entity sourceEntity, Vector3 point, Vector3 impactDirection, Vector3 normal, Vector3 up, float intensity = 1)
     {
         // Determine effects based on surface (currently doesn't have support for multiple sound types)
         ParticleSystem effect = defaultImpactEffect;
@@ -34,8 +34,10 @@ public class ImpactEffect : ScriptableObject
         // Instantiate impact effect at surface
         if (effect != null)
         {
+            //Vector3 effectDirection = normal;
+            Vector3 effectDirection = Vector3.Reflect(impactDirection, normal);
             ParticleSystem effectToSpawn = ObjectPool.RequestObject(effect, true, maxNumberOfSpawnedEffects);
-            StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, normal, up, 0);
+            StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, effectDirection, up, 0);
             // TO DO: use intensity to determine size of particles
             effectToSpawn.Play();
         }
