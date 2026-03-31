@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
@@ -26,6 +27,7 @@ public class IndexStateSwitcher : MonoBehaviour
     public int radialMenuIndex;
     public SingleInput radialMenuInput;
     public TextMeshProUGUI modeNameText;
+    public Image currentModeIcon;
 
     //[Header("Scrolling")]
     //public SingleInput scrollInput;
@@ -42,9 +44,9 @@ public class IndexStateSwitcher : MonoBehaviour
             radialMenu.Refresh(sprites, () => MiscFunctions.IndexOfInArray(controller.states, controller.currentState));
             radialMenuInput.onActionPerformed.AddListener((ctx) => radialMenuGroup.ProcessSingleMenuInput(radialMenuIndex, ctx));
             radialMenu.onValueChanged.AddListener((i) => modeNameText.text = controller.states[i].name);
-            radialMenu.onValueConfirmed.AddListener((i) => controller.SwitchToState(controller.states[i]));
+            radialMenu.onValueConfirmed.AddListener(SwitchMode);
         }
-        
+
         /*
         for (int i = 0; i < states.Length; i++)
         {
@@ -55,6 +57,13 @@ public class IndexStateSwitcher : MonoBehaviour
         if (scrollInput != null) scrollInput.onActionPerformed.AddListener(ProcessScrollInput);
         */
 
+        SwitchMode(0);
+    }
+
+    void SwitchMode(int index)
+    {
+        controller.SwitchToState(states[index].state);
+        currentModeIcon.sprite = states[index].sprite;
     }
     /*
     void ProcessInput(InputAction.CallbackContext context, StateFunction state)

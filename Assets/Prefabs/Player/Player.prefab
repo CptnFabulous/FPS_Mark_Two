@@ -81,6 +81,7 @@ MonoBehaviour:
   radialMenuIndex: 2
   radialMenuInput: {fileID: 8171847302222031906}
   modeNameText: {fileID: 4667863535392737602}
+  currentModeIcon: {fileID: 2764191434518404541}
 --- !u!1 &716978597370346070
 GameObject:
   m_ObjectHideFlags: 0
@@ -5071,6 +5072,10 @@ PrefabInstance:
       propertyPath: handler
       value: 
       objectReference: {fileID: 4579184524127900838}
+    - target: {fileID: 4765153163229541604, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: m_text
+      value: Select Vision Mode
+      objectReference: {fileID: 0}
     - target: {fileID: 4775936652982585025, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -5142,6 +5147,10 @@ PrefabInstance:
     - target: {fileID: 5805713390322589897, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5898581248244267724, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: actionName
+      value: Select Vision Mode
       objectReference: {fileID: 0}
     - target: {fileID: 6059150997034478104, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: playerTracking
@@ -5255,6 +5264,10 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8071006302828433283, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+      propertyPath: m_Name
+      value: 'Tutorial prompt: Select Vision Mode'
+      objectReference: {fileID: 0}
     - target: {fileID: 8298214394374734207, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: m_SizeDelta.y
       value: 129.82
@@ -5315,6 +5328,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 546527b39a8bf244699538b10c47cc5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2764191434518404541 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5617837959884040311, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!224 &3773584271034839818 stripped
