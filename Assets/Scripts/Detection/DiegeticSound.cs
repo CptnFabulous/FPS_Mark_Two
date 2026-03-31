@@ -54,8 +54,7 @@ public class DiegeticSound : ScriptableObject
         if (source != null)
         {
             source.pitch = Random.Range(minPitchVariance, maxPitchVariance);
-            source.volume = volumeForPlayer;
-            source.PlayOneShot(clip);
+            source.PlayOneShot(clip, volumeForPlayer);
         }
         else
         {

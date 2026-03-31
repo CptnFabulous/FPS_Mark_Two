@@ -7,6 +7,7 @@ public class DecalOnParticleHit : MonoBehaviour
 {
     public ImpactEffect effect;
     public DiegeticSound sound;
+    public Entity sourceEntity;
     public float maxVelocity = 5f;
 
     ParticleSystem particleSystem;
@@ -28,12 +29,12 @@ public class DecalOnParticleHit : MonoBehaviour
             float multiplier = pce.velocity.magnitude / maxVelocity;
             if (effect != null)
             {
-                effect.Play(other, null, point, pce.velocity, pce.normal, transform.up, multiplier);
+                effect.Play(other, sourceEntity, point, pce.velocity, pce.normal, transform.up, multiplier);
             }
             if (sound != null)
             {
                 Debug.Log($"Playing {sound.name} at {point}");
-                sound.Play(point, null, multiplier);
+                sound.Play(point, sourceEntity, multiplier);
             }
         }
     }
