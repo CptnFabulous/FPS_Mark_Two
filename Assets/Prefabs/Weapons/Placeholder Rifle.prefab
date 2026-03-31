@@ -447,6 +447,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 8446451415370582923}
+  ragdoll: {fileID: 0}
 --- !u!114 &8446451415489526380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1086,6 +1087,38 @@ PrefabInstance:
     - target: {fileID: 7473494366831382301, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
       propertyPath: modelMovementCurve.m_Curve.Array.data[2].outWeight
       value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: VelocityModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: VelocityModule.inWorldSpace
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: VelocityModule.radial.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: RotationBySpeedModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: RotationBySpeedModule.y.scalar
+      value: -12.56637
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: VelocityModule.orbitalY.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: RotationBySpeedModule.curve.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498561693252181177, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
+      propertyPath: RotationBySpeedModule.separateAxes
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7731887130499676215, guid: be6a3112fc750e342803fbd81f01a505, type: 3}
       propertyPath: m_Layer

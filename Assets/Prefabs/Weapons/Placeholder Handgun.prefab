@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 1896198974144082936}
   - component: {fileID: 3271768948884958388}
   - component: {fileID: 1918805000778534155}
+  - component: {fileID: 1754219382299873493}
   m_Layer: 0
   m_Name: Shell Ejection
   m_TagString: Untagged
@@ -3509,7 +3510,7 @@ ParticleSystem:
     range: {x: 0, y: 1}
     separateAxes: 0
   RotationBySpeedModule:
-    enabled: 0
+    enabled: 1
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -3566,7 +3567,7 @@ ParticleSystem:
     y:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: -12.56637
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3619,7 +3620,7 @@ ParticleSystem:
     curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.7853982
+      scalar: 0
       minScalar: 0.7853982
       maxCurve:
         serializedVersion: 2
@@ -3669,7 +3670,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    separateAxes: 0
+    separateAxes: 1
     range: {x: 0, y: 1}
   ColorBySpeedModule:
     enabled: 0
@@ -3917,7 +3918,7 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
@@ -4964,6 +4965,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   degreesCelsius: 260
+--- !u!114 &1754219382299873493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2559363578184327217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3afff67400de6243bf3a4e264b3ef97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effect: {fileID: 0}
+  sound: {fileID: 11400000, guid: 14fc785b502699e4fa74b815bb6f2c52, type: 2}
+  maxVelocity: 5
 --- !u!1 &4037988526042884270
 GameObject:
   m_ObjectHideFlags: 0
@@ -5360,6 +5376,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 5737478536575503395}
+  ragdoll: {fileID: 0}
 --- !u!114 &5737478536426012100
 MonoBehaviour:
   m_ObjectHideFlags: 0
