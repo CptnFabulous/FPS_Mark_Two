@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -11,18 +12,40 @@ public class IndexStateSwitcher : MonoBehaviour
     {
         public StateFunction state;
         public SingleInput input;
+        public Sprite sprite;
     }
 
     public StateController controller;
     public InputStatePair[] states;
-    public StateFunction neutralState;
-    public UnityEvent<int> onIndexChanged;
+    //public StateFunction neutralState;
+    //public UnityEvent<int> onIndexChanged;
 
-    [Header("Scrolling")]
-    public SingleInput scrollInput;
+    [Header("Radial menu")]
+    public RadialMenu radialMenu;
+    public MultiRadialMenu radialMenuGroup;
+    public int radialMenuIndex;
+    public SingleInput radialMenuInput;
+    public TextMeshProUGUI modeNameText;
 
-    private void Awake()
+    //[Header("Scrolling")]
+    //public SingleInput scrollInput;
+
+    private void Start()
     {
+        if (radialMenu != null)
+        {
+            Sprite[] sprites = new Sprite[states.Length];
+            for (int i = 0; i < states.Length; i++)
+            {
+                sprites[i] = states[i].sprite;
+            }
+            radialMenu.Refresh(sprites, () => MiscFunctions.IndexOfInArray(controller.states, controller.currentState));
+            radialMenuInput.onActionPerformed.AddListener((ctx) => radialMenuGroup.ProcessSingleMenuInput(radialMenuIndex, ctx));
+            radialMenu.onValueChanged.AddListener((i) => modeNameText.text = controller.states[i].name);
+            radialMenu.onValueConfirmed.AddListener((i) => controller.SwitchToState(controller.states[i]));
+        }
+        
+        /*
         for (int i = 0; i < states.Length; i++)
         {
             int index = i;
@@ -30,7 +53,10 @@ public class IndexStateSwitcher : MonoBehaviour
         }
 
         if (scrollInput != null) scrollInput.onActionPerformed.AddListener(ProcessScrollInput);
+        */
+
     }
+    /*
     void ProcessInput(InputAction.CallbackContext context, StateFunction state)
     {
         // If state is not active, switch to it.
@@ -51,4 +77,5 @@ public class IndexStateSwitcher : MonoBehaviour
         if (nextStateIndex < 0 || nextStateIndex >= controller.states.Length) return;
         onIndexChanged.Invoke(nextStateIndex);
     }
+    */
 }

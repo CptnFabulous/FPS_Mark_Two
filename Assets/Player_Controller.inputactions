@@ -96,6 +96,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Select Vision Mode",
+                    "type": "Button",
+                    "id": "9933d137-b987-41d9-a284-719046dc5bd3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "RadialMenuInput,Tap",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Scroll Weapon",
                     "type": "Value",
                     "id": "01ef8d88-e531-4ed9-9282-3f1809230c7c",
@@ -147,33 +156,6 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "Press(behavior=2)",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Scroll Vision Modes",
-                    "type": "Value",
-                    "id": "14e83255-bb05-4695-a05f-b58fdbcdab6d",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Toggle Thermal Vision",
-                    "type": "Button",
-                    "id": "64997456-f20e-4d8f-9e6b-7e57e5127a4d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Toggle Flashlight",
-                    "type": "Button",
-                    "id": "2068e0e2-0296-44c7-9fa3-0f15b4e5aab8",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -466,6 +448,28 @@
                 },
                 {
                     "name": "",
+                    "id": "e4ecd194-6135-4fb4-b9ea-d9196af7d2a7",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Select Vision Mode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "66d60c6a-f5dd-4e6b-8e92-4dd067974027",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Select Vision Mode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e30ce6eb-adf2-43bc-92ac-20e6448307fe",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
@@ -604,116 +608,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Offhand Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "Keyboard inputs",
-                    "id": "3e75d204-cc59-4a0f-b9e0-3138403c9876",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Scroll Vision Modes",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "372ad64a-bcee-4ba9-b9f3-39008da277ec",
-                    "path": "<Keyboard>/t",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Scroll Vision Modes",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "095666ba-9e9c-4976-b2cb-5f5d4d89a804",
-                    "path": "<Keyboard>/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Scroll Vision Modes",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "Gamepad inputs",
-                    "id": "75001ad4-95d9-4353-8086-ca1343d05592",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Scroll Vision Modes",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "2849249c-e4ef-48c1-bb45-015bfe7e715c",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Scroll Vision Modes",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "f6e1a45c-0192-4742-8b17-2a718cf37da7",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Scroll Vision Modes",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "47dc9347-ee17-4f6e-b0c3-f662e3a7e27f",
-                    "path": "<Keyboard>/t",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Toggle Thermal Vision",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "fac6f0ed-b5d4-4795-b56a-977eb9b03aa1",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Toggle Thermal Vision",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d216cd8f-713d-4163-a940-bf90629fd192",
-                    "path": "<Keyboard>/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Toggle Flashlight",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "944d1375-b331-4b00-8d71-5cdb953e4678",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Toggle Flashlight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

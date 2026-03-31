@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class RadialMenu : MonoBehaviour
@@ -103,9 +104,12 @@ public class RadialMenu : MonoBehaviour
         _options = new RadialMenuSlice[icons.Length];
         for (int i = 0; i < options.Count; i++)
         {
+            //Debug.Log(icons[i]);
             RadialMenuSlice newSlice = Instantiate(slicePrefab, iconParent);
+            newSlice.name = icons[i].name;
             newSlice.sprite = icons[i];
             AddSegment(newSlice, i);
+            //Debug.Log(segmentSize);
             newSlice.UpdateSegmentSize(segmentSize);
             _options[i] = newSlice;
         }
@@ -185,31 +189,26 @@ public class RadialMenu : MonoBehaviour
 
         SetSelectorAngle(selectionAngle);
     }
-    /// <summary>
-    /// Opens the radial menu and updates it to the current selection.
-    /// </summary>
-    /// <param name="index"></param>
-    public void EnterMenu()
+    public void SetMenuActive(bool active, bool applySelectionOnExit = true)
     {
-        if (optionsPresent == false) return;
+        if (active)
+        {
+            if (optionsPresent == false) return;
 
-        // Force-update the index
-        SetCurrentValue(calculateCurrentIndex.Invoke(), true);
-        
-        cursorDirection = Vector2.zero;
-        SetSelectorAngle(segmentSize * _currentIndex);
-        //SetActiveState(true);
+            // Force-update the index
+            SetCurrentValue(calculateCurrentIndex.Invoke(), true);
+
+            cursorDirection = Vector2.zero;
+            SetSelectorAngle(segmentSize * _currentIndex);
+            //SetActiveState(true);
+        }
+        else
+        {
+            //SetActiveState(false);
+            if (applySelectionOnExit) onValueConfirmed.Invoke(currentValue);
+        }
     }
-    /// <summary>
-    /// Closes the menu and applies the selection.
-    /// </summary>
-    public void ExitMenu(bool applySelection = true)
-    {
-        //SetActiveState(false);
-        if (applySelection) onValueConfirmed.Invoke(currentValue);
-    }
-
-
+    
     public void SetCurrentValue(int newIndex, bool forceRefresh = false)
     {
         newIndex = Mathf.Clamp(newIndex, 0, options.Count - 1);

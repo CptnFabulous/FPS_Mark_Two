@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class OffhandSelectorHUD : MonoBehaviour
 {
@@ -10,8 +11,8 @@ public class OffhandSelectorHUD : MonoBehaviour
     [Header("Info on selected firing mode")]
     //public Image weaponImage;
     //public Text weaponName;
-    public Text firingModeName;
-    public Text ammoCapacity;
+    public TextMeshProUGUI firingModeName;
+    public TextMeshProUGUI ammoCapacity;
     public Image ammoIcon;
 
     OffhandAttackHandler handler;

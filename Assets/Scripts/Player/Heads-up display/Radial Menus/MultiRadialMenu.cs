@@ -119,7 +119,7 @@ public class MultiRadialMenu : MonoBehaviour
         }
         else
         {
-            currentMenu.ExitMenu();
+            currentMenu.SetMenuActive(false);//.ExitMenu();
         }
 
         return true;
@@ -160,9 +160,9 @@ public class MultiRadialMenu : MonoBehaviour
 
     void SwitchToDifferentMenu(RadialMenu newMenu)
     {
-        currentMenu.ExitMenu(false);
+        currentMenu.SetMenuActive(false, false);
         currentMenu = newMenu;
-        currentMenu.EnterMenu();
+        currentMenu.SetMenuActive(true);
 
         // Trigger animation
         int index = menus.IndexOf(currentMenu);

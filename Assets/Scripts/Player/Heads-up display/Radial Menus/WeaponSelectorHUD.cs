@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class WeaponSelectorHUD : MonoBehaviour
 {
@@ -21,9 +22,9 @@ public class WeaponSelectorHUD : MonoBehaviour
 
     [Header("Info on selected firing mode")]
     //public Image weaponImage;
-    public Text weaponName;
-    public Text firingModeName;
-    public Text ammoCapacity;
+    public TextMeshProUGUI weaponName;
+    public TextMeshProUGUI firingModeName;
+    public TextMeshProUGUI ammoCapacity;
     public Image ammoIcon;
 
     WeaponHandler handler;
