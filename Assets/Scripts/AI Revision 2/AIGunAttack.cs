@@ -115,7 +115,7 @@ public class AIGunAttack : MonoBehaviour
         int numberOfAttacks = Random.Range(attackNumberMin, max);
         for (int i = 0; i < numberOfAttacks; i++)
         {
-            yield return weapon.SingleShot();
+            yield return weapon.SingleShotAsync();
             onAttack.Invoke();
         }
 
