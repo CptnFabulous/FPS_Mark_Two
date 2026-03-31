@@ -18,6 +18,7 @@ public class ImpactEffect : ScriptableObject
     public Material defaultDecalMaterial;
     public Vector2 decalSize = new Vector2(0.02f, 0.02f);
     public bool playSoundAtMaxVolume = false;
+    public bool randomiseEffectRotation = true;
 
     //static SpriteRenderer decalPrefab;
     static DecalProjector decalProjector;
@@ -37,7 +38,7 @@ public class ImpactEffect : ScriptableObject
             //Vector3 effectDirection = normal;
             Vector3 effectDirection = Vector3.Reflect(impactDirection, normal);
             ParticleSystem effectToSpawn = ObjectPool.RequestObject(effect, true, maxNumberOfSpawnedEffects);
-            StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, effectDirection, up, 0);
+            StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, effectDirection, up, 0, randomiseEffectRotation);
             // TO DO: use intensity to determine size of particles
             effectToSpawn.Play();
         }
@@ -85,18 +86,20 @@ public class ImpactEffect : ScriptableObject
             dp.gameObject.layer = surfaceCollider.layer;
 
             //Vector3 pointToStickDecal = point + (normal.normalized * 0.01f);
-            StickObjectToSurface(dp.transform, surfaceCollider.transform, point, -normal, up, -0.01f);
+            StickObjectToSurface(dp.transform, surfaceCollider.transform, point, -normal, up, -0.01f, randomiseEffectRotation);
         }
     }
-
+    /*
     public static void StickObjectToSurface(Transform objectToStick, RaycastHit surface, Vector3 worldUp, float distanceOffSurface)
     {
         StickObjectToSurface(objectToStick, surface.transform, surface.point, surface.normal, worldUp, distanceOffSurface);
     }
-    public static void StickObjectToSurface(Transform objectToStick, Transform surface, Vector3 point, Vector3 forward, Vector3 up, float distanceOffSurface)
+    */
+    public static void StickObjectToSurface(Transform objectToStick, Transform surface, Vector3 point, Vector3 forward, Vector3 up, float distanceOffSurface, bool randomiseRotation)
     {
         objectToStick.position = point + (forward * distanceOffSurface);
         objectToStick.rotation = Quaternion.LookRotation(forward, up);
+        if (randomiseRotation) objectToStick.rotation *= Quaternion.Euler(0, 0, Random.Range(-180, 180));
         objectToStick.parent = surface;
     }
 }
