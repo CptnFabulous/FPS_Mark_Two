@@ -65,7 +65,7 @@ public class DrawInteractionOutlines : ScriptableRendererFeature
             foreach (Renderer r in childRenderers)
             {
                 if (MiscFunctions.IsLayerInLayerMask(cameraMask, r.gameObject.layer) == false) return;
-                //if (MiscFunctions.IsLayerInLayerMask(interactionHandler.detectionMask, r.gameObject.layer) == false) return;
+                if (MiscFunctions.IsLayerInLayerMask(interactionHandler.detection.mask, r.gameObject.layer) == false) return;
 
                 for (int i = 0; i < r.materials.Length; i++)
                 {
