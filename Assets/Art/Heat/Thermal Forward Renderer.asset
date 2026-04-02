@@ -132,9 +132,10 @@ MonoBehaviour:
   - {fileID: 595975431976279287}
   - {fileID: 4510204660454155490}
   - {fileID: 4897767930989420453}
+  - {fileID: 5055922540220364761}
   - {fileID: -7363852587580461393}
   - {fileID: -7147067298726585874}
-  m_RendererFeatureMap: f75cce6d7f544508e264ae1a3e77973ea59fecd6fb5df843afeeec421657ce99ee5997992884d09c
+  m_RendererFeatureMap: f75cce6d7f544508e264ae1a3e77973ea59fecd6fb5df843d9b7b94dc33e2a46afeeec421657ce99ee5997992884d09c
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -235,7 +236,7 @@ MonoBehaviour:
   m_Name: Render environment thermals
   m_EditorClassIdentifier: 
   m_Active: 1
-  thermalVisionMaterial: {fileID: 2100000, guid: 537c1b7fd038efd4e983e35f52be0782, type: 2}
+  thermalVisionMaterial: {fileID: 2100000, guid: 3e3911db60817c345903c927ee41eda8, type: 2}
   backgroundMaterial: {fileID: 0}
   smokeLayers:
     serializedVersion: 2
@@ -243,7 +244,30 @@ MonoBehaviour:
   smokeAlpha: 0.1
   renderLayers:
     serializedVersion: 2
-    m_Bits: 1695
+    m_Bits: 1183
+  renderPassEvent: 500
+--- !u!114 &5055922540220364761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a60de5f9bf7b2c43a297ebd59746f4d, type: 3}
+  m_Name: Render smoke
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  thermalVisionMaterial: {fileID: 2100000, guid: 2bacf1f08b9228845a1c5354380cc29f, type: 2}
+  backgroundMaterial: {fileID: 0}
+  smokeLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  smokeAlpha: 0.1
+  renderLayers:
+    serializedVersion: 2
+    m_Bits: 512
   renderPassEvent: 500
 --- !u!114 &8735638441406957083
 MonoBehaviour:
