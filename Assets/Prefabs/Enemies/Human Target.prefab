@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2426134569916935282}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,8 @@ GameObject:
   - component: {fileID: 3295435487868414854}
   - component: {fileID: 2426134569975506430}
   - component: {fileID: 2426134569975506425}
-  m_Layer: 0
+  - component: {fileID: 1192888389335788123}
+  m_Layer: 6
   m_Name: Human Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,6 +91,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 2426134569975506430}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &2426134569975506430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +111,7 @@ MonoBehaviour:
     criticalLevel: 5
   godmode: 0
   deadDescription: dead
+  poise: {fileID: 0}
   onDamage:
     m_PersistentCalls:
       m_Calls:
@@ -326,6 +329,19 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+--- !u!114 &1192888389335788123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2426134569975506427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b04208d9df46a7c4e934278bef8d8312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  degreesCelsius: 37.5
 --- !u!1 &2426134570717245512
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +351,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2426134570717245513}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Down Position
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -370,7 +386,7 @@ GameObject:
   - component: {fileID: 2426134570734740553}
   - component: {fileID: 2426134570734740552}
   - component: {fileID: 2426134570734740555}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -488,7 +504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2426134570868856454}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Default Position
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -523,7 +539,7 @@ GameObject:
   - component: {fileID: 2426134570909926868}
   - component: {fileID: 2426134570909926871}
   - component: {fileID: 2426134570909926698}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Torso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -643,7 +659,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2426134570923078598}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hit Position
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -678,7 +694,7 @@ GameObject:
   - component: {fileID: 2426134571922811097}
   - component: {fileID: 2426134571922811096}
   - component: {fileID: 2426134571922811103}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Legs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -797,7 +813,7 @@ GameObject:
   - component: {fileID: 5036970740187371231}
   - component: {fileID: 6772061571854068043}
   - component: {fileID: 5848689822604430835}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Torso (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -880,7 +896,7 @@ GameObject:
   - component: {fileID: 1058719484552506451}
   - component: {fileID: 5659171799662009976}
   - component: {fileID: 3308016835101812178}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Torso (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -963,7 +979,7 @@ GameObject:
   - component: {fileID: 4776743632855459395}
   - component: {fileID: 2107954671668741127}
   - component: {fileID: 7967992233568029271}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Torso (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1046,7 +1062,7 @@ GameObject:
   - component: {fileID: 2267979868198278110}
   - component: {fileID: 8426975978828277717}
   - component: {fileID: 6935436753943813569}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Head (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
