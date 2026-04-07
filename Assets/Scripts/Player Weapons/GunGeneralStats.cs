@@ -9,6 +9,7 @@ public class GunGeneralStats : RangedAttackFiringData
     public Projectile projectilePrefab;
     public int projectileCount = 1;
     public float shotSpread = 0;
+    public bool centreFirstPellet = false;
     public UnityEvent effectsOnFire;
 
     public override LayerMask hitDetection => projectilePrefab.detection.mask;
@@ -33,9 +34,16 @@ public class GunGeneralStats : RangedAttackFiringData
             newProjectile.gameObject.SetActive(true);
 
             // Calculates a direction for the projectile, given random spread angles
-            Vector3 spreadAngles = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * shotSpread;
-            Vector3 castDirection = Quaternion.LookRotation(aimDirection, worldUp) * Quaternion.Euler(spreadAngles) * Vector3.forward;
+            Quaternion aimRotation = Quaternion.LookRotation(aimDirection, worldUp);
 
+            // If not set up to do so, don't apply spread to the first pellet
+            if (!(i == 0 && centreFirstPellet))
+            {
+                Vector3 spreadAngles = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * shotSpread;
+                aimRotation *= Quaternion.Euler(spreadAngles);
+            }
+            
+            Vector3 castDirection = aimRotation * Vector3.forward;
             WeaponUtility.CalculateObjectLaunch(origin, muzzle.position, castDirection, range, hitDetection, user.HitOwnCollider, out _, out Vector3 hitPoint, out RaycastHit rh, out bool behindMuzzle);
             if (behindMuzzle)
             {
