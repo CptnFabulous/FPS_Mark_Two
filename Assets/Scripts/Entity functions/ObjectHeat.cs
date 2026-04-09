@@ -41,13 +41,13 @@ public class ObjectHeat : MonoBehaviour
     /// <summary>
     /// TO DO: replace this with something assigned from a singleton, maybe based on the object's position
     /// </summary>
-    public static float ambientTemperature => 20;
+    public static float ambientTemperature => 20f;
     /// <summary>
     /// TO DO: replace this with something assigned from a singleton
     /// </summary>
-    public static float maxHeat => 50;
+    public static float maxHeat => 50f;
     /// <summary>
     /// TO DO: replace this with something assigned from a singleton
     /// </summary>
-    public static float minHeat => 25;
+    public static float minHeat => 18f;
 }
