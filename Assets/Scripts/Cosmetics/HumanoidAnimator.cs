@@ -8,7 +8,6 @@ public class HumanoidAnimator : MonoBehaviour
 
     [Header("Anatomy")]
     [SerializeField] public Animator animator;
-    [SerializeField] PhysicsAffectedAI physicsHandler;
     [SerializeField] Transform[] spineBones;
 
     [Header("Movement")]
@@ -25,13 +24,24 @@ public class HumanoidAnimator : MonoBehaviour
     [SerializeField] string standUpState = "Movement.Stand up from fall";
     [SerializeField] string ragdollOrientationDotProduct = "Ragdoll orientation dot product";
 
-    public Ragdoll ragdoll => physicsHandler.ragdoll;
+    PhysicsAffectedAI physicsHandler => (character as AI).physicsHandler;
+    public Ragdoll ragdoll => character.ragdoll;
     public int defaultAnimationLayer => animator.GetLayerIndex(standardMovementLayer);
 
     private void Awake()
     {
-        character.health.onDamage.AddListener(UpdateDamageData);
-        ragdoll.onActiveStateSet.AddListener((active) => animator.enabled = !active);
+        if (character != null)
+        {
+            if (character != null && character.health != null) character.health.onDamage.AddListener(UpdateDamageData);
+            //Debug.Log($"{this}, {character}");
+            //Debug.Log($"{ragdoll}");
+            ragdoll.onActiveStateSet.AddListener((active) => animator.enabled = !active);
+        }
+        else
+        {
+            enabled = false;
+        }
+        
     }
     private void Update()
     {
@@ -44,6 +54,12 @@ public class HumanoidAnimator : MonoBehaviour
     }
     void LateUpdate()
     {
+        if (character == null)
+        {
+            enabled = false;
+            return;
+        }
+
         if (ragdoll.enabled) return;
 
 

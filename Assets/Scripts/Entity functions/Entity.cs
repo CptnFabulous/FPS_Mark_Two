@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
 
     public Health health;
     public AudioSource audioSource;
+    public Ragdoll ragdoll;
 
     IList<Collider> _colliders;
     Rigidbody _rb;

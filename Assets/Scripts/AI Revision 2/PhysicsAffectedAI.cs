@@ -10,8 +10,8 @@ public class PhysicsAffectedAI : MonoBehaviour
     [SerializeField] Rigidbody rigidbody;
     [SerializeField] CapsuleCollider collider;
     [SerializeField] float groundingRayLength = 0.01f;
-    public Ragdoll ragdoll;
 
+    public Ragdoll ragdoll => rootAI.ragdoll;
     NavMeshAgent navMeshAgent => rootAI.agent;
     public bool ragdollActive
     {
@@ -22,6 +22,7 @@ public class PhysicsAffectedAI : MonoBehaviour
 
     public IEnumerator SetRagdollActiveState(bool active)
     {
+        //Debug.Log($"{rootAI}: setting ragdoll active to {active}");
         // Don't bother setting everything up if there isn't a ragdoll, just set it to the regular active state
         if (ragdoll == null)
         {

@@ -12,7 +12,8 @@ public class TriggerRagdollJitterOnDamageType : MonoBehaviour
     void Awake()
     {
         //baseRagdoll.onActiveStateSet.AddListener(OnRagdollActiveStateSet);
-        baseRagdoll.attachedTo.health.onDamage.AddListener(OnDamage);
+        Health h = baseRagdoll.attachedTo.health;
+        if (h != null) h.onDamage.AddListener(OnDamage);
     }
     /*
     void OnRagdollActiveStateSet(bool active)
