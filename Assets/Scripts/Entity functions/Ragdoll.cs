@@ -14,7 +14,7 @@ public class Ragdoll : MonoBehaviour
     public UnityEvent<bool> onActiveStateSet;
 
     [Header("Animations")]
-    public SkinnedMeshRenderer[] skinnedMeshRenderers;
+    public Transform[] transformsToSetToZero;
 
     Rigidbody[] _rb;
     Vector3 rootBoneOriginalPosition;
@@ -119,14 +119,11 @@ public class Ragdoll : MonoBehaviour
             rb.collisionDetectionMode = !active ? CollisionDetectionMode.ContinuousSpeculative : collisionDetectionMode;
         }
 
-        // Reset and realign renderer orientations
-        for (int i = 0; i < skinnedMeshRenderers.Length; i++)
+        // Reset and realign necessary transforms, so poses don't break
+        for (int i = 0; i < transformsToSetToZero.Length; i++)
         {
-            SkinnedMeshRenderer renderer = skinnedMeshRenderers[i];
-            if (renderer == null) return;
-            if (active) return;
-            renderer.transform.localPosition = Vector3.zero;
-            renderer.transform.localRotation = Quaternion.identity;
+            transformsToSetToZero[i].localPosition = Vector3.zero;
+            transformsToSetToZero[i].localRotation = Quaternion.identity;
         }
     }
 
