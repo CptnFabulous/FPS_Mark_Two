@@ -51,11 +51,16 @@ public class OffhandSelectorHUD : MonoBehaviour
         firingModeName.text = mode.name;
         //weaponName.text = mode.attachedTo.name;
 
+        AmmunitionType ammoType = null;
         if (mode is RangedAttack r)
         {
-            AmmunitionType ammoType = r.stats.ammoType;
-            ammoIcon.sprite = (ammoType != null) ? ammoType.icon : null;
+            ammoType = r.stats.ammoType;
         }
+        else if (mode is ThrowObject t)
+        {
+            ammoType = t.ammunitionType;
+        }
+        ammoIcon.sprite = (ammoType != null) ? ammoType.icon : null;
 
         ammoCapacity.text = mode.hudInfo;
     }
