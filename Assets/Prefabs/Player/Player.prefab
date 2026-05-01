@@ -333,6 +333,62 @@ MonoBehaviour:
     m_RotationOrder: 4
   textureFormat: 20
   filterMode: 1
+--- !u!1 &1919010169480169897
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3375454311931473660}
+  - component: {fileID: 362065047927858742}
+  m_Layer: 6
+  m_Name: Movement input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3375454311931473660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919010169480169897}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1742334206566201894}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &362065047927858742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919010169480169897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 728cebbb5f5ccbb4488cddda0d7d291c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapName: On foot
+  actionName: Move
+  inputPrompt: {fileID: 0}
+  onActionStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onActionPerformed:
+    m_PersistentCalls:
+      m_Calls: []
+  onActionCancelled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2190677201780507143
 GameObject:
   m_ObjectHideFlags: 0
@@ -500,6 +556,67 @@ MonoBehaviour:
   regenDelay: 0.5
   regenTime: 1
   guiMeter: {fileID: 1881373689726421184}
+--- !u!1 &2436868044435986381
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1204164179114221280}
+  - component: {fileID: 5320301466435834614}
+  m_Layer: 6
+  m_Name: Grounding Handler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1204164179114221280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2436868044435986381}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1742334206566201894}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5320301466435834614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2436868044435986381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a3e848974c27c140ad08e85d7f48abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundingRayLength: 0.01
+  collider: {fileID: 5952785220977946993}
+  onLand:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 9fc06f0949f64bb448bf2fbdcc5aeb15, type: 2}
+        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 5952785220977947006}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2496397548176694304
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,7 +769,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1767433957376735319}
+  - component: {fileID: 1498451882598581639}
   - component: {fileID: 5230658506488907610}
+  - component: {fileID: 2732515158457513459}
+  - component: {fileID: 7757829048816490853}
   m_Layer: 6
   m_Name: Standard movement
   m_TagString: Untagged
@@ -675,6 +795,47 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1742334206566201894}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1498451882598581639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2878033486654234698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3147d6f6bb52ad45a24b8dc1070b0d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlling: {fileID: 5952785220977947003}
+  lookControls: {fileID: 5674984449773469396}
+  groundingHandler: {fileID: 5320301466435834614}
+  standingMaterial: {fileID: 13400000, guid: e6ee4169a9384b44a937244a72aa83ed, type: 2}
+  movingMaterial: {fileID: 13400000, guid: 3249d7ec0cebd2a49804eeafa555fa94, type: 2}
+  movementBinding: {fileID: 362065047927858742}
+  canMove: 1
+  defaultSpeed: 4
+  acceleration: 50
+  crouchController: {fileID: 7757829048816490853}
+  sprintController: {fileID: 2732515158457513459}
+  jumpBinding: {fileID: 2470524257728333503}
+  jumpForce: 5
+  jumpCooldown: 0.1
+  onJump:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 7b04d35eb76501941beed52a85e3ba78, type: 2}
+        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 5952785220977947006}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5230658506488907610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -687,7 +848,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 869db54f0fd093d43bea5bbfa89ccae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 5952785220977947007}
+  controller: {fileID: 1498451882598581639}
   upperBodyAnimationTransform: {fileID: 5952785222623807978}
   leftHand: {fileID: 2903037186602504766}
   strideLength: 2
@@ -808,6 +969,80 @@ MonoBehaviour:
   speedForMaxSway: 10
   torsoPositionUpdateTime: 0.1
   torsoRotationUpdateTime: 0.2
+--- !u!114 &2732515158457513459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2878033486654234698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da5605603bc85841b0fc720e99bb08f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedMultiplier: 1.5
+  staminaPerSecond: 1.5
+  footstepVolumeMultiplier: 2
+  toggleInput: 1
+  timeStillBeforeCancel: 0
+  movementController: {fileID: 1498451882598581639}
+  stamina: {fileID: 2602773801818801118}
+  onActionStart:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7757829048816490853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2878033486654234698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ae35432efd6fc645b78a19af342757e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementController: {fileID: 1498451882598581639}
+  collider: {fileID: 5952785220977946993}
+  lookControls: {fileID: 5674984449773469396}
+  onCrouch:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5345706760175754708}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  onStand:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5345706760175754708}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  toggleCrouch: 1
+  crouchTransitionTime: 0.2
+  standHeight: 1.7
+  crouchHeight: 0.8
+  headDistanceFromTop: 0.2
+  crouchSpeedMultiplier: 0.5
+  footstepVolumeMultiplier: 0.2
 --- !u!1 &2974029526459997928
 GameObject:
   m_ObjectHideFlags: 0
@@ -1106,6 +1341,62 @@ MonoBehaviour:
   onActionCancelled:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &5317433436987825602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1135379149597001738}
+  - component: {fileID: 2470524257728333503}
+  m_Layer: 6
+  m_Name: Jump input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1135379149597001738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5317433436987825602}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1742334206566201894}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2470524257728333503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5317433436987825602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 728cebbb5f5ccbb4488cddda0d7d291c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapName: On foot
+  actionName: Jump
+  inputPrompt: {fileID: 0}
+  onActionStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onActionPerformed:
+    m_PersistentCalls:
+      m_Calls: []
+  onActionCancelled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5375726126347384740
 GameObject:
   m_ObjectHideFlags: 0
@@ -1150,6 +1441,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1742334206566201894}
+  - component: {fileID: 3777638003876376270}
   m_Layer: 6
   m_Name: Movement
   m_TagString: Untagged
@@ -1170,10 +1462,30 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3375454311931473660}
+  - {fileID: 1135379149597001738}
   - {fileID: 932282527024634742}
   - {fileID: 1767433957376735319}
+  - {fileID: 1204164179114221280}
   m_Father: {fileID: 5952785220977947004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3777638003876376270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5428108283114522832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad8f5a9188714604fabca8d7a08661b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 5952785220977947003}
+  current: {fileID: 1498451882598581639}
+  onSetActive:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5701187030125109489
 GameObject:
   m_ObjectHideFlags: 0
@@ -1351,9 +1663,6 @@ GameObject:
   - component: {fileID: 5952785220977947004}
   - component: {fileID: 5952785220977947003}
   - component: {fileID: 5952785220977947005}
-  - component: {fileID: 5952785220977947007}
-  - component: {fileID: 8691069559276216019}
-  - component: {fileID: 2692210061216476635}
   - component: {fileID: 4579184524127900838}
   - component: {fileID: 745592948619609687}
   - component: {fileID: 317139347150765821}
@@ -1409,10 +1718,11 @@ MonoBehaviour:
   health: {fileID: 745592948619609687}
   audioSource: {fileID: 5952785220977947006}
   ragdoll: {fileID: 0}
+  capsuleCollider: {fileID: 5952785220977946993}
   stamina: {fileID: 2602773801818801118}
   affiliation: {fileID: 11400000, guid: 4fa3cac1b5d754d4894e40f91efa32fa, type: 2}
   controls: {fileID: 3129558233819840828}
-  movement: {fileID: 5952785220977947007}
+  movement: {fileID: 1498451882598581639}
   stateHandler: {fileID: 5952785220977947005}
   weapons: {fileID: 4579184524127900838}
   headsUpDisplay: {fileID: 8098729900447558270}
@@ -1450,134 +1760,6 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5952785220977947007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5952785220977946995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3147d6f6bb52ad45a24b8dc1070b0d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlling: {fileID: 5952785220977947003}
-  canMove: 1
-  defaultSpeed: 4
-  acceleration: 50
-  standingMaterial: {fileID: 13400000, guid: e6ee4169a9384b44a937244a72aa83ed, type: 2}
-  movingMaterial: {fileID: 13400000, guid: 3249d7ec0cebd2a49804eeafa555fa94, type: 2}
-  lookControls: {fileID: 5674984449773469396}
-  crouchController: {fileID: 2692210061216476635}
-  sprintController: {fileID: 8691069559276216019}
-  jumpForce: 5
-  jumpCooldown: 0.1
-  groundingRayLength: 0.01
-  onJump:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 7b04d35eb76501941beed52a85e3ba78, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 5952785220977947006}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onLand:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 9fc06f0949f64bb448bf2fbdcc5aeb15, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 5952785220977947006}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &8691069559276216019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5952785220977946995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0da5605603bc85841b0fc720e99bb08f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speedMultiplier: 1.5
-  staminaPerSecond: 1.5
-  footstepVolumeMultiplier: 2
-  toggleInput: 1
-  timeStillBeforeCancel: 0
-  movementController: {fileID: 5952785220977947007}
-  stamina: {fileID: 2602773801818801118}
-  onActionStart:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &2692210061216476635
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5952785220977946995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ae35432efd6fc645b78a19af342757e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementController: {fileID: 5952785220977947007}
-  collider: {fileID: 5952785220977946993}
-  lookControls: {fileID: 5674984449773469396}
-  onCrouch:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5345706760175754708}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  onStand:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5345706760175754708}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  toggleCrouch: 1
-  crouchTransitionTime: 0.2
-  standHeight: 1.7
-  crouchHeight: 0.8
-  headDistanceFromTop: 0.2
-  crouchSpeedMultiplier: 0.5
-  footstepVolumeMultiplier: 0.2
 --- !u!114 &4579184524127900838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2136,10 +2318,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   swayHandler: {fileID: 395139178566883132}
-  movementController: {fileID: 5952785220977947007}
+  movementController: {fileID: 1498451882598581639}
   multiplierWhileMoving: 2
   movementMultiplierReference: Player Movement
-  crouchController: {fileID: 2692210061216476635}
+  crouchController: {fileID: 7757829048816490853}
   multiplierWhileCrouching: 0.5
   crouchMultiplierReference: Player Crouching
 --- !u!114 &6034779799005031584

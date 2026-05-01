@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class Character : Entity
 {
+    public CapsuleCollider capsuleCollider;
     public RegeneratingResource stamina;
 
     [Header("Character data")]
@@ -29,17 +30,4 @@ public abstract class Character : Entity
     public abstract Vector3 MovementDirection { get; }
     public Vector3 LocalMovementDirection => transform.InverseTransformDirection(MovementDirection);
     public abstract WeaponHandler weaponHandler { get; }
-
-    /*
-    protected override void Awake()
-    {
-        base.Awake();
-        health.onDeath.AddListener((_) => Die());
-    }
-
-    protected virtual void Die()
-    {
-        Debug.Log($"{this} is now dying");
-    }
-    */
 }
