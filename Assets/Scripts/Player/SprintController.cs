@@ -47,7 +47,11 @@ public class SprintController : MonoBehaviour
     /// Registers the player's input to start or stop sprinting.
     /// </summary>
     /// <param name="input"></param>
-    public void OnSprint(InputValue input) => isSprinting = MiscFunctions.GetToggleableInput(isSprinting, input.isPressed, toggleInput);
+    public void OnSprint(InputValue input)
+    {
+        //Debug.Log($"Sprint input = {input.isPressed}");
+        isSprinting = enabled && MiscFunctions.GetToggleableInput(isSprinting, input.isPressed, toggleInput);
+    }
     void TryStartSprint(out bool willSprint)
     {
         willSprint = false;
