@@ -49,10 +49,8 @@ public class MovementController : MovementState
     //public void OnMove(InputValue input) => movementInput = canMove ? input.Get<Vector2>() : Vector2.zero;
 
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
-
         movementBinding.onActionPerformed.AddListener(ProcessMovementInput);
         jumpBinding.onActionPerformed.AddListener(OnJump);
     }
@@ -63,7 +61,7 @@ public class MovementController : MovementState
     }
     void OnJump(InputAction.CallbackContext ctx)
     {
-        if (groundingHandler.groundingData.collider == null && Time.time - lastTimeJumped >= jumpCooldown)
+        if (movementHandler.groundingHandler.groundingData.collider == null && Time.time - lastTimeJumped >= jumpCooldown)
         {
             return;
         }
@@ -86,11 +84,6 @@ public class MovementController : MovementState
         Vector3 currentVelocity = rigidbody.transform.InverseTransformDirection(rigidbody.velocity);
         desiredVelocity.y = currentVelocity.y;
 
-        ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration, Space.Self);
+        movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration * Time.fixedDeltaTime, Space.Self);
     }
-    private void OnDisable()
-    {
-        collider.material = standingMaterial;
-    }
-    
 }

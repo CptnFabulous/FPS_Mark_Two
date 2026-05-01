@@ -55,7 +55,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
         // Implements bobbing animations for player walk cycle, and cosmetic effects whenever they take a step.
 
         // If player is on the ground and has EITHER started moving or stopped before the walk cycle finishes.
-        RaycastHit ground = controller.groundingHandler.groundingData;
+        RaycastHit ground = controller.movementHandler.groundingHandler.groundingData;
         if (ground.collider != null && (controller.movementInput.magnitude > 0 || walkCycleTimer != 0))
         {
             float walkCycleLength = strideLength * stepsPerCycle / controller.CurrentMoveSpeed;
@@ -78,7 +78,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
                 if (sc.isSprinting) volume *= sc.footstepVolumeMultiplier;
 
                 footsteps.Play(ground.collider.gameObject, controller.controlling, ground.point, -ground.normal, ground.normal, transform.forward, volume);
-                onStep.Invoke(controller.groundingHandler.groundingData);
+                onStep.Invoke(controller.movementHandler.groundingHandler.groundingData);
                 stepTimer = 0;
                 #endregion
             }
