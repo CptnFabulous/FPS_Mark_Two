@@ -15,6 +15,8 @@ public class PlayerMovementHandler : MonoBehaviour
     public LayerMask collisionMask => MiscFunctions.GetPhysicsLayerMask(collider.gameObject.layer);
     public bool isGrounded => groundingHandler.isGrounded;
 
+    public Vector3 localVelocity => rigidbody.transform.InverseTransformDirection(rigidbody.velocity);
+
     void Awake()
     {
         rigidbody.constraints = RigidbodyConstraints.FreezeRotation;

@@ -20,22 +20,6 @@ public abstract class MovementState : StateFunction
 }
 
 /*
-public class Dodge : MovementState
-{
-    public float speedMultiplier = 2f;
-    public float duration = 0.5f;
-
-    [Header("Inputs")]
-    public SingleInput dodgeInput;
-    public SingleInput directionalInput;
-
-    public override IEnumerator AsyncProcedure()
-    {
-        // Get movement direction
-
-        // Launch player in that direction
-    }
-}
 
 public class Mantle : MovementState
 {

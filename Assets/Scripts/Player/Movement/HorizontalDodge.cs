@@ -7,9 +7,8 @@ using UnityEngine.Events;
 public class HorizontalDodge : MovementState
 {
     [Header("Stats")]
-    //public float speedMultiplier = 2f;
+    [Tooltip("Time range represents duration of dodge, value represents movement speed multiplier")]
     public AnimationCurve speedCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
-    //public float duration = 0.5f;
     public float staminaCost = 1;
     public float cooldown = 0.5f;
 
@@ -34,18 +33,19 @@ public class HorizontalDodge : MovementState
     void RegisterInput(InputAction.CallbackContext ctx)
     {
         if (CanPerform(ctx) == false) return;
+
         // Preserve rotation at time dodge was performed
+        // TO DO: should I update this to also take into account the angle of the ground? For when dodging up a slope?
         originalRotation = controlling.transform.rotation;
+
         controller.SwitchToState(this);
     }
-
-    
 
     public override IEnumerator AsyncProcedure()
     {
         // Get movement direction
-        Vector3 dodgeDirection = new Vector3(originalInput.x, 0, originalInput.y);
-        dodgeDirection = originalRotation * dodgeDirection;
+        Vector3 localDodgeDirection = new Vector3(originalInput.x, 0, originalInput.y);
+        //Vector3 dodgeDirection = originalRotation * localDodgeDirection;
 
         // Deplete stamina
         controlling.stamina.Deplete(staminaCost);
@@ -71,10 +71,21 @@ public class HorizontalDodge : MovementState
             timer += Time.fixedDeltaTime;
             timer = Mathf.Min(timer, maxTime);
 
+            // Calculate speed for this part of the dodge
             float speed = normalMovement.CurrentMoveSpeed * speedCurve.Evaluate(timer);
-            Vector3 desiredVelocity = speed * dodgeDirection;
 
+            // Get base direction
+            // Multiply by desired speed
+            // Change Y axis to represent current local velocity, since the dodge isn't meant to affect existing momentum on said axis
+            Vector3 desiredLocalVelocity = speed * localDodgeDirection;
+            desiredLocalVelocity.y = movementHandler.localVelocity.y;
+
+            Vector3 desiredVelocity = originalRotation * desiredLocalVelocity;
             movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, rigidbody.velocity, Mathf.Infinity, Space.World);
+            /*
+            Vector3 desiredVelocity = speed * dodgeDirection;
+            movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, rigidbody.velocity, Mathf.Infinity, Space.World);
+            */
 
             yield return new WaitForFixedUpdate();
         }

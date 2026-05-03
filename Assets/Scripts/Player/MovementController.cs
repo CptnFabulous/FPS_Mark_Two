@@ -81,7 +81,7 @@ public class MovementController : MovementState
         movementVelocity = transform.TransformDirection(desiredVelocity);
 
         // Account for current velocity
-        Vector3 currentVelocity = rigidbody.transform.InverseTransformDirection(rigidbody.velocity);
+        Vector3 currentVelocity = movementHandler.localVelocity;
         desiredVelocity.y = currentVelocity.y;
 
         movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, currentVelocity, acceleration * Time.fixedDeltaTime, Space.Self);
