@@ -12,6 +12,7 @@ public class SmokeParticleDensityController : MonoBehaviour
         // I imagine it'd be the same with tuples as well.
         public Vector3Int gridPosition { get; private set; }
         public Vector3 worldPosition { get; private set; }
+        public int maxSize { get; private set; }
 
         public SmokeCloud[] clouds;// = new SmokeCloud[4096];
         public int[] indices;// = new int[4096];
@@ -23,12 +24,14 @@ public class SmokeParticleDensityController : MonoBehaviour
         {
             this.gridPosition = gridPosition;
             this.worldPosition = worldPosition;
+            this.maxSize = maxSize;
             clouds = new SmokeCloud[maxSize];
             indices = new int[maxSize];
         }
     }
 
     [SerializeField] float minimumAcceptableDistance = 1.5f;
+    [SerializeField] int maxParticlesPerGridSpace = 64;
     //public float resolveVectorMagnitude = 1f;
     public float resolveVelocityMagnitude = 10f;
     public float deceleration = 10f;
@@ -144,7 +147,7 @@ public class SmokeParticleDensityController : MonoBehaviour
         bool spaceExists = dictionary.TryGetValue(gridPosition, out ParticleGridSpace gridSpace);
         if (!spaceExists)
         {
-            gridSpace = new ParticleGridSpace(gridPosition, GridToWorldPosition(gridPosition), 4096);
+            gridSpace = new ParticleGridSpace(gridPosition, GridToWorldPosition(gridPosition), maxParticlesPerGridSpace);
             dictionary.Add(gridPosition, gridSpace);
         }
         
