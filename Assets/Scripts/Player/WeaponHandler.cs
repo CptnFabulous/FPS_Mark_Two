@@ -9,6 +9,7 @@ public class WeaponHandler : MonoBehaviour
     public Player controller;
     public SingleInput primaryInput;
     public SingleInput secondaryInput;
+    public SingleInput tertiaryInput;
     public SingleInput weaponMenuInput;
 
     [Header("Weapons")]
@@ -91,6 +92,10 @@ public class WeaponHandler : MonoBehaviour
         // Primary and secondary fire inputs
         primaryInput.onActionPerformed.AddListener((ctx) => PrimaryFireInput(ctx.ReadValueAsButton()));
         secondaryInput.onActionPerformed.AddListener((ctx) => SecondaryFireInput(ctx.ReadValueAsButton()));
+        tertiaryInput.onActionPerformed.AddListener((ctx) =>
+        {
+            if (ctx.ReadValueAsButton() == true) TertiaryInput();
+        });
 
         // Weapon and mode switch inputs
         if (weaponMenuInput != null) weaponMenuInput.onActionPerformed.AddListener((ctx) => attackSelectors.ProcessSingleMenuInput(weaponMenuIndex, ctx));
@@ -115,7 +120,7 @@ public class WeaponHandler : MonoBehaviour
         if (!WeaponReady) return;
         CurrentWeapon.CurrentMode.SetSecondaryInput(pressed);
     }
-    void OnReload()
+    void TertiaryInput()
     {
         if (!WeaponReady) return;
         CurrentWeapon.CurrentMode.OnTertiaryInput();
