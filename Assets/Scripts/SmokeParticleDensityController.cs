@@ -177,7 +177,7 @@ public class SmokeParticleDensityController : MonoBehaviour
         // Figure out the direction of the neighbouring grid spaces that the particle radius may intrude into.
         // Due to the size of the grid space, we can ensure it'll only intrude in a single direction on each axis.
         Vector3Int offsetDirection = new Vector3Int();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 3; i++)
         {
             // For each axis, get the direction of the particle relative to the grid space centre
             // Then 'normalise' (so it neatly shifts over to the next grid space)
@@ -194,53 +194,6 @@ public class SmokeParticleDensityController : MonoBehaviour
             if (dictionary.TryGetValue(neighbour, out ParticleGridSpace space) == false) continue;
             CheckWithinGridSpace(space);
         }
-
-
-
-        /*
-        // Iterate through grid spaces to find the ones that are close enough to this particle.
-        for (int dictionaryIndex = 0; dictionaryIndex < gridSpaceDictionary.Count; dictionaryIndex++)
-        {
-            #region Check if this grid position is close enough to the current particle to worry about
-            Vector3Int neighbouringPosition = gridSpaceDictionary.keyArray[dictionaryIndex];
-
-            // Check if this grid space is more than one unit too far in any direction.
-            bool tooFarAway = false;
-            for (int a = 0; a < 2; a++)
-            {
-                int difference = neighbouringPosition[a] - particleGridPosition[a];
-                if (Mathf.Abs(difference) > 1)
-                {
-                    tooFarAway = true;
-                    break;
-                }
-            }
-            // If not, none of the particles in it will be close enough to worry about. Proceed to the next one.
-            if (tooFarAway) continue;
-            #endregion
-
-            ParticleGridSpace space = gridSpaceDictionary.valueArray[dictionaryIndex];
-            CheckWithinGridSpace(space);
-        }
-        */
-
-
-
-
-        /*
-        Vector3Int gridPosBase = particleGridPosition - Vector3Int.one;
-        MiscFunctions.IterateThroughGrid(neighbourSpaceVolumeToCheck, CheckAdjacentGridSpace);
-
-        // The function for checking each space.
-        void CheckAdjacentGridSpace(Vector3Int neighbourOffset)
-        {
-            // Check that particles are present in that grid space
-            Vector3Int neighbour = gridPosBase + neighbourOffset;
-            if (dictionary.TryGetValue(neighbour, out ParticleGridSpace space) == false) return;
-
-            CheckWithinGridSpace(space);
-        }
-        */
 
         void CheckWithinGridSpace(ParticleGridSpace space)
         {
@@ -268,14 +221,14 @@ public class SmokeParticleDensityController : MonoBehaviour
     void ApplyResolverOffset(SmokeCloud cloud, int index)
     {
         Vector3 resolverVector = cloud.particleOffsetResolvers[index];
-        
+        resolverVector = resolveVelocityMagnitude * resolverVector;
+
         // Method 1: position is directly tweaked frame by frame.
         //cloud.particleArray[index].position += Time.fixedDeltaTime * resolveVectorMagnitude * resolverVector;
         //cloud.particleArray[index].position += resolverVector * Time.fixedDeltaTime;
-        
+
         // Method 2: particle velocity is directly altered.
-        cloud.particleArray[index].velocity = Vector3.MoveTowards(cloud.particleArray[index].velocity, resolveVelocityMagnitude * resolverVector, deceleration * Time.fixedDeltaTime);
-        //cloud.particleArray[index].velocity = Vector3.MoveTowards(cloud.particleArray[index].velocity, resolverVector, deceleration * Time.fixedDeltaTime);
+        cloud.particleArray[index].velocity = Vector3.MoveTowards(cloud.particleArray[index].velocity, resolverVector, deceleration * Time.fixedDeltaTime);
     }
 
     Vector3Int WorldToGridPosition(Vector3 worldPosition, out Vector3 nonRounded)
