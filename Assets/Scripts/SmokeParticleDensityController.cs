@@ -48,6 +48,31 @@ public class SmokeParticleDensityController : MonoBehaviour
         new Vector3Int(1, 1, 1),
     };
 
+    static SmokeParticleDensityController _singleton;
+
+    public static SmokeParticleDensityController singleton => GetSingleton();
+
+    /// <summary>
+    /// Finds a singleton, or creates one if one cannot be found.
+    /// </summary>
+    /// <returns></returns>
+    public static SmokeParticleDensityController GetSingleton()
+    {
+        if (_singleton == null)
+        {
+            _singleton = FindAnyObjectByType<SmokeParticleDensityController>();
+        }
+        if (_singleton == null)
+        {
+            SmokeParticleDensityController prefab = Resources.Load<SmokeParticleDensityController>("Smoke Particle Density Controller");
+            Debug.Log(prefab);
+            _singleton = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            DontDestroyOnLoad(_singleton);
+        }
+
+        return _singleton;
+    }
+
     void FixedUpdate()
     {
         // Get rid of grid spaces that haven't been updated in a while, to reduce the number of checks per frame

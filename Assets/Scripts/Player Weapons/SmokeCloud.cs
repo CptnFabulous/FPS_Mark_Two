@@ -10,15 +10,14 @@ public class SmokeCloud : MonoBehaviour
     public static IReadOnlyList<SmokeCloud> activeClouds => _activeClouds;
     
     [SerializeField] ParticleSystem particleSystem;
-    public SmokeParticleDensityController densityControllerPrefab;
-    [HideInInspector, System.NonSerialized] public ParticleSystem.Particle[] particleArray;
 
     SphereCollider[] colliderArray;
-    [HideInInspector, System.NonSerialized] public Vector3[] particleOffsetResolvers;
+    [HideInInspector, NonSerialized] public ParticleSystem.Particle[] particleArray;
 
     static SphereCollider smokeColliderPrefab;
     static Transform activeSmokeCloudParent;
     static SmokeParticleDensityController densityControllerSingleton;
+    [HideInInspector, NonSerialized] public Vector3[] particleOffsetResolvers;
 
     public bool emitting
     {
@@ -45,16 +44,8 @@ public class SmokeCloud : MonoBehaviour
 
     private void Awake()
     {
-        // Check that a density controller exists. If not, spawn one
-        if (densityControllerSingleton == null)
-        {
-            densityControllerSingleton = FindAnyObjectByType<SmokeParticleDensityController>();
-        }
-        if (densityControllerSingleton == null)
-        {
-            densityControllerSingleton = Instantiate(densityControllerPrefab);
-            DontDestroyOnLoad(densityControllerSingleton);
-        }
+        // Ensure a density controller exists
+        SmokeParticleDensityController.GetSingleton();
 
         // Set up particle arrays
         int maxParticles = particleSystem.main.maxParticles;
