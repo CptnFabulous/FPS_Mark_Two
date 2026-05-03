@@ -110,25 +110,33 @@ public class SmokeParticleDensityController : MonoBehaviour
             cloud.particleEmitter.SetParticles(cloud.particleArray, cloud.numberOfParticles);
         }
     }
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        //Gizmos.color = Color.grey;
         foreach (ParticleGridSpace gridSpace in dictionary.Values)
         {
             if (gridSpace.numberOfParticles <= 0) continue;
+
+            // Interpolate colour based on number of particles in each grid space
+            float particleCountRatio = gridSpace.numberOfParticles / gridSpace.maxSize;
+            Gizmos.color = Color.Lerp(Color.grey, Color.black, particleCountRatio);
             Gizmos.DrawWireCube(gridSpace.worldPosition, (minimumAcceptableDistance * 2) * Vector3.one);
         }
 
-        Gizmos.color = Color.black;
         IterateThroughParticles((cloud, index) =>
         {
             if (index >= cloud.particleEmitter.particleCount) return;
+
+
+            ParticleSystem.Particle realParticle = cloud.particleArray[index];
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(realParticle.position, realParticle.velocity);
 
             // Show resolver vectors for each particle
             Vector3 resolverVector = cloud.particleOffsetResolvers[index];
             if (resolverVector.sqrMagnitude <= 0) return;
 
-            ParticleSystem.Particle realParticle = cloud.particleArray[index];
+            Gizmos.color = Color.green;
             Gizmos.DrawRay(realParticle.position, resolverVector);
         });
     }
