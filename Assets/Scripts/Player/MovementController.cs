@@ -61,17 +61,18 @@ public class MovementController : MovementState
     }
     void TryJump(InputAction.CallbackContext ctx)
     {
-        if (movementHandler.groundingHandler.groundingData.collider == null && Time.time - lastTimeJumped >= jumpCooldown)
-        {
-            return;
-        }
+        // Check that player can jump
+        if (isGrounded == false) return;
+        if (Time.time - lastTimeJumped < jumpCooldown) return;
 
-        if (crouchController != null)
-        {
-            crouchController.isCrouching = false;
-        }
-        rigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        // Cancel crouch
+        if (crouchController != null) crouchController.isCrouching = false;
+
+        // Trigger jump
+        rigidbody.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
         onJump.Invoke();
+
+        // Reset cooldown
         lastTimeJumped = Time.time;
     }
 
