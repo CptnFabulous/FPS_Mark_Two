@@ -30,12 +30,17 @@ public class SmokeParticleDensityController : MonoBehaviour
         }
     }
 
-    [SerializeField] float minimumAcceptableDistance = 1.5f;
+    [Header("Checking radii")]
+    public float checkRadiusSizeMultiplier = 1f;
+    [SerializeField] float maximumCheckRadius = 1.5f;
+
+    [Header("Grid spaces")]
     [SerializeField] int maxParticlesPerGridSpace = 64;
-    //public float resolveVectorMagnitude = 1f;
+    public float gridSpaceInactiveLifetime = 10f;
+
+    [Header("Resolving")]
     public float resolveVelocityMagnitude = 10f;
     public float deceleration = 10f;
-    public float gridSpaceInactiveLifetime = 10f;
 
     Dictionary<Vector3Int, ParticleGridSpace> dictionary = new Dictionary<Vector3Int, ParticleGridSpace>();
 
@@ -120,7 +125,7 @@ public class SmokeParticleDensityController : MonoBehaviour
             // Interpolate colour based on number of particles in each grid space
             float particleCountRatio = gridSpace.numberOfParticles / gridSpace.maxSize;
             Gizmos.color = Color.Lerp(Color.grey, Color.black, particleCountRatio);
-            Gizmos.DrawWireCube(gridSpace.worldPosition, (minimumAcceptableDistance * 2) * Vector3.one);
+            Gizmos.DrawWireCube(gridSpace.worldPosition, (maximumCheckRadius * 2) * Vector3.one);
         }
 
         IterateThroughParticles((cloud, index) =>
@@ -168,7 +173,12 @@ public class SmokeParticleDensityController : MonoBehaviour
     }
     void CalculateResolverDirection(SmokeCloud cloud, int index)
     {
-        float squaredMinimumDistance = minimumAcceptableDistance * minimumAcceptableDistance;
+        // Calculate how far away we should check for each particle
+        float particleSize = cloud.particleArray[index].GetCurrentSize(cloud.particleEmitter);
+        float checkRadius = particleSize * checkRadiusSizeMultiplier;
+        checkRadius = Mathf.Min(checkRadius, maximumCheckRadius); // Ensure check radius doesn't exceed maximum range that can be checked (accounting for grid size)
+
+        float squaredMinimumDistance = checkRadius * checkRadius;
 
         // Get the grid space of the current particle.
         ParticleSystem.Particle realParticle = cloud.particleArray[index];
@@ -235,13 +245,13 @@ public class SmokeParticleDensityController : MonoBehaviour
     {
         // The size of each grid space should be the total diameter of the checking volume for a particle.
         // This keeps each grid space as small as possible while ensuring that if a particle is in X grid space, all particles within the minimum distance are in either its space, or adjacent in one axis direction only.
-        nonRounded = worldPosition / (minimumAcceptableDistance * 2);
+        nonRounded = worldPosition / (maximumCheckRadius * 2);
         return Vector3Int.RoundToInt(nonRounded);
     }
     Vector3 GridToWorldPosition(Vector3Int gridPosition)
     {
         Vector3 result = gridPosition;
-        return (minimumAcceptableDistance * 2) * result;
+        return (maximumCheckRadius * 2) * result;
     }
     static void IterateThroughParticles(System.Action<SmokeCloud, int> action)
     {

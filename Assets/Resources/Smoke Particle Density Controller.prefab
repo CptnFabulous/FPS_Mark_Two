@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0df2576ac3f0e0499c32315d4ee5c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumAcceptableDistance: 1.5
+  checkRadiusSizeMultiplier: 0.75
+  maximumCheckRadius: 1.5
   maxParticlesPerGridSpace: 64
+  gridSpaceInactiveLifetime: 10
   resolveVelocityMagnitude: 5
   deceleration: 10
-  gridSpaceInactiveLifetime: 10
