@@ -52,14 +52,14 @@ public class MovementController : MovementState
     void Awake()
     {
         movementBinding.onActionPerformed.AddListener(ProcessMovementInput);
-        jumpBinding.onActionPerformed.AddListener(OnJump);
+        jumpBinding.onActionPerformed.AddListener(TryJump);
     }
 
     void ProcessMovementInput(InputAction.CallbackContext ctx)
     {
         movementInput = canMove ? ctx.ReadValue<Vector2>() : Vector2.zero;
     }
-    void OnJump(InputAction.CallbackContext ctx)
+    void TryJump(InputAction.CallbackContext ctx)
     {
         if (movementHandler.groundingHandler.groundingData.collider == null && Time.time - lastTimeJumped >= jumpCooldown)
         {
