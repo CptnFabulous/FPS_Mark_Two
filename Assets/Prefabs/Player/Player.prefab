@@ -1331,6 +1331,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementHandler: {fileID: 6045511799847877017}
+  speedMultiplier: 2
+  duration: 0.125
   speedCurve:
     serializedVersion: 2
     m_Curve:
@@ -1356,7 +1358,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   staminaCost: 1
-  cooldown: 0
+  cooldown: 0.5
   dodgeInput: {fileID: 5190843782885477643}
   directionalInput: {fileID: 362065047927858742}
   normalMovement: {fileID: 1498451882598581639}

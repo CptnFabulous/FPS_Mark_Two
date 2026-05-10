@@ -7,6 +7,8 @@ using UnityEngine.Events;
 public class HorizontalDodge : MovementState
 {
     [Header("Stats")]
+    public float speedMultiplier = 3;
+    public float duration = 0.25f;
     [Tooltip("Time range represents duration of dodge, value represents movement speed multiplier")]
     public AnimationCurve speedCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
     public float staminaCost = 1;
@@ -52,24 +54,35 @@ public class HorizontalDodge : MovementState
 
         onDodge.Invoke();
 
-        /*
+        
         // Calculate speed
         float speed = normalMovement.CurrentMoveSpeed * speedMultiplier;
+
+        // Get base direction
+        // Multiply by desired speed
+        // Change Y axis to represent current local velocity, since the dodge isn't meant to affect existing momentum on said axis
+        Vector3 desiredLocalVelocity = speed * localDodgeDirection;
+        desiredLocalVelocity.y = movementHandler.localVelocity.y;
         // Launch player in that direction
-        rigidbody.velocity = speed * dodgeDirection;
+        Vector3 desiredVelocity = originalRotation * desiredLocalVelocity;
+        movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, rigidbody.velocity, Mathf.Infinity, Space.World);
 
         // Wait for duration
         yield return new WaitForSeconds(duration);
-        */
+        // Restore standing material so velocity can decelerate
+        collider.material = movementHandler.standingMaterial;
+        // Reset cooldown
+        lastTimePerformed = Time.time;
 
-        float maxTime = speedCurve[speedCurve.length - 1].time;
 
+        // Previous version, continuously altering velocity over curve.
+        /*
+        float duration = speedCurve[speedCurve.length - 1].time;
         float timer = 0;
-        while (timer < maxTime)
+        while (timer < duration)
         {
-            //timer += Time.fixedDeltaTime / duration;
             timer += Time.fixedDeltaTime;
-            timer = Mathf.Min(timer, maxTime);
+            timer = Mathf.Min(timer, duration);
 
             // Calculate speed for this part of the dodge
             float speed = normalMovement.CurrentMoveSpeed * speedCurve.Evaluate(timer);
@@ -82,14 +95,11 @@ public class HorizontalDodge : MovementState
 
             Vector3 desiredVelocity = originalRotation * desiredLocalVelocity;
             movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, rigidbody.velocity, Mathf.Infinity, Space.World);
-            /*
-            Vector3 desiredVelocity = speed * dodgeDirection;
-            movementHandler.ShiftCharacterVelocityTowards(desiredVelocity, rigidbody.velocity, Mathf.Infinity, Space.World);
-            */
 
             yield return new WaitForFixedUpdate();
         }
-        
+        */
+
         controller.SwitchToState(normalMovement);
     }
 
