@@ -9,7 +9,8 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 {
     public enum AILookMode
     {
-        FreeLook,
+        FreeLookAngle,
+        FreeLookShift,
         StraightForward,
         SweepSightline
     }
@@ -33,12 +34,12 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     /// The world-space position the AI is looking towards. If shifting, represents reference position. If rotating, represents the desired target.
     /// </summary>
     Vector3 lookingTowards;
-    AILookMode currentLookMode = AILookMode.FreeLook;
+    AILookMode currentLookMode = AILookMode.FreeLookAngle;
 
     // Sweep variables
     System.Func<Vector3> getDirectionForSweep;
     Vector2 sweepAngles;
-    float delayBetweenSweeps = 0.5f;
+    //float delayBetweenSweeps = 0.5f;
     Vector3[] lookTargetAngles;
 
     #region Properties
@@ -119,8 +120,15 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     private void OnDrawGizmosSelected()
     {
+        if (sightlineReference != null)
+        {
+            Gizmos.matrix = Matrix4x4.TRS(viewAxis.position, sightlineReference.rotation, Vector3.one);
+            Gizmos.color = Color.red;
+            DebugUtility.DrawAngledGizmoFrustum(Vector3.zero, maxTurnAngleHorizontal * 2, maxTurnAngleVertical * 2, maxRange, minRange);
+        }
+
         // Draw vision cone direction and angles
-        Gizmos.matrix = viewAxis.localToWorldMatrix;
+        Gizmos.matrix = Matrix4x4.identity;
 
         // Display gizmos for sightline sweeping code
         switch (currentLookMode)
@@ -150,12 +158,21 @@ public class AIAim : MonoBehaviour, ICharacterLookController
                 }
 
                 break;
+
             case AILookMode.StraightForward:
 
                 Gizmos.color = Color.cyan;
                 Gizmos.DrawRay(transform.position, neutralLookDirection);
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawRay(ai.visionCone.transform.position, ai.visionCone.transform.forward);
+
+                break;
+
+            case AILookMode.FreeLookShift:
+
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(lookingTowards, 0.5f);
+                Gizmos.DrawLine(LookOrigin, lookingTowards);
 
                 break;
         }
@@ -166,7 +183,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
     public void RotateFreeLookTowards(Vector3 position)
     {
-        currentLookMode = AILookMode.FreeLook;
+        currentLookMode = AILookMode.FreeLookAngle;
         RotateLookTowards(position);
     }
     void RotateLookTowards(Vector3 position)
@@ -175,9 +192,13 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         //ai.DebugLog(degreesPerSecond);
         RotateLookTowards(position, degreesPerSecond);
     }
-    public void ShiftLookTowards(Vector3 position, float distancePerSecond)
+    public void ShiftFreeLookTowards(Vector3 position, float distancePerSecond)
     {
-        currentLookMode = AILookMode.FreeLook;
+        currentLookMode = AILookMode.FreeLookShift;
+        ShiftLookTowards(position, distancePerSecond);
+    }
+    void ShiftLookTowards(Vector3 position, float distancePerSecond)
+    {
         lookingTowards = Vector3.MoveTowards(lookingTowards, position, distancePerSecond * Time.deltaTime);
         lookRotation = Quaternion.LookRotation(lookingTowards - LookOrigin, upAxis);
     }
@@ -227,7 +248,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     public void CancelAsyncRoutines()
     {
         ai.DebugLog("Cancelling async look routines");
-        currentLookMode = AILookMode.FreeLook;
+        currentLookMode = AILookMode.FreeLookAngle;
     }
     
 
@@ -237,7 +258,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
     public IEnumerator RotateTowardsPositionAsync(Vector3 position)
     {
-        currentLookMode = AILookMode.FreeLook;
+        currentLookMode = AILookMode.FreeLookAngle;
         yield return RotateTowardsAsync(position);
     }
     IEnumerator RotateTowardsAsync(Vector3 position)

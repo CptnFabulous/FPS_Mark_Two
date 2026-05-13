@@ -54,7 +54,7 @@ public class AIGunAttack : MonoBehaviour
         // If attack has already started, shift aim linearly towards target
         if (inAttack)
         {
-            aim.ShiftLookTowards(targetPosition, aimSpeedWhileTelegraphing);
+            aim.ShiftFreeLookTowards(targetPosition, aimSpeedWhileTelegraphing);
         }
         else
         {
