@@ -99,6 +99,16 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     float verticalSweepDistance => Mathf.Max(sweepAngles.y - viewAngles.y, 0);
     public float minRange => 0;
     public float maxRange => ai.visionCone.viewRange;
+    Vector3 neutralLookDirection
+    {
+        get
+        {
+            // If agent is moving, look in the direction the agent is moving. Otherwise, look straight forward.
+            NavMeshAgent agent = ai.agent;
+            bool isMoving = agent != null && agent.desiredVelocity.magnitude > 0;
+            return isMoving ? agent.desiredVelocity : ai.transform.forward;
+        }
+    }
 
     #endregion
 
@@ -143,7 +153,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
             case AILookMode.StraightForward:
 
                 Gizmos.color = Color.cyan;
-                Gizmos.DrawRay(transform.position, ai.agent.desiredVelocity);
+                Gizmos.DrawRay(transform.position, neutralLookDirection);
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawRay(ai.visionCone.transform.position, ai.visionCone.transform.forward);
 
@@ -251,11 +261,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         {
             yield return null;
 
-            // If agent is moving, look in the direction the agent is moving. Otherwise, look straight forward.
-            NavMeshAgent agent = ai.agent;
-            Vector3 moveDirection = agent.desiredVelocity;
-            bool isMoving = moveDirection.magnitude > 0;
-            Vector3 direction = isMoving ? moveDirection : ai.transform.forward;
+            Vector3 direction = neutralLookDirection;
             RotateLookTowards(LookOrigin + direction, currentAimStats.lookSpeed);
             Debug.DrawRay(LookOrigin, 2 * direction.normalized, Color.green);
         }
