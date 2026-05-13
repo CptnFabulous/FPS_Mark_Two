@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using CptnFabulous.MiscUtility;
 
 public class HeadsUpDisplay : MonoBehaviour
 {
@@ -11,8 +10,6 @@ public class HeadsUpDisplay : MonoBehaviour
     public Player controller;
     public new Camera camera;
     public AudioSource soundPlayer;
-    Canvas canvas;
-    RectTransform rt;
     public void PlayAudioClip(AudioClip clip)
     {
         soundPlayer.PlayOneShot(clip);
@@ -20,53 +17,6 @@ public class HeadsUpDisplay : MonoBehaviour
     public void PlayAudioClip(DiegeticSound soundEffect)
     {
         soundEffect.Play(soundPlayer);
-    }
-
-
-
-    [Header("Detection")]
-    public float observationRange = 50;
-    public LayerMask relevantThingDetection = ~0;
-    public bool RelevantThingObserved(float range, out RaycastHit observedObject)
-    {
-        return Physics.Raycast(camera.transform.position, camera.transform.forward, out observedObject, range, relevantThingDetection);
-    }
-
-    [Header("Enemy Health")]
-    public ResourceMeter enemyHealthMeter;
-    public void CheckIfLookingAtDamageableEntity()
-    {
-        
-        float detectionRange = observationRange;
-        if (controller.weapons.CurrentWeapon != null)
-        {
-            RangedAttack attack = controller.weapons.CurrentWeapon.CurrentMode as RangedAttack;
-            if (attack != null)
-            {
-                detectionRange = attack.stats.range;
-            }
-        }
-
-        Entity observedEnemy = null;
-        if (RelevantThingObserved(detectionRange, out RaycastHit observedObject))
-        {
-            Hitbox h = observedObject.collider.GetComponent<Hitbox>();
-            if (h != null) observedEnemy = h.attachedTo;
-        }
-
-        bool shouldShow = observedEnemy != null && observedEnemy.health != null && observedEnemy.health.IsAlive;
-        enemyHealthMeter.gameObject.SetActive(shouldShow);
-        if (shouldShow == false) return;
-
-        Health enemyHealth = observedEnemy.health;
-        Bounds entityBounds = observedEnemy.bounds;
-        Vector3 meterPosition = entityBounds.center + (camera.transform.up * entityBounds.extents.magnitude);
-
-        Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
-        Vector3 canvasPosition = TransformUtility.ScreenToAnchoredPosition(meterScreenPosition, enemyHealthMeter.rectTransform, rt);//MiscFunctions.ScreenToRectTransformSpace(meterScreenPosition, rt);
-        enemyHealthMeter.rectTransform.anchoredPosition = canvasPosition;
-        enemyHealthMeter.obtainValues = () => enemyHealth.data;
-        //enemyHealthMeter.Refresh(enemyHealth.data);
     }
 
     [Header("Damage")]
@@ -92,17 +42,6 @@ public class HeadsUpDisplay : MonoBehaviour
 
     private void Awake()
     {
-        canvas = GetComponent<Canvas>();
-        rt = GetComponent<RectTransform>();
-
-
         Notification<DamageMessage>.Receivers += CheckToPlayDamageEffects;
     }
-    private void LateUpdate()
-    {
-        //UpdateWeaponHUD(controller.weapons.CurrentWeapon);
-        CheckIfLookingAtDamageableEntity();
-    }
-
-    
 }
