@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96538a29e5877e64e88cc96047a4f3f1, type: 3}
   m_Name: Shatterable Wood
   m_EditorClassIdentifier: 
+  healthMeterColour: {r: 0.29803923, g: 0.101960786, b: 0, a: 1}
+  healthMeterCriticalColour: {r: 0.7, g: 0.101960786, b: 0, a: 1}
   _multipliers:
   - type: 2
     multiplier: 5
@@ -20,3 +22,6 @@ MonoBehaviour:
   - type: 4
     multiplier: 5
   isWhitelist: 0
+  minimumCollisionForceToDamage: 10
+  damagePerCollisionForceUnit: 0.5
+  stunPerCollisionForceUnit: 1

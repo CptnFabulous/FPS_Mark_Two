@@ -40,7 +40,6 @@ public class EnemyHealthMeter : MonoBehaviour
 
         bool shouldShow = observedEnemy != null && observedEnemy.health != null && observedEnemy.health.IsAlive;
         canvasGroup.alpha = shouldShow ? 1 : 0;
-        //healthMeter.gameObject.SetActive(shouldShow);
         if (shouldShow == false) return;
 
         Health enemyHealth = observedEnemy.health;
@@ -48,11 +47,12 @@ public class EnemyHealthMeter : MonoBehaviour
         Vector3 meterPosition = entityBounds.center + (camera.transform.up * entityBounds.extents.magnitude);
 
         Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
-        Vector3 canvasPosition = TransformUtility.ScreenToAnchoredPosition(meterScreenPosition, healthMeter.rectTransform, parentRectTransform);//MiscFunctions.ScreenToRectTransformSpace(meterScreenPosition, rt);
+        Vector3 canvasPosition = TransformUtility.ScreenToAnchoredPosition(meterScreenPosition, healthMeter.rectTransform, parentRectTransform);
 
+        healthMeter.safeColour = h.resistances.healthMeterColour;
+        healthMeter.criticalColour = h.resistances.healthMeterCriticalColour;
         healthMeter.rectTransform.anchoredPosition = canvasPosition;
         healthMeter.obtainValues = () => enemyHealth.data;
-        //enemyHealthMeter.Refresh(enemyHealth.data);
     }
 
     public bool RelevantThingObserved(float range, out RaycastHit observedObject)

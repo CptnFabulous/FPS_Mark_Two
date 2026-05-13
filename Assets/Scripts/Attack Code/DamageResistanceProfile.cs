@@ -19,6 +19,8 @@ public class DamageResistanceProfile : ScriptableObject
         }
     }
 
+    public Color healthMeterColour = new Color(0.5f, 0, 0);
+    public Color healthMeterCriticalColour = new Color(1f, 0, 0);
     [SerializeField] List<DamageMultiplier> _multipliers;
     [Tooltip("If enabled, only allow damage specified here. Otherwise, any damage types not specified here will take normal damage")]
     [SerializeField] bool isWhitelist;

@@ -23,16 +23,14 @@ public class Hitbox : MonoBehaviour
         if (sourceHealth == null) return;
 
         //force *= hitbox.damageMultiplier;
-        if (resistances != null)
-        {
-            float multiplier = resistances[type];
 
-            //Debug.Log($"{attachedTo}: damage resistance profile present, multiplying by {multiplier}");
-            if (multiplier == 0) return;
+        float multiplier = resistances[type];
 
-            damage = Mathf.RoundToInt(damage * multiplier);
-            stun = Mathf.RoundToInt(stun * multiplier);
-        }
+        //Debug.Log($"{attachedTo}: damage resistance profile present, multiplying by {multiplier}");
+        if (multiplier == 0) return;
+
+        damage = Mathf.RoundToInt(damage * multiplier);
+        stun = Mathf.RoundToInt(stun * multiplier);
 
         sourceHealth.Damage(damage, stun, critical, type, attacker, weaponUsed, direction);
     }
