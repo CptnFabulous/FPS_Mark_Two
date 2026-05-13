@@ -45,6 +45,15 @@ public class HorizontalDodge : MovementState
 
     public override IEnumerator AsyncProcedure()
     {
+        // Force the player to stand up first. If they can't do so, cancel the function.
+        bool tryCancelCrouch = normalMovement.crouchController.TryChangeCrouch(false);
+        if (tryCancelCrouch == false)
+        {
+            controller.SwitchToState(normalMovement);
+            yield break;
+        }
+
+
         // Get movement direction
         Vector3 localDodgeDirection = new Vector3(originalInput.x, 0, originalInput.y);
         //Vector3 dodgeDirection = originalRotation * localDodgeDirection;
@@ -56,7 +65,7 @@ public class HorizontalDodge : MovementState
 
         
         // Calculate speed
-        float speed = normalMovement.CurrentMoveSpeed * speedMultiplier;
+        float speed = normalMovement.defaultSpeed * speedMultiplier;
 
         // Get base direction
         // Multiply by desired speed

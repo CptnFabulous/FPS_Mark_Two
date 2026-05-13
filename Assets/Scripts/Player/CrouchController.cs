@@ -38,15 +38,21 @@ public class CrouchController : MonoBehaviour
     /// Receives the player's input value to change if they're crouching or standing.
     /// </summary>
     /// <param name="input"></param>
-    void OnCrouch(InputValue input) => isCrouching = MiscFunctions.GetToggleableInput(isCrouching, input.isPressed, toggleCrouch);
+    void OnCrouch(InputValue input)
+    {
+        if (movementController.enabled == false) return;
+
+        bool wantsToCrouch = MiscFunctions.GetToggleableInput(isCrouching, input.isPressed, toggleCrouch);
+        TryChangeCrouch(wantsToCrouch);
+    }
     /// <summary>
     /// Attempts to either crouch or stand back up.
     /// </summary>
     /// <param name="wantsToCrouch"></param>
-    void TryChangeCrouch(bool wantsToCrouch)
+    public bool TryChangeCrouch(bool wantsToCrouch)
     {
         // Don't do anything if the player is already in the assigned state
-        if (isCrouching == wantsToCrouch) return;
+        if (isCrouching == wantsToCrouch) return true;
 
         //Debug.Log(this + ": Attempting to set crouching to " + wantsToCrouch);
 
@@ -61,7 +67,7 @@ public class CrouchController : MonoBehaviour
         }
 
         // Check again to not invoke events unnecessarily
-        if (isCrouching == wantsToCrouch) return;
+        if (isCrouching == wantsToCrouch) return false;
 
         // If currently sprinting, try to cancel sprint
         if (wantsToCrouch)
@@ -69,8 +75,9 @@ public class CrouchController : MonoBehaviour
             SprintController sprint = movementController.sprintController;
             if (sprint != null)
             {
+                // If sprint cannot be cancelled, back out
                 sprint.isSprinting = false;
-                if (sprint.isSprinting == true) return;
+                if (sprint.isSprinting == true) return false;
             }
         }
 
@@ -79,6 +86,7 @@ public class CrouchController : MonoBehaviour
         //speedModifiers.Add(crouchSpeedMultiplier);
         //speedModifiers.Remove(crouchSpeedMultiplier);
         (wantsToCrouch ? onCrouch : onStand).Invoke();
+        return true;
     }
     bool SpaceToStandUpBlocked()
     {
