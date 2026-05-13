@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,7 +27,7 @@ public class GroundingHandler : MonoBehaviour
     public static void GetGroundingData(CapsuleCollider collider, float groundingRayLength, out RaycastHit newGroundingData)
     {
         Transform transform = collider.transform;
-        LayerMask collisionMask = MiscFunctions.GetPhysicsLayerMask(collider.gameObject.layer);
+        LayerMask collisionMask = PhysicsUtility.GetPhysicsLayerMask(collider.gameObject.layer);
 
         Vector3 rayOrigin = transform.position + transform.up * (collider.height / 2);
         float distance = groundingRayLength + Vector3.Distance(transform.position, rayOrigin);

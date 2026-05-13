@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -87,7 +88,7 @@ public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
             // Draw the weapon then switch to its mode
             w.gameObject.SetActive(true);
             yield return w.Draw();
-            yield return w.SwitchMode(MiscFunctions.IndexOfInArray(w.modes, offhandAbility));
+            yield return w.SwitchMode(CollectionUtility.IndexOfInArray(w.modes, offhandAbility));
 
             // Set input, and wait until input and action are finished
             offhandAbility.SetPrimaryInput(true);

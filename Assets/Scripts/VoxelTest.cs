@@ -93,7 +93,7 @@ public class VoxelTest : MonoBehaviour
     }
     float GetValueAtCoordinates(Vector3Int coords)
     {
-        bool outsideArray = MiscFunctions.IsIndexOutsideArray(dimensions, coords);
+        bool outsideArray = CollectionUtility.IsIndexOutsideArray(dimensions, coords);
 
         //Debug.Log($"Checking {coords}, outside array = {outsideArray}");
 

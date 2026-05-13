@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,7 +29,7 @@ public class Entity : MonoBehaviour
     {
         get
         {
-            if (colliders != null && colliders.Count > 0) return MiscFunctions.CombinedBounds(colliders);
+            if (colliders != null && colliders.Count > 0) return TransformUtility.CombinedBounds(colliders);
             return new Bounds(transform.position, Vector3.zero);
         }
     }
@@ -57,7 +58,7 @@ public class Entity : MonoBehaviour
             return _colliders;
         }
     }
-    public Rigidbody rigidbody => _rb ??= GetComponentInChildren<Rigidbody>();
+    public Rigidbody rigidbody => ComponentUtility.AutoCache(ref _rb, gameObject, ComponentGetType.InChild);
 
     public Renderer[] renderers => MiscFunctions.GetImmediateComponentsInChildren<Renderer, Entity>(this, ref _renderers);
 
@@ -91,7 +92,7 @@ public class Entity : MonoBehaviour
     /// </summary>
     /// <param name="hit"></param>
     /// <returns></returns>
-    public bool HitOwnCollider(RaycastHit hit) => MiscFunctions.ArrayContains(colliders, hit.collider);
+    public bool HitOwnCollider(RaycastHit hit) => CollectionUtility.ArrayContains(colliders, hit.collider);
 
     /*
     public float timeScale = 1;

@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class ThrowHandler : MonoBehaviour
     public Rigidbody holding { get; private set; } = null;
     public bool currentlyThrowing { get; private set; } = false;
 
-    public LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(holding.gameObject.layer);
+    public LayerMask attackMask => PhysicsUtility.GetPhysicsLayerMask(holding.gameObject.layer);
 
     private void Awake()
     {
@@ -171,7 +172,7 @@ public class ThrowHandler : MonoBehaviour
     bool ColliderIsException(RaycastHit rh)
     {
         if (user.HitOwnCollider(rh)) return true;
-        if (MiscFunctions.ArrayContains(PhysicsCache.GetChildColliders(holding), rh.collider)) return true;
+        if (CollectionUtility.ArrayContains(PhysicsCache.GetChildColliders(holding), rh.collider)) return true;
         return false;
     }
 

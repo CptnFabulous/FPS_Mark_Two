@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using CptnFabulous.MiscUtility;
 
 // Coroutine must be invoked on an object that exists before the loading screen or new scene is loaded, and continues to exist afterwards.
 
@@ -162,7 +163,7 @@ public class LoadingScreen : MonoBehaviour
     IEnumerator YieldOnAnimation(string triggerName)
     {
         if (animator == null) yield break;
-        bool valueRecognised = MiscFunctions.TrySetAnimatorTrigger(animator, triggerName);
+        bool valueRecognised = AnimationUtility.TrySetAnimatorTrigger(animator, triggerName);
         if (!valueRecognised) yield break;
         yield return new WaitWhile(AnimationInProgress);
     }

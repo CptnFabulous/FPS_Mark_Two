@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,7 +164,7 @@ public class Health : MonoBehaviour
 
         // Multiply the force based on the angle of the normal and relative velocity.
         // This ensures that entities don't take ridiculous amounts of damage just from scrapes.
-        Vector3 normal = MiscFunctions.GetAverageCollisionNormal(collision);
+        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision);
         float dotProduct = Vector3.Dot(relativeVelocity, normal);
         //Debug.Log($"{attachedTo}: Hit dot product = {dotProduct}");
         dotProduct = Mathf.Clamp01(dotProduct);
@@ -297,8 +298,8 @@ public class Health : MonoBehaviour
 
         // If not, check in the parent values
         //attachedTo.DebugLog($"Miniscule collision detected, check for non-kinematic parents. {hitRigidbody}, {incomingRigidbody}, {force}");
-        Rigidbody hit = MiscFunctions.GetComponentInParentWhere<Rigidbody>(hitbox.transform, (rb) => rb.isKinematic == false);
-        Rigidbody incoming = MiscFunctions.GetComponentInParentWhere<Rigidbody>(collision.collider.transform, (rb) => rb.isKinematic == false);
+        Rigidbody hit = ComponentUtility.GetComponentInParentWhere<Rigidbody>(hitbox.transform, (rb) => rb.isKinematic == false);
+        Rigidbody incoming = ComponentUtility.GetComponentInParentWhere<Rigidbody>(collision.collider.transform, (rb) => rb.isKinematic == false);
         bool hitExists = hit != null;
         bool incomingExists = incoming != null;
 
@@ -316,7 +317,7 @@ public class Health : MonoBehaviour
 
         // Check the directions of the relative velocity and collision normal.
         // If the angle is obtuse (dot product is less than zero), the two objects are moving away from each other and therefore not colliding.
-        Vector3 normal = MiscFunctions.GetAverageCollisionNormal(collision);
+        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision);
         float dotProduct = Vector3.Dot(velocity, normal);
         if (dotProduct < 0) return Vector3.zero;
 

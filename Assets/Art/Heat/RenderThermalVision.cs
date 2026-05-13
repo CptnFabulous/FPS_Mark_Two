@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -160,13 +161,13 @@ public class RenderThermalVision : ScriptableRendererFeature
                     // Don't write data for objects that aren't being viewed by the camera
                     int rendererLayer = r.gameObject.layer;
 
-                    bool inCameraCullingMask = MiscFunctions.IsLayerInLayerMask(camera.cullingMask, rendererLayer);
+                    bool inCameraCullingMask = PhysicsUtility.IsLayerInLayerMask(camera.cullingMask, rendererLayer);
                     if (!inCameraCullingMask)
                     {
                         //Debug.Log($"{camera.name}, {renderFeature.name}: {r.name} not rendering, not part of camera");
                         continue;
                     }
-                    bool inAllowedLayers = MiscFunctions.IsLayerInLayerMask(allAllowedLayers, rendererLayer);
+                    bool inAllowedLayers = PhysicsUtility.IsLayerInLayerMask(allAllowedLayers, rendererLayer);
                     if (!inAllowedLayers)
                     {
                         //Debug.Log($"{camera.name}, {renderFeature.name}: {r.name} not rendering, not in allowed layers");
@@ -177,7 +178,7 @@ public class RenderThermalVision : ScriptableRendererFeature
                     //Debug.Log($"{camera.name}, {renderFeature.name}: {r.name} rendering");
 
                     // Determines if renderer should be see-through
-                    bool isSmoke = MiscFunctions.IsLayerInLayerMask(smokeLayers, rendererLayer);
+                    bool isSmoke = PhysicsUtility.IsLayerInLayerMask(smokeLayers, rendererLayer);
                     float alpha = isSmoke ? smokeAlpha : 1f;
 
                     // Generates material based off values, and applies it to each sub-mesh of the renderer

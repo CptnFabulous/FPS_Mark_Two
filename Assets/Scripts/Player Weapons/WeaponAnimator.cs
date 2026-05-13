@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,7 +45,7 @@ public class WeaponAnimator : MonoBehaviour
             if (m is RangedAttack rm)
             {
                 rm.onWindup.AddListener(() => controller.SetTrigger(windupTrigger));
-                rm.onStartStopFiring.AddListener((b) => MiscFunctions.TrySetAnimatorBool(controller, isShooting, b));
+                rm.onStartStopFiring.AddListener((b) => AnimationUtility.TrySetAnimatorBool(controller, isShooting, b));
             }
         }
 
@@ -66,13 +67,13 @@ public class WeaponAnimator : MonoBehaviour
     private void Update()
     {
         //controller.SetBool(active, weaponToAnimate.isActiveAndEnabled);
-        MiscFunctions.TrySetAnimatorInteger(controller, mode, weaponToAnimate.currentModeIndex);
+        AnimationUtility.TrySetAnimatorInteger(controller, mode, weaponToAnimate.currentModeIndex);
 
         RangedAttack rm = weaponToAnimate.CurrentMode as RangedAttack;
         if (rm != null)
         {
             bool isReloading = rm.currentlyReloading;
-            MiscFunctions.TrySetAnimatorBool(controller, reloadActiveString, isReloading);
+            AnimationUtility.TrySetAnimatorBool(controller, reloadActiveString, isReloading);
         }
     }
 

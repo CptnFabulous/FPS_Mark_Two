@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using CptnFabulous.MiscUtility;
 
 public class StateController : StateFunction
 {
@@ -16,7 +17,7 @@ public class StateController : StateFunction
     public StateFunction currentState => current;
     public int stateIndex
     {
-        get => MiscFunctions.IndexOfInArray(states, currentState);
+        get => CollectionUtility.IndexOfInArray(states, currentState);
         set
         {
             value = Mathf.Clamp(value, 0, states.Length - 1);
@@ -141,7 +142,8 @@ public class StateController : StateFunction
         // Check that the current state actually needs to be changed
         if (newState != currentState)
         {
-            rootEntity.DebugLog($"{root}: switching from {current} to {newState}");
+            //rootEntity.DebugLog($"{root}: switching from {current} to {newState}");
+            rootEntity.DebugLog($"Switching from {current} to {newState}");
             // Finish and disable the currently active state
             yield return ExitCurrentStateIfPresentAndEnabled();
             // Assign current and previous states
@@ -158,7 +160,7 @@ public class StateController : StateFunction
         // The parent state shouldn't be able to accidentally disable the current one by iterating downwards, as the coroutine will realise 'ExitCurrentState' coroutine will realise is set to not do anything if the desired state is already active
         if (controller != null)
         {
-            rootEntity.DebugLog($"{root}: switching over parent controllers in hierarchy");
+            //rootEntity.DebugLog($"{root}: switching over parent controllers in hierarchy");
             yield return controller.TrySwitchState(this);
         }
 

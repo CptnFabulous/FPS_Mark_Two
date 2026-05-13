@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,18 +11,10 @@ public partial class VoxelMesh : MonoBehaviour
     static Vector3[] directionsOfDensityChangeAcrossGridSpace = new Vector3[12];
     static int[] edgeWhereDensityChangeOccurred = new int[12];
 
-
-
-
-
-
-
-    
-
     public static void DualContouring(Vector3Int dimensions, System.Func<Vector3Int, float> obtainValueAtPosition, System.Func<Vector3, float> obtainSignedDistanceField)
     {
         // Add faces for each grid position
-        MiscFunctions.IterateThroughGrid(dimensions, (coords) =>
+        CollectionUtility.IterateThroughGrid(dimensions, (coords) =>
         {
             // Get coordinates of grid space, as an easily modifiable vector
 
@@ -49,10 +42,10 @@ public partial class VoxelMesh : MonoBehaviour
         float valueAtPoint = obtainValueAtPosition.Invoke(position);
 
         //Vector3Int coords = new Vector3Int(x, y, z);
-        Vector3 vertexSpaceMin = position - globalVertexOffset;
+        Vector3 vertexSpaceMin = position - VoxelUtility.globalVertexOffset;
         for (int c = 0; c < 8; c++)
         {
-            Vector3 possibleCorner = vertexSpaceMin + corners[c];
+            Vector3 possibleCorner = vertexSpaceMin + VoxelUtility.corners[c];
             valuesAtCornersOfGridSpace[c] = signedDistanceField.Invoke(possibleCorner);
         }
 
@@ -61,10 +54,10 @@ public partial class VoxelMesh : MonoBehaviour
         {
             // 12 iterations with 2 sets of coordinates, for the corners we calculated.
             // Each set of 2 corners represents an edge around the grid space.
-            int corner1 = edges[e].Item1;
-            int corner2 = edges[e].Item2;
-            Vector3 cornerPos1 = vertexSpaceMin + corners[corner1];
-            Vector3 cornerPos2 = vertexSpaceMin + corners[corner2];
+            int corner1 = VoxelUtility.edges[e].Item1;
+            int corner2 = VoxelUtility.edges[e].Item2;
+            Vector3 cornerPos1 = vertexSpaceMin + VoxelUtility.corners[corner1];
+            Vector3 cornerPos2 = vertexSpaceMin + VoxelUtility.corners[corner2];
             Debug.DrawLine(cornerPos1, cornerPos2, Color.gray);
 
             // Compare the values we calculated at those corners.
@@ -78,7 +71,7 @@ public partial class VoxelMesh : MonoBehaviour
             bool fillMismatch = (v1 > 0) != (v2 > 0);
             if (!fillMismatch) continue;
 
-            Vector3 pointOfDensityChange = corners[corner1]; // We could use corner1 or corner2, as the only different value is being overwritten anyway.
+            Vector3 pointOfDensityChange = VoxelUtility.corners[corner1]; // We could use corner1 or corner2, as the only different value is being overwritten anyway.
 
 
             // Should I instead calculate this based on each vertex instead of each grid space, and get the set-in-stone grid space values as the corners?
@@ -172,10 +165,10 @@ public partial class VoxelMesh : MonoBehaviour
         // I think I'd need 3 3D arrays, one for each axis. Each array would need to be 1 unit wider on each side compared to the actual grid.
 
         //Vector3Int coords = new Vector3Int(x, y, z);
-        Vector3 vertexSpaceMin = position - globalVertexOffset;
+        Vector3 vertexSpaceMin = position - VoxelUtility.globalVertexOffset;
         for (int c = 0; c < 8; c++)
         {
-            Vector3Int gridPos = Vector3Int.RoundToInt(vertexSpaceMin + corners[c]);
+            Vector3Int gridPos = Vector3Int.RoundToInt(vertexSpaceMin + VoxelUtility.corners[c]);
             valuesAtCornersOfGridSpace[c] = obtainValueAtPosition.Invoke(gridPos);
         }
 
@@ -188,8 +181,8 @@ public partial class VoxelMesh : MonoBehaviour
         {
             // 12 iterations with 2 sets of coordinates, for the corners we calculated.
             // Each set of 2 corners represents an edge around the grid space.
-            int corner1 = edges[e].Item1;
-            int corner2 = edges[e].Item2;
+            int corner1 = VoxelUtility.edges[e].Item1;
+            int corner2 = VoxelUtility.edges[e].Item2;
             // Compare the values we calculated at those corners.
             float v1 = valuesAtCornersOfGridSpace[corner1];
             float v2 = valuesAtCornersOfGridSpace[corner2];
@@ -199,10 +192,10 @@ public partial class VoxelMesh : MonoBehaviour
 
             //Debug.Log($"{position}, {axisBeingChecked}, frame {Time.frameCount}");
 
-            Debug.DrawLine(vertexSpaceMin + corners[corner1], vertexSpaceMin + corners[corner2], Color.gray);
+            Debug.DrawLine(vertexSpaceMin + VoxelUtility.corners[corner1], vertexSpaceMin + VoxelUtility.corners[corner2], Color.gray);
             if (!fillMismatch) continue;
 
-            Vector3 pointOfDensityChange = corners[corner1]; // We could use corner1 or corner2, as the only different value is being overwritten anyway.
+            Vector3 pointOfDensityChange = VoxelUtility.corners[corner1]; // We could use corner1 or corner2, as the only different value is being overwritten anyway.
 
             bool startIsFilled = v1 > v2;
 
@@ -225,7 +218,7 @@ public partial class VoxelMesh : MonoBehaviour
             numOfChanges++;
 
             int filledCorner = startIsFilled ? corner1 : corner2;
-            Debug.DrawLine(vertexSpaceMin + corners[filledCorner], vertexSpaceMin + pointOfDensityChange, Color.blue);
+            Debug.DrawLine(vertexSpaceMin + VoxelUtility.corners[filledCorner], vertexSpaceMin + pointOfDensityChange, Color.blue);
             Debug.DrawRay(pointToCheck, normal, Color.green);
         }
 
@@ -594,7 +587,7 @@ public partial class VoxelMesh : MonoBehaviour
 
     static void CalculateDualContouredMeshFromVertexData(Vector3Int dimensions/*, System.Func<Vector3Int, float> obtainValueAtPosition*/)
     {
-        MiscFunctions.IterateThroughGrid(dimensions, (coords) =>
+        CollectionUtility.IterateThroughGrid(dimensions, (coords) =>
         {
             // Check on each axis if adjacent faces need to be created
             Vector3Int coordsMin = coords - Vector3Int.one;
@@ -618,10 +611,10 @@ public partial class VoxelMesh : MonoBehaviour
 
                 // Check if there are enough vertices at this point, on this axis, to make a face
                 bool enoughVertices = true;
-                int[] cornerIndices = faceCornersForAdjacentSquares[faceCornersIndex];
+                int[] cornerIndices = VoxelUtility.faceCornersForAdjacentSquares[faceCornersIndex];
                 for (int c = 0; c < 4; c++)
                 {
-                    Vector3Int cornerPosition = coordsMin + corners[cornerIndices[c]];
+                    Vector3Int cornerPosition = coordsMin + VoxelUtility.corners[cornerIndices[c]];
 
                     //bool vertexFound = vertexDictionary.TryGetValue(cornerPosition, out int order);
                     //enoughVertices &= vertexFound;

@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -102,7 +103,7 @@ public class ADSHandler : MonoBehaviour
     void LerpADSCosmetics(float timer)
     {
         // Rotate gun so the reticle axis transform is parallel with the player's aim direction
-        Quaternion relativeRotation = MiscFunctions.FromToRotation(adsData.modelPivot.rotation, adsData.reticleAxis.rotation);
+        Quaternion relativeRotation = TransformUtility.DifferenceBetweenRotations(adsData.reticleAxis.rotation, adsData.modelPivot.rotation);
         Quaternion rotation = lookControls.upperBody.rotation * Quaternion.Inverse(relativeRotation);
         adsData.modelOrientationTransform.rotation = Quaternion.Lerp(adsData.hipFireOrientation.rotation, rotation, timer);
 
@@ -114,7 +115,7 @@ public class ADSHandler : MonoBehaviour
             // Vector3.SmoothDamp is used on the euler angles for clean transitions.
             // If the smoothdamp is applied directly to the gun rotation, it drags too far behind.
             // Applying the base gun rotation straight then using smoothdamp on just the sway value is better at keeping the rotation within specified boundaries.
-            Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(lookControls.rotationVelocity, playerMovementTransform);
+            Quaternion localRotationVelocity = TransformUtility.WorldToLocalRotation(lookControls.rotationVelocity, playerMovementTransform);
             float intensity = Mathf.Clamp01(localRotationVelocity.eulerAngles.magnitude / adsData.speedForMaxSway);
             Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0); // Only record X and Y values to prevent awkward shifting
             swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -adsData.lookSwayDegrees, intensity);

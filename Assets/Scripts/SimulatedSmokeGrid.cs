@@ -36,7 +36,7 @@ public class SimulatedSmokeGrid : MonoBehaviour
     {
         Debug.Log($"Generating smoke grid, dimensions = {chunkGridSize}");
         _chunks = new SmokeChunk[chunkGridSize.x, chunkGridSize.y, chunkGridSize.z];
-        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) =>
+        CollectionUtility.IterateThroughGrid(chunkGridSize, (x, y, z) =>
         {
             Vector3Int gridPos = terrainData.ChunkToGridCoords(new Vector3Int(x, y, z), Vector3Int.zero);
             Vector3 worldPos = terrainData.GridToWorldPosition(gridPos);
@@ -58,7 +58,7 @@ public class SimulatedSmokeGrid : MonoBehaviour
         }
 
         // TO DO: update mesh
-        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].UpdateMesh());
+        CollectionUtility.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].UpdateMesh());
     }
     void SimulationStep()
     {
@@ -69,9 +69,9 @@ public class SimulatedSmokeGrid : MonoBehaviour
         // TO DO: move smoke based on velocity
 
         // Prep for simulation step again (this needs to be done each time an operation is performed that affects multiple spaces/chunks at once)
-        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].PrepareForStep());
+        CollectionUtility.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].PrepareForStep());
         // Dissipate smoke
-        MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].SpreadStep());
+        CollectionUtility.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].SpreadStep());
     }
 
     public bool IntroduceSmoke(Vector3 worldPosition, float amount)
@@ -81,7 +81,7 @@ public class SimulatedSmokeGrid : MonoBehaviour
         // Find appropriate chunk for that world position (if it exists)
         Vector3Int gridPos = terrainData.WorldToGridPosition(worldPosition);
         terrainData.GridToChunkCoords(gridPos, out Vector3Int chunkCoords, out Vector3Int coordsInChunk);
-        if (MiscFunctions.IsIndexOutsideArray(chunkGridSize, chunkCoords)) return false;
+        if (CollectionUtility.IsIndexOutsideArray(chunkGridSize, chunkCoords)) return false;
 
         // Ensure position isn't occupied by terrain
         if (terrainData.containsTerrain[gridPos.x, gridPos.y, gridPos.z]) return false;
@@ -93,5 +93,5 @@ public class SimulatedSmokeGrid : MonoBehaviour
         return true;
     }
     
-    public void Clear() => MiscFunctions.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].Clear());
+    public void Clear() => CollectionUtility.IterateThroughGrid(chunkGridSize, (x, y, z) => chunks[x, y, z].Clear());
 }

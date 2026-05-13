@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,10 +34,10 @@ public abstract class ResourceDisplay : MonoBehaviour
 
         if (animationController != null)
         {
-            MiscFunctions.TrySetAnimatorFloat(animationController, current, values.current);
-            MiscFunctions.TrySetAnimatorBool(animationController, critical, values.isCritical);
-            MiscFunctions.TrySetAnimatorBool(animationController, full, values.isFull);
-            MiscFunctions.TrySetAnimatorBool(animationController, depleted, values.isDepleted);
+            AnimationUtility.TrySetAnimatorFloat(animationController, current, values.current);
+            AnimationUtility.TrySetAnimatorBool(animationController, critical, values.isCritical);
+            AnimationUtility.TrySetAnimatorBool(animationController, full, values.isFull);
+            AnimationUtility.TrySetAnimatorBool(animationController, depleted, values.isDepleted);
         }
     }
 }

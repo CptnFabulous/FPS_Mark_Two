@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ public class SmokeChunk : MonoBehaviour
         parentGrid = GetComponentInParent<SimulatedSmokeGrid>();
         grid = new float[size.x, size.y, size.z];
         _oldGrid = new float[size.x, size.y, size.z];
-        _chunkPositionInGrid = MiscFunctions.IndexOfIn3DArray(parentGrid.chunks, this);
+        _chunkPositionInGrid = CollectionUtility.IndexOfIn3DArray(parentGrid.chunks, this);
 
         cloudMesh = GetComponent<VoxelMesh>();
     }
@@ -269,7 +270,7 @@ public class SmokeChunk : MonoBehaviour
             // If space is not part of the terrain grid, treat it as empty.
             // If a space is occupied by solid terrain, don't allow smoke in
             Vector3Int neighbourOnGrid = terrainData.ChunkToGridCoords(chunkPositionInGrid, neighbour);
-            bool outside = MiscFunctions.IsIndexOutsideArray(terrainData.gridSize, neighbourOnGrid);
+            bool outside = CollectionUtility.IsIndexOutsideArray(terrainData.gridSize, neighbourOnGrid);
             if (!outside && terrainData.containsTerrain[neighbourOnGrid.x, neighbourOnGrid.y, neighbourOnGrid.z]) continue;
 
             // Add to list of valid neighbours
@@ -339,7 +340,7 @@ public class SmokeChunk : MonoBehaviour
         positionInChunk = Vector3Int.zero;
 
         // If space is still inside chunk, just return this chunk and the input position
-        if (!MiscFunctions.IsIndexOutsideArray(size, neighbouringSpace))
+        if (!CollectionUtility.IsIndexOutsideArray(size, neighbouringSpace))
         {
             chunkContaining = this;
             positionInChunk = neighbouringSpace;
@@ -351,13 +352,13 @@ public class SmokeChunk : MonoBehaviour
         terrainData.GridToChunkCoords(gridCoords, out Vector3Int chunkPosition, out positionInChunk);
 
         // Do nothing if chunk cannot be found (on edge of grid)
-        if (MiscFunctions.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) return;
+        if (CollectionUtility.IsIndexOutsideArray(parentGrid.chunkGridSize, chunkPosition)) return;
 
         // Find correct chunk and introduce smoke there instead
         chunkContaining = parentGrid.chunks[chunkPosition.x, chunkPosition.y, chunkPosition.z];
     }
 
-    void IterateThroughGrid(System.Action<int, int, int> action) => MiscFunctions.IterateThroughGrid(size, action);
+    void IterateThroughGrid(System.Action<int, int, int> action) => CollectionUtility.IterateThroughGrid(size, action);
 
 
 
@@ -430,7 +431,7 @@ public class SmokeChunk : MonoBehaviour
         edgePoints.Clear();
 
         // For each cell in the grid, check if it has a value greater than zero but is next to a square with a value of zero.
-        MiscFunctions.IterateThroughGrid(dimensions, (coords) =>
+        CollectionUtility.IterateThroughGrid(dimensions, (coords) =>
         {
             float cellDensity = obtainValue.Invoke(coords);
             //Debug.Log($"Checking cell {coords}, {cellDensity}");
@@ -442,8 +443,8 @@ public class SmokeChunk : MonoBehaviour
                 int minusIndex = i * 2;
                 int plusIndex = minusIndex + 1;
 
-                float densityAtMinus = obtainValue.Invoke(coords + VoxelMesh.adjacencies[minusIndex]);
-                float densityAtPlus = obtainValue.Invoke(coords + VoxelMesh.adjacencies[plusIndex]);
+                float densityAtMinus = obtainValue.Invoke(coords + VoxelUtility.adjacencies[minusIndex]);
+                float densityAtPlus = obtainValue.Invoke(coords + VoxelUtility.adjacencies[plusIndex]);
 
                 bool minusExists = densityAtMinus > 0;
                 bool plusExists = densityAtPlus > 0;

@@ -1,9 +1,9 @@
+using CptnFabulous.MiscUtility;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.UI.Image;
 
 public class DiegeticLightSource : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class DiegeticLightSource : MonoBehaviour
 
     Light l;
 
-    Light lightSource => l ??= GetComponent<Light>();
+    Light lightSource => ComponentUtility.AutoCache(ref l, gameObject);
 
     private void Awake() => sourcesInScene.Add(this);
     private void OnDestroy() => sourcesInScene.Remove(this);
@@ -35,7 +35,7 @@ public class DiegeticLightSource : MonoBehaviour
 
         if (lightSource.type == LightType.Spot)
         {
-            direction = MiscFunctions.ClampDirection(direction, transform.forward, lightSource.spotAngle / 2);
+            direction = TransformUtility.ClampDirection(direction, transform.forward, lightSource.spotAngle / 2);
         }
         else if (lightSource.type == LightType.Directional)
         {
@@ -50,7 +50,7 @@ public class DiegeticLightSource : MonoBehaviour
         //bool lightReachesTarget = Physics.Raycast(origin, direction, out RaycastHit rh, range, lightSource.cullingMask) && rh.collider.GetComponentInParent<Entity>() == targetEntity;
         if (lightReachesTarget == false) return 0;
 
-        return lightSource.intensity * MiscFunctions.InverseSquareValueMultiplier(direction.magnitude);
+        return lightSource.intensity * MathUtility.InverseSquareValueMultiplier(direction.magnitude);
     }
     public static float EntityIllumination(Entity targetEntity)
     {

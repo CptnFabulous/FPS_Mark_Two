@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using CptnFabulous.MiscUtility;
 
 public class IndexStateSwitcher : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class IndexStateSwitcher : MonoBehaviour
             {
                 sprites[i] = states[i].sprite;
             }
-            radialMenu.Refresh(sprites, () => MiscFunctions.IndexOfInArray(controller.states, controller.currentState));
+            radialMenu.Refresh(sprites, () => CollectionUtility.IndexOfInArray(controller.states, controller.currentState));
             radialMenuInput.onActionPerformed.AddListener((ctx) => radialMenuGroup.ProcessSingleMenuInput(radialMenuIndex, ctx));
             radialMenu.onValueChanged.AddListener((i) => modeNameText.text = controller.states[i].name);
             radialMenu.onValueConfirmed.AddListener(SwitchMode);

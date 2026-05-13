@@ -65,7 +65,7 @@ public static class AIPathing
         NavMeshAgent agent = ai.agent;
 
         List<AIGridPoints.GridPoint> points = AIGridPoints.Current.GetPoints(positionToCheckFrom, 0, distance, true);
-        MiscFunctions.ShuffleList(points);
+        CollectionUtility.ShuffleList(points);
         foreach (AIGridPoints.GridPoint point in points)
         {
             // Recreate the character's bounds, at the cover spot being checked

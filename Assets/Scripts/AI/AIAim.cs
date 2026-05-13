@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -122,10 +123,10 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
                 // Draw total range covered by sweep
                 Gizmos.color = Color.yellow;
-                MiscFunctions.DrawAngledGizmoFrustum(headPos, sweepAngles.x, sweepAngles.y, maxRange, minRange);
+                DebugUtility.DrawAngledGizmoFrustum(headPos, sweepAngles.x, sweepAngles.y, maxRange, minRange);
                 // Draw range the AI needs to turn in
                 Gizmos.color = Color.blue;
-                MiscFunctions.DrawAngledGizmoFrustum(headPos, horizontalSweepDistance, verticalSweepDistance, maxRange, minRange);
+                DebugUtility.DrawAngledGizmoFrustum(headPos, horizontalSweepDistance, verticalSweepDistance, maxRange, minRange);
 
                 // Draw points to shift towards (don't proceed if there aren't any calculated)
                 if (enabled && lookTargetAngles != null)

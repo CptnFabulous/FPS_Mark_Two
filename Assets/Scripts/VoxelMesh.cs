@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,7 +57,7 @@ public partial class VoxelMesh : MonoBehaviour
 
         Gizmos.matrix = transform.localToWorldMatrix;
 
-        MiscFunctions.IterateThroughGrid(dimensions, (coords) =>
+        CollectionUtility.IterateThroughGrid(dimensions, (coords) =>
         {
             float value = obtainValue.Invoke(coords);
 
@@ -122,66 +123,6 @@ public partial class VoxelMesh : MonoBehaviour
 
     #region Mesh generation
 
-    // Static readonly values for stuff that will never change, to save processing power
-    public static readonly Vector3Int[] adjacencies = new Vector3Int[6]
-    {
-        Vector3Int.left,
-        Vector3Int.right,
-        Vector3Int.down,
-        Vector3Int.up,
-        Vector3Int.back,
-        Vector3Int.forward
-    };
-    public static readonly int[][] faceCornersForAdjacentSquares = new int[6][]
-    {
-        // Ints need to be oriented top left, top right, bottom left, bottom right
-        new int[] { 3, 1, 2, 0 }, // Left
-        new int[] { 4, 5, 6, 7 }, // Right
-        new int[] { 0, 4, 2, 6 }, // Down
-        new int[] { 1, 3, 5, 7 }, // Up
-        new int[] { 0, 1, 4, 5 }, // Backward
-        new int[] { 7, 3, 6, 2 }, // Forward
-    };
-    public static readonly Vector3Int[] corners = new Vector3Int[8]
-    {
-        //    3 -------- 7
-        //   /|         /|
-        //  / |        / |
-        // 1 -------- 5  |
-        // |  |       |  |
-        // Y  2 ------|- 6
-        // | Z        | /
-        // |/         |/
-        // 0 --X----- 4
-        new Vector3Int(0, 0, 0),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(0, 1, 1),
-        new Vector3Int(1, 0, 0),
-        new Vector3Int(1, 1, 0),
-        new Vector3Int(1, 0, 1),
-        new Vector3Int(1, 1, 1),
-    };
-
-    public static readonly (int, int)[] edges = new (int, int)[12]
-    {
-        // The second corner will always be after the first corner on whatever axis they run across.
-        (0, 4), // X, 0, 0
-        (1, 5), // X, 1, 0
-        (2, 6), // X, 0, 1
-        (3, 7), // X, 1, 1
-        (0, 1), // 0, Y, 0
-        (4, 5), // 1, Y, 0
-        (2, 3), // 0, Y, 1
-        (6, 7), // 1, Y, 1
-        (0, 2), // 0, 0, Z
-        (4, 6), // 1, 0, Z
-        (1, 3), // 0, 1, Z
-        (5, 7), // 1, 1, Z
-    };
-
-    static readonly Vector3 globalVertexOffset = new Vector3(0.5f, 0.5f, 0.5f);
-
     // These values aren't kept once the array is complete, but the arrays themselves are to reduce garbage collection
     static float[] valuesOfNeighbours = new float[6];
     static int[] cornerVertexListPositions = new int[4]; // The array positions of the four vertices used to form a face.
@@ -222,7 +163,7 @@ public partial class VoxelMesh : MonoBehaviour
     static void GenerateCubeMesh(Vector3Int dimensions, System.Func<Vector3Int, float> obtainValueAtPosition)
     {
         // Add faces for each grid position
-        MiscFunctions.IterateThroughGrid(dimensions, (x, y, z) =>
+        CollectionUtility.IterateThroughGrid(dimensions, (x, y, z) =>
         {
             // Get coordinates of grid space, as an easily modifiable vector
             Vector3Int coords = new Vector3Int(x, y, z);
@@ -235,7 +176,7 @@ public partial class VoxelMesh : MonoBehaviour
             int numberOfNeighbours = 0;
             for (int d = 0; d < 6; d++)
             {
-                Vector3Int neighbour = coords + adjacencies[d];
+                Vector3Int neighbour = coords + VoxelUtility.adjacencies[d];
                 float value = obtainValueAtPosition(neighbour);
                 valuesOfNeighbours[d] = value; // These values are overwritten for each grid space, but the array itself is reused to avoid garbage collection.
                 if (value > 0) numberOfNeighbours++;
@@ -255,7 +196,7 @@ public partial class VoxelMesh : MonoBehaviour
                     // Use those indices to get the correct offsets for the desired vertex positions.
                     // Vertex grid dimensions are equivalent to value grid dimensions plus one on each side
                     // To get the vertices on either side of a grid position on an axis, get that axis, then plus 1 for the other.
-                    Vector3Int vertexGridPos = coords + corners[faceCornersForAdjacentSquares[n][c]];
+                    Vector3Int vertexGridPos = coords + VoxelUtility.corners[VoxelUtility.faceCornersForAdjacentSquares[n][c]];
 
                     /*
                     // Get the order of this vertex in the list. If it doesn't exist, add it.
@@ -276,7 +217,7 @@ public partial class VoxelMesh : MonoBehaviour
                     {
                         indexOrder = vertexDictionary.Count;
                         vertexDictionary.Add(vertexGridPos, indexOrder);
-                        vertices[indexOrder] = vertexGridPos - globalVertexOffset;
+                        vertices[indexOrder] = vertexGridPos - VoxelUtility.globalVertexOffset;
                         vertexOffsets[indexOrder] = Vector3.zero;
                     }
 
@@ -351,7 +292,7 @@ public partial class VoxelMesh : MonoBehaviour
             Debug.DrawRay(vertices[v], vertexNormals[v], Color.green);
             for (int i = 0; i < 6; i++)
             {
-                Debug.DrawRay(vertices[v], 0.1f * (Vector3)adjacencies[i], Color.blue);
+                Debug.DrawRay(vertices[v], 0.1f * (Vector3)VoxelUtility.adjacencies[i], Color.blue);
             }
         }
 
@@ -427,7 +368,7 @@ public partial class VoxelMesh : MonoBehaviour
 
         for (int i = 0; i < 8; i++)
         {
-            Vector3Int coords = min + corners[i];
+            Vector3Int coords = min + VoxelUtility.corners[i];
             valuesAroundVertex[i] = obtainValueAtGridPoint.Invoke(coords);
             //Debug.Log($"Midpoint check: {coords}, {valuesAroundVertex[i]}");
         }
@@ -492,7 +433,7 @@ public partial class VoxelMesh : MonoBehaviour
     {
         return NormalFromDerivatives(pos, (v) =>
         {
-            return value - MiscFunctions.CubeRoot((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+            return value - MathUtility.CubeRoot((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
         }, derivative);
     }
 

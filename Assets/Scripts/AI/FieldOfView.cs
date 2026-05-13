@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -178,8 +179,8 @@ public class FieldOfView : MonoBehaviour
         Vector3 targetUp = targetDirection * Vector3.up;
 
         // Calculate dimensions of sweep zone, relative to the view direction
-        int horizontalAxisIndex = MiscFunctions.ClosestAxis(targetRight);
-        int verticalAxisIndex = MiscFunctions.ClosestAxis(targetUp);
+        int horizontalAxisIndex = TransformUtility.ClosestAxis(targetRight);
+        int verticalAxisIndex = TransformUtility.ClosestAxis(targetUp);
         float zoneWidth = b.size[horizontalAxisIndex];
         float zoneHeight = b.size[verticalAxisIndex];
 

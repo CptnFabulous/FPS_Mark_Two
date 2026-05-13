@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -133,7 +134,7 @@ public class PlayerWalkCosmetics : MonoBehaviour
         #region Torso sway
         // Adds cosmetic sway to the player's hands and held items when they turn and shift their aim.
 
-        Quaternion localRotationVelocity = MiscFunctions.WorldToLocalRotation(controller.lookControls.rotationVelocity, controller.transform);
+        Quaternion localRotationVelocity = TransformUtility.WorldToLocalRotation(controller.lookControls.rotationVelocity, controller.transform);
         float intensity = Mathf.Clamp01(localRotationVelocity.eulerAngles.magnitude / speedForMaxSway);
         Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0);
         swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -lookSwayDegrees, intensity);

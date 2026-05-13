@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ public class SpikeJoint : MonoBehaviour
         if (activeJoints.Find((x) => x.Item1 == target) != null) return;
         //if (activeJoints.Find((x) => x.connectedBody == rb) != null) return;
 
-        if (MiscFunctions.IsLayerInLayerMask(impalable, target.gameObject.layer) == false) return;
+        if (PhysicsUtility.IsLayerInLayerMask(impalable, target.gameObject.layer) == false) return;
 
         // Check that a rigidbody is present, and not already pinned to this joint
         if (rb == null) return;

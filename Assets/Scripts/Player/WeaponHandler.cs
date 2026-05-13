@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -163,12 +164,12 @@ public class WeaponHandler : MonoBehaviour
         // Switch either your weapon, or the firing mode on your current weapon
         if (quickSwitchModes && CurrentWeapon != null)
         {
-            int newIndex = MiscFunctions.LoopIndex(CurrentWeapon.currentModeIndex + increment, CurrentWeapon.modes.Length);
+            int newIndex = MathUtility.LoopIndex(CurrentWeapon.currentModeIndex + increment, CurrentWeapon.modes.Length);
             StartCoroutine(CurrentWeapon.SwitchMode(newIndex));
         }
         else if (equippedWeapons.Count > 0) // Don't allow switching if there's nothing to switch to
         {
-            int newIndex = MiscFunctions.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Count);
+            int newIndex = MathUtility.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Count);
             StartCoroutine(SwitchWeapon(newIndex));
         }
     }

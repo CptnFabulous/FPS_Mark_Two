@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +26,7 @@ public class PropCarryingHandler : WeaponMode
 
     WeaponHandler weaponHandler => throwHandler.user.weaponHandler;
     OffhandAttackHandler offhandAttackHandler => weaponHandler.offhandAttacks;
-    public override LayerMask attackMask => MiscFunctions.GetPhysicsLayerMask(heldItem.gameObject.layer);
+    public override LayerMask attackMask => PhysicsUtility.GetPhysicsLayerMask(heldItem.gameObject.layer);
     public override string hudInfo => null;
 
     private void Awake()

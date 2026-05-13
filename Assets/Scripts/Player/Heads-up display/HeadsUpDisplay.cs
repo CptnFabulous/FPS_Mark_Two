@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using CptnFabulous.MiscUtility;
 
 public class HeadsUpDisplay : MonoBehaviour
 {
@@ -62,7 +63,7 @@ public class HeadsUpDisplay : MonoBehaviour
         Vector3 meterPosition = entityBounds.center + (camera.transform.up * entityBounds.extents.magnitude);
 
         Vector3 meterScreenPosition = camera.WorldToScreenPoint(meterPosition);
-        Vector3 canvasPosition = MiscFunctions.ScreenToAnchoredPosition(meterScreenPosition, enemyHealthMeter.rectTransform, rt);//MiscFunctions.ScreenToRectTransformSpace(meterScreenPosition, rt);
+        Vector3 canvasPosition = TransformUtility.ScreenToAnchoredPosition(meterScreenPosition, enemyHealthMeter.rectTransform, rt);//MiscFunctions.ScreenToRectTransformSpace(meterScreenPosition, rt);
         enemyHealthMeter.rectTransform.anchoredPosition = canvasPosition;
         enemyHealthMeter.obtainValues = () => enemyHealth.data;
         //enemyHealthMeter.Refresh(enemyHealth.data);

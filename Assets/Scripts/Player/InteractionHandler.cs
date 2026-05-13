@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,7 +64,7 @@ public class InteractionHandler : MonoBehaviour
         else if (targetedPhysicsProp != null)
         {
             canInteractWithTarget = true;
-            targetBounds = MiscFunctions.CombinedBounds(PhysicsCache.GetChildColliders(targetedPhysicsProp));
+            targetBounds = TransformUtility.CombinedBounds(PhysicsCache.GetChildColliders(targetedPhysicsProp));
         }
     }
 
@@ -81,7 +82,7 @@ public class InteractionHandler : MonoBehaviour
         rb = null;
 
         // Check that the target object can be seen on screen.
-        bool insideCamera = MiscFunctions.PointIsInsideCamera(referenceCamera, c.bounds.center);
+        bool insideCamera = TransformUtility.PointIsInsideCamera(referenceCamera, c.bounds.center);
         if (!insideCamera) return false;
 
         // Check for either an Interactable or Rigidbody, ignore if not found

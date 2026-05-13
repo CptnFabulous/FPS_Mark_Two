@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
     public CapsuleCollider collider => controlling.capsuleCollider;
     public Rigidbody rigidbody => controlling.rigidbody;
-    public LayerMask collisionMask => MiscFunctions.GetPhysicsLayerMask(collider.gameObject.layer);
+    public LayerMask collisionMask => PhysicsUtility.GetPhysicsLayerMask(collider.gameObject.layer);
     public bool isGrounded => groundingHandler.isGrounded;
 
     public Vector3 localVelocity => rigidbody.transform.InverseTransformDirection(rigidbody.velocity);

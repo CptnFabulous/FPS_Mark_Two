@@ -76,7 +76,7 @@ public static class AIAction
     public static bool LineOfSightToTarget(Vector3 origin, Vector3 direction, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, QueryTriggerInteraction detectTriggers, System.Func<RaycastHit, bool> isException)
     {
         bool raycastHit = RaycastWithExceptions(origin, direction, out hit, viewRange, viewDetection, isException, detectTriggers);
-        return raycastHit && MiscFunctions.ArrayContains(targetColliders, hit.collider);
+        return raycastHit && CollectionUtility.ArrayContains(targetColliders, hit.collider);
     }
     
     public static Vector3 HypotheticalLookOrigin(AI ai, Vector3 positionToLookFrom)

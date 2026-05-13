@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -101,7 +102,7 @@ public class DiegeticAudioListener : MonoBehaviour
         }
 
         // Check if the sound is loud enough for the listener to hear it. If not, cancel
-        heardDecibels = decibels * MiscFunctions.InverseSquareValueMultiplier(travelDistance);
+        heardDecibels = decibels * MathUtility.InverseSquareValueMultiplier(travelDistance);
         bool canHear = heardDecibels >= minVolumeToHear;
 
         //rootEntity.DebugLog($"Heard {sound} from {source} = {canHear}. Outgoing volume = {decibels}. Incoming volume {heardDecibels} >= {minVolumeToHear}");

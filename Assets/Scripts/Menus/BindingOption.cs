@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using CptnFabulous.MiscUtility;
 
 public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandler
 {
@@ -34,11 +35,11 @@ public class BindingOption : MonoBehaviour//, ISelectHandler, IPointerEnterHandl
         bindingIndex = newBindingIndex;
         baseMenu = menu;
 
-        string displayBindingGroups = MiscFunctions.FormatNameForPresentation(binding.groups, bindingPunctuationToAddSpaces, bindingPunctuationToRemove);
+        string displayBindingGroups = TextUtility.FormatNameForPresentation(binding.groups, bindingPunctuationToAddSpaces, bindingPunctuationToRemove);
 
         if (binding.isPartOfComposite)
         {
-            string displayName = MiscFunctions.FormatNameForPresentation(binding.name);
+            string displayName = TextUtility.FormatNameForPresentation(binding.name);
             bindingName.text = displayName + " (" + displayBindingGroups + ")";
         }
         else

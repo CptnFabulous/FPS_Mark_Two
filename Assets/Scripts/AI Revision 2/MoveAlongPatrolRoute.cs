@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,7 +72,7 @@ public class MoveAlongPatrolRoute : AIStateFunction
             }
             else // Otherwise, just loop it
             {
-                newIndex = MiscFunctions.LoopIndex(newIndex, length);
+                newIndex = MathUtility.LoopIndex(newIndex, length);
             }
         }
 

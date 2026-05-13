@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using CptnFabulous.MiscUtility;
 
 public class GUIButtonPrompt : MonoBehaviour
 {
@@ -107,7 +108,7 @@ public class GUIButtonPrompt : MonoBehaviour
         else // Otherwise default to key graphic
         {
             graphic.sprite = keyboardKey;
-            keyNameText.text = MiscFunctions.FormatNameForPresentation(path);
+            keyNameText.text = TextUtility.FormatNameForPresentation(path);
             // I might be able to use InputAction.GetBindingDisplayString(), but I don't fully understand how it works.
         }
     }

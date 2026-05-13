@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,7 +59,7 @@ public class AIGridPoints : MonoBehaviour
     public Vector3 floorNormal => floorRotation * Vector3.up;
 
 
-    float coverCheckRaycastDistance => MiscFunctions.LengthOfDiagonal(gridSpacing, gridSpacing);
+    float coverCheckRaycastDistance => MathUtility.LengthOfDiagonal(gridSpacing, gridSpacing);
     public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
     #endregion
 

@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         Vector3 direction = User.aimDirection;
         List<Character> targets = WeaponUtility.MeleeDetectMultiple<Character>(origin, direction, range, angle, attackMask);
         targets.RemoveAll((e) => User.IsHostileTowards(e) == false);
-        MiscFunctions.SortListWithOnePredicate(targets, (e) =>
+        CollectionUtility.SortListWithOnePredicate(targets, (e) =>
         {
             Vector3 hitLocation = e.bounds.ClosestPoint(origin);
             return Vector3.Angle(direction, hitLocation - origin);
@@ -155,6 +156,6 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     protected override void OnDisable()
     {
         base.OnDisable();
-        MiscFunctions.TrySetAnimatorTrigger(animator, interruptTrigger);
+        AnimationUtility.TrySetAnimatorTrigger(animator, interruptTrigger);
     }
 }

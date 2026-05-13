@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +30,7 @@ public class DamageDealer
         int s = Mathf.RoundToInt(stun * multiplier);
 
         // Apply knockback to the closest rigidbody
-        Rigidbody rb = MiscFunctions.GetComponentInParentWhere<Rigidbody>(target.transform, (rb) => rb.isKinematic == false);
+        Rigidbody rb = ComponentUtility.GetComponentInParentWhere<Rigidbody>(target.transform, (rb) => rb.isKinematic == false);
         if (rb != null)
         {
             rb.AddForceAtPosition(knockback * multiplier * direction.normalized, point, ForceMode.Impulse);

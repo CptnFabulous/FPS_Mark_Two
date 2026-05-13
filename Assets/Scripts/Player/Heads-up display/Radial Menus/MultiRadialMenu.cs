@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -147,7 +148,7 @@ public class MultiRadialMenu : MonoBehaviour
         int index = oldIndex;
         for (int i = 0; i < menus.Count; i++)
         {
-            index = MiscFunctions.LoopIndex(index + 1, menus.Count);
+            index = MathUtility.LoopIndex(index + 1, menus.Count);
             // End loop once one is found
             if (menus[index].optionsPresent) break;
         }

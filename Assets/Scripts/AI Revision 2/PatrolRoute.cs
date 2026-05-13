@@ -1,8 +1,8 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 public class PatrolRoute : MonoBehaviour
 {
@@ -22,7 +22,7 @@ public class PatrolRoute : MonoBehaviour
             if (paths[i] == null) paths[i] = new NavMeshPath();
 
             Vector3 a = points[i].position;
-            Vector3 b = points[MiscFunctions.LoopIndex(i + 1, length)].position;
+            Vector3 b = points[MathUtility.LoopIndex(i + 1, length)].position;
             NavMesh.CalculatePath(a, b, NavMesh.AllAreas, paths[i]);
         }
     }
@@ -44,7 +44,7 @@ public class PatrolRoute : MonoBehaviour
             }
             else
             {
-                int b = MiscFunctions.LoopIndex(i + 1, points.Length);
+                int b = MathUtility.LoopIndex(i + 1, points.Length);
                 DrawDebugArrow(points[i].position, points[b].position, Color.red);
             }
         }

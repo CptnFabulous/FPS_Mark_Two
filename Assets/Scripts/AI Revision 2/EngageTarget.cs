@@ -63,7 +63,7 @@ public class EngageTarget : TravelToDestination
         // Is the point within the appropriate min and max distance of the target?
         // Will the AI have appropriate line of sight to the target?
         List<AIGridPoints.GridPoint> points = AIGridPoints.Current.GetPoints(navMeshAgent.transform.position, 0, checkDistance);
-        MiscFunctions.ShuffleList(points); // Shuffle points to ensure some randomisation in the final result, so the agents don't all cluster around the one ideal point
+        CollectionUtility.ShuffleList(points); // Shuffle points to ensure some randomisation in the final result, so the agents don't all cluster around the one ideal point
 
         int count = Mathf.Min(points.Count, maxNumberOfChecks);
         for (int i = 0; i < count; i++)

@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ public class NumberKeySelector : MonoBehaviour
     #region MonoBehaviour stuff
     public UnityEvent<int> onSelectionMade;
     [Tooltip("If true, values are shifted down to represent number positions on a num row, otherwise the int accurately represents the number pressed.")]
-    public bool startWithOne;
+    public bool startWithOne = true;
 
     private void Update()
     {
@@ -56,7 +57,7 @@ public class NumberKeySelector : MonoBehaviour
                 if (startWithOne)
                 {
                     keyIndex -= 1;
-                    keyIndex = MiscFunctions.Loop(keyIndex, 0, 9);
+                    keyIndex = MathUtility.Loop(keyIndex, 0, 9);
                 }
                 return true;
             }

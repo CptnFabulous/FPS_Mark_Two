@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +30,10 @@ public class Weapon : MonoBehaviour
             // Check if the weapon is still attached to the current user. Clear if not (e.g. if dropped)
             if (_user != null && transform.IsChildOf(_user.transform) == false) _user = null;
             // If now null, check for a new user
-            return _user ??= GetComponentInParent<Character>();
+
+            return ComponentUtility.AutoCache(ref _user, gameObject, ComponentGetType.InParent);
+
+            //return _user ??= GetComponentInParent<Character>();
         }
     }
     public WeaponMode CurrentMode
