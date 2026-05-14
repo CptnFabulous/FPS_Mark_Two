@@ -44,6 +44,7 @@ public class SmokeParticleDensityController : MonoBehaviour
 
     Dictionary<Vector3Int, ParticleGridSpace> dictionary = new Dictionary<Vector3Int, ParticleGridSpace>();
 
+
     public static readonly Vector3Int[] neighbourOffsets = new Vector3Int[]
     {
         new Vector3Int(0, 0, 0),
@@ -55,6 +56,10 @@ public class SmokeParticleDensityController : MonoBehaviour
         new Vector3Int(0, 1, 1),
         new Vector3Int(1, 1, 1),
     };
+
+    public float gridSpaceSize => maximumCheckRadius * 2;
+
+    #region Singleton
 
     static SmokeParticleDensityController _singleton;
 
@@ -80,6 +85,8 @@ public class SmokeParticleDensityController : MonoBehaviour
 
         return _singleton;
     }
+
+    #endregion
 
     void FixedUpdate()
     {
@@ -115,7 +122,7 @@ public class SmokeParticleDensityController : MonoBehaviour
             cloud.particleEmitter.SetParticles(cloud.particleArray, cloud.numberOfParticles);
         }
     }
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         //Gizmos.color = Color.grey;
         foreach (ParticleGridSpace gridSpace in dictionary.Values)
@@ -125,7 +132,7 @@ public class SmokeParticleDensityController : MonoBehaviour
             // Interpolate colour based on number of particles in each grid space
             float particleCountRatio = gridSpace.numberOfParticles / gridSpace.maxSize;
             Gizmos.color = Color.Lerp(Color.grey, Color.black, particleCountRatio);
-            Gizmos.DrawWireCube(gridSpace.worldPosition, (maximumCheckRadius * 2) * Vector3.one);
+            Gizmos.DrawWireCube(gridSpace.worldPosition, gridSpaceSize * Vector3.one);
         }
 
         IterateThroughParticles((cloud, index) =>
@@ -245,13 +252,13 @@ public class SmokeParticleDensityController : MonoBehaviour
     {
         // The size of each grid space should be the total diameter of the checking volume for a particle.
         // This keeps each grid space as small as possible while ensuring that if a particle is in X grid space, all particles within the minimum distance are in either its space, or adjacent in one axis direction only.
-        nonRounded = worldPosition / (maximumCheckRadius * 2);
+        nonRounded = worldPosition / gridSpaceSize;
         return Vector3Int.RoundToInt(nonRounded);
     }
     Vector3 GridToWorldPosition(Vector3Int gridPosition)
     {
         Vector3 result = gridPosition;
-        return (maximumCheckRadius * 2) * result;
+        return gridSpaceSize * result;
     }
     static void IterateThroughParticles(System.Action<SmokeCloud, int> action)
     {
