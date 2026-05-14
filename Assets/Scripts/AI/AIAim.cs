@@ -22,11 +22,12 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     [Header("Stats")]
     public AIAimStats defaultAimStats;
     public float targetThresholdAngle = 0;
-    /*
-    [Range(0, 360)] public float horizontalTurnAngle = 360;
-    [Range(0, 180)] public float verticalTurnAngle = 180;
-    */
     public bool rotateTorso = true;
+
+    [Header("Turning range")]
+    public Transform sightlineReference;
+    [Range(0, 180)] public float maxTurnAngleHorizontal = 180;
+    [Range(0, 90)] public float maxTurnAngleVertical = 90;
 
     public AIAimStats currentAimStats { get; set; }
 
@@ -34,7 +35,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     /// The world-space position the AI is looking towards. If shifting, represents reference position. If rotating, represents the desired target.
     /// </summary>
     Vector3 lookingTowards;
-    AILookMode currentLookMode = AILookMode.FreeLookAngle;
+    AILookMode _currentLookMode = AILookMode.FreeLookAngle;
 
     // Sweep variables
     System.Func<Vector3> getDirectionForSweep;
@@ -54,6 +55,31 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         get => viewAxis.rotation;
         set
         {
+            // Clamp values on each axis
+            if (sightlineReference != null)
+            {
+                Quaternion difference = DifferenceFromSightline(value);
+                Vector3 differenceEulerAngles = difference.eulerAngles;
+
+                // If value is greater than 180, that means it's a negative value
+                void ProcessFloat(ref float angle, float maxAngle)
+                {
+                    // Clamp the value within the desired range. Make sure to convert ranges from (0 to 360) to (-180 to 180) and back.
+                    bool greaterThan180 = angle > 180;
+                    if (greaterThan180) angle -= 360;
+                    angle = Mathf.Clamp(angle, -maxAngle, maxAngle);
+                    if (greaterThan180) angle += 360;
+                }
+
+                ProcessFloat(ref differenceEulerAngles.y, maxTurnAngleHorizontal);
+                ProcessFloat(ref differenceEulerAngles.x, maxTurnAngleVertical);
+                
+                // TO DO: figure out how to effectively clamp these values
+                //value = sightlineReference.rotation * Quaternion.AngleAxis(differenceEulerAngles.y, sightlineReference.up) * Quaternion.AngleAxis(differenceEulerAngles.x, sightlineReference.right);// Quaternion.Euler(differenceEulerAngles);
+                difference = Quaternion.Euler(differenceEulerAngles);
+                value = difference * sightlineReference.rotation;
+            }
+            
             if (rotateTorso)
             {
                 Vector3 forwardDirection = value * Vector3.forward;
@@ -82,8 +108,19 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     public Vector3 LookOrigin => viewAxis.position;
     /// <summary>
     /// The direction the AI is deliberately aiming towards, excluding sway.
+    /// <para>The setter is experimental and untested, and may break horribly.</para>
     /// </summary>
-    public Vector3 LookDirection => viewAxis.forward;
+    public Vector3 LookDirection
+    {
+        get => viewAxis.forward;
+        set
+        {
+            Vector3 rightAxis = Vector3.Cross(value, ai.transform.up);
+            Vector3 upAxis = Vector3.Cross(value, -rightAxis);
+            Quaternion lookQuaternion = Quaternion.LookRotation(value, upAxis);
+            lookRotation = lookQuaternion;
+        }
+    }
     /// <summary>
     /// The direction the AI is looking in, converted into an easy Vector3 value.
     /// </summary>
@@ -100,6 +137,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     float verticalSweepDistance => Mathf.Max(sweepAngles.y - viewAngles.y, 0);
     public float minRange => 0;
     public float maxRange => ai.visionCone.viewRange;
+    public AILookMode currentLookMode => _currentLookMode;
     Vector3 neutralLookDirection
     {
         get
@@ -131,7 +169,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         Gizmos.matrix = Matrix4x4.identity;
 
         // Display gizmos for sightline sweeping code
-        switch (currentLookMode)
+        switch (_currentLookMode)
         {
             case AILookMode.SweepSightline:
 
@@ -183,7 +221,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
     public void RotateFreeLookTowards(Vector3 position)
     {
-        currentLookMode = AILookMode.FreeLookAngle;
+        _currentLookMode = AILookMode.FreeLookAngle;
         RotateLookTowards(position);
     }
     void RotateLookTowards(Vector3 position)
@@ -194,7 +232,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     public void ShiftFreeLookTowards(Vector3 position, float distancePerSecond)
     {
-        currentLookMode = AILookMode.FreeLookShift;
+        _currentLookMode = AILookMode.FreeLookShift;
         ShiftLookTowards(position, distancePerSecond);
     }
     void ShiftLookTowards(Vector3 position, float distancePerSecond)
@@ -230,7 +268,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     public void LookInNeutralDirection()
     {
         // If already running a neutral direction look coroutine, do nothing
-        if (currentLookMode == AILookMode.StraightForward) return;
+        if (_currentLookMode == AILookMode.StraightForward) return;
         StartCoroutine(LookInNeutralDirectionAsync());
     }
     /// <summary>
@@ -242,13 +280,13 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     public void SweepSightline(System.Func<Vector3> obtainDirection, Vector2 angles, float delayBetweenSweeps)
     {
         // If already set to sweep a sightline, do nothing
-        if (currentLookMode == AILookMode.SweepSightline) return;
+        if (_currentLookMode == AILookMode.SweepSightline) return;
         StartCoroutine(SweepSightlineAsync(obtainDirection, angles, delayBetweenSweeps));
     }
     public void CancelAsyncRoutines()
     {
         ai.DebugLog("Cancelling async look routines");
-        currentLookMode = AILookMode.FreeLookAngle;
+        _currentLookMode = AILookMode.FreeLookAngle;
     }
     
 
@@ -258,7 +296,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
     public IEnumerator RotateTowardsPositionAsync(Vector3 position)
     {
-        currentLookMode = AILookMode.FreeLookAngle;
+        _currentLookMode = AILookMode.FreeLookAngle;
         yield return RotateTowardsAsync(position);
     }
     IEnumerator RotateTowardsAsync(Vector3 position)
@@ -277,8 +315,8 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     public IEnumerator LookInNeutralDirectionAsync()
     {
         ai.DebugLog("Looking in neutral direction");
-        currentLookMode = AILookMode.StraightForward;
-        while (enabled && currentLookMode == AILookMode.StraightForward)
+        _currentLookMode = AILookMode.StraightForward;
+        while (enabled && _currentLookMode == AILookMode.StraightForward)
         {
             yield return null;
 
@@ -286,7 +324,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
             RotateLookTowards(LookOrigin + direction, currentAimStats.lookSpeed);
             Debug.DrawRay(LookOrigin, 2 * direction.normalized, Color.green);
         }
-        if (currentLookMode == AILookMode.StraightForward) ai.DebugLog($"Neutral direction look ended, new look mode = {Enum.GetName(typeof(AILookMode), currentLookMode)}");
+        if (_currentLookMode == AILookMode.StraightForward) ai.DebugLog($"Neutral direction look ended, new look mode = {Enum.GetName(typeof(AILookMode), _currentLookMode)}");
     }
     /// <summary>
     /// Sets the AI to track its aim back and forth along an angle and sightline.
@@ -300,9 +338,18 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         #region Set stats
 
         getDirectionForSweep = obtainDirection;
-        this.sweepAngles.x = Mathf.Clamp(angles.x, 0, 360);
-        this.sweepAngles.y = Mathf.Clamp(angles.y, 0, 180);
-        this.delayBetweenSweeps = delayBetweenSweeps;
+        if (sightlineReference != null)
+        {
+            this.sweepAngles.x = Mathf.Clamp(angles.x, 0, maxTurnAngleHorizontal * 2);
+            this.sweepAngles.y = Mathf.Clamp(angles.y, 0, maxTurnAngleVertical * 2);
+        }
+        else
+        {
+            this.sweepAngles.x = Mathf.Clamp(angles.x, 0, 360);
+            this.sweepAngles.y = Mathf.Clamp(angles.y, 0, 180);
+        }
+        
+        //this.delayBetweenSweeps = delayBetweenSweeps;
 
         #endregion
 
@@ -355,10 +402,10 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         ai.DebugLog("Sweeping sightline");
 
         // Declare this component is currently doing a sightline sweep
-        currentLookMode = AILookMode.SweepSightline;
+        _currentLookMode = AILookMode.SweepSightline;
 
         // Shift look between different positions
-        while (enabled && currentLookMode == AILookMode.SweepSightline)
+        while (enabled && _currentLookMode == AILookMode.SweepSightline)
         {
             // Lerp look between points
             for (int i = 0; i < lookTargetAngles.Length; i++)
@@ -427,6 +474,23 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         float distanceBetweenAimAndTarget = Vector3.Distance(LookOrigin + relativeAimPoint, target);
         return distanceBetweenAimAndTarget < threshold;
     }
+    public bool CanTurnTowardsPoint(Vector3 point) => CanTurnTowards(point - LookOrigin);
+    public bool CanTurnTowards(Vector3 direction)
+    {
+        if (sightlineReference == null) return true;
+
+        // Check if AI is able to turn past its rotation to see it
+        Quaternion towardsPoint = Quaternion.LookRotation(direction, upAxis);
+        Vector3 differenceEulerAngles = DifferenceFromSightline(towardsPoint).eulerAngles;
+
+        // Check if each angle is outside the max values
+        if (Mathf.Abs(differenceEulerAngles.y) > maxTurnAngleHorizontal) return false;
+        if (Mathf.Abs(differenceEulerAngles.x) > maxTurnAngleVertical) return false;
+
+        return true;
+    }
+
+    Quaternion DifferenceFromSightline(Quaternion rotation) => TransformUtility.DifferenceBetweenRotations(sightlineReference.rotation, rotation);
 
     #endregion
 }
