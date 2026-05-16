@@ -198,6 +198,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &1671100869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,4 +218,6 @@ MonoBehaviour:
   idLockedMessage: ID-locked
   type: {fileID: 11400000, guid: 3790a818e1c48494c8a1afd8bbfae7e5, type: 2}
   amountToRestore: 18
+  pickupMessageFormat: Restore {0} {1} rounds
+  fullMessageFormat: Max {0} rounds is {1}
   limitedSupply: 1

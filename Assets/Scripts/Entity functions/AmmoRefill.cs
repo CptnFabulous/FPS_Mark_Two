@@ -7,12 +7,15 @@ public class AmmoRefill : ItemPickup
     [Header("Weapon")]
     public Weapon toPickup;
     public bool idLocked = false;
+    public string pickupMessage = "Pick up";
     public string idLockedMessage = "ID-locked";
 
     [Header("Ammo")]
     public AmmunitionType type;
     [Tooltip("If less than one, restores all ammo")]
     public int amountToRestore;
+    public string pickupMessageFormat = "Restore {0} {1} rounds";
+    public string fullMessageFormat = "Max {0} rounds is {1}";
     public bool limitedSupply = true;
 
     bool CanPlayerPickUpThisWeapon(Player player)
@@ -37,12 +40,27 @@ public class AmmoRefill : ItemPickup
                 return false;
             }
 
-
+            message = pickupMessage;
             return true;
         }
 
-        // Otherwise check if the player's ammo can be topped up
-        return player.weapons.ammo.GetStock(type) < player.weapons.ammo.GetMax(type);
+
+        int current = Mathf.RoundToInt(player.weapons.ammo.GetStock(type));
+        int max = player.weapons.ammo.GetMax(type);
+
+        // Check if the player's ammo can be topped up
+        bool ammoNotFull = current < max;
+
+        if (ammoNotFull)
+        {
+            message = string.Format(pickupMessageFormat, amountToRestore, type.name);
+        }
+        else
+        {
+            message = string.Format(fullMessageFormat, type.name, max);
+        }
+
+        return ammoNotFull;
     }
     public override void OnPickup(Player player)
     {
@@ -53,13 +71,12 @@ public class AmmoRefill : ItemPickup
             player.weapons.AddWeapon(spawnedWeapon, true);
         }
 
-        int amount = amountToRestore;
-        if (amount <= 0)
-        {
-            amount = int.MaxValue;
-        }
-        player.weapons.ammo.Collect(type, amount, out amount);
+        bool isInfinite = amountToRestore <= 0;
+        int amount = isInfinite ? int.MaxValue : amountToRestore;
 
-        if (limitedSupply) base.OnPickup(player);
+        player.weapons.ammo.Collect(type, amount, out int remainder);
+        if (!isInfinite) amountToRestore = remainder;
+
+        if (limitedSupply && amountToRestore <= 0) base.OnPickup(player);
     }
 }
