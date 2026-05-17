@@ -43,6 +43,8 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     //float delayBetweenSweeps = 0.5f;
     Vector3[] lookTargetAngles;
 
+    Vector3 lookTargetPosition;
+
     #region Properties
 
     public bool active
@@ -212,6 +214,15 @@ public class AIAim : MonoBehaviour, ICharacterLookController
                 Gizmos.DrawWireSphere(lookingTowards, 0.5f);
                 Gizmos.DrawLine(LookOrigin, lookingTowards);
 
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(lookTargetPosition, 0.5f);
+
+                break;
+            case AILookMode.FreeLookAngle:
+
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(lookTargetPosition, 0.5f);
+
                 break;
         }
     }
@@ -239,6 +250,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     {
         lookingTowards = Vector3.MoveTowards(lookingTowards, position, distancePerSecond * Time.deltaTime);
         lookRotation = Quaternion.LookRotation(lookingTowards - LookOrigin, upAxis);
+        lookTargetPosition = position;
     }
     /// <summary>
     /// Rotates AI aim over time to look at position value, at a speed of degreesPerSecond
@@ -259,6 +271,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         Quaternion correctRotation = Quaternion.LookRotation(position - LookOrigin, upAxis);
         //correctRotation *= Quaternion.Inverse(AimSway(Stats.swayAngle, Stats.swaySpeed));
         lookRotation = Quaternion.RotateTowards(lookRotation, correctRotation, degreesPerSecond * Time.deltaTime);
+        lookTargetPosition = position;
     }
     public void ResetStatsToDefault() => currentAimStats = defaultAimStats;
 
