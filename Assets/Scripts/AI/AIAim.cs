@@ -235,12 +235,6 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         _currentLookMode = AILookMode.FreeLookAngle;
         RotateLookTowards(position);
     }
-    void RotateLookTowards(Vector3 position)
-    {
-        float degreesPerSecond = currentAimStats.SpeedBasedOnAngle(LookDirection, position - LookOrigin);
-        //ai.DebugLog(degreesPerSecond);
-        RotateLookTowards(position, degreesPerSecond);
-    }
     public void ShiftFreeLookTowards(Vector3 position, float distancePerSecond)
     {
         _currentLookMode = AILookMode.FreeLookShift;
@@ -252,13 +246,10 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         lookRotation = Quaternion.LookRotation(lookingTowards - LookOrigin, upAxis);
         lookTargetPosition = position;
     }
-    /// <summary>
-    /// Rotates AI aim over time to look at position value, at a speed of degreesPerSecond
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="degreesPerSecond"></param>
-    void RotateLookTowards(Vector3 position, float degreesPerSecond)
+    void RotateLookTowards(Vector3 position)
     {
+        float degreesPerSecond = currentAimStats.SpeedBasedOnAngle(LookDirection, position - LookOrigin);
+        
         /*
         // An experimental version that should ensure the position doesn't snap when switching between rotate and shift based look functions
         Vector3 direction = Vector3.RotateTowards(lookingTowards - LookOrigin, position - LookOrigin, degreesPerSecond * Mathf.Deg2Rad, 0);
@@ -334,7 +325,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
             yield return null;
 
             Vector3 direction = neutralLookDirection;
-            RotateLookTowards(LookOrigin + direction, currentAimStats.lookSpeed);
+            RotateLookTowards(LookOrigin + direction);
             Debug.DrawRay(LookOrigin, 2 * direction.normalized, Color.green);
         }
         if (_currentLookMode == AILookMode.StraightForward) ai.DebugLog($"Neutral direction look ended, new look mode = {Enum.GetName(typeof(AILookMode), _currentLookMode)}");
