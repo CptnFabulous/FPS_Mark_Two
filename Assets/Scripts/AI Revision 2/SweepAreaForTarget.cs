@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
 
 public class SweepAreaForTarget : AIStateFunction
@@ -79,6 +80,8 @@ public class SweepAreaForTarget : AIStateFunction
     }
     private void OnDrawGizmosSelected()
     {
+        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+
         if (pointsToCheck == null) return;
         foreach (AIGridPoints.GridPoint gridPoint in pointsToCheck)
         {

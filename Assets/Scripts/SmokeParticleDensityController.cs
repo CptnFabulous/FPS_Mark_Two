@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class SmokeParticleDensityController : MonoBehaviour
 {
@@ -124,7 +125,8 @@ public class SmokeParticleDensityController : MonoBehaviour
     }
     private void OnDrawGizmosSelected()
     {
-        //Gizmos.color = Color.grey;
+        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+
         foreach (ParticleGridSpace gridSpace in dictionary.Values)
         {
             if (gridSpace.numberOfParticles <= 0) continue;

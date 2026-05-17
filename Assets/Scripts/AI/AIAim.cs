@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering.Universal;
 
 public class AIAim : MonoBehaviour, ICharacterLookController
 {
@@ -160,6 +161,8 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     private void OnDrawGizmosSelected()
     {
+        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+
         if (sightlineReference != null)
         {
             Gizmos.matrix = Matrix4x4.TRS(viewAxis.position, sightlineReference.rotation, Vector3.one);

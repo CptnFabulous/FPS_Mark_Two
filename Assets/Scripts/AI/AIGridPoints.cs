@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 public class AIGridPoints : MonoBehaviour
@@ -82,6 +83,7 @@ public class AIGridPoints : MonoBehaviour
 
     public void OnDrawGizmosSelected()
     {
+        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(bounds.center, bounds.size);
 

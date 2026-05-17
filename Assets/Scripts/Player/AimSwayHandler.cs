@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class AimSwayHandler : MonoBehaviour
 {
@@ -56,6 +57,8 @@ public class AimSwayHandler : MonoBehaviour
     }
     private void OnDrawGizmosSelected()
     {
+        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+
         float length = 20;
 
         Gizmos.color = Color.blue;
