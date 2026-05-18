@@ -80,7 +80,7 @@ public class SweepAreaForTarget : AIStateFunction
     }
     private void OnDrawGizmosSelected()
     {
-        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+        if (MiscFunctions.CurrentCameraNotMain()) return;
 
         if (pointsToCheck == null) return;
         foreach (AIGridPoints.GridPoint gridPoint in pointsToCheck)

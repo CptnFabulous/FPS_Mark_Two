@@ -125,7 +125,7 @@ public class SmokeParticleDensityController : MonoBehaviour
     }
     private void OnDrawGizmosSelected()
     {
-        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+        if (MiscFunctions.CurrentCameraNotMain()) return;
 
         foreach (ParticleGridSpace gridSpace in dictionary.Values)
         {

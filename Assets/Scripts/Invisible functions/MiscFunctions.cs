@@ -40,6 +40,8 @@ public readonly struct MiscFunctions
 
     #endregion
 
+    public static bool CurrentCameraNotMain() => Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay;
+
     public static bool GetToggleableInput(bool currentState, bool buttonPressed, bool isToggled)
     {
         if (isToggled == false) currentState = buttonPressed;

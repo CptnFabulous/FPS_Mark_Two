@@ -161,7 +161,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     private void OnDrawGizmosSelected()
     {
-        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
+        if (MiscFunctions.CurrentCameraNotMain()) return;
 
         if (sightlineReference != null)
         {
