@@ -117,22 +117,17 @@ public class Entity : MonoBehaviour
         if (this is Player player == false) Destroy(gameObject);
     }
 
-
-
-
-
-
-
-
-
+    [HideInCallstack]
     public void DebugLog(string message)
     {
         if (showDebugData) Debug.Log($"{this}: {message}, frame {Time.frameCount}");
     }
+    [HideInCallstack]
     public void DebugLogError(string message)
     {
         if (showDebugData) Debug.LogError($"{this}: {message}, frame {Time.frameCount}");
     }
+    [HideInCallstack]
     public void DebugLog(object target)
     {
         if (showDebugData) Debug.Log($"{this}: {target}, frame {Time.frameCount}");
