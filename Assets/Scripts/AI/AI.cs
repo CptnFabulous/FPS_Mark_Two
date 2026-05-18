@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering.Universal;
 
 public class AI : Character
 {
@@ -65,26 +65,36 @@ public class AI : Character
         base.Awake();
         if (agent != null) agent.speed = baseMovementSpeed;
     }
-    private void OnDrawGizmos()
+
+#if UNITY_EDITOR
+    private void OnGUI()
     {
-        if (agent != null)
-        {
-            Gizmos.color = Color.blue;
-            AIAction.GizmosDrawNavMeshPath(agent.path);
-        }
+        if (showDebugData == false) return;
+
+        Camera camera = Camera.main;
+        Vector3 worldPosition = LookTransform.position + 0.5f * Vector3.up;
+
+        if (Vector3.Dot(camera.transform.forward, worldPosition - camera.transform.position) < 0) return;
+
+        string text = name;
+        text += '\n';
+        text += stateController.currentStateInHierarchy.name;
+        text += '\n';
+        text += aiming.currentLookMode;
+
+        Vector2 screenPosition = camera.WorldToScreenPoint(worldPosition);
+        screenPosition.y = Screen.height - screenPosition.y;
+
+        Vector2 size = new Vector2(250, 50);
+
+        GUI.Label(new Rect(screenPosition - (size / 2), size), text, EditorStyles.centeredGreyMiniLabel);
     }
+#endif
+
     protected override void Die()
     {
         base.Die();
         stateController.SwitchToState(deathState);
-        
-        /*
-        stateController.enabled = false;
-        aiming.enabled = false;
-        targeting.enabled = false;
-        physicsHandler.ragdollActive = true;
-        //gameObject.SetActive(false);
-        */
     }
 
     public IEnumerator TravelToDestination(Vector3 position)
