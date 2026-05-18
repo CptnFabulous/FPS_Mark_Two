@@ -12,6 +12,7 @@ public class AITargetingBeam : MonoBehaviour
     public float minLength = 0.5f;
     public float maxLength = 10f;
     public UnityEvent onPlay;
+
     LayerMask hitDetection => attachedTo.stats.hitDetection;
 
     
@@ -24,6 +25,9 @@ public class AITargetingBeam : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (attachedTo == null) return;
+        if (attachedTo.User == null) return;
+
         // Launch a simple raycast to check roughly what the attack will hit
         bool raycastHit = AIAction.RaycastWithExceptions(transform.position, transform.forward, out RaycastHit rh, maxLength, hitDetection, attachedTo.User.HitOwnCollider);
 
