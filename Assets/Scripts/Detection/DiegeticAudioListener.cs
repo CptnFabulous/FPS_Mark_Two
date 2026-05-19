@@ -85,6 +85,8 @@ public class DiegeticAudioListener : MonoBehaviour
         Vector3 origin = source.CentreOfMass;
         Vector3 destination = transform.position;
 
+        //rootEntity.DebugLog($"Checking sound {sound} from {origin}");
+
         // Check how far it takes the sound to travel, based on how the sound would reach the target.
         // First, check if it's a clear line of sight to the target.
         if (AIAction.LineOfSight(origin, destination, source, rootEntity, soundLayerMask))
@@ -96,7 +98,11 @@ public class DiegeticAudioListener : MonoBehaviour
         {
             // Not a straight shot, check if the sound reaches the target via reverb
             bool validPath = ReverbPath(origin, destination, maxDistance, soundNavMeshMask, out travelDistance);
-            if (!validPath) return false;
+            if (!validPath)
+            {
+                //rootEntity.DebugLog($"Cannot reach target, sound completely blocked");
+                return false;
+            }
 
             // TO DO POSSIBLY IF I FEEL IT'S NECESSARY: under whatever criteria, get the hit objects from the line of sight check and reduce the sound volume based on the types of objects hit
         }
@@ -122,20 +128,33 @@ public class DiegeticAudioListener : MonoBehaviour
     {
         travelDistance = 0;
 
+        //Debug.Log($"Reverb path check from {origin} to {destination}");
+
         // Sample start and end positions on NavMesh, and cancel if start and end points can't be found
         bool validOrigin = NavMesh.SamplePosition(origin, out NavMeshHit pathStart, maxDistance, navMeshMask);
+        //Debug.Log(validOrigin);
         if (!validOrigin) return false;
         bool validDestination = NavMesh.SamplePosition(destination, out NavMeshHit pathEnd, maxDistance, navMeshMask);
+        //Debug.Log(validDestination);
         if (!validDestination) return false;
 
+        // Ensure a path asset exists
+        if (reverbPath == null) reverbPath = new NavMeshPath();
+
+        // Try to calculate a path
+        /*
         // Generate filter
         NavMeshQueryFilter filter = new NavMeshQueryFilter();
         filter.agentTypeID = agentID;
         filter.areaMask = navMeshMask;
-
-        // Calculate path, cancel if it can't be completed
-        if (reverbPath == null) reverbPath = new NavMeshPath();
+        Debug.Log($"{filter.agentTypeID}, {filter.areaMask}");
         bool pathCalculated = NavMesh.CalculatePath(pathStart.position, pathEnd.position, filter, reverbPath);
+        */
+        bool pathCalculated = NavMesh.CalculatePath(pathStart.position, pathEnd.position, navMeshMask, reverbPath);
+
+
+
+        //Debug.Log($"{pathCalculated}, {reverbPath.status}");
         if (!pathCalculated) return false;
         if (reverbPath.status != NavMeshPathStatus.PathComplete) return false;
 
