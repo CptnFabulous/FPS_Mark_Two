@@ -9,8 +9,6 @@ public class PatrolArea : AIStateFunction
     protected override void OnEnable()
     {
         base.OnEnable();
-        investigateState.onFail = this;
-
         navMeshAgent.isStopped = true;
     }
     private void OnDisable()

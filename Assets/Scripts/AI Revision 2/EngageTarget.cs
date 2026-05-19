@@ -21,44 +21,70 @@ public class EngageTarget : TravelToDestination
 
     [Header("Alternate states")]
     [SerializeField] AIStateFunction onTargetEliminated;
+
+    [Header("On target lost")]
+    public float timeAfterSightLossUntilSearch = 5;
+    [SerializeField] InvestigateLocations searchForMissingTarget;
     [SerializeField] AIStateFunction onTargetLost;
 
     public Character target => targetManager.target;
     public float maxMoveDistance => checkDistance > 0 ? checkDistance : Mathf.Infinity;
 
-    protected override void OnEnable()
-    {
-        // I might need to change this so that it only picks a new position during OnEnable() if a certain amount of time has passed between switching away from this state and returning to it.
-        // So if the AI only switches for like a second (e.g. to look around) and doesn't actually need to change position, it doesn't constantly zip around like a maniac
-        
-        base.OnEnable();
-        //currentAttack.enabled = true;
-    }
-
     private void OnDisable()
     {
-        currentAttack.enabled = false;
+        currentAttack.CancelAttack();
     }
     public void Update()
     {
+        // Check if enemy has been killed/deleted
         if (targetManager.targetExists == false)
         {
-            SwitchToState(onTargetEliminated);
+            controller.SwitchToState(onTargetEliminated);
             return;
         }
 
-        // Check if the AI can currently see the target
-        bool targetIsVisible = targetManager.viewStatus == ViewStatus.Visible;
-        currentAttack.enabled = targetIsVisible;
-        if (targetIsVisible == false)
+        // If the AI has been unable to get line of sight on the target for an extended period, start searching more proactively.
+        float timeSinceTargetLost = Time.time - targetManager.lastTimeSeenTarget;
+        if (timeSinceTargetLost >= timeAfterSightLossUntilSearch)
         {
-            rootAI.DebugLog($"View status is {targetManager.viewStatus} on frame {Time.frameCount}. Hit target = {targetManager.lastHit.collider}");
-            SwitchToState(onTargetLost);
-            return;
+            // Check if there's data to search for the last selected position. If so, do that. 
+            if (searchForMissingTarget != null)
+            {
+                if (searchForMissingTarget.TrySearchForNewPosition(targetManager.lastValidHit.point, 0, onTargetLost, 1, true, true))
+                {
+                    rootAI.DebugLog($"Target lost");
+                    return;
+                }
+            }
+            else
+            {
+                // If not, go straight to the 'on target lost' state.
+                controller.SwitchToState(onTargetLost);
+                return;
+            }
+        }
+
+        // If path is no longer viable, select a new one
+        if (navMeshAgent != null)
+        {
+            if (VantagePointIsValid(navMeshAgent.destination) == false)
+            {
+                bool pathFound = GetPath(ref calculatedPath);
+                if (pathFound) navMeshAgent.SetPath(calculatedPath);
+                //navMeshAgent.SetPath(GetPath());
+            }
+        }
+        
+        // Run attack routines
+        bool canPerformAttackRoutine = currentAttack.RunAttackRoutine();
+        if (!canPerformAttackRoutine)
+        {
+            // If AI can't see the target, keep its sight trained on the last position.
+            aim.RotateFreeLookTowards(rootAI.targeting.lastValidHit.point);
         }
     }
 
-    protected override NavMeshPath GetPath()
+    protected override bool GetPath(ref NavMeshPath path)
     {
         // Is the point within the appropriate min and max distance of the target?
         // Will the AI have appropriate line of sight to the target?
@@ -72,21 +98,21 @@ public class EngageTarget : TravelToDestination
 
             bool valid = VantagePointIsValid(position);
             if (!valid) continue;
-            NavMeshPath p = AIPathing.CalculatePath(rootAI, position, maxMoveDistance);
-            if (p == null) continue;
+
+            bool validPath = AIPathing.CanMoveToDestination(rootAI, position, maxMoveDistance, ref path);
+            if (validPath == false) continue;
 
             //Debug.Log($"Selected {i + 1}/{count}");
-            return p; // Return the first point that meets the criteria
+            return true; // Return the first point that meets the criteria
         }
-        //Debug.Log($"None of the {count} checked points were valid");
 
-        //destination = new AIGridPoints.GridPoint();
-        return null;
+        return false;
     }
     protected override bool IsPathViable()
     {
         // Check if the vantage point is still viable.
         // Unless the AI is seeking cover, in which case check the current cover position in case it's compromised.
+        // TO DO: make seeking cover be a separate state
         bool valid = VantagePointIsValid(navMeshAgent.destination);
         //Debug.Log($"{this}: IsPathViable() check = {valid}");
         return valid;
@@ -96,7 +122,7 @@ public class EngageTarget : TravelToDestination
         if (rootAI == null) return false;
         if (target == null) return false;
 
-        Debug.DrawRay(position, Vector3.up, Color.yellow);
+        //Debug.DrawRay(position, Vector3.up, Color.yellow);
 
         Bounds targetBounds = target.bounds;
 
@@ -110,14 +136,8 @@ public class EngageTarget : TravelToDestination
 
         // Check if line of sight between destination and target is not compromised
         Vector3 lookOriginFromVantagePoint = AIAction.HypotheticalLookOrigin(rootAI, position);
-        Debug.DrawLine(target.transform.position, targetBounds.center, Color.cyan);
-        Debug.DrawLine(lookOriginFromVantagePoint, targetBounds.center, Color.cyan);
         bool lineOfSight = currentAttack.AttackNotBlocked(lookOriginFromVantagePoint);
-        if (lineOfSight == false)
-        {
-            //Debug.Log("Line of sight is broken");
-            return false;
-        }
+        if (lineOfSight == false) return false;
 
         // Check if the position is close to cover
         if (coverDistance > 0)
@@ -128,7 +148,7 @@ public class EngageTarget : TravelToDestination
                 //Debug.Log("Wants cover but can't find any");
                 return false;
             }
-            Debug.DrawRay(point.position, Vector3.up, Color.white);
+            //Debug.DrawRay(point.position, Vector3.up, Color.white);
         }
 
         // Check if the position is occupied

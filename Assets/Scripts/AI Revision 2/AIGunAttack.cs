@@ -6,6 +6,15 @@ using UnityEngine.Events;
 
 public class AIGunAttack : MonoBehaviour
 {
+    public enum AttackState
+    {
+        None,
+        Telegraph,
+        Attack,
+        Cooldown
+    }
+    
+    
     public AI rootAI;
     
     public RangedAttack weapon;
@@ -22,19 +31,20 @@ public class AIGunAttack : MonoBehaviour
     public int attackNumberMax = 3;
     public float attackMoveSpeedMultiplier = 0.5f;
     public UnityEvent onAttack;
+    public float delayBetweenAttacks = 0;
 
     [Header("Cooldown")]
     public float cooldownMin = 0.05f;
     public float cooldownMax = 0.2f;
     public UnityEvent onCooldown;
 
-    bool inAttack;
+    AttackState attackState;
     IEnumerator currentAttackSequence;
 
     AIAim aim => rootAI.aiming;
     Character target => rootAI.target;
     bool canTarget => rootAI.targeting.viewStatus == ViewStatus.Visible;
-    Vector3 targetPosition
+    public Vector3 targetPosition
     {
         get
         {
@@ -46,68 +56,75 @@ public class AIGunAttack : MonoBehaviour
     }
     bool onTarget => aim.IsLookingAt(targetPosition);
 
-    private void Update()
+    /// <summary>
+    /// Needs to be run every frame to execute attack behaviours.
+    /// </summary>
+    /// <returns>True if a valid action was performed this frame, false if nothing could be done.</returns>
+    public bool RunAttackRoutine()
     {
-        if (target == null) return;
-        if (target.health.IsAlive == false) return;
+        if (target == null) return false;
+        if (target.health.IsAlive == false) return false;
+
+        // Check that the AI can get line of sight to its target, and that the current attack won't be blocked.
+        bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin);
 
         // If attack has already started, shift aim linearly towards target
-        if (inAttack)
+        if (attackState != AttackState.None)
         {
+            // If in telegraph, check if target is lost. If so, cancel attack.
+            if (attackState == AttackState.Telegraph && canTarget == false)
+            {
+                CancelAttack();
+                return false;
+            }
+            
             aim.ShiftFreeLookTowards(targetPosition, aimSpeedWhileTelegraphing);
+            return true;
         }
-        else
+        else if (canTarget && attackNotBlocked)
         {
-            // Check that the AI can get line of sight to its target, and that the current attack won't be blocked.
-            bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin);
-            if (canTarget && attackNotBlocked)
+            // if the AI can see the target and its attack isn't blocked, rotate look to fix aim on target.
+            aim.RotateFreeLookTowards(targetPosition);
+            if (onTarget)
             {
-                // if the AI can see the target and its attack isn't blocked, rotate look to fix aim on target.
-                aim.RotateFreeLookTowards(targetPosition);
-                if (onTarget)
-                {
-                    currentAttackSequence = null;
-                    currentAttackSequence = AttackSequence();
-                    StartCoroutine(currentAttackSequence);
-                }
+                currentAttackSequence = null;
+                currentAttackSequence = AttackSequence();
+                StartCoroutine(currentAttackSequence);
             }
-            else
-            {
-                // Otherwise, the AI looks straight forward as it moves to its desired vantage point.
-                aim.LookInNeutralDirection();
-            }
+            return true;
         }
+
+        return false;
     }
-    private void OnDisable()
+    public void CancelAttack()
     {
-        if (currentAttackSequence != null)
-        {
-            // Prematurely cancel attack
-            StopCoroutine(currentAttackSequence);
-            currentAttackSequence = null;
-            onTelegraphEnd.Invoke();
-            SetSpeed(1);
-            onCooldown.Invoke();
-            inAttack = false;
-            aim.CancelAsyncRoutines();
-        }
+        if (currentAttackSequence == null) return;
+
+        // Prematurely cancel attack
+        rootAI.DebugLog("Cancelling attack");
+        StopCoroutine(currentAttackSequence);
+        currentAttackSequence = null;
+        onTelegraphEnd.Invoke();
+        SetSpeedMultiplier(1);
+        onCooldown.Invoke();
+        attackState = AttackState.None;
+        aim.CancelAsyncRoutines();
     }
 
     IEnumerator AttackSequence()
     {
-        inAttack = true;
-
         rootAI.DebugLog($"Telegraphing {weapon}");
-
-        //currentAimTarget = targetPosition;
-        SetSpeed(telegraphMoveSpeedMultiplier);
+        attackState = AttackState.Telegraph;
+        // TO DO: set a fire-and-forget routine for shifting aim towards target
+        SetSpeedMultiplier(telegraphMoveSpeedMultiplier);
         onTelegraph.Invoke();
         yield return new WaitForSeconds(telegraphDelay);
-
-        SetSpeed(attackMoveSpeedMultiplier);
-        onTelegraphEnd.Invoke();
+        //yield return CancellableYield(CancellableYieldForSeconds(telegraphDelay), () => canTarget == false, CancelAttack);
 
         rootAI.DebugLog($"Executing attack with {weapon}");
+        attackState = AttackState.Attack;
+        SetSpeedMultiplier(attackMoveSpeedMultiplier);
+        onTelegraphEnd.Invoke();
 
         int max = weapon.controls.maxBurst;
         max = max > 0 ? max : int.MaxValue - 1;
@@ -117,22 +134,42 @@ public class AIGunAttack : MonoBehaviour
         {
             yield return weapon.SingleShotAsync();
             onAttack.Invoke();
+            if (delayBetweenAttacks > 0) yield return new WaitForSeconds(delayBetweenAttacks);
         }
 
         rootAI.DebugLog($"Cooling down from attack with {weapon}");
-
-        // Revert to default speed
-        SetSpeed(1);
+        attackState = AttackState.Cooldown;
+        SetSpeedMultiplier(1); // Revert to default speed
         float cooldown = Random.Range(cooldownMin, cooldownMax);
         onCooldown.Invoke();
         yield return new WaitForSeconds(cooldown);
-        inAttack = false;
+
+        // End attack
+        attackState = AttackState.None;
     }
 
-    void SetSpeed(float multipler)
+    void SetSpeedMultiplier(float multiplier)
     {
         NavMeshAgent agent = rootAI.agent;
-        if (agent != null) agent.speed = rootAI.baseMovementSpeed * multipler;
+        if (agent != null) agent.speed = rootAI.baseMovementSpeed * multiplier;
     }
-    public bool AttackNotBlocked(Vector3 hypotheticalOrigin) => AIAction.LineOfSight(hypotheticalOrigin, targetPosition, rootAI, target, weapon.attackMask);
+    public bool AttackNotBlocked(Vector3 aimOrigin) => AIAction.LineOfSight(aimOrigin, targetPosition, rootAI, target, weapon.attackMask);
+
+    public static IEnumerator CancellableYieldForSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+    }
+    public static IEnumerator CancellableYield(IEnumerator ienumerator, System.Func<bool> cancelCondition, System.Action onCancel)
+    {
+        while (ienumerator.MoveNext())
+        {
+            // If values indicate the function needs to be cancelled, do so and invoke the appropriate event
+            if (cancelCondition.Invoke())
+            {
+                onCancel.Invoke();
+                yield break;
+            }
+            yield return ienumerator.Current;
+        }
+    }
 }

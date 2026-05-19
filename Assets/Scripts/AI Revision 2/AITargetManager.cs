@@ -11,7 +11,7 @@ public class AITargetManager : MonoBehaviour
     public AI controlling;
     public AIStateFunction onTargetFound;
 
-    public ViewStatus viewStatus { get; private set; }
+    public ViewStatus viewStatus { get; private set; } = ViewStatus.NotPresent;
     public RaycastHit lastHit { get; private set; }
     public RaycastHit lastValidHit { get; private set; }
     public Vector3 lastKnownPosition { get; private set; }
@@ -27,11 +27,13 @@ public class AITargetManager : MonoBehaviour
         RaycastHit hit;
         if (targetExists == false)
         {
+            //controlling.DebugLog($"Target not found, searching");
             target = controlling.visionCone.FindObjectInFieldOfView<Character>(controlling.IsHostileTowards, detectionMask, out hit);
             viewStatus = targetExists ? ViewStatus.Visible : ViewStatus.NotPresent;
         }
         else
         {
+            //controlling.DebugLog($"Target is {target}, checking if still visible");
             viewStatus = controlling.visionCone.VisionConeCheck(target, out hit);
         }
         lastHit = hit;

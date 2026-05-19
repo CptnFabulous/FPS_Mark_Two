@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using CptnFabulous.MiscUtility;
 
 public class StateController : StateFunction
 {
@@ -81,9 +80,9 @@ public class StateController : StateFunction
         yield return ExitCurrentStateIfPresentAndEnabled();
     }
 
-    public override void SwitchToState(StateFunction newState)
+    public void SwitchToState(StateFunction newState, bool forceIfSameState = false)
     {
-        StartCoroutine(TrySwitchState(newState));
+        StartCoroutine(TrySwitchState(newState, forceIfSameState));
     }
     public void RestartCurrentState()
     {
@@ -94,7 +93,7 @@ public class StateController : StateFunction
     /// <summary>
     /// Attempts to switch to a new state, but checks if it's necessary first so it doesn't override any current actions.
     /// </summary>
-    IEnumerator TrySwitchState(StateFunction newState)
+    IEnumerator TrySwitchState(StateFunction newState, bool forceIfSameState = false)
     {
         // Do nothing if the desired state is not part of the state machine hierarchy
         if (newState.root != root)
@@ -110,10 +109,9 @@ public class StateController : StateFunction
             yield break;
         }
 
-        // Check if new state is the same as the current one
-        // If so, check if it's currently enabled
-        // If state is the same and already enabled, do nothing
-        if (newState == currentState && newState.enabled)
+        // Check if we're already on the desired state,and if it's already enabled.
+        // If so, do nothing (unless set to force a refresh so the current state restarts)
+        if (newState == currentState && newState.enabled && forceIfSameState == false)
         {
             //rootEntity.DebugLog($"{this}: already switched to {newState}");
             yield break;

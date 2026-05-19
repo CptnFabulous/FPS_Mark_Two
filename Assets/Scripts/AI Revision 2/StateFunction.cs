@@ -39,7 +39,7 @@ public abstract class StateFunction : MonoBehaviour
     // If a parent controller is present, ask it for its root.
     // Once a state can't find a parent controller, that state is the root.
 
-    public virtual void SwitchToState(StateFunction newState) => controller.SwitchToState(newState);
+    //public virtual void SwitchToState(StateFunction newState, bool forceIfSameState = false) => controller.SwitchToState(newState, forceIfSameState);
 
     /// <summary>
     /// Runs before the state is deactivated by the parent controller.

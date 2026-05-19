@@ -7,11 +7,14 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
 {
     public InvestigateLocations locationSearchState;
     //public StateFunction onSearchUnsuccessful;
+    public float soundWaitDuration = 0;
     public List<DiegeticSound> suspiciousNoises;
+
+    AI rootAI => locationSearchState.rootAI;
 
     private void Awake()
     {
-        locationSearchState.rootAI.hearing.onSoundHeard.AddListener(CheckIfNoiseIsWorthInvestigating);
+        rootAI.hearing.onSoundHeard.AddListener(CheckIfNoiseIsWorthInvestigating);
     }
     void CheckIfNoiseIsWorthInvestigating(HeardSound sound)
     {
@@ -20,14 +23,14 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
         if (priority < 0) return;
 
 
-        //locationSearchState.TrySearchForNewPosition(sound.originPoint, priority, onSearchUnsuccessful);
 
         // MAYBE: Also if the position doesn't line up with a known friendly/harmless thing?
         //locationSearchState.rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}");
-        /*
-        StateFunction previousState = locationSearchState.controller.currentActiveStateInHierarchy;
-        Debug.Log($"{locationSearchState.rootAI.name}: Investigating {sound.sound.name} at {sound.originPoint}. Will switch to {previousState.name} if failed");
-        */
-        locationSearchState.TrySearchForNewPosition(sound.originPoint, priority, false);
+
+        StateFunction previousState = GetPreviousState();
+        if (locationSearchState.TrySearchForNewPosition(sound.originPoint, soundWaitDuration, previousState, priority, false, false))
+        {
+            rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}. Will switch to {previousState.name} if failed");
+        }
     }
 }

@@ -1,56 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &548635348939486589
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6865889221189543224}
-  - component: {fileID: 5691326587957119647}
-  m_Layer: 6
-  m_Name: Find target's last position
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6865889221189543224
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 548635348939486589}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6325197632759387487}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5691326587957119647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 548635348939486589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3331abbec161c94d8c01f8c7a3713ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  icon: {fileID: 690883873600460605, guid: 14fb83ba714c0da4799aa175e8166c5f, type: 3}
-  soundCue: {fileID: 0}
-  animationTrigger: 
-  aimStats: {fileID: 6594071849308504864}
-  timeToWaitBeforeReacquiringTarget: 5
-  onFail: {fileID: 2618743024015922463}
-  investigateState: {fileID: 414535660375231210}
 --- !u!1 &948062402293159137
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,7 +114,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2498218948766230660}
-  - {fileID: 6865889221189543224}
   - {fileID: 429659991118692250}
   - {fileID: 5231975620577196877}
   - {fileID: 7269599322796750088}
@@ -481,6 +429,7 @@ MonoBehaviour:
   onAttack:
     m_PersistentCalls:
       m_Calls: []
+  delayBetweenAttacks: 0
   cooldownMin: 0
   cooldownMax: 0
   onCooldown:
@@ -677,12 +626,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   locationSearchState: {fileID: 414535660375231210}
+  basePriority: 0
+  soundWaitDuration: 0
   suspiciousNoises:
   - {fileID: 11400000, guid: 9b099937e029c8a4c8a96a55539d9517, type: 2}
   - {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
   - {fileID: 11400000, guid: e91dac1c0072e114093296c03705eb64, type: 2}
   - {fileID: 11400000, guid: 7a58ef69d604c7246be1a03933b38350, type: 2}
   - {fileID: 11400000, guid: ad3e0b55282b0d3409685ab865dc29d3, type: 2}
+  damageWaitDuration: 2
 --- !u!1 &4523392251199138075
 GameObject:
   m_ObjectHideFlags: 0
@@ -739,7 +691,9 @@ MonoBehaviour:
   maxTargetDistance: 40
   coverDistance: 3
   onTargetEliminated: {fileID: 1998196516955973173}
-  onTargetLost: {fileID: 5691326587957119647}
+  timeAfterSightLossUntilSearch: 5
+  searchForMissingTarget: {fileID: 414535660375231210}
+  onTargetLost: {fileID: 2618743024015922463}
 --- !u!1 &4768548187943095004
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,6 +1148,7 @@ MonoBehaviour:
   health: {fileID: 7555169701559161295}
   audioSource: {fileID: 3550908051030195185}
   ragdoll: {fileID: 4007590385114570656}
+  capsuleCollider: {fileID: 0}
   stamina: {fileID: 0}
   affiliation: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
   stateController: {fileID: 4300564472772752741}
@@ -1426,6 +1381,9 @@ MonoBehaviour:
   defaultAimStats: {fileID: 6594071849308504864}
   targetThresholdAngle: 0
   rotateTorso: 1
+  sightlineReference: {fileID: 0}
+  maxTurnAngleHorizontal: 180
+  maxTurnAngleVertical: 180
 --- !u!1 &7555169703030807958
 GameObject:
   m_ObjectHideFlags: 0
@@ -1634,11 +1592,9 @@ MonoBehaviour:
   animationTrigger: 
   aimStats: {fileID: 4605831353781806781}
   delayBetweenChangingTargetLocation: 10
-  onFail: {fileID: 0}
   statesToSwitchFrom:
-  - {fileID: 1998196516955973173}
-  - {fileID: 5691326587957119647}
   - {fileID: 2618743024015922463}
+  - {fileID: 1998196516955973173}
 --- !u!1 &8030190719948512139
 GameObject:
   m_ObjectHideFlags: 0

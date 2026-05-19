@@ -17,17 +17,21 @@ public class SweepAreaForTarget : AIStateFunction
     public float delayBetweenSweeps = 0.5f;
 
     [Header("States")]
-    public AIStateFunction successState;
+    //public AIStateFunction successState;
     public AIStateFunction failState;
     public InvestigateLocations investigateState;
 
+
+    //Vector3 originOfCheckRadius => targetManager.lastKnownPosition;
+    Vector3 originOfCheckRadius => standingPosition;
+
     List<AIGridPoints.GridPoint> pointsToCheck;
-    float lastTimeDestinationUpdated;
+    //float lastTimeDestinationUpdated;
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        investigateState.onFail = this; // Let the AI be temporarily distracted by noises, but then go back to sweeping the area
+        //investigateState.onFail = this; // Let the AI be temporarily distracted by noises, but then go back to sweeping the area
         //Debug.Log($"{rootAI}: starting search");
         //if (pointsToCheck == null) GetPoints();
         StartNewSearch();
@@ -38,18 +42,6 @@ public class SweepAreaForTarget : AIStateFunction
     }
     void Update()
     {
-        //.LookInNeutralDirection();
-        /*
-        // If the AI can see their target, switch to the success state.
-        if (targetManager.canSeeTarget == ViewStatus.Visible)
-        {
-            Debug.Log($"{rootAI}: found target");
-            SwitchToState(successState);
-            pointsToCheck = null;
-            return;
-        }
-        */
-
         // Clear points the AI can see (and therefore no longer needs to check)
         pointsToCheck.RemoveAll((point) =>
         {
@@ -66,7 +58,7 @@ public class SweepAreaForTarget : AIStateFunction
             if (failState != null)
             {
                 pointsToCheck = null;
-                SwitchToState(failState);
+                controller.SwitchToState(failState);
             }
             else // If no fail state is specified, start another search
             {
@@ -92,6 +84,8 @@ public class SweepAreaForTarget : AIStateFunction
 
     void StartNewSearch()
     {
+        //rootAI.DebugLog("Starting new search");
+
         // Get a copy of the cached grid points
         LevelArea areaToSearch = LevelArea.FindAreaOfPosition(targetManager.lastKnownPosition);
         //Debug.Log($"{this}: area to search = " + areaToSearch);
@@ -131,8 +125,8 @@ public class SweepAreaForTarget : AIStateFunction
         // Sort points by distance (in reverse order since we need to iterate backwards through the array)
         pointsToCheck.Sort((a, b) =>
         {
-            float aDis = (a.position - standingPosition).sqrMagnitude;
-            float bDis = (b.position - standingPosition).sqrMagnitude;
+            float aDis = (a.position - originOfCheckRadius).sqrMagnitude;
+            float bDis = (b.position - originOfCheckRadius).sqrMagnitude;
             return bDis.CompareTo(aDis);
         });
 

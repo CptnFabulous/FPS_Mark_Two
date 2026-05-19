@@ -16,6 +16,7 @@ public abstract class TravelToDestination : AIStateFunction
     // Moving to ideal point to shoot target
     // Avoiding an incoming attack
     // Flanking maneuver
+    protected NavMeshPath calculatedPath;
 
     protected override void OnEnable()
     {
@@ -24,14 +25,15 @@ public abstract class TravelToDestination : AIStateFunction
         if (navMeshAgent != null)
         {
             navMeshAgent.isStopped = false;
-            NavMeshPath path = GetPath();
-            if (path != null) navMeshAgent.path = path;
+
+            bool pathFound = GetPath(ref calculatedPath);
+            if (pathFound) navMeshAgent.path = calculatedPath;
         }
     }
 
 
     protected abstract bool IsPathViable();
-    protected abstract NavMeshPath GetPath(/*out AIGridPoints.GridPoint destination*/);
+    protected abstract bool GetPath(ref NavMeshPath path/*out AIGridPoints.GridPoint destination*/);
 
 
     

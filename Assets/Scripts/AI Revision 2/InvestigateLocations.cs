@@ -1,88 +1,98 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class InvestigateLocations : AIStateFunction
 {
     [Header("Investigating")]
     public float delayBetweenChangingTargetLocation = 10;
 
-    //StateFunction onSuccess;
-    public StateFunction onFail;
-
     [Header("State transitions")]
     [SerializeField] List<StateFunction> statesToSwitchFrom;
 
-    public Vector3 positionToCheck { get; private set; }
-    public float priorityLevel { get; private set; }
-    public float lastTimeOfTargetChange { get; private set; } = Mathf.NegativeInfinity;
+    Vector3 pointToCheck;
+    float waitDuration;
+    StateFunction onFail;
 
-    public void TrySearchForNewPosition(Vector3 position, float priority, bool overrideCooldown)
+    float priorityLevel = Mathf.NegativeInfinity;
+    float lastTimeOfTargetChange = Mathf.NegativeInfinity;
+
+    private void OnDrawGizmosSelected()
     {
-        // Check that the AI is in a state where it's actually interested in investigating noises (e.g. not in combat)
-        if (statesToSwitchFrom.Count > 0 && statesToSwitchFrom.Contains(root.currentStateInHierarchy) == false) return;
-        
-        // Ignore if the enemy is already engaging a known target
-        if (targetManager.targetExists && targetManager.viewStatus == ViewStatus.Visible)
-        {
-            rootAI.DebugLog("Ignored, AI has already found the target");
-            return;
-        }
+        if (MiscFunctions.CurrentCameraNotMain()) return;
 
-        // Ignore if the current target is more important/suspicious
-        if (priority < priorityLevel)
-        {
-            rootAI.DebugLog($"Ignored, location is not a high-enough priority ({priority}, {priorityLevel})");
-            return;
-        }
-
-        // Ignore if the enemy has already just acquired a new position to check (and this check does not have authority to override it)
-        if (overrideCooldown == false && (Time.time - lastTimeOfTargetChange) < delayBetweenChangingTargetLocation)
-        {
-            //rootAI.DebugLog("Ignored, it's too soon since the AI acquired a new target");
-            return;
-        }
-
-        positionToCheck = position;
-        priorityLevel = priority;
-        lastTimeOfTargetChange = Time.time;
-
-        //this.onSuccess = onSuccess;
-        //this.onFail = onFail;
-
-        // Switch to this state if not already there
-        if (controller.currentState != this)
-        {
-            controller.SwitchToState(this);
-        }
-        else // If already searching, re-assign the last destination
-        {
-            navMeshAgent.SetDestination(positionToCheck);
-        }
+        if (enabled == false) return;
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(pointToCheck, 0.5f);
     }
-
     private void OnDisable()
     {
         aim.LookInNeutralDirection();
-        priorityLevel = 0; // Resets priority value
+    }
+
+    public bool TrySearchForNewPosition(Vector3 pointToCheck, float waitDuration, StateFunction onFail, float priority, bool ignoreCurrentState, bool overrideCooldown)
+    {
+        // Check that the AI is in a state where it's actually interested in investigating noises (e.g. not in combat)
+        if (!ignoreCurrentState && statesToSwitchFrom.Count > 0 && statesToSwitchFrom.Contains(root.currentStateInHierarchy) == false)
+        {
+            rootAI.DebugLog("Not interested in searching");
+            return false;
+        }
+        
+        // If already investigating, check if there's a valid reason to override the current investigation
+        if (controller.currentState == this)
+        {
+            if (priority < priorityLevel)
+            {
+                // Ignore if the new target isn't as important
+                rootAI.DebugLog("Already searching for something more important");
+                return false;
+            }
+            else if (overrideCooldown == false && (Time.time - lastTimeOfTargetChange) < delayBetweenChangingTargetLocation)
+            {
+                // Ignore if current target was acquired too recently (and the new target doesn't have authority to override it)
+                rootAI.DebugLog("Too soon since the AI acquired a new target");
+                return false;
+            }
+        }
+
+        rootAI.DebugLog("Will search for position");
+
+        this.pointToCheck = pointToCheck;
+        this.waitDuration = waitDuration;
+        this.onFail = onFail;
+        priorityLevel = priority;
+        lastTimeOfTargetChange = Time.time;
+
+        // Force refresh
+        controller.SwitchToState(this, true);
+        return true;
     }
 
     public override IEnumerator AsyncProcedure()
     {
-        rootAI.DebugLog("Investigation started, looking in neutral direction");
-        // Have the AI look in the standard direction.
-        aim.LookInNeutralDirection();
+        rootAI.DebugLog("Looking at suspicious position");
+        if (waitDuration > 0)
+        {
+            // Look towards the target's last-known position.
+            yield return aim.RotateTowardsPositionAsync(pointToCheck);
+            yield return new WaitForSeconds(waitDuration);
+        }
 
-        // Go to location of sound.
-        rootAI.DebugLog($"{this}: travelling to suspicious position (frame {Time.frameCount})");
-        yield return rootAI.TravelToDestination(positionToCheck);
+        // Go to suspicious location.
+        rootAI.DebugLog($"Travelling to suspicious position");
+        aim.LookInNeutralDirection();
+        yield return rootAI.TravelToDestination(pointToCheck);
 
         // Look around said position
-        rootAI.DebugLog($"{this}: looking around target's last-known position (frame {Time.frameCount})");
+        rootAI.DebugLog($"Looking around target's last-known position");
         Vector3 startDirection = transform.forward;
         yield return aim.SweepSightlineAsync(() => startDirection, new Vector2(360, 180), 0, false);
 
         // If nothing is detected, switch to alternate procedure
-        SwitchToState(onFail);
+        controller.SwitchToState(onFail);
+        // Reset priority value now that there's no check state
+        priorityLevel = Mathf.NegativeInfinity;
     }
 }

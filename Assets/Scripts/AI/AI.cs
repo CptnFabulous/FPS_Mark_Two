@@ -100,14 +100,12 @@ public class AI : Character
     public IEnumerator TravelToDestination(Vector3 position)
     {
         if (agent == null) yield break;
-        
-        Debug.DrawLine(transform.position, position, Color.cyan, 5);
+
+        agent.isStopped = false;
+
+        //Debug.DrawLine(transform.position, position, Color.cyan, 5);
         agent.SetDestination(position);
 
-
-        // Set the AI to look straight forward
-        aiming.LookInNeutralDirection();
-        
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => reachedDestination);

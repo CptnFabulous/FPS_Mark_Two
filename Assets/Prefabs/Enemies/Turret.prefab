@@ -120,7 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &1844510280121180908
 GameObject:
   m_ObjectHideFlags: 0
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &2131625940933771439
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,6 +333,8 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 2065538367267534249}
   audioSource: {fileID: 1594795221519742183}
+  ragdoll: {fileID: 0}
+  capsuleCollider: {fileID: 0}
   stamina: {fileID: 0}
   affiliation: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
   stateController: {fileID: 2029478338685448919}
@@ -457,9 +459,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     name: New Resource
-    max: 25
-    current: 25
-    criticalLevel: 5
+    max: 50
+    current: 50
+    criticalLevel: 10
   godmode: 0
   deadDescription: destroyed
   poise: {fileID: 0}
@@ -695,7 +697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 1
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!108 &6060665247033873742
 Light:
   m_ObjectHideFlags: 0
@@ -839,6 +841,8 @@ MonoBehaviour:
   maxTargetDistance: 15
   coverDistance: 2
   onTargetEliminated: {fileID: 8816799217935229477}
+  timeAfterSightLossUntilSearch: 5
+  searchForMissingTarget: {fileID: 0}
   onTargetLost: {fileID: 8816799217935229477}
 --- !u!114 &492860660033172326
 MonoBehaviour:
@@ -881,6 +885,7 @@ MonoBehaviour:
   onAttack:
     m_PersistentCalls:
       m_Calls: []
+  delayBetweenAttacks: 0
   cooldownMin: 0
   cooldownMax: 0
   onCooldown:
@@ -1091,7 +1096,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &3874618513739275633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1285,7 +1290,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &4278949447789034244
 GameObject:
   m_ObjectHideFlags: 0
@@ -6354,6 +6359,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 4942945783503569619}
   projectileCount: 1
   shotSpread: 0
+  centreFirstPellet: 0
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:
@@ -6519,7 +6525,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &5801371512224400586
 GameObject:
   m_ObjectHideFlags: 0
@@ -6642,7 +6648,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &5934760209010600683
 GameObject:
   m_ObjectHideFlags: 0
@@ -6815,7 +6821,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _attachedTo: {fileID: 4609959751622302532}
   isCritical: 0
-  resistances: {fileID: 0}
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &7433238092715446194
 GameObject:
   m_ObjectHideFlags: 0
@@ -7101,10 +7107,6 @@ PrefabInstance:
     - target: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
       propertyPath: damageStats.stun
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7059086101645604909, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
-      propertyPath: startingVelocity
-      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 7059086101645604910, guid: c1f25fa5499190945a75b5b04839683a, type: 3}
       propertyPath: m_RootOrder

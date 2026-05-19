@@ -5,33 +5,12 @@ using UnityEngine.AI;
 
 public static class AIPathing
 {
-    /// <summary>
-    /// Calculates a path while taking hazards into account, based on how the enemy AI is set up.
-    ///<para>Work in progress! Currently there are no special checks, but I want to add those in later.</para>
-    /// </summary>
-    /// <param name="ai"></param>
-    /// <param name="position"></param>
-    /// <returns></returns>
-    public static NavMeshPath CalculatePath(AI ai, Vector3 position, float maxDistance)
+    public static bool CanMoveToDestination(AI ai, Vector3 destination, float maxDistance, ref NavMeshPath path)
     {
-        // Check if a feasible path exists.
-        NavMeshPath path = new NavMeshPath();
-        bool success = CanMoveToDestination(ai, position, maxDistance, out path);
-        if (success == false) return null;
+        if (path == null) path = new NavMeshPath();
 
-        // TO DO: Extra AI features
-        // Check if walking along this path will result in the AI doing something stupid like walking out into an enemy firing line
-        // Check if the AI is aware of that problem
-        // Try generating an alternate route that meets those requirements
-
-        return path;
-    }
-
-    static bool CanMoveToDestination(AI ai, Vector3 destination, float maxDistance, out NavMeshPath path)
-    {
         // Will the AI be able to form a clear path to the target?
         // Is the point close enough to bother moving to?
-        path = new NavMeshPath();
         bool success = NavMesh.CalculatePath(ai.agent.transform.position, destination, ai.agent.areaMask, path);
         if (success == false) return false;
         if (path.status != NavMeshPathStatus.PathComplete) return false;
@@ -42,6 +21,10 @@ public static class AIPathing
         // Maybe the AI can have a 'wing it' versus 'play it safe and go on established routes' setting
         // If the AI wings it, maybe they should try calculating the path from the opposite end, then figure out a movement technique that connects the two.
 
+        // TO DO: Extra AI features
+        // Check if walking along this path will result in the AI doing something stupid like walking out into an enemy firing line
+        // Check if the AI is aware of that problem
+        // Try generating an alternate route that meets those requirements
 
         return true;
     }
