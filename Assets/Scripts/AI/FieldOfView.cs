@@ -29,7 +29,7 @@ public class FieldOfView : MonoBehaviour
     static int numberOfGridPointsToCheck;
 
     Collider[] overlapSphereResults = new Collider[1024];
-    List<Entity> previouslyScanned = new List<Entity>();
+    HashSet<Entity> previouslyScanned = new HashSet<Entity>();
     Entity[] foundTargets = new Entity[256];
     RaycastHit[] foundTargetHits = new RaycastHit[256];
     int numberOfTargets = 0;
