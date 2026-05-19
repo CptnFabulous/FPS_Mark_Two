@@ -35,26 +35,28 @@ public class DiegeticSound : ScriptableObject
     static readonly float distanceThreshold = 1f;
     static readonly float ageThreshold = 0.2f;
 
-    public void Play(Entity entity) => Play(entity.bounds.center, entity);
+    //public void Play(Entity entity) => Play(entity.bounds.center, entity);
     public void Play(AudioSource source) => Play(source.transform.position, source.GetComponentInParent<Entity>(), source);
-    public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1, bool playAudioAtMaxVolume = false)
+    public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1, float minimumVolume = 0)
     {
         AudioSource source = null;
         if (sourceEntity != null)
         {
             source = sourceEntity.audioSource;
         }
-        Play(point, sourceEntity, source, multiplier, playAudioAtMaxVolume);
+        Play(point, sourceEntity, source, multiplier, minimumVolume);
     }
-    public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1, bool playAudioAtMaxVolume = false)
+    public void Play(Vector3 point, Entity sourceEntity, AudioSource source, float multiplier = 1, float minimumVolume = 0)
     {
         AudioClip clip = sounds[Random.Range(0, sounds.Length)];
         float volumeForPlayer = /*Random.Range(minVolumeVariance, maxVolumeVariance) * */multiplier;
-        volumeForPlayer = playAudioAtMaxVolume ? 1 : volumeForPlayer;
+        volumeForPlayer = Mathf.Max(volumeForPlayer, minimumVolume);
         if (source != null)
         {
+            //float previousPitch = source.pitch;
             source.pitch = Random.Range(minPitchVariance, maxPitchVariance);
             source.PlayOneShot(clip, volumeForPlayer);
+            //source.pitch = previousPitch;
         }
         else
         {

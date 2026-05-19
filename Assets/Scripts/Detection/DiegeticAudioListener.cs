@@ -105,8 +105,8 @@ public class DiegeticAudioListener : MonoBehaviour
         heardDecibels = decibels * MathUtility.InverseSquareValueMultiplier(travelDistance);
         bool canHear = heardDecibels >= minVolumeToHear;
 
-        //rootEntity.DebugLog($"Heard {sound} from {source} = {canHear}. Outgoing volume = {decibels}. Incoming volume {heardDecibels} >= {minVolumeToHear}");
-        Debug.DrawLine(origin, destination, canHear ? Color.cyan : Color.blue, 1);
+        //rootEntity.DebugLog($"Outgoing volume = {decibels}. Incoming volume {heardDecibels}/{minVolumeToHear}");
+        //Debug.DrawLine(origin, destination, canHear ? Color.cyan : Color.blue, 1);
 
         return canHear;
     }

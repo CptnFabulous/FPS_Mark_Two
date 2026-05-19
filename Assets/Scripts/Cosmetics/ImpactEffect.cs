@@ -17,7 +17,7 @@ public class ImpactEffect : ScriptableObject
     //public Sprite defaultDecal;
     public Material defaultDecalMaterial;
     public Vector2 decalSize = new Vector2(0.02f, 0.02f);
-    public bool playSoundAtMaxVolume = false;
+    [Range(0, 1)] public float minimumVolume = 0;
     public bool randomiseEffectRotation = true;
 
     //static SpriteRenderer decalPrefab;
@@ -37,37 +37,19 @@ public class ImpactEffect : ScriptableObject
         {
             //Vector3 effectDirection = normal;
             Vector3 effectDirection = Vector3.Reflect(impactDirection, normal);
-            ParticleSystem effectToSpawn = ObjectPool.RequestObject(effect, true, maxNumberOfSpawnedEffects);
+            ObjectPool.CreateObjectPool(effect, true, maxNumberOfSpawnedEffects);
+            ParticleSystem effectToSpawn = ObjectPool.RequestObject(effect);
             StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, effectDirection, up, 0, randomiseEffectRotation);
             // TO DO: use intensity to determine size of particles
             effectToSpawn.Play();
         }
 
         // Play sound effect at point
-        if (sound != null) sound.Play(point, sourceEntity, intensity, playSoundAtMaxVolume);
+        if (sound != null) sound.Play(point, sourceEntity, intensity, minimumVolume);
 
         // Stick decal
         bool isNotPlayer = EntityCache<Player>.GetEntity(surfaceCollider) == null;
-        /*
-        if (decal != null && isNotPlayer)
-        {
-            if (decalPrefab == null)
-            {
-                decalPrefab = new GameObject($"Decal Renderer").AddComponent<SpriteRenderer>();
-                decalPrefab.gameObject.SetActive(false);
-                DontDestroyOnLoad(decalPrefab);
-            }
-
-            SpriteRenderer sr = ObjectPool.RequestObject(decalPrefab, true, maxNumberOfSpawnedEffects);
-            sr.sprite = decal;
-            sr.name = $"Decal ({name})";
-            sr.gameObject.layer = surfaceCollider.layer;
-
-            //Vector3 pointToStickDecal = point + (normal.normalized * 0.01f);
-            StickObjectToSurface(sr.transform, surfaceCollider.transform, point, normal, up, 0.01f);
-        }
-        */
-
+        
         if (decalMaterial != null && isNotPlayer)
         {
             if (decalProjector == null)
