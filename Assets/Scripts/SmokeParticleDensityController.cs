@@ -13,7 +13,7 @@ public class SmokeParticleDensityController : MonoBehaviour
         // I imagine it'd be the same with tuples as well.
         public Vector3Int gridPosition { get; private set; }
         public Vector3 worldPosition { get; private set; }
-        public int maxSize { get; private set; }
+        public int maxParticleCount { get; private set; }
 
         public SmokeCloud[] clouds;// = new SmokeCloud[4096];
         public int[] indices;// = new int[4096];
@@ -21,13 +21,13 @@ public class SmokeParticleDensityController : MonoBehaviour
 
         public float lastTimeUpdated = 0f;
 
-        public ParticleGridSpace(Vector3Int gridPosition, Vector3 worldPosition, int maxSize)
+        public ParticleGridSpace(Vector3Int gridPosition, Vector3 worldPosition, int maxParticleCount)
         {
             this.gridPosition = gridPosition;
             this.worldPosition = worldPosition;
-            this.maxSize = maxSize;
-            clouds = new SmokeCloud[maxSize];
-            indices = new int[maxSize];
+            this.maxParticleCount = maxParticleCount;
+            clouds = new SmokeCloud[maxParticleCount];
+            indices = new int[maxParticleCount];
         }
     }
 
@@ -123,17 +123,37 @@ public class SmokeParticleDensityController : MonoBehaviour
             cloud.particleEmitter.SetParticles(cloud.particleArray, cloud.numberOfParticles);
         }
     }
+
+#if UNITY_EDITOR
+    static readonly Color unusedColour = new Color(0.5f, 0, 0, 0.5f);
+    static readonly Color emptyColour = new Color(0.5f, 0.5f, 0.5f, 1);
+    static readonly Color fullColour = new Color(0, 0, 0, 1);
+
+    static readonly Color safeVelocityColour = Color.blue;
+    static readonly Color conflictingVelocityColour = Color.red;
+    static readonly Color desiredVelocityColour = Color.green;
+    static readonly Color inbetweenColour = new Color(0.5f, 0.5f, 0);
+
     private void OnDrawGizmosSelected()
     {
         if (MiscFunctions.CurrentCameraNotMain()) return;
 
         foreach (ParticleGridSpace gridSpace in dictionary.Values)
         {
-            if (gridSpace.numberOfParticles <= 0) continue;
+            if (gridSpace.numberOfParticles <= 0)
+            {
+                Gizmos.color = unusedColour;
+            }
+            else
+            {
+                // Interpolate colour based on number of particles in each grid space
+                float particleCountRatio = gridSpace.numberOfParticles / gridSpace.maxParticleCount;
+                Gizmos.color = Color.Lerp(emptyColour, fullColour, particleCountRatio);
+                //Gizmos.color = cellDensityColourGradient.Evaluate(particleCountRatio);
+            }
 
-            // Interpolate colour based on number of particles in each grid space
-            float particleCountRatio = gridSpace.numberOfParticles / gridSpace.maxSize;
-            Gizmos.color = Color.Lerp(Color.grey, Color.black, particleCountRatio);
+
+            //Gizmos.DrawCube(gridSpace.worldPosition, gridSpaceSize * Vector3.one);
             Gizmos.DrawWireCube(gridSpace.worldPosition, gridSpaceSize * Vector3.one);
         }
 
@@ -141,19 +161,33 @@ public class SmokeParticleDensityController : MonoBehaviour
         {
             if (index >= cloud.particleEmitter.particleCount) return;
 
+            Vector3 resolverVector = cloud.particleOffsetResolvers[index];
+            bool needsToBeResolved = resolverVector.sqrMagnitude > 0;
 
             ParticleSystem.Particle realParticle = cloud.particleArray[index];
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(realParticle.position, realParticle.velocity);
+            Vector3 position = realParticle.position;
+            Vector3 velocity = realParticle.velocity;
 
-            // Show resolver vectors for each particle
-            Vector3 resolverVector = cloud.particleOffsetResolvers[index];
-            if (resolverVector.sqrMagnitude <= 0) return;
+            // Show current colour
+            if (needsToBeResolved)
+            {
+                Gizmos.color = conflictingVelocityColour;
+                Gizmos.DrawRay(position, velocity);
 
-            Gizmos.color = Color.green;
-            Gizmos.DrawRay(realParticle.position, resolverVector);
+                Gizmos.color = desiredVelocityColour;
+                Gizmos.DrawRay(position, resolverVector);
+
+                Gizmos.color = inbetweenColour;
+                Gizmos.DrawLine(position + velocity, position + resolverVector);
+            }
+            else
+            {
+                Gizmos.color = safeVelocityColour;
+                Gizmos.DrawRay(position, velocity);
+            }
         });
     }
+#endif
 
     void ResetResolverVectors(SmokeCloud cloud, int index)
     {
