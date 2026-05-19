@@ -55,7 +55,7 @@ public class SweepAreaForTarget : AIStateFunction
         {
             if (Vector3.Distance(point.position, visionCone.transform.position) > distanceForVisualCheck) return false;
 
-            return visionCone.VisionConeCheck(point.position) == ViewStatus.Visible;
+            return visionCone.VisionConeCheck(point.position, out _) == ViewStatus.Visible;
         });
         // Also remove points that are really close to the agent 
         pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) < distanceForInstinctCheck);

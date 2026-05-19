@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public enum ViewStatus
 {
@@ -40,8 +39,8 @@ public class FieldOfView : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
-        
+        if (MiscFunctions.CurrentCameraNotMain()) return;
+
         Gizmos.color = Color.yellow;
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawFrustum(Vector3.zero, viewingAngles.y, viewRange, 0, viewingAngles.x / viewingAngles.y);
@@ -81,6 +80,7 @@ public class FieldOfView : MonoBehaviour
         if (viewingAngles.x <= 180 && viewingAngles.y <= 180)
         {
             // If viewing angle fits comfortably inside a frustum, make a box encompassing it.
+            // This reduces the area checked over, and the number of colliders to process.
             float halfRange = viewRange * 0.5f;
             Vector3 boxCentre = transform.position + halfRange * transform.forward;
 
@@ -145,20 +145,7 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
-    public ViewStatus VisionConeCheck(Vector3 position)
-    {
-        Vector3 direction = position - transform.position;
-
-        // Check angle
-        if (AngleCheck(direction, transform, viewingAngles, out float angleX, out _) == false) return ViewStatus.OutsideViewAngle;
-
-
-        // Check range
-        if (direction.magnitude > ViewRangeAtAngle(angleX)) return ViewStatus.OutOfRange;
-        // Check line of sight
-        bool seen = AIAction.LineOfSight(transform.position, position, viewDetection.mask, rootAI.HitOwnCollider);
-        return seen ? ViewStatus.Visible : ViewStatus.BehindCover;
-    }
+    public ViewStatus VisionConeCheck(Vector3 point, out RaycastHit hit) => PositionCheck(point, out hit, null);
     /// <summary>
     /// Calculates and runs a sweep of raycasts to check a cone-shaped area for colliders. This check will also detect partially-hidden colliders, but is performance-intensive and should not be run regularly.
     /// </summary>
@@ -169,17 +156,22 @@ public class FieldOfView : MonoBehaviour
 
         IList<Collider> targetColliders = targetEntity.colliders;
         // If no colliders are present, just do a simple bounds check
-        if (targetColliders == null || targetColliders.Count <= 0) return VisionConeCheck(targetEntity.CentreOfMass);
+        if (targetColliders == null || targetColliders.Count <= 0) return PositionCheck(targetEntity.CentreOfMass, out _, null);
+
+        Bounds b = targetEntity.bounds;
+        Vector3 centre = b.center;
+
+        // Perform a single initial raycast. If this one hits, it means the target is in plain sight and we won't have to bother with any of the partial cover nonsense.
+        ViewStatus initialCheckStatus = PositionCheck(centre, out hit, targetColliders);
+        if (initialCheckStatus == ViewStatus.Visible) return ViewStatus.Visible;
 
         #region Calculate grid to check
 
-        Bounds b = targetEntity.bounds;
-
         // Get centre and axes of raycast sweep zone
-        Vector3 centre = b.center;
-        Quaternion targetDirection = Quaternion.LookRotation(centre - transform.position);
-        Vector3 targetRight = targetDirection * Vector3.right;
-        Vector3 targetUp = targetDirection * Vector3.up;
+        Vector3 directionToTarget = centre - transform.position;
+        Quaternion fromOriginToTargetRotation = Quaternion.LookRotation(directionToTarget);
+        Vector3 targetRight = fromOriginToTargetRotation * Vector3.right;
+        Vector3 targetUp = fromOriginToTargetRotation * Vector3.up;
 
         // Calculate dimensions of sweep zone, relative to the view direction
         int horizontalAxisIndex = TransformUtility.ClosestAxis(targetRight);
@@ -224,46 +216,100 @@ public class FieldOfView : MonoBehaviour
         #region Check each point for the target
 
         // Set up values to check why each cast failed
-        //int outOfViewAngle = 0;
+        int outOfViewAngle = 0;
         int blocked = 0;
         for (int i = 0; i < numberOfGridPointsToCheck; i++)
         {
-            Vector2 point = gridPointsToCheck[i];
-
             // Calculates raycast point to aim for
-            //Vector3 raycastHitDestination = gridStartCorner + (spacingX * (point.x) * targetRight) + (spacingY * (point.y) * targetUp);
+            Vector2 point = gridPointsToCheck[i];
             Vector3 raycastHitDestination = gridStartCorner + (spacingX * (point.x + 0.5f) * targetRight) + (spacingY * (point.y + 0.5f) * targetUp);
-            Vector3 direction = raycastHitDestination - transform.position;
 
-            // Check if this cast is inside the AI's peripheral vision
-            if (AngleCheck(direction, transform, viewingAngles, out float angleX, out _) == false)
+            // Perform a line of sight + angle check to the target point, to the target colliders
+            ViewStatus castResult = PositionCheck(raycastHitDestination, out hit, targetColliders);
+            switch (castResult)
             {
-                //outOfViewAngle++;
-                continue;
+                // If the raycast hit one of the target's colliders, that means the AI can see it!
+                case ViewStatus.Visible:
+                    return ViewStatus.Visible;
+                    break;
+
+                // If outside view angle, ignore and continue.
+                case ViewStatus.OutsideViewAngle:
+                    outOfViewAngle++;
+                    break;
+
+                // If it did hit something else, register as an obstruction
+                case ViewStatus.BehindCover:
+                    blocked++;
+                    break;
             }
-
-            float calculatedRange = ViewRangeAtAngle(angleX);
-
-            // Run a line of sight check to the target colliders
-            bool lineOfSight = AIAction.LineOfSightToTarget(transform.position, direction, out hit, calculatedRange, viewDetection.mask, targetColliders, QueryTriggerInteraction.Collide, rootAI.HitOwnCollider);
-            //Debug.DrawRay(transform.position, viewRange * direction.normalized, lineOfSight ? Color.green : Color.red);
-            //Debug.Log(hit.collider);
-            // If the raycast hit one of the target's colliders, that means the AI can see it!
-            if (lineOfSight) return ViewStatus.Visible;
-
-            // Raycast did not find target.
-            // If it did hit something else, register as an obstruction
-            if (hit.collider != null) blocked++;
-            // Proceed to next check
         }
         #endregion
 
         // If the only casts that hit were blocked, the object is behind cover.
-        // If a cast is outside the viewing angle, the AI couldn't see it anyway, so we didn't bother checking if it's blocked 
         if (blocked > 0) return ViewStatus.BehindCover;
 
-        // Otherwise, the target is completely outside the viewing angle
-        return ViewStatus.OutsideViewAngle;
+        // If nothing was blocked, but one or more casts was outside the angle, that must be the reason it couldn't be seen.
+        if (outOfViewAngle > 0) return ViewStatus.OutsideViewAngle;
+
+        // Otherwise it's probably out of range.
+        return ViewStatus.OutOfRange;
+    }
+
+
+    ViewStatus PositionCheck(Vector3 point, out RaycastHit hit, IEnumerable<Collider> targetColliders)
+    {
+        Vector3 direction = point - transform.position;
+        hit = new RaycastHit();
+
+        // Check that the point is not outside of the view angle
+        if (AngleCheck(direction, transform, viewingAngles, out float angleX, out _) == false)
+        {
+            //Debug.Log("Outside view angle");
+            return ViewStatus.OutsideViewAngle;
+        }
+
+        float calculatedRange = ViewRangeAtAngle(angleX);
+
+        // If we're only checking for a single point:
+        if (targetColliders == null || targetColliders.Count() <= 0)
+        {
+            // Perform a simple range check
+            if (direction.magnitude > calculatedRange) return ViewStatus.OutOfRange;
+            // Perform a simple line of sight check. If we hit something, line of sight is blocked
+            bool seen = AIAction.LineOfSight(transform.position, point, viewDetection.mask, rootAI.HitOwnCollider);
+            //Debug.Log($"Simple check, line of sight = {seen}");
+            return seen ? ViewStatus.Visible : ViewStatus.BehindCover;
+        }
+
+        // TO DO: have some kind of backup check in case all the colliders are disabled for some reason
+        //return ViewStatus.NotPresent;
+
+        bool lineOfSight = AIAction.LineOfSightToTarget(transform.position, direction, out hit, calculatedRange, viewDetection.mask, targetColliders, rootAI.HitOwnCollider);
+        // If we hit one of the target colliders, then the target is visible!
+        if (lineOfSight)
+        {
+            //Debug.Log("Success!");
+            return ViewStatus.Visible;
+        }
+
+        // If something was hit that isn't the target, that means it's behind cover.
+        if (hit.collider != null)
+        {
+            //Debug.Log($"Result = {false}, behind cover");
+            return ViewStatus.BehindCover;
+        }
+
+        // TO DO: should I bother checking if the colliders were in range?
+        // The only reason it'd go through with the line of sight to colliders check, not detect anything at all and not be out of range, is if all the colliders were disabled.
+        // Or maybe if all the colliders were at the wrong angle compared to the centre of mass?
+        // Then again the only time where the collider field is being used is in the main complex check, where the angle is never too different. Otherwise it's private.
+        //Debug.Log("Out of range");
+        return ViewStatus.OutOfRange;
+
+        // TO DO: check if any of the colliders were even close enough
+        //throw new System.NotImplementedException();
+
     }
 
     float ViewRangeAtAngle(float angleX) => viewRange;// * Mathf.Lerp(1, peripheralMultiplier, angleX / viewingAngles.x);

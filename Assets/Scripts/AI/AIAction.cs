@@ -73,9 +73,9 @@ public static class AIAction
         Vector3 direction = to - from;
         return !RaycastWithExceptions(from, direction, out _, direction.magnitude, detection, isException, QueryTriggerInteraction.UseGlobal, printDebugMessages);
     }
-    public static bool LineOfSightToTarget(Vector3 origin, Vector3 direction, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, QueryTriggerInteraction detectTriggers, System.Func<RaycastHit, bool> isException)
+    public static bool LineOfSightToTarget(Vector3 origin, Vector3 direction, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, System.Func<RaycastHit, bool> isException)
     {
-        bool raycastHit = RaycastWithExceptions(origin, direction, out hit, viewRange, viewDetection, isException, detectTriggers);
+        bool raycastHit = RaycastWithExceptions(origin, direction, out hit, viewRange, viewDetection, isException, QueryTriggerInteraction.Collide);
         return raycastHit && CollectionUtility.ArrayContains(targetColliders, hit.collider);
     }
     
