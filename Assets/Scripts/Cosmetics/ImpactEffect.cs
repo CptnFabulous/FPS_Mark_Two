@@ -57,9 +57,11 @@ public class ImpactEffect : ScriptableObject
                 decalProjector = new GameObject("Decal Projector").AddComponent<DecalProjector>();
                 decalProjector.gameObject.SetActive(false);
                 DontDestroyOnLoad(decalProjector);
+                ObjectPool.CreateObjectPool(decalProjector, true, maxNumberOfSpawnedEffects);
+                decalProjector.transform.SetParent(ObjectPool.GetPoolParent(decalProjector));
             }
 
-            DecalProjector dp = ObjectPool.RequestObject(decalProjector, true, maxNumberOfSpawnedEffects);
+            DecalProjector dp = ObjectPool.RequestObject(decalProjector);
             //Vector2 decalSize = decal.pixelsPerUnit * decal.textureRect.size;
 
             dp.size = new Vector3(decalSize.x, decalSize.y, 1);
