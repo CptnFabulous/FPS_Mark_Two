@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnemyHealthMeter : MonoBehaviour
 {
-    public ResourceMeter healthMeter;
+    public ResourceDisplay healthMeter;
     public RectTransform parentRectTransform;
     public CanvasGroup canvasGroup;
     public float observationRange = 50;

@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class PlayerHealthHUD : MonoBehaviour
 {
-    public ResourceMeter healthMeter;
+    public ResourceDisplay healthMeter;
     public UnityEvent damageEffects;
     public UnityEvent healEffects;
 

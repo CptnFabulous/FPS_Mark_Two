@@ -569,6 +569,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7595526582294369536}
+  - component: {fileID: 6222737900646938878}
+  - component: {fileID: 987324102767852713}
   m_Layer: 6
   m_Name: Movement
   m_TagString: Untagged
@@ -596,6 +598,53 @@ Transform:
   - {fileID: 1742334206566201894}
   m_Father: {fileID: 5952785220977947004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6222737900646938878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398642341574712183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bdf3e04a4e843049b6d9003eba25aeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlling: {fileID: 5952785220977947003}
+  collider: {fileID: 5952785220977946993}
+  lookControls: {fileID: 5674984449773469396}
+  groundingHandler: {fileID: 987324102767852713}
+  standingMaterial: {fileID: 13400000, guid: e6ee4169a9384b44a937244a72aa83ed, type: 2}
+  movingMaterial: {fileID: 13400000, guid: 3249d7ec0cebd2a49804eeafa555fa94, type: 2}
+--- !u!114 &987324102767852713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398642341574712183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a3e848974c27c140ad08e85d7f48abb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundingRayLength: 0.01
+  collider: {fileID: 5952785220977946993}
+  onLand:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 9fc06f0949f64bb448bf2fbdcc5aeb15, type: 2}
+        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 5952785220977947006}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2406643243703453481
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,7 +696,7 @@ MonoBehaviour:
     criticalLevel: 1
   regenDelay: 1
   regenTime: 1
-  guiMeter: {fileID: 1881373689726421184}
+  guiMeter: {fileID: 4592229086229172349}
 --- !u!1 &2496397548176694304
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,7 +887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3147d6f6bb52ad45a24b8dc1070b0d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementHandler: {fileID: 6045511799847877017}
+  movementHandler: {fileID: 6222737900646938878}
   movementBinding: {fileID: 362065047927858742}
   canMove: 1
   defaultSpeed: 4
@@ -1330,7 +1379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d92b69ee799678743baf0e0f7828747d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementHandler: {fileID: 6045511799847877017}
+  movementHandler: {fileID: 6222737900646938878}
   speedMultiplier: 2
   duration: 0.125
   speedCurve:
@@ -1438,7 +1487,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c06f407b24e03b4db6c3812665ed2ea, type: 2}
+  - {fileID: 2100000, guid: f51288b7bb6339e4b896f5623bef932f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1616,9 +1665,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1742334206566201894}
-  - component: {fileID: 6045511799847877017}
   - component: {fileID: 3777638003876376270}
-  - component: {fileID: 3563673693111838529}
   m_Layer: 6
   m_Name: Movement State Controller
   m_TagString: Untagged
@@ -1643,23 +1690,6 @@ Transform:
   - {fileID: 4403990508921314293}
   m_Father: {fileID: 7595526582294369536}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6045511799847877017
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5428108283114522832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bdf3e04a4e843049b6d9003eba25aeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlling: {fileID: 5952785220977947003}
-  lookControls: {fileID: 5674984449773469396}
-  groundingHandler: {fileID: 3563673693111838529}
-  standingMaterial: {fileID: 13400000, guid: e6ee4169a9384b44a937244a72aa83ed, type: 2}
-  movingMaterial: {fileID: 13400000, guid: 3249d7ec0cebd2a49804eeafa555fa94, type: 2}
 --- !u!114 &3777638003876376270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1677,35 +1707,6 @@ MonoBehaviour:
   onSetActive:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3563673693111838529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5428108283114522832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a3e848974c27c140ad08e85d7f48abb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundingRayLength: 0.01
-  collider: {fileID: 5952785220977946993}
-  onLand:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 9fc06f0949f64bb448bf2fbdcc5aeb15, type: 2}
-        m_TargetAssemblyTypeName: RandomSoundPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 5952785220977947006}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &5701187030125109489
 GameObject:
   m_ObjectHideFlags: 0
@@ -1767,7 +1768,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c06f407b24e03b4db6c3812665ed2ea, type: 2}
+  - {fileID: 2100000, guid: 9a3156da2f5969b4196699ba12ced7e9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1850,7 +1851,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c06f407b24e03b4db6c3812665ed2ea, type: 2}
+  - {fileID: 2100000, guid: f51288b7bb6339e4b896f5623bef932f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1937,7 +1938,6 @@ MonoBehaviour:
   health: {fileID: 745592948619609687}
   audioSource: {fileID: 5952785220977947006}
   ragdoll: {fileID: 0}
-  capsuleCollider: {fileID: 5952785220977946993}
   stamina: {fileID: 2602773801818801118}
   affiliation: {fileID: 11400000, guid: 4fa3cac1b5d754d4894e40f91efa32fa, type: 2}
   controls: {fileID: 3129558233819840828}
@@ -2275,7 +2275,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 2a4e621dc1634654e996408868280ebf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2757,7 +2757,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 3799
+    m_Bits: 7903
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -3541,7 +3541,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c06f407b24e03b4db6c3812665ed2ea, type: 2}
+  - {fileID: 2100000, guid: f51288b7bb6339e4b896f5623bef932f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3890,7 +3890,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c06f407b24e03b4db6c3812665ed2ea, type: 2}
+  - {fileID: 2100000, guid: 9a3156da2f5969b4196699ba12ced7e9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3929,7 +3929,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2537497215239300288
 Transform:
   m_ObjectHideFlags: 0
@@ -3973,7 +3973,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0e3ba9c156eaab74caa05504756288aa, type: 2}
+  - {fileID: 2100000, guid: 2a4e621dc1634654e996408868280ebf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5711,17 +5711,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2138693298e1e4d40ad3fe080cdf7cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1881373689726421184 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8192342176099384586, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5d0006968286ad47b9b9aca0d879f41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1942817378809579715 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8168604717116882185, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
@@ -5749,6 +5738,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6914298990779041472, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
   m_PrefabInstance: {fileID: 7758277924342625738}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4592229086229172349 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6057359843538920887, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
+  m_PrefabInstance: {fileID: 7758277924342625738}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 050f15157c9d0aa4fa2778d2b7653dce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4667863535392737602 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3129268975211854984, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}

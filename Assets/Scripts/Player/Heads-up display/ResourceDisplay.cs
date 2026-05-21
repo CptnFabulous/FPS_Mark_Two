@@ -11,6 +11,7 @@ public abstract class ResourceDisplay : MonoBehaviour
     public string decimalFormatting = "0";
 
     [Header("Additional animations")]
+    public RectTransform rectTransform;
     [SerializeField] Animator animationController;
     [SerializeField] string current = "Current";
     [SerializeField] string critical = "Critical";
@@ -19,6 +20,9 @@ public abstract class ResourceDisplay : MonoBehaviour
 
     public System.Func<Resource> obtainValues;
     Resource lastObtainedValues;
+
+    public abstract Color safeColour { get; set; }
+    public abstract Color criticalColour { get; set; }
 
     protected virtual void LateUpdate()
     {

@@ -8,14 +8,23 @@ public class ResourceMeter : ResourceDisplay
 {
     [Header("Main meter")]
     [SerializeField] Image currentMeter;
-    public Color safeColour = Color.green;
-    public Color criticalColour = Color.red;
+    [SerializeField] Color _safeColour = Color.green;
+    [SerializeField] Color _criticalColour = Color.red;
 
     [Header("'Previous' meter")]
     [SerializeField] Image previousMeter;
     public float barChangeSpeed = 0.1f;
 
-    public RectTransform rectTransform { get; private set; }
+    public override Color safeColour
+    {
+        get => _safeColour;
+        set => _safeColour = value;
+    }
+    public override Color criticalColour
+    {
+        get => _criticalColour;
+        set => _criticalColour = value;
+    }
     float currentFill
     {
         get => currentMeter.fillAmount;
@@ -36,7 +45,6 @@ public class ResourceMeter : ResourceDisplay
         base.Refresh(values);
     }
 
-    private void Awake() => rectTransform = GetComponent<RectTransform>();
     private void OnEnable() => previousFill = currentFill;
     protected override void LateUpdate()
     {

@@ -11,7 +11,7 @@ public class RegeneratingResource : MonoBehaviour
     public float regenDelay = 2;
     public float regenTime = 2;
 
-    public ResourceMeter guiMeter;
+    public ResourceDisplay guiMeter;
 
     float regenDelayTimer;
 
