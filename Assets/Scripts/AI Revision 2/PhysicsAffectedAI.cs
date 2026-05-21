@@ -108,9 +108,10 @@ public class PhysicsAffectedAI : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        // Update physics collider size to match NavMeshAgent size
+        // Update physics collider size and position to match agent's
         collider.radius = navMeshAgent.radius;
         collider.height = navMeshAgent.height;
+        collider.center = new Vector3(0, navMeshAgent.height / 2, 0);
 
         // Check if AI is animated, and standing grounded on a valid NavMesh. Disable gravity if so.
         GroundingHandler.GetGroundingData(collider, groundingRayLength, out RaycastHit groundingData);
