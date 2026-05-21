@@ -6,12 +6,13 @@ using UnityEngine;
 public class PlayerMovementHandler : MonoBehaviour
 {
     public Player controlling;
+    public CapsuleCollider collider;
     public LookController lookControls;
     public GroundingHandler groundingHandler;
     public PhysicMaterial standingMaterial;
     public PhysicMaterial movingMaterial;
 
-    public CapsuleCollider collider => controlling.capsuleCollider;
+    //public CapsuleCollider collider => controlling.capsuleCollider;
     public Rigidbody rigidbody => controlling.rigidbody;
     public LayerMask collisionMask => PhysicsUtility.GetPhysicsLayerMask(collider.gameObject.layer);
     public bool isGrounded => groundingHandler.isGrounded;

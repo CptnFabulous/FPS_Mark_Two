@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class Character : Entity
 {
-    public CapsuleCollider capsuleCollider;
     public RegeneratingResource stamina;
 
     [Header("Character data")]
