@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -64,8 +65,8 @@ public class DrawInteractionOutlines : ScriptableRendererFeature
             LayerMask cameraMask = renderingData.cameraData.camera.cullingMask;
             foreach (Renderer r in childRenderers)
             {
-                if (MiscFunctions.IsLayerInLayerMask(cameraMask, r.gameObject.layer) == false) return;
-                if (MiscFunctions.IsLayerInLayerMask(interactionHandler.detection.mask, r.gameObject.layer) == false) return;
+                if (PhysicsUtility.IsLayerInLayerMask(cameraMask, r.gameObject.layer) == false) return;
+                if (PhysicsUtility.IsLayerInLayerMask(interactionHandler.detection.mask, r.gameObject.layer) == false) return;
 
                 for (int i = 0; i < r.materials.Length; i++)
                 {
