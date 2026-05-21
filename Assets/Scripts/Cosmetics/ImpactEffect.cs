@@ -24,6 +24,11 @@ public class ImpactEffect : ScriptableObject
     static DecalProjector decalProjector;
     static int maxNumberOfSpawnedEffects = 100;
 
+    public void Play(ParticleCollisionInfo info)
+    {
+        ParticleCollisionEvent pce = info.particleData;
+        Play(info.particleData.colliderComponent.gameObject, info.sourceEntity, pce.intersection, pce.velocity, pce.normal, info.emitter.transform.up, info.strengthRatio);
+    }
     public void Play(GameObject surfaceCollider, Entity sourceEntity, Vector3 point, Vector3 impactDirection, Vector3 normal, Vector3 up, float intensity = 1)
     {
         // Determine effects based on surface (currently doesn't have support for multiple sound types)

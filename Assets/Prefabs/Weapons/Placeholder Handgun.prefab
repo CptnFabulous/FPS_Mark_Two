@@ -4977,10 +4977,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3afff67400de6243bf3a4e264b3ef97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effect: {fileID: 0}
-  sound: {fileID: 11400000, guid: 14fc785b502699e4fa74b815bb6f2c52, type: 2}
   sourceEntity: {fileID: 2605568798290647580}
   maxVelocity: 5
+  invokeOnImpact:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 14fc785b502699e4fa74b815bb6f2c52, type: 2}
+        m_TargetAssemblyTypeName: DiegeticSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4037988526042884270
 GameObject:
   m_ObjectHideFlags: 0
@@ -5092,6 +5105,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 8052518943785051574}
   projectileCount: 1
   shotSpread: 0.5
+  centreFirstPellet: 0
   effectsOnFire:
     m_PersistentCalls:
       m_Calls:
@@ -5240,7 +5254,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5737478536109170961
 Transform:
   m_ObjectHideFlags: 0
@@ -5309,7 +5323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8ddee4d0d61eae4f811fc23b3eeb2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roundsPerMinute: 1200
+  roundsPerMinute: 600
   windupTime: 0
   minBurst: 0
   maxBurst: 0
@@ -5395,6 +5409,7 @@ MonoBehaviour:
   oneHanded: 1
   modes:
   - {fileID: 1860411831288340870}
+  - {fileID: 7345721882391281965}
   - {fileID: 7431643398119198419}
   currentModeIndex: 0
   switchSpeed: 0.2

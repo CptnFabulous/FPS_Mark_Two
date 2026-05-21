@@ -36,6 +36,7 @@ public class DiegeticSound : ScriptableObject
     static readonly float ageThreshold = 0.2f;
 
     //public void Play(Entity entity) => Play(entity.bounds.center, entity);
+    public void Play(ParticleCollisionInfo pce) => Play(pce.particleData.intersection, pce.sourceEntity, pce.strengthRatio);
     public void Play(AudioSource source) => Play(source.transform.position, source.GetComponentInParent<Entity>(), source);
     public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1, float minimumVolume = 0)
     {

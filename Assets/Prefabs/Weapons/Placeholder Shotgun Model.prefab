@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 3878389066073242437}
   - component: {fileID: 6109594086077682620}
   - component: {fileID: 1004255261275299458}
+  - component: {fileID: 4630072727821055509}
   m_Layer: 0
   m_Name: Shell Ejection
   m_TagString: Untagged
@@ -5016,6 +5017,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   degreesCelsius: 260
+--- !u!114 &4630072727821055509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851114888754034927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3afff67400de6243bf3a4e264b3ef97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceEntity: {fileID: 0}
+  maxVelocity: 10
+  invokeOnImpact:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 7d245b9a416e88e4391149897de4ab41, type: 2}
+        m_TargetAssemblyTypeName: DiegeticSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2913566223726966525
 GameObject:
   m_ObjectHideFlags: 0
