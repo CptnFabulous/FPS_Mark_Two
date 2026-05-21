@@ -20,7 +20,7 @@ public class AimSwayHandler : MonoBehaviour
     public WeaponHandler weaponHandler;
 
     float _currentSway;
-    Quaternion _currentSwayQuaternion;
+    //Quaternion _currentSwayQuaternion;
 
     public Weapon currentWeapon => weaponHandler.CurrentWeapon;
     public float aimSwayAngle => _currentSway;
@@ -41,9 +41,9 @@ public class AimSwayHandler : MonoBehaviour
             return totalSway;
         }
     }
-
+    public Quaternion swayOffsetRotation => AimSway(aimSwayAngle, swaySpeed, centeringCurve);
     public Vector3 aimOrigin => transform.position;
-    public Quaternion aimRotation => aimAxis.rotation * _currentSwayQuaternion;//AimSway(aimSwayAngle, swaySpeed, centeringCurve);
+    public Quaternion aimRotation => aimAxis.rotation * swayOffsetRotation;
     /// <summary>
     /// The direction the player is currently aiming in, accounting for accuracy sway.
     /// </summary>
@@ -53,8 +53,9 @@ public class AimSwayHandler : MonoBehaviour
     {
         // Gradually shifts aim sway towards the desired value
         _currentSway = Mathf.MoveTowards(_currentSway, desiredSwayAngle, swayAcceleration * Time.deltaTime);
-        _currentSwayQuaternion = AimSway(aimSwayAngle, swaySpeed, centeringCurve);
+        //_currentSwayQuaternion = AimSway(aimSwayAngle, swaySpeed, centeringCurve);
     }
+    /*
     private void OnDrawGizmosSelected()
     {
         if (Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay) return;
@@ -67,7 +68,7 @@ public class AimSwayHandler : MonoBehaviour
         Gizmos.matrix = aimAxis.localToWorldMatrix;
         Gizmos.color = Color.cyan;
         Gizmos.DrawFrustum(Vector3.zero, aimSwayAngle, length, 0, 1);
-    }
+    }*/
 
     /// <summary>
     /// Multiply this by a Quaternion and a Vector3 to get an aim direction with a smooth sway for accuracy deviation.
