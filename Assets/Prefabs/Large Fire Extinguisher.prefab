@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 4453649957227706594}
   - component: {fileID: 8737026383804825539}
   m_Layer: 6
-  m_Name: Fire Extinguisher
+  m_Name: Large Fire Extinguisher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -399,11 +399,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showDebugData: 0
-  properName: Fire Extinguisher
+  properName: Large Fire Extinguisher
   description: A new entity.
   isUnique: 0
   health: {fileID: 4453649957227706591}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &4453649957227706591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,6 +424,7 @@ MonoBehaviour:
     criticalLevel: 0
   godmode: 0
   deadDescription: ruptured
+  poise: {fileID: 0}
   onDamage:
     m_PersistentCalls:
       m_Calls: []

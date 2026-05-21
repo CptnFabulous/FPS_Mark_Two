@@ -106,8 +106,14 @@ public class SweepAreaForTarget : AIStateFunction
         // Assign a new destination
         GetNextDestination();
 
-        Vector3 lastDirection = rootAI.transform.forward;
+        
+        aim.LookInNeutralDirection();
+        return;
+        
 
+        // TO DO: have actual sweep code. Problem is this method doesn't interpolate properly in the right direction, always prioritising the shortest path.
+        
+        Vector3 lastDirection = rootAI.transform.forward;
         Vector3 LookSweepDirection()
         {
             Vector3 velocity = navMeshAgent.desiredVelocity;
@@ -117,6 +123,7 @@ public class SweepAreaForTarget : AIStateFunction
         // Set the aiming module so the AI looks around while moving.
         Vector2 sweepAngles = new Vector2(horizontalSweepAngle, verticalSweepAngle);
         aim.SweepSightline(LookSweepDirection, sweepAngles, delayBetweenSweeps);
+        
     }
     void GetNextDestination()
     {
