@@ -134,6 +134,21 @@ public class PhysicsAffectedAI : MonoBehaviour
             rigidbody.MovePosition(currentPosition + (Time.fixedDeltaTime * velocity));
         }
     }
+    private void OnDrawGizmos()
+    {
+        if (MiscFunctions.CurrentCameraNotMain()) return;
+
+        Gizmos.color = Color.blue;
+        AIAction.GizmosDrawNavMeshPath(navMeshAgent.path);
+
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Vector3 centre = new Vector3(0, navMeshAgent.height / 2, 0);
+        float width = navMeshAgent.radius * 2;
+        Vector3 size = new Vector3(width, navMeshAgent.height, width);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireCube(centre, size);
+
+    }
 
     void UpdateBasePositionToMatchRagdoll()
     {
