@@ -16,7 +16,7 @@ public class GroundingHandler : MonoBehaviour
 
     private void FixedUpdate()
     {
-        GetGroundingData(collider, groundingRayLength, out RaycastHit newGroundingData);
+        GetGroundingData(collider, groundingRayLength, out RaycastHit newGroundingData, out _);
         if (newGroundingData.collider != null && groundingData.collider == null)
         {
             onLand.Invoke(newGroundingData);
@@ -24,7 +24,7 @@ public class GroundingHandler : MonoBehaviour
         groundingData = newGroundingData; // Update grounding data
     }
 
-    public static void GetGroundingData(CapsuleCollider collider, float groundingRayLength, out RaycastHit newGroundingData)
+    public static void GetGroundingData(CapsuleCollider collider, float groundingRayLength, out RaycastHit newGroundingData, out bool isGrounded)
     {
         Transform transform = collider.transform;
         LayerMask collisionMask = PhysicsUtility.GetPhysicsLayerMask(collider.gameObject.layer);
@@ -32,6 +32,6 @@ public class GroundingHandler : MonoBehaviour
         Vector3 rayOrigin = transform.position + transform.up * (collider.height / 2);
         float distance = groundingRayLength + Vector3.Distance(transform.position, rayOrigin);
         float radius = collider.radius * 0.9f;
-        Physics.SphereCast(rayOrigin, radius, -transform.up, out newGroundingData, distance, collisionMask);
+        isGrounded = Physics.SphereCast(rayOrigin, radius, -transform.up, out newGroundingData, distance, collisionMask);
     }
 }

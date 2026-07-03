@@ -114,14 +114,15 @@ public class PhysicsAffectedAI : MonoBehaviour
         collider.center = new Vector3(0, navMeshAgent.height / 2, 0);
 
         // Check if AI is animated, and standing grounded on a valid NavMesh. Disable gravity if so.
-        GroundingHandler.GetGroundingData(collider, groundingRayLength, out RaycastHit groundingData);
-        bool agentMoving = !ragdollActive && groundingData.collider != null && navMeshAgent.velocity.sqrMagnitude > 0;
+        GroundingHandler.GetGroundingData(collider, groundingRayLength, out RaycastHit groundingData, out bool isGrounded);
+        bool agentMoving = !ragdollActive && isGrounded && navMeshAgent.velocity.sqrMagnitude > 0;
         rigidbody.useGravity = !agentMoving;
 
         // If the ragdoll is active, ensure the AI's orientation lines up with the ragdoll's (they're only separated so the physics don't bug out)
         if (ragdollActive)
         {
             UpdateBasePositionToMatchRagdoll();
+            rigidbody.useGravity = false;
             return;
         }
 
