@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -129,10 +130,14 @@ public class SmokeParticleDensityController : MonoBehaviour
     static readonly Color emptyColour = new Color(0.5f, 0.5f, 0.5f, 1);
     static readonly Color fullColour = new Color(0, 0, 0, 1);
 
-    static readonly Color safeVelocityColour = Color.blue;
+    static readonly Color calmParticleColour = new Color(0, 0.5f, 0);
+    static readonly Color disturbedParticleColour = new Color(1, 0.25f, 0);
+    /*
     static readonly Color conflictingVelocityColour = Color.red;
     static readonly Color desiredVelocityColour = Color.green;
     static readonly Color inbetweenColour = new Color(0.5f, 0.5f, 0);
+    */
+    
 
     private void OnDrawGizmosSelected()
     {
@@ -149,11 +154,8 @@ public class SmokeParticleDensityController : MonoBehaviour
                 // Interpolate colour based on number of particles in each grid space
                 float particleCountRatio = gridSpace.numberOfParticles / gridSpace.maxParticleCount;
                 Gizmos.color = Color.Lerp(emptyColour, fullColour, particleCountRatio);
-                //Gizmos.color = cellDensityColourGradient.Evaluate(particleCountRatio);
             }
 
-
-            //Gizmos.DrawCube(gridSpace.worldPosition, gridSpaceSize * Vector3.one);
             Gizmos.DrawWireCube(gridSpace.worldPosition, gridSpaceSize * Vector3.one);
         }
 
@@ -168,23 +170,10 @@ public class SmokeParticleDensityController : MonoBehaviour
             Vector3 position = realParticle.position;
             Vector3 velocity = realParticle.velocity;
 
-            // Show current colour
-            if (needsToBeResolved)
-            {
-                Gizmos.color = conflictingVelocityColour;
-                Gizmos.DrawRay(position, velocity);
-
-                Gizmos.color = desiredVelocityColour;
-                Gizmos.DrawRay(position, resolverVector);
-
-                Gizmos.color = inbetweenColour;
-                Gizmos.DrawLine(position + velocity, position + resolverVector);
-            }
-            else
-            {
-                Gizmos.color = safeVelocityColour;
-                Gizmos.DrawRay(position, velocity);
-            }
+            Gizmos.color = needsToBeResolved ? disturbedParticleColour : calmParticleColour;
+            float checkRadius = GetParticleCheckRadius(cloud, index);
+            Gizmos.DrawWireSphere(position, checkRadius);
+            if (needsToBeResolved) Gizmos.DrawRay(position, resolverVector);
         });
     }
 #endif
@@ -217,10 +206,7 @@ public class SmokeParticleDensityController : MonoBehaviour
     void CalculateResolverDirection(SmokeCloud cloud, int index)
     {
         // Calculate how far away we should check for each particle
-        float particleSize = cloud.particleArray[index].GetCurrentSize(cloud.particleEmitter);
-        float checkRadius = particleSize * checkRadiusSizeMultiplier;
-        checkRadius = Mathf.Min(checkRadius, maximumCheckRadius); // Ensure check radius doesn't exceed maximum range that can be checked (accounting for grid size)
-
+        float checkRadius = GetParticleCheckRadius(cloud, index);
         float squaredMinimumDistance = checkRadius * checkRadius;
 
         // Get the grid space of the current particle.
@@ -276,12 +262,10 @@ public class SmokeParticleDensityController : MonoBehaviour
         Vector3 resolverVector = cloud.particleOffsetResolvers[index];
         resolverVector = resolveVelocityMagnitude * resolverVector;
 
-        // Method 1: position is directly tweaked frame by frame.
-        //cloud.particleArray[index].position += Time.fixedDeltaTime * resolveVectorMagnitude * resolverVector;
-        //cloud.particleArray[index].position += resolverVector * Time.fixedDeltaTime;
-
-        // Method 2: particle velocity is directly altered.
+        // Shift particle velocity towards desired value
         cloud.particleArray[index].velocity = Vector3.MoveTowards(cloud.particleArray[index].velocity, resolverVector, deceleration * Time.fixedDeltaTime);
+        // Adding onto it changes it too much and means the particles don't form consistent clouds.
+        // Directly changing the position causes lots of clipping.
     }
 
     Vector3Int WorldToGridPosition(Vector3 worldPosition, out Vector3 nonRounded)
@@ -303,5 +287,13 @@ public class SmokeParticleDensityController : MonoBehaviour
             // Iterate through just the number of active particles.
             for (int i = 0; i < cloud.numberOfParticles; i++) action.Invoke(cloud, i);
         }
+    }
+    float GetParticleCheckRadius(SmokeCloud cloud, int particleIndex)
+    {
+        float particleSize = cloud.particleArray[particleIndex].GetCurrentSize(cloud.particleEmitter);
+        float checkRadius = particleSize * 0.5f;
+        checkRadius *= checkRadiusSizeMultiplier;
+        checkRadius = Mathf.Min(checkRadius, maximumCheckRadius); // Ensure check radius doesn't exceed maximum range that can be checked (accounting for grid size)
+        return checkRadius;
     }
 }
