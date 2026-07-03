@@ -103,6 +103,9 @@ public class MapScreen : MonoBehaviour
     }
     private void LateUpdate()
     {
+        MiscFunctions.SetMaterialBool(mapRenderer.material, "_Automapped", terrainMap.autoMapped);
+
+
         // Update output render texture
         Vector2Int currentResolution = new Vector2Int(playerCamera.scaledPixelWidth, playerCamera.scaledPixelHeight);
         if (outputTexture == null || lastResolution.x != currentResolution.x || lastResolution.y != currentResolution.y)
