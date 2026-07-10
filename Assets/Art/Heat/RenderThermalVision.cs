@@ -45,7 +45,7 @@ public class RenderThermalVision : ScriptableRendererFeature
         /// An ultra simple opaque material, drawn to force an initial depth pass.
         /// </summary>
         static Material depthPassMaterial => dpm ??= CoreUtils.CreateEngineMaterial("Unlit/Color");
-        float ambientTempRatio => 0;//Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
+        float ambientTempRatio => Mathf.InverseLerp(ObjectHeat.minHeat, ObjectHeat.maxHeat, ObjectHeat.ambientTemperature);
 
         public ThermalPass(RenderThermalVision renderFeature, Material thermalVisionMaterial, Material backgroundMaterial, LayerMask renderLayers, LayerMask smokeLayers, float smokeAlpha)
         {
