@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public readonly struct MiscFunctions
 {
@@ -50,4 +51,8 @@ public readonly struct MiscFunctions
         return currentState;
     }
 
+    public static void SetMaterialBool(Material material, string propertyName, bool value)
+    {
+        material.SetInt(propertyName, value ? 1 : 0);
+    }
 }
