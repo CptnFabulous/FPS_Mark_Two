@@ -16,7 +16,8 @@ public class CheckpointManager : MonoBehaviour
     public ParticleSystem effect;
     public UnityEvent<Player> onRespawn;
 
-    int currentCheckpointIndex = 0;
+    [Header("Debug")]
+    public int currentCheckpointIndex = 0;
     Player _target;
 
     public int deathCount { get; private set; } = 0;
