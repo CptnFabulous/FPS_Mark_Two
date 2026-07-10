@@ -37,11 +37,9 @@ public class AmmunitionInventory : MonoBehaviour
         onResourceUpdated.Invoke(type, -amount, ammunitionTypes[index]);
     }
 
-    void Reset()
-    {
-        OnValidate();
-    }
-    void OnValidate()
+#if UNITY_EDITOR
+    [ContextMenu("Validate types")]
+    void Validate()
     {
         Resource[] newAmmoTypes = new Resource[AmmunitionType.All.Length]; // Then creates an appropriately sized array of resource variables
         for (int i = 0; i < newAmmoTypes.Length; i++) // For each required ammo type
@@ -70,4 +68,5 @@ public class AmmunitionInventory : MonoBehaviour
         }
         ammunitionTypes = newAmmoTypes;
     }
+#endif
 }
