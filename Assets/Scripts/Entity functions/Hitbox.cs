@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Hitbox : MonoBehaviour
 {
-    //public float damageMultiplier = 1;
     [SerializeField] Entity _attachedTo;
     public bool isCritical;
     public DamageResistanceProfile resistances;
@@ -13,16 +13,14 @@ public class Hitbox : MonoBehaviour
     Collider c;
     Rigidbody _rb;
 
-    public Collider collider => c ??= GetComponent<Collider>();
-    public Entity attachedTo => _attachedTo ??= GetComponentInParent<Entity>();
+    public Collider collider => ComponentUtility.AutoCache(ref c, gameObject);
+    public Entity attachedTo => ComponentUtility.AutoCache(ref _attachedTo, gameObject, ComponentGetType.InParent);
     public Health sourceHealth => attachedTo.health;
-    public Rigidbody rigidbody => _rb ??= GetComponentInParent<Rigidbody>();
+    public Rigidbody rigidbody => ComponentUtility.AutoCache(ref _rb, gameObject, ComponentGetType.InParent);
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, Entity weaponUsed, Vector3 direction, bool critical = false)
     {
         if (sourceHealth == null) return;
-
-        //force *= hitbox.damageMultiplier;
 
         float multiplier = resistances[type];
 
