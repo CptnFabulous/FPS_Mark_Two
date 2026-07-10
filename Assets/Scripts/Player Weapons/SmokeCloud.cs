@@ -12,12 +12,12 @@ public class SmokeCloud : MonoBehaviour
     [SerializeField] ParticleSystem particleSystem;
 
     SphereCollider[] colliderArray;
-    [HideInInspector, NonSerialized] public ParticleSystem.Particle[] particleArray;
+    [HideInInspector, System.NonSerialized] public ParticleSystem.Particle[] particleArray;
 
     static SphereCollider smokeColliderPrefab;
     static Transform activeSmokeCloudParent;
     static SmokeParticleDensityController densityControllerSingleton;
-    [HideInInspector, NonSerialized] public Vector3[] particleOffsetResolvers;
+    [HideInInspector, System.NonSerialized] public Vector3[] particleOffsetResolvers;
 
     public bool emitting
     {
