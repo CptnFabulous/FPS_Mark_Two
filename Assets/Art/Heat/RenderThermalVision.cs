@@ -16,6 +16,9 @@ public class RenderThermalVision : ScriptableRendererFeature
     public LayerMask renderLayers = ~0;
     public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
 
+
+
+
     class ThermalPass : ScriptableRenderPass
     {
         RenderThermalVision renderFeature;
@@ -32,6 +35,12 @@ public class RenderThermalVision : ScriptableRendererFeature
         static Material dpm;
         Dictionary<(float, float), Material> materialCache = new Dictionary<(float, float), Material>();
         //static List<Renderer> everythingToRender = new List<Renderer>();
+
+        //RenderTargetIdentifier cameraIdentifier = new RenderTargetIdentifier(BuiltinRenderTextureType.CameraTarget);
+
+
+        //RenderTexture targetTexture;
+
 
         List<ShaderTagId> shaderTags = new List<ShaderTagId>()
         {
@@ -105,8 +114,36 @@ public class RenderThermalVision : ScriptableRendererFeature
                 cmd.Clear();
             }
 
-
             SortingCriteria sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
+
+
+
+
+            /*
+
+            // Automatically update texture if the resolution is incorrect
+            // IDEA: instead of matching the resolution exactly, divide the resolution before passing it back to the camera so thermal resolution can be made deliberately poor for balancing purposes?
+            Resolution resolution = Screen.currentResolution;
+            if (targetTexture == null || targetTexture.width != resolution.width || targetTexture.height != resolution.height)
+            {
+                targetTexture = new RenderTexture(resolution.width, resolution.height, 32);
+            }
+
+            // For each set of values:
+            // Clear targetTexture
+            // Draw objects onto target texture
+            // Apply necessary processing
+            // Copy onto target texture
+
+            RenderTexture previousRenderTexture = camera.targetTexture;
+            camera.targetTexture = targetTexture;
+            camera.targetTexture = previousRenderTexture;
+            cmd.Blit(targetTexture, cameraIdentifier);
+
+            */
+
+
+
 
 
 
@@ -233,6 +270,43 @@ public class RenderThermalVision : ScriptableRendererFeature
     {
         renderer.EnqueuePass(m_ScriptablePass);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    class ThermalPass2 : ScriptableRenderPass
+    {
+        
+
+        Dictionary<float, HashSet<Renderer>> opaqueRenderers;
+        Dictionary<float, HashSet<Renderer>> transparentRenderers;
+        
+
+
+        // I think that I can probably make things less computationally demanding by having each HeatObject sort its own renderers based on opacity?
+
+
+        void RenderStuff()
+        {
+            // Sort each renderer into groups based on opacity
+        }
+
+        void RenderObjectGroup(HashSet<Renderer> renderers, float temperature, bool transparent)
+        {
+
+        }
+    }
+    */
 }
 
 
