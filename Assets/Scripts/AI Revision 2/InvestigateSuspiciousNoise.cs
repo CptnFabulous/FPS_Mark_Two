@@ -13,11 +13,15 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
     public float soundWaitDuration = 0;
     public List<DiegeticSound> suspiciousNoises;
 
+    [Header("Damage")]
+    public float damageWaitDuration = 2;
+
     AI rootAI => locationSearchState.rootAI;
 
     private void Awake()
     {
         rootAI.hearing.onSoundHeard.AddListener(CheckIfNoiseIsWorthInvestigating);
+        rootAI.health.onDamage.AddListener(RespondToDamage);
     }
     void CheckIfNoiseIsWorthInvestigating(HeardSound sound)
     {
@@ -40,4 +44,33 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
             rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}. Will switch to {previousState.name} if failed");
         }
     }
+
+    void RespondToDamage(DamageMessage dm)
+    {
+        // The enemy won't necessarily know where the damage came from, 
+        // Look in the direction the damage came from, and wait a couple of seconds.
+        // Go over to investigate that position.
+
+        FieldOfView visionCone = rootAI.visionCone;
+        Vector3 directionToLook = -dm.direction;
+        float range = visionCone.viewRange;
+
+        Vector3 possibleOrigin;
+        if (Physics.Raycast(visionCone.transform.position, directionToLook, out RaycastHit rh, range, visionCone.viewDetection.mask))
+        {
+            possibleOrigin = rh.point;
+        }
+        else
+        {
+            possibleOrigin = range * directionToLook.normalized;
+        }
+
+        // Check possible origin of hit
+        if (locationSearchState.TrySearchForNewPosition(possibleOrigin, damageWaitDuration, GetPreviousState(), 2, false, true))
+        {
+            rootAI.DebugLog($"Reacting to damage by {dm.method}");
+        }
+    }
+
+    StateFunction GetPreviousState() => locationSearchState.controller.currentStateInHierarchy;
 }
