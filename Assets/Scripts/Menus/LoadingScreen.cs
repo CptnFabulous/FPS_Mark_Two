@@ -35,6 +35,8 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadScene(string sceneToLoad)
     {
+        SceneManager.LoadScene(sceneToLoad);
+        return;
         Debug.Log($"{this}: loading scene '{sceneToLoad}'");
         StartCoroutine(LoadSceneAsync(sceneToLoad));
     }
@@ -44,9 +46,15 @@ public class SceneLoader : MonoBehaviour
     {
         loadInProgress = true;
 
+        Scene currentScene = SceneManager.GetActiveScene();
+
         // Load the loading screen
-        AsyncOperation loadLoadingScreen = SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Single);
+        AsyncOperation loadLoadingScreen = SceneManager.LoadSceneAsync(loadingSceneName, LoadSceneMode.Additive);
         yield return new WaitUntil(() => loadLoadingScreen.isDone);
+
+
+        AsyncOperation unloadCurrentScene = SceneManager.UnloadSceneAsync(currentScene);
+        yield return new WaitUntil(() => unloadCurrentScene.isDone);
 
         // Load the level, wait for the continue prompt and activate it
         LoadingScreen loadingScreen = FindObjectOfType<LoadingScreen>();
