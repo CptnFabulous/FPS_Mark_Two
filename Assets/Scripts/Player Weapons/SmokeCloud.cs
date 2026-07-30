@@ -94,6 +94,10 @@ public class SmokeCloud : MonoBehaviour
             c.transform.position = p.position;
         }
     }
+    private void OnEnable()
+    {
+        _activeClouds.Add(this);
+    }
     private void OnDisable()
     {
         // Ensure all colliders are deactivated and returned to the pool
@@ -102,6 +106,7 @@ public class SmokeCloud : MonoBehaviour
             ObjectPool.DismissObject(colliderArray[i]);
             colliderArray[i] = null;
         }
+        _activeClouds.Remove(this);
     }
 
     static SphereCollider SpawnParticleCollider()
