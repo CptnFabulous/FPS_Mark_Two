@@ -9,7 +9,7 @@ public class AITargetManager : MonoBehaviour
 
     [Header("AI data")]
     public AI controlling;
-    public AIStateFunction onTargetFound;
+    public StateFunction onTargetFound;
 
     public ViewStatus viewStatus { get; private set; } = ViewStatus.NotPresent;
     public RaycastHit lastHit { get; private set; }
