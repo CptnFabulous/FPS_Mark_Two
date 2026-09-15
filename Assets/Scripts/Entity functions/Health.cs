@@ -157,10 +157,63 @@ public class Health : MonoBehaviour
         // Ensure the entity can't be damaged by its own colliders
         if (attachedTo.colliders.Contains(collision.collider)) return;
 
+
+
+
+        #region Figure out what damaged this entity
+
+        // Get the entity data of the launched object
+        // TO DO: figure out if the object was launched by another entity
+        Entity attacker = null;
+        Entity incomingEntity = collision.gameObject.GetComponentInParent<Entity>();
+
+        /*
+        
+        // Obtain launch data for target and incoming object
+        // If only one has data assigned, use that.
+        // If both exist, check which one was launched first (prioritise whichever was launched by an actual player)
+        // Then register that value as the attacker.
+
+        if (PhysicsCache.GetObjectLaunchData(incomingRigidbody, out var incoming) || PhysicsCache.GetObjectLaunchData(attachedTo.rigidbody, out var self))
+        {
+            PhysicsCache.ObjectLaunchData best = MiscFunctions.GetBest((toCheck) =>
+            {
+
+            }, true, incoming, self);
+
+
+        }
+        else
+        {
+            
+        }
+        */
+
+        // If neither has assigned launch data, use the incoming object itself as the attacker
+        attacker = incomingEntity;
+
+        // If the thing that collided with this entity is considered an ally, don't deal damage.
+        if (attacker != null && attacker.IsHostileTowards(attachedTo) == false) return;
+
+        #endregion
+
+        Rigidbody rb = collision.rigidbody;
+        bool isStaticCollision = rb == null;
+
+         
+        // If the target entity is an AI, that's currently in its 'no physics' state, don't allow it to take damage from static collisions
+        // TO DO: what if I have a non-physics object that's still moving very fast, e.g. a moving train? Maybe if I add that it should be a kinematic rigidbody?
+        if (isStaticCollision && attachedTo is AI ai)
+        {
+            PuppetmasterRagdollHandler physicsHandler = ai.physicsStateHandler;
+            if (physicsHandler != null && physicsHandler.currentState == AIPhysicsState.NoPhysics) return;
+        }
+
+
         #region Calculate collision force, cancel if too low
+
         Vector3 relativeVelocity = GetRelativeVelocityOfPhysicsImpact(collision, hitbox);
         float force = relativeVelocity.magnitude;
-        Rigidbody rb = collision.rigidbody;
 
         // Multiply the force based on the angle of the normal and relative velocity.
         // This ensures that entities don't take ridiculous amounts of damage just from scrapes.
@@ -170,26 +223,27 @@ public class Health : MonoBehaviour
         dotProduct = Mathf.Clamp01(dotProduct);
         force *= dotProduct;
 
+
         DamageResistanceProfile resistances = hitbox.resistances;
+        float threshold = resistances.minimumCollisionForceToDamage;//isStaticCollision ? resistances.staticCollisionForceThreshold : resistances.forceThreshold;
 
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
         //attachedTo.DebugLog($"{hitbox} impacted with {collision.collider}, velocity = {force}/{minimumCollisionForceToDamage}");
-        if (force <= resistances.minimumCollisionForceToDamage) return;
+        if (force <= threshold) return;
 
         // Multiply physics damage based on the incoming mass
-        float massMultiplier = (rb != null) ? PhysicsCache.TotalMassOfConnectedRigidbodies(rb) : multiplierForStaticCollisions;
+        float massMultiplier = (!isStaticCollision) ? PhysicsCache.TotalMassOfConnectedRigidbodies(rb) : multiplierForStaticCollisions;
         force *= massMultiplier;
 
         
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
-        if (force <= resistances.minimumCollisionForceToDamage) return;
+        if (force <= threshold) return;
         
         #endregion
 
         #region Check if the entity can take damage from the colliding object at this time
-
 
         // Check the root rigidbody this entity is attached to.
         GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
@@ -210,7 +264,7 @@ public class Health : MonoBehaviour
 
         #endregion
 
-        attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}. Force = {relativeVelocity.magnitude} * {dotProduct} * {massMultiplier} = {force}/{resistances.minimumCollisionForceToDamage}, on frame {Time.frameCount}");
+        attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}. Force = {relativeVelocity.magnitude} * {dotProduct} * {massMultiplier} = {force}/{threshold}, on frame {Time.frameCount}");
 
         #region Calculate damage and stun values
 
@@ -227,36 +281,9 @@ public class Health : MonoBehaviour
 
         #region Deal damage and stun
 
-        Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponentInParent<Entity>();
-
-
-
-        /*
-        // Obtain launch data for target and incoming object
-        // If only one has data assigned, use that.
-        // If both exist, check which one was launched first (prioritise whichever was launched by an actual player)
-        // Then register that value as the attacker.
-
-        // If neither has assigned launch data, use the incoming object itself as the attacker
-
-
-
-
-
-
-        if (PhysicsCache.GetObjectLaunchData(incomingRigidbody, out var incoming) || PhysicsCache.GetObjectLaunchData(attachedTo.rigidbody, out var self))
-        {
-            PhysicsCache.ObjectLaunchData best = MiscFunctions.GetBest((toCheck) =>
-            {
-
-            }, true, incoming, self);
-
-
-        }
-        */
-
         // Deal damage (use the hitbox's main damage function to calculate things like resistances)
-        hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.PhysicsImpact, thingThatDamagedThisHitbox, thingThatDamagedThisHitbox, collision.relativeVelocity.normalized, hitbox.isCritical);
+        hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.PhysicsImpact, attacker, incomingEntity, collision.relativeVelocity.normalized, hitbox.isCritical);
+        
         #endregion
     }
 
