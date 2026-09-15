@@ -34,10 +34,11 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
 
     public override LayerMask attackMask => hitDetection.mask;
     public override string hudInfo => null;
+    Vector3 attackOrigin => User.LookTransform.position;
 
     protected override void OnSecondaryInputChanged(bool held)
     {
-        // Block/parry
+        // Block/parry?
     }
 
     public override bool CanAttack() => User.stamina.values.current > staminaConsumption;
@@ -56,38 +57,55 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         #endregion
 
         #region Acquire target
-        Vector3 origin = User.LookTransform.position;
+
         Vector3 direction = User.aimDirection;
-        List<Character> targets = WeaponUtility.MeleeDetectMultiple<Character>(origin, direction, range, angle, attackMask);
-        targets.RemoveAll((e) => User.IsHostileTowards(e) == false);
-        CollectionUtility.SortListWithOnePredicate(targets, (e) =>
+
+        RaycastHit hit;
+        Collider targetCollider;
+
+        // Detect closest collider that meets requirements (reuse interaction code?)
+        // TO DO: Do I prioritise hitboxes over rigidbodies, or do I just prioritise whichever has either and is closer to the reticle?
+        bool hitboxFound = AngleCheck.CheckForObjectsInCone(attackOrigin, direction, angle, range, attackMask, out targetCollider, out hit, (Collider collider, out Collider c) =>
         {
-            Vector3 hitLocation = e.bounds.ClosestPoint(origin);
-            return Vector3.Angle(direction, hitLocation - origin);
+            // Mark the 'out' value, even though we're doing GetComponent() calls
+            c = collider;
+
+            // Check for a hitbox
+            // Make sure hitbox isn't an ally
+            Hitbox hb = collider.GetComponentInParent<Hitbox>();
+            if (hb != null && User.IsHostileTowards(hb.attachedTo)) return true;
+
+            // If no hitbox is found, check for a non-kinematic rigidbody
+            Rigidbody rb = ComponentUtility.GetComponentInParentWhere<Rigidbody>(collider.transform, (rb) => rb.isKinematic == false);
+            if (rb != null) return true;
+
+            return false;
         });
-        Character target = (targets.Count > 0) ? targets[0] : null;
-        //Debug.Log($"{this}: commencing attack, target = {target}");
+
+        // If a hitbox is not found, use a raycast to hit whatever collider the user is directly aiming at
+        if (!hitboxFound && Physics.Raycast(attackOrigin, direction, out hit, range, attackMask))
+        {
+            targetCollider = hit.collider;
+        }
+        
         #endregion
 
         #region Play attack animation
         if (animator != null) animator.SetTrigger(attackTrigger);
 
         // Wait for attack. If target is acquired, shift movement towards target
-        if (target != null && snapTowardsTarget)
+        if (targetCollider != null && snapTowardsTarget)
         {
-            #region Shift the character's position/rotation towards the target
-
             Quaternion startingRotation = User.lookController.lookRotation;
             AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
             // TO DO: disable standard look controls
             yield return MiscFunctions.WaitOnLerp(attackTime, (ref float t) =>
             {
-                Vector3 aimDirection = target.bounds.center - User.LookTransform.position;
+                Vector3 aimDirection = hit.point - attackOrigin;
                 Quaternion desiredRotation = Quaternion.LookRotation(aimDirection, User.transform.up);
                 User.lookController.lookRotation = Quaternion.Lerp(startingRotation, desiredRotation, curve.Evaluate(t));
             });
             // TO DO: reenable look controls
-            #endregion
         }
         else
         {
@@ -96,33 +114,10 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         #endregion
 
         #region Deal damage to target (if the attack hits something)
-        GameObject targetObject = null;
-        Vector3 point = Vector3.zero;
-        Vector3 normal = -direction;
-        Vector3 hitDirection = direction;
-        if (target != null)
-        {
-            //Debug.Log($"{this}: dealing damage");
 
-            targetObject = target.gameObject;
-            point = target.bounds.center;
-            hitDirection = point - origin;
-            normal = -hitDirection;
-            //hitData.AttackObject(target.gameObject, User, User, point, hitDirection, -hitDirection);
-        }
-        else if (Physics.SphereCast(origin, backupCastRadius, direction, out RaycastHit rh, range, attackMask))
+        if (targetCollider != null)
         {
-            targetObject = rh.collider.gameObject;
-            point = rh.point;
-            normal = rh.normal;
-            hitDirection = direction;
-            // Casts a secondary check
-            //Debug.Log("Hit something that isn't an entity");
-        }
-
-        if (targetObject != null)
-        {
-            Vector3 attackDirection = hitDirection;
+            Vector3 attackDirection = hit.point - attackOrigin;
 
             if (directionOffsetAngles != Vector3.zero)
             {
@@ -133,8 +128,9 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
             }
             //Debug.DrawRay(point, attackDirection, Color.green, 5);
 
-            hitData.AttackObject(targetObject, User, User, point, attackDirection, normal);
+            hitData.AttackObject(targetCollider.gameObject, User, User, hit.point, attackDirection, hit.normal);
         }
+
         #endregion
 
         #region Cooldown
