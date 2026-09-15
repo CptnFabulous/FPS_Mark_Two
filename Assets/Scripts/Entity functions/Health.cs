@@ -218,6 +218,10 @@ public class Health : MonoBehaviour
         float damage = force * resistances.damagePerCollisionForceUnit;
         float stun = force * resistances.stunPerCollisionForceUnit;
 
+        float multiplier = resistances[DamageType.PhysicsImpact];
+        if (multiplier == 0) return;
+        damage = Mathf.RoundToInt(damage * multiplier);
+        stun = Mathf.RoundToInt(stun * multiplier);
 
         #endregion
 
