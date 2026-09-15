@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : Character
 {
+    static List<Player> _activePlayers = new List<Player>();
+    public static IReadOnlyList<Player> activePlayers => _activePlayers;
+    
     public override ICharacterLookController lookController => movement.lookControls;
     public override Transform LookTransform => movement.lookControls.upperBody;
     public override Vector3 aimDirection => weapons.AimDirection;
@@ -31,6 +34,16 @@ public class Player : Character
     public PlayerStateHandler stateHandler;
     public WeaponHandler weapons;
     public HeadsUpDisplay headsUpDisplay;
+
+
+    private void OnEnable()
+    {
+        _activePlayers.Add(this);
+    }
+    private void OnDisable()
+    {
+        _activePlayers.Remove(this);
+    }
 
     protected override void Die()
     {

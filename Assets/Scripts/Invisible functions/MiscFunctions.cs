@@ -55,4 +55,16 @@ public readonly struct MiscFunctions
     {
         material.SetInt(propertyName, value ? 1 : 0);
     }
+
+
+    public static bool DoAnyMeetCriteria<T>(IEnumerable<T> collection, System.Func<T, bool> criteria)
+    {
+        foreach (T t in collection)
+        {
+            if (criteria.Invoke(t)) return true;
+        }
+        return false;
+    }
+
+
 }

@@ -880,6 +880,10 @@ PrefabInstance:
       propertyPath: rootAI
       value: 
       objectReference: {fileID: 4137702903641763450}
+    - target: {fileID: 404736683569558719, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
+      propertyPath: pathfindingHandler
+      value: 
+      objectReference: {fileID: 6062076589948770711}
     - target: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
       propertyPath: m_Name
       value: Generic Enemy Root
@@ -960,6 +964,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1885834910078435881}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2539215066647347846}
     - targetCorrespondingSourceObject: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4137702903641763450}
@@ -1195,6 +1202,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
   m_PrefabInstance: {fileID: 4026937343484816805}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2539215066647347846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2707361439851497658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6bd9d9b49bb64244a104eff5934c95e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootAI: {fileID: 4137702903641763450}
+  puppetmasterHandler: {fileID: 3638741317993978138}
+  idleStates:
+  - {fileID: 2629324958796532218}
 --- !u!114 &4137702903641763450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1222,6 +1245,7 @@ MonoBehaviour:
   hearing: {fileID: 289877762307028798}
   agent: {fileID: 6774321062433608729}
   physicsHandler: {fileID: 0}
+  physicsStateHandler: {fileID: 3638741317993978138}
   baseMovementSpeed: 3.5
   destinationThreshold: 1
   aiming: {fileID: 3361821906320152131}
@@ -1296,7 +1320,6 @@ MonoBehaviour:
   rootAI: {fileID: 4137702903641763450}
   rigidbody: {fileID: 8365656880307998804}
   collider: {fileID: 1911611086530963177}
-  groundingRayLength: 0.01
 --- !u!114 &7384869552421036058
 MonoBehaviour:
   m_ObjectHideFlags: 0

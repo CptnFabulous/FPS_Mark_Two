@@ -34,7 +34,6 @@ public class Entity : MonoBehaviour
         }
     }
     public Vector3 CentreOfMass => bounds.center;
-
     public virtual IList<Collider> colliders
     {
         get
@@ -59,7 +58,6 @@ public class Entity : MonoBehaviour
         }
     }
     public Rigidbody rigidbody => ComponentUtility.AutoCache(ref _rb, gameObject, ComponentGetType.InChild);
-
     public Renderer[] renderers => MiscFunctions.GetImmediateComponentsInChildren<Renderer, Entity>(this, ref _renderers);
 
     protected virtual void Awake()
@@ -94,6 +92,8 @@ public class Entity : MonoBehaviour
     /// <returns></returns>
     public bool HitOwnCollider(RaycastHit hit) => CollectionUtility.ArrayContains(colliders, hit.collider);
 
+    public bool isBeingRendered => MiscFunctions.DoAnyMeetCriteria(renderers, (r) => r.isVisible);
+
     /*
     public float timeScale = 1;
     public Vector3 gravity = Physics.gravity;
@@ -114,6 +114,7 @@ public class Entity : MonoBehaviour
 
         // Delete the actual object.
         // (Unless it's a player, don't delete them so the game over screen can play)
+        // TO DO: check if this object was spawned from an object pool. If so, return it to the pool.
         if (this is Player player == false) Destroy(gameObject);
     }
 
