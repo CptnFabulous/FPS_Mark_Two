@@ -27,6 +27,7 @@ public class DamageResistanceProfile : ScriptableObject
 
     [Header("Physics damage")]
     public float minimumCollisionForceToDamage = 10;
+    public float damagePerCollisionForceUnit = 0.5f;
     public float stunPerCollisionForceUnit = 1f;
 
     Dictionary<DamageType, float> _md;
