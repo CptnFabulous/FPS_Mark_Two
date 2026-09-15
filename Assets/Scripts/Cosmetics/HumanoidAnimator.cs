@@ -25,7 +25,7 @@ public class HumanoidAnimator : MonoBehaviour
     [SerializeField] string ragdollOrientationDotProduct = "Ragdoll orientation dot product";
 
     PhysicsAffectedAI physicsHandler => (character as AI).physicsHandler;
-    public Ragdoll ragdoll => character.ragdoll;
+    //public Ragdoll ragdoll => character.ragdoll;
     public int defaultAnimationLayer => animator.GetLayerIndex(standardMovementLayer);
 
     private void Awake()
@@ -35,7 +35,7 @@ public class HumanoidAnimator : MonoBehaviour
             if (character != null && character.health != null) character.health.onDamage.AddListener(UpdateDamageData);
             //Debug.Log($"{this}, {character}");
             //Debug.Log($"{ragdoll}");
-            ragdoll.onActiveStateSet.AddListener((active) => animator.enabled = !active);
+            //ragdoll.onActiveStateSet.AddListener((active) => animator.enabled = !active);
         }
         else
         {
@@ -45,13 +45,14 @@ public class HumanoidAnimator : MonoBehaviour
     }
     private void Update()
     {
-        if (ragdoll.enabled) return;
+        //if (ragdoll.enabled) return;
 
         // Update walk direction values
         Vector3 walkValues = character.LocalMovementDirection;
         animator.SetFloat(walkXValue, walkValues.x);
         animator.SetFloat(walkZValue, walkValues.z);
     }
+    /*
     void LateUpdate()
     {
         if (character == null)
@@ -79,6 +80,7 @@ public class HumanoidAnimator : MonoBehaviour
             }
         }
     }
+    */
 
     void UpdateDamageData(DamageMessage damageMessage)
     {
