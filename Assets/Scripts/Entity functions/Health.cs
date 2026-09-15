@@ -48,9 +48,9 @@ public class Health : MonoBehaviour
 
     public DamageMessage lastSourceOfDamage { get; private set; } = null;
 
-    static float minimumCollisionForceToDamage = 10;
-    static float damagePerCollisionForceUnit = 0.5f;
-    static float stunPerCollisionForceUnit = 1f;
+    //static float minimumCollisionForceToDamage = 10;
+    //static float damagePerCollisionForceUnit = 0.5f;
+    //static float stunPerCollisionForceUnit = 1f;
     static float minTimeBetweenCollisions = 0.5f;
     static float minTimeAfterThrowBeforeCollision = 1f;
     static float multiplierForStaticCollisions = 4;
@@ -170,26 +170,22 @@ public class Health : MonoBehaviour
         dotProduct = Mathf.Clamp01(dotProduct);
         force *= dotProduct;
 
+        DamageResistanceProfile resistances = hitbox.resistances;
+
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
         //attachedTo.DebugLog($"{hitbox} impacted with {collision.collider}, velocity = {force}/{minimumCollisionForceToDamage}");
-        if (force <= minimumCollisionForceToDamage) return;
+        if (force <= resistances.minimumCollisionForceToDamage) return;
 
         // Multiply physics damage based on the incoming mass
-        if (rb != null)
-        {
-            force *= PhysicsCache.TotalMassOfConnectedRigidbodies(rb);
-        }
-        else
-        {
-            force *= multiplierForStaticCollisions;
-        }
+        float massMultiplier = (rb != null) ? PhysicsCache.TotalMassOfConnectedRigidbodies(rb) : multiplierForStaticCollisions;
+        force *= massMultiplier;
 
-        /*
+        
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
-        if (force <= minimumCollisionForceToDamage) return;
-        */
+        if (force <= resistances.minimumCollisionForceToDamage) return;
+        
         #endregion
 
         #region Check if the entity can take damage from the colliding object at this time
@@ -214,37 +210,20 @@ public class Health : MonoBehaviour
 
         #endregion
 
-        #region Deal damage and stun
-        attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}, force = {force}/{minimumCollisionForceToDamage}, on frame {Time.frameCount}");
+        attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}. Force = {relativeVelocity.magnitude} * {dotProduct} * {massMultiplier} = {force}/{resistances.minimumCollisionForceToDamage}, on frame {Time.frameCount}");
+
+        #region Calculate damage and stun values
 
         // Calculate damage and stun accordingly
-        float damage = force * damagePerCollisionForceUnit;
-        float stun = force * stunPerCollisionForceUnit;
+        float damage = force * resistances.damagePerCollisionForceUnit;
+        float stun = force * resistances.stunPerCollisionForceUnit;
+
+
+        #endregion
+
+        #region Deal damage and stun
 
         Entity thingThatDamagedThisHitbox = collision.gameObject.GetComponentInParent<Entity>();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

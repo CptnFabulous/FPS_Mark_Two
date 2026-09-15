@@ -25,6 +25,10 @@ public class DamageResistanceProfile : ScriptableObject
     [Tooltip("If enabled, only allow damage specified here. Otherwise, any damage types not specified here will take normal damage")]
     [SerializeField] bool isWhitelist;
 
+    [Header("Physics damage")]
+    public float minimumCollisionForceToDamage = 10;
+    public float stunPerCollisionForceUnit = 1f;
+
     Dictionary<DamageType, float> _md;
 
     Dictionary<DamageType, float> multipliers
