@@ -161,6 +161,7 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     }
     private void OnDrawGizmosSelected()
     {
+        if (ai.showDebugData == false) return;
         if (MiscFunctions.CurrentCameraNotMain()) return;
 
         if (sightlineReference != null)
