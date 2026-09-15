@@ -17,7 +17,7 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
     [SerializeField] float range = 2;
     [SerializeField] float angle = 45;
     [SerializeField] DetectionProfile hitDetection;
-    [SerializeField] float backupCastRadius = 0.5f;
+    //[SerializeField] float backupCastRadius = 0.5f;
     [SerializeField] bool snapTowardsTarget;
 
     [Header("Damage")]
