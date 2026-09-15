@@ -9,9 +9,16 @@ public static class AIPathing
     {
         if (path == null) path = new NavMeshPath();
 
+        NavMeshAgent agent = ai.agent;
+
+        // Create query filter for more accurate searching
+        NavMeshQueryFilter filter = new NavMeshQueryFilter();
+        filter.agentTypeID = agent.agentTypeID;
+        filter.areaMask = agent.areaMask;
+
         // Will the AI be able to form a clear path to the target?
         // Is the point close enough to bother moving to?
-        bool success = NavMesh.CalculatePath(ai.agent.transform.position, destination, ai.agent.areaMask, path);
+        bool success = NavMesh.CalculatePath(agent.transform.position, destination, filter, path);
         if (success == false) return false;
         if (path.status != NavMeshPathStatus.PathComplete) return false;
         if (AIAction.NavMeshPathDistance(path) > maxDistance) return false;
