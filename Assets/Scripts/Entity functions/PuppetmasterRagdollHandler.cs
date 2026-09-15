@@ -73,11 +73,10 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
             // If not ragdollised, enable central collider
             centralCollider.enabled = notRagdollised;
 
+            // Determine if navmeshagent should automatically update physical position to match agent position should update.
+            // Only do so if in a state where the central body isn't meant to be affected by physics.
+            rootAI.agent.updatePosition = value == AIPhysicsState.NoPhysics;
 
-            // TO DO: Determine if PhysicsBasedNavMeshMovement should be enabled or not. Enabled if 'physics', otherwise disabled
-            //pathfindingHandler.enabled = value == AIPhysicsState.Physics;
-            // TO DO: Determine if navmesh position should update. Should do so if 'no physics' and PhysicsBasedNavMeshMovement is disabled
-            rootAI.agent.updatePosition = (value == AIPhysicsState.NoPhysics) && !pathfindingHandler.enabled;
 
             
             // TO DO: If set to 'physics', copy force from children to main rigidbody in update loop? (Currently happens all the time)
