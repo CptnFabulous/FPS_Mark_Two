@@ -164,9 +164,9 @@ public class Health : MonoBehaviour
 
         // Multiply the force based on the angle of the normal and relative velocity.
         // This ensures that entities don't take ridiculous amounts of damage just from scrapes.
-        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision);
-        float dotProduct = Vector3.Dot(relativeVelocity, normal);
-        //Debug.Log($"{attachedTo}: Hit dot product = {dotProduct}");
+        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision).normalized;
+        float dotProduct = Vector3.Dot(relativeVelocity.normalized, normal);
+        //attachedTo.DebugLog($"{attachedTo}: Hit dot product = {dotProduct}");
         dotProduct = Mathf.Clamp01(dotProduct);
         force *= dotProduct;
 
