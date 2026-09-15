@@ -194,6 +194,7 @@ public class RenderThermalVision : ScriptableRendererFeature
                 {
                     // Don't try rendering if it's been destroyed for whatever reason
                     if (r == null) continue;
+                    if (r.enabled == false) continue;
 
                     // Don't write data for objects that aren't being viewed by the camera
                     int rendererLayer = r.gameObject.layer;
