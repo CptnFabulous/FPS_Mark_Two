@@ -34,6 +34,9 @@ public class AIStaggering : AIStateFunction
 
         yield return new WaitForSeconds(staggerTime);
 
+        // TO DO: wait until AI is back on solid ground
+        yield return rootAI.physicsStateHandler.WaitUntilAppropriateToStandUp(null);
+
         // Re-assign path now that stun is complete
         navMeshAgent.path = existingPath;
         existingPath = null;

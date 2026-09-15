@@ -16,6 +16,15 @@ public enum AIPhysicsState
 
 public class PuppetmasterRagdollHandler : MonoBehaviour
 {
+    public struct StandUpData
+    {
+        public bool navMeshPointFound;
+        public Vector3 position;
+        public Quaternion rotation;
+        public NavMeshHit navMeshHit;
+        public float dot;
+    }
+    
     public AI rootAI;
     public PhysicsBasedNavMeshMovement pathfindingHandler;
     public PuppetMaster puppetmaster;
@@ -222,6 +231,32 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
         if (navMeshPointFound) newBasePosition = navMeshHit.position;
     }
 
+
+    public IEnumerator WaitUntilAppropriateToStandUp(System.Action<StandUpData> onDataAcquired)
+    {
+        // Wait until it's right for the ragdoll to stand up
+        Vector3 newBasePosition = Vector3.zero;
+        Quaternion newBaseRotation = Quaternion.identity;
+        bool navMeshPointFound = false;
+        NavMeshHit navMeshHit = new NavMeshHit();
+        float dot = 0;
+        yield return new WaitUntil(() =>
+        {
+            CheckConditionsToStandUp(out newBasePosition, out newBaseRotation, out navMeshPointFound, out navMeshHit, out dot);
+            return navMeshPointFound;
+        });
+
+        if (onDataAcquired == null) yield break;
+
+        StandUpData data = new StandUpData();
+        data.navMeshPointFound = navMeshPointFound;
+        data.position = newBasePosition;
+        data.rotation = newBaseRotation;
+        data.navMeshHit = navMeshHit;
+        data.dot = dot;
+
+        onDataAcquired.Invoke(data);
+    }
     
     void SetAIFunctionsActive(bool active)
     {

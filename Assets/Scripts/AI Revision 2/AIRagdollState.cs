@@ -36,21 +36,13 @@ public class AIRagdollState : AIStateFunction
         yield return new WaitForSeconds(minDuration - ragdollHandler.collapseTime);
 
         // Wait until it's right for the ragdoll to stand up
-        Vector3 newBasePosition = Vector3.zero;
-        Quaternion newBaseRotation = Quaternion.identity;
-        bool navMeshPointFound = false;
-        NavMeshHit navMeshHit = new NavMeshHit();
-        float dot = 0;
-        yield return new WaitUntil(() =>
-        {
-            ragdollHandler.CheckConditionsToStandUp(out newBasePosition, out newBaseRotation, out navMeshPointFound, out navMeshHit, out dot);
-            return navMeshPointFound;
-        });
-
+        PuppetmasterRagdollHandler.StandUpData standUpData = new PuppetmasterRagdollHandler.StandUpData();
+        yield return ragdollHandler.WaitUntilAppropriateToStandUp((d) => standUpData = d);
         // Stand up
         currentlyStandingUp = true;
-        yield return ragdollHandler.StandUpAsync(newBasePosition, newBaseRotation, dot);
+        yield return ragdollHandler.StandUpAsync(standUpData.position, standUpData.rotation, standUpData.dot);
 
+        // Return to normal
         stunHandler.ReturnToNormalFunction();
     }
 
