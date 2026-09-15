@@ -7,9 +7,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum AIPhysicsState
+{
+    NoPhysics,
+    Physics,
+    Ragdoll
+}
+
 public class PuppetmasterRagdollHandler : MonoBehaviour
 {
     public AI rootAI;
+    public PhysicsBasedNavMeshMovement pathfindingHandler;
     public PuppetMaster puppetmaster;
     [SerializeField] Collider centralCollider;
     [SerializeField] Rigidbody centralRigidbody;
@@ -17,7 +25,6 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     [SerializeField] Transform rootBone;
     [SerializeField] IK[] ikComponents;
     
-
     [Header("Ragdollising")]
     [SerializeField] public float collapseTime = 0.1f;
     [SerializeField] AnimationCurve weightDecayCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
@@ -35,6 +42,63 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     [SerializeField] AnimationCurve ikWeightCurve = AnimationCurve.EaseInOut(3.5f, 0, 4, 1);
 
 
+    AIPhysicsState lastSetState;
+
+    public AIPhysicsState currentState
+    {
+        get => lastSetState;
+        set
+        {
+            // Set Puppetmaster state to dead if supposed to be ragdolling, otherwise maintain animations
+            bool notRagdollised = (value != AIPhysicsState.Ragdoll);
+            puppetmaster.state = notRagdollised ? PuppetMaster.State.Alive : PuppetMaster.State.Dead;
+
+            // Determine if rigidbody needs to be kinematic.
+            bool setToKinematic = value == AIPhysicsState.NoPhysics || value == AIPhysicsState.Ragdoll;
+            // If so, copy velocity to child rigidbodies first
+            if (setToKinematic)
+            {
+                TransferForceFromCentralToChildRigidbodies();
+            }
+
+            // Then set kinematic value
+            centralRigidbody.isKinematic = setToKinematic;
+
+            // TO DO: if not kinematic, transfer force immediately to main rigidbody?
+            if (!setToKinematic)
+            {
+                TransferForceFromChildrenToCentralRigidbody();
+            }
+
+            // If not ragdollised, enable central collider
+            centralCollider.enabled = notRagdollised;
+
+
+            // TO DO: Determine if PhysicsBasedNavMeshMovement should be enabled or not. Enabled if 'physics', otherwise disabled
+            //pathfindingHandler.enabled = value == AIPhysicsState.Physics;
+            // TO DO: Determine if navmesh position should update. Should do so if 'no physics' and PhysicsBasedNavMeshMovement is disabled
+            rootAI.agent.updatePosition = (value == AIPhysicsState.NoPhysics) && !pathfindingHandler.enabled;
+
+            
+            // TO DO: If set to 'physics', copy force from children to main rigidbody in update loop? (Currently happens all the time)
+
+
+            lastSetState = value;
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     /*
     private void Awake()
     {
@@ -46,12 +110,45 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     }
     */
 
+    private void Start()
+    {
+        // Set state to 'no physics' for default movement
+        currentState = AIPhysicsState.NoPhysics;
+    }
 
-    
 
     private void FixedUpdate()
     {
-        float forceTransferMultiplier = 1f;
+        // If AI is set up to accept knockback, transfer any accumulated force from child colliders to main rigidbody
+        if (!centralRigidbody.isKinematic)
+        {
+            TransferForceFromChildrenToCentralRigidbody();
+        }
+    }
+
+    void TransferForceFromCentralToChildRigidbodies()
+    {
+        Vector3 velocity = centralRigidbody.velocity;
+        Vector3 angularVelocity = centralRigidbody.angularVelocity;
+        //Vector3 accumulatedForce = centralRigidbody.GetAccumulatedForce();
+        //Vector3 accumulatedTorque = centralRigidbody.GetAccumulatedTorque();
+
+        if (velocity == Vector3.zero && angularVelocity == Vector3.zero/* && accumulatedForce == Vector3.zero && accumulatedTorque == Vector3.zero*/) return;
+
+        rootAI.DebugLog($"Stopping AI knockback, transferring velocity from main rigidbody ({velocity}, {angularVelocity}) to children");
+        foreach (Muscle muscle in puppetmaster.muscles)
+        {
+            Rigidbody mr = muscle.rigidbody;
+            if (mr == null) continue;
+
+            mr.AddForce(velocity, ForceMode.VelocityChange);
+            mr.AddTorque(angularVelocity, ForceMode.VelocityChange);
+            //mr.AddForce(accumulatedForce, ForceMode.Force);
+            //mr.AddTorque(accumulatedTorque, ForceMode.Force);
+        }
+    }
+    void TransferForceFromChildrenToCentralRigidbody(float forceTransferMultiplier = 1f)
+    {
         foreach (Muscle muscle in puppetmaster.muscles)
         {
             Vector3 accumulatedForce = muscle.rigidbody.GetAccumulatedForce();
@@ -80,8 +177,10 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     {
         // Disable AI functionality
         SetAIFunctionsActive(false);
+
         // Start ragdolling
-        SetRagdollActive(false);
+        currentState = AIPhysicsState.Ragdoll;
+
         // Reduce puppet and IK weights to zero over a short period
         yield return MiscFunctions.WaitOnLerp(collapseTime, (ref float t) =>
         {
@@ -115,8 +214,8 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
         animator.SetFloat(ragdollOrientationDotProduct, dot);
         animator.SetTrigger(standUpTrigger);
 
-        // Re-enable animations, but don't immediately reset weights
-        SetRagdollActive(true);
+        // Re-enable animations (still keep physics), but don't immediately reset weights
+        currentState = AIPhysicsState.Physics;
         // Slowly interpolate weights up to full power, over specific timeframes
         yield return MiscFunctions.WaitOnLerp(standUpTime, (ref float t) =>
         {
@@ -138,7 +237,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     /// </summary>
     public void ForceAllStandUpValues()
     {
-        SetRagdollActive(true);
+        currentState = AIPhysicsState.NoPhysics;
         puppetmaster.muscleWeight = 1;
         puppetmaster.pinWeight = 1;
         SetIKWeight(1);
@@ -154,30 +253,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
         if (navMeshPointFound) newBasePosition = navMeshHit.position;
     }
 
-    void SetRagdollActive(bool alive)
-    {
-        puppetmaster.state = alive ? PuppetMaster.State.Alive : PuppetMaster.State.Dead;
-
-        
-        if (!alive)
-        {
-            Vector3 velocity = centralRigidbody.velocity;
-            Vector3 angularVelocity = centralRigidbody.angularVelocity;
-            Vector3 accumulatedForce = centralRigidbody.GetAccumulatedForce();
-            Vector3 accumulatedTorque = centralRigidbody.GetAccumulatedTorque();
-            Debug.Log($"Starting ragdoll, transferring velocity from main rigidbody ({velocity}, {angularVelocity}) to children");
-            foreach (Muscle muscle in puppetmaster.muscles)
-            {
-                muscle.rigidbody.AddForce(velocity, ForceMode.VelocityChange);
-                //muscle.rigidbody.AddForce(accumulatedForce, ForceMode.Force);
-                muscle.rigidbody.AddTorque(angularVelocity, ForceMode.VelocityChange);
-                //muscle.rigidbody.AddTorque(accumulatedTorque, ForceMode.Force);
-            }
-        }
-
-        centralCollider.enabled = alive;
-        centralRigidbody.isKinematic = !alive;
-    }
+    
     void SetAIFunctionsActive(bool active)
     {
         if (rootAI == null) return;

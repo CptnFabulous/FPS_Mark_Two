@@ -69,8 +69,10 @@ public class AIRagdollState : AIStateFunction
 
     private void OnDisable()
     {
-        // TO DO: forcibly switch everything back to normal
-        ragdollHandler.ForceAllStandUpValues();
+        // TO DO: forcibly switch everything back to normal?
+        // This will be handled from the character poise 'return to previous function', ensuring it switches straight to the correct value and doesn't switch to anything else inbetween.
+        //ragdollHandler.currentState = PuppetmasterRagdollHandler.AIPhysicsState.NoPhysics;
+
         currentlyStandingUp = false;
 
         /*

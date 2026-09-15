@@ -19,6 +19,7 @@ public class DamageDealer
 
     public bool AttackObject(GameObject target, Entity attacker, Entity attackingWith, Vector3 point, Vector3 direction, Vector3 normal, float multiplier = 1)
     {
+        attackingWith.DebugLog($"Attacking {target}");
         //if (attacker.transform.IsChildOf(target.transform)) return false;
 
         // Check that it's not hitting an ally (do nothing if so)
@@ -28,19 +29,6 @@ public class DamageDealer
         // Multiply values 
         int d = Mathf.RoundToInt(damage * multiplier);
         int s = Mathf.RoundToInt(stun * multiplier);
-
-        // Apply knockback to the closest rigidbody
-        Rigidbody rb = ComponentUtility.GetComponentInParentWhere<Rigidbody>(target.transform, (rb) => rb.isKinematic == false);
-        if (rb != null)
-        {
-            rb.AddForceAtPosition(knockback * multiplier * direction.normalized, point, ForceMode.Impulse);
-
-            // Tell the attacker's health script that it just applied velocity to a physics object, to prevent self damage from physics glitches
-            if (attacker != null && attacker.health != null)
-            {
-                attacker.health.timesPhysicsObjectsWereLaunchedByThisEntity[PhysicsCache.GetRootRigidbody(rb).gameObject] = Time.time;
-            }
-        }
 
         // Apply damage and stun to either the hitbox or the health script, if there is one
         Hitbox hb = target.GetComponentInParent<Hitbox>();
@@ -63,6 +51,21 @@ public class DamageDealer
             impactEffect.Play(target, attackingWith, point, direction, normal, attackingWith.transform.up, multiplier);
         }
         onHit.Invoke();
+
+        // Apply knockback to the closest rigidbody
+        Rigidbody rb = ComponentUtility.GetComponentInParentWhere<Rigidbody>(target.transform, (rb) => rb.isKinematic == false);
+        if (rb != null)
+        {
+            Vector3 knockbackVector = knockback * multiplier * direction.normalized;
+            attackingWith.DebugLog($"Adding {knockbackVector} (magnitude = {knockbackVector.magnitude}) to {rb}");
+            rb.AddForceAtPosition(knockbackVector, point, ForceMode.Impulse);
+
+            // Tell the attacker's health script that it just applied velocity to a physics object, to prevent self damage from physics glitches
+            if (attacker != null && attacker.health != null)
+            {
+                attacker.health.timesPhysicsObjectsWereLaunchedByThisEntity[PhysicsCache.GetRootRigidbody(rb).gameObject] = Time.time;
+            }
+        }
 
         return true;
     }

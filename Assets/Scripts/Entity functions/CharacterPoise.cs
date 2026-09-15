@@ -73,8 +73,11 @@ public class CharacterPoise : MonoBehaviour
     {
         if (currentStun > 0)
         {
+            /*
             float newStun = currentStun - (recoverSpeed * Time.deltaTime);
             currentStun = Mathf.Max(newStun, 0);
+            */
+            currentStun = Mathf.MoveTowards(currentStun, 0, recoverSpeed * Time.deltaTime);
         }
     }
 
@@ -86,6 +89,9 @@ public class CharacterPoise : MonoBehaviour
     
     public void ReturnToNormalFunction()
     {
+        // TO DO: change AI physics state back to default (no physics)
+        if (attachedTo is AI ai) ai.physicsStateHandler.currentState = AIPhysicsState.NoPhysics;
+
         // Rather than preventing stun from increasing at all while staggered or knocked down, just reset stun to zero once the enemy leaves the stun state.
         stateController.SwitchToState(lastNonStunState);
         currentStun = 0;

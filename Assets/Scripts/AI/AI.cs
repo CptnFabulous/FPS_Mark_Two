@@ -17,6 +17,7 @@ public class AI : Character
     [Header("Movement and pathing")]
     public NavMeshAgent agent;
     public PhysicsAffectedAI physicsHandler;
+    public PuppetmasterRagdollHandler physicsStateHandler;
     public float baseMovementSpeed = 5;
     public float destinationThreshold = 1;
 
