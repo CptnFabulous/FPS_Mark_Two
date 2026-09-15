@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Player Damage Data
   m_EditorClassIdentifier: 
   healthMeterColour: {r: 0.5, g: 0, b: 0, a: 1}
+  healthMeterCriticalColour: {r: 1, g: 0, b: 0, a: 1}
   _multipliers: []
   isWhitelist: 0
-  minimumCollisionForceToDamage: 15
+  forceThreshold: 10
+  staticCollisionForceThreshold: 10
   damagePerCollisionForceUnit: 0.5
   stunPerCollisionForceUnit: 1

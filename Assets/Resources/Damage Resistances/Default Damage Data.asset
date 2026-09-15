@@ -12,5 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96538a29e5877e64e88cc96047a4f3f1, type: 3}
   m_Name: Default Damage Data
   m_EditorClassIdentifier: 
+  healthMeterColour: {r: 0.5, g: 0, b: 0, a: 1}
+  healthMeterCriticalColour: {r: 1, g: 0, b: 0, a: 1}
   _multipliers: []
   isWhitelist: 0
+  forceThreshold: 10
+  staticCollisionForceThreshold: 10
+  damagePerCollisionForceUnit: 0.5
+  stunPerCollisionForceUnit: 1
