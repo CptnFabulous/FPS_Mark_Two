@@ -64,11 +64,9 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
             // Then set kinematic value
             centralRigidbody.isKinematic = setToKinematic;
 
-            // TO DO: if not kinematic, transfer force immediately to main rigidbody?
-            if (!setToKinematic)
-            {
-                TransferForceFromChildrenToCentralRigidbody();
-            }
+            // If not kinematic, transfer force immediately to main rigidbody
+            // TO DO: do more testing on if this helps with anything
+            TryTransferForceFromChildrenToCentralRigidbody();
 
             // If not ragdollised, enable central collider
             centralCollider.enabled = notRagdollised;
@@ -77,52 +75,22 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
             // Only do so if in a state where the central body isn't meant to be affected by physics.
             rootAI.agent.updatePosition = value == AIPhysicsState.NoPhysics;
 
-
-            
-            // TO DO: If set to 'physics', copy force from children to main rigidbody in update loop? (Currently happens all the time)
-
-
+            // Ensure last set state is set correctly. This allows other functions to change based on the desired state
+            // (e.g. copying force from children to main rigidbody in update loop)
             lastSetState = value;
         }
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    private void Awake()
-    {
-        float weightFraction = centralRigidbody.mass / puppetmaster.muscles.Length;
-        foreach (Muscle muscle in puppetmaster.muscles)
-        {
-            muscle.rigidbody.mass = weightFraction;
-        }
-    }
-    */
 
     private void Start()
     {
         // Set state to 'no physics' for default movement
         currentState = AIPhysicsState.NoPhysics;
     }
-
-
     private void FixedUpdate()
     {
         // If AI is set up to accept knockback, transfer any accumulated force from child colliders to main rigidbody
-        if (!centralRigidbody.isKinematic)
-        {
-            TransferForceFromChildrenToCentralRigidbody();
-        }
+        
+        TryTransferForceFromChildrenToCentralRigidbody();
     }
 
     void TransferForceFromCentralToChildRigidbodies()
@@ -146,8 +114,10 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
             //mr.AddTorque(accumulatedTorque, ForceMode.Force);
         }
     }
-    void TransferForceFromChildrenToCentralRigidbody(float forceTransferMultiplier = 1f)
+    void TryTransferForceFromChildrenToCentralRigidbody(float forceTransferMultiplier = 1f)
     {
+        if (centralRigidbody.isKinematic) return;
+
         foreach (Muscle muscle in puppetmaster.muscles)
         {
             Vector3 accumulatedForce = muscle.rigidbody.GetAccumulatedForce();
