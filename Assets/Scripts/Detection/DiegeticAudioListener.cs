@@ -128,29 +128,22 @@ public class DiegeticAudioListener : MonoBehaviour
     {
         travelDistance = 0;
 
-        //Debug.Log($"Reverb path check from {origin} to {destination}");
-
-        // Sample start and end positions on NavMesh, and cancel if start and end points can't be found
-        bool validOrigin = NavMesh.SamplePosition(origin, out NavMeshHit pathStart, maxDistance, navMeshMask);
-        //Debug.Log(validOrigin);
-        if (!validOrigin) return false;
-        bool validDestination = NavMesh.SamplePosition(destination, out NavMeshHit pathEnd, maxDistance, navMeshMask);
-        //Debug.Log(validDestination);
-        if (!validDestination) return false;
 
         // Ensure a path asset exists
         if (reverbPath == null) reverbPath = new NavMeshPath();
 
+
+
         // Try to calculate a path
-        /*
+        
         // Generate filter
         NavMeshQueryFilter filter = new NavMeshQueryFilter();
         filter.agentTypeID = agentID;
         filter.areaMask = navMeshMask;
-        Debug.Log($"{filter.agentTypeID}, {filter.areaMask}");
-        bool pathCalculated = NavMesh.CalculatePath(pathStart.position, pathEnd.position, filter, reverbPath);
-        */
-        bool pathCalculated = NavMesh.CalculatePath(pathStart.position, pathEnd.position, navMeshMask, reverbPath);
+        //rootEntity.DebugLog($"{filter.agentTypeID}, {filter.areaMask}");
+        bool pathCalculated = NavMesh.CalculatePath(origin, destination, filter, reverbPath);
+
+        //bool pathCalculated = NavMesh.CalculatePath(start, end, navMeshMask, reverbPath);
 
 
 
@@ -159,9 +152,8 @@ public class DiegeticAudioListener : MonoBehaviour
         if (reverbPath.status != NavMeshPathStatus.PathComplete) return false;
 
         // Update distance to reflect path corners (plus distance from real to sampled ends)
-        float originToPathStart = Vector3.Distance(origin, pathStart.position);
-        float pathEndToEars = Vector3.Distance(pathEnd.position, destination);
-        travelDistance = originToPathStart + AIAction.NavMeshPathDistance(reverbPath) + pathEndToEars;
+        
+        travelDistance = AIAction.NavMeshPathDistance(reverbPath);
         return true;
     }
 }
