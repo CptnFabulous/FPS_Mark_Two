@@ -139,11 +139,12 @@ public class LookController : MonoBehaviour, ICharacterLookController
             value *= baseMouseSensitivity * mouseSensitivityRange;
         }
 
-        // Apply ADS multiplier for easier aiming
+        // Apply ADS multipliers for easier aiming
         if (inADS)
         {
+            // Different multipliers for mouse vs. gamepad
             value *= usingGamepad ? gamepadMultiplierWhileAiming : mouseMultiplierWhileAiming;
-            // Reduced further based on magnification
+            // Reduce further based on magnification
             value /= currentMode.optics.magnification;
         }
         #endregion
