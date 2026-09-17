@@ -23,10 +23,14 @@ public class AIStaggering : AIStateFunction
         staggerTime = staggerStateInfo.length;
     }
     */
+    public override void BeforeEntry()
+    {
+        rootAI.physicsStateHandler.currentState = AIPhysicsState.Physics;
+    }
     public override IEnumerator AsyncProcedure()
     {
         // TO DO: set AI physics state correctly
-        rootAI.physicsStateHandler.currentState = AIPhysicsState.Physics;
+        //rootAI.physicsStateHandler.currentState = AIPhysicsState.Physics;
 
         // Disable agent pathing (but save original path)
         existingPath = navMeshAgent.path;

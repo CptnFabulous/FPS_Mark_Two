@@ -42,6 +42,12 @@ public abstract class StateFunction : MonoBehaviour
     //public virtual void SwitchToState(StateFunction newState, bool forceIfSameState = false) => controller.SwitchToState(newState, forceIfSameState);
 
     /// <summary>
+    /// Runs immediately on the very first frame a switch starts, before the previous state has even been exited.
+    /// <para>TO DO: this function may not run under certain circumstances, e.g. if it's the first state upon starting.</para>
+    /// </summary>
+    public virtual void BeforeEntry() { }
+
+    /// <summary>
     /// Runs before the state is deactivated by the parent controller.
     /// </summary>
     public virtual IEnumerator AsyncExit() => null;

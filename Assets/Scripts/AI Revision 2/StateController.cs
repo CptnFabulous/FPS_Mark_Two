@@ -55,13 +55,24 @@ public class StateController : StateFunction
             if (states.Length > 0) current = states[0];
         }
     }
+    
     private void OnEnable()
     {
         // Restart the current state and its coroutines
-        SwitchToState(current);
+        SwitchToState(current, true);
         // Trigger events that need to occur to match the controller's active state
         onSetActive.Invoke(true);
     }
+    
+    /*
+    private void Start()
+    {
+        // Forcibly switch on the current state and trigger its coroutines
+        SwitchToState(current, true);
+        // Trigger events that need to occur to match the controller's active state
+        onSetActive.Invoke(true);
+    }
+    */
     private void OnDisable()
     {
         // Hard-stop the current state and all its IEnumerator-based functionality
@@ -116,12 +127,17 @@ public class StateController : StateFunction
             //rootEntity.DebugLog($"{this}: already switched to {newState}");
             yield break;
         }
+
         // If state is different, switch normally
         // If state is the same but currently disabled, enable it
 
         // Don't trigger another switch if already started switching to the desired state
         if (nextState == newState) yield break;
         nextState = newState;
+
+        // TO DO: instantly run anything that needs to occur on the same frame as the switch being triggered
+        rootEntity.DebugLog($"Invoking {nextState}.BeforeEntry()");
+        nextState.BeforeEntry();
 
         // Stop coroutine if one is currently active
         StopCurrentCoroutine();
@@ -171,6 +187,7 @@ public class StateController : StateFunction
 
         // Ensure there's actually a state to enter into
         if (current == null) yield break;
+        rootEntity.DebugLog($"Starting {current}");
         // Don't redo any of the entry functions if the state is already active
         if (current.enabled) yield break;
 
