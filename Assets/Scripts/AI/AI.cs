@@ -73,7 +73,9 @@ public class AI : Character
         if (showDebugData == false) return;
 
         Camera camera = Camera.main;
-        Vector3 worldPosition = LookTransform.position + 0.5f * Vector3.up;
+        //Vector3 worldPosition = LookTransform.position + 0.5f * Vector3.up;
+        Vector3 boundsTop = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z);
+        Vector3 worldPosition = boundsTop + 0.5f * Vector3.up;
 
         if (Vector3.Dot(camera.transform.forward, worldPosition - camera.transform.position) < 0) return;
 
