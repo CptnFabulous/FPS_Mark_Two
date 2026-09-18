@@ -17,6 +17,7 @@ public class WeaponHandler : MonoBehaviour
     public List<Weapon> equippedWeapons;
     public bool sortByOrderIndex = true;
     public OffhandAttackHandler offhandAttacks;
+    public ThrowHandler throwHandler;
 
     [Header("Stats")]
     public AmmunitionInventory ammo;

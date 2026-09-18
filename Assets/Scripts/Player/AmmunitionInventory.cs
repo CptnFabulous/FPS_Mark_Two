@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class AmmunitionInventory : MonoBehaviour
 {
+    public WeaponHandler weaponHandler;
     public bool startEmpty;
     [SerializeField] Resource[] ammunitionTypes;
 
@@ -14,9 +16,13 @@ public class AmmunitionInventory : MonoBehaviour
     {
         for (int i = 0; i < ammunitionTypes.Length; i++)
         {
-            ammunitionTypes[i].current = startEmpty ? 0 : ammunitionTypes[i].max;
+            // Unless set to start completely empty, fill each ammo type if the player has a weapon or gadget that uses it
+            bool shouldFill = !startEmpty && PlayerUsesAmmoType(AmmunitionType.All[i]);
+            ammunitionTypes[i].current = shouldFill ? ammunitionTypes[i].max : 0;
         }
     }
+
+    
 
     public Resource GetValues(AmmunitionType type) => ammunitionTypes[AmmunitionType.GetIndex(type)];
     public float GetStock(AmmunitionType type) => GetValues(type).current;
@@ -69,4 +75,34 @@ public class AmmunitionInventory : MonoBehaviour
         ammunitionTypes = newAmmoTypes;
     }
 #endif
+
+    #region Checking ammo against current weapons
+
+    bool PlayerUsesAmmoType(AmmunitionType type)
+    {
+        // Check if the player has a weapon or gadget equipped with this ammo type.
+        if (weaponHandler.equippedWeapons.Find((w) => WeaponUsesAmmoType(w, type)) != null) return true;
+        if (weaponHandler.offhandAttacks.allModes.FirstOrDefault((m) => WeaponModeUsesAmmoType(m, type)) != null) return true;
+
+        return false;
+    }
+    bool WeaponUsesAmmoType(Weapon w, AmmunitionType ammoType)
+    {
+        return w.modes.FirstOrDefault((m) => WeaponModeUsesAmmoType(m, ammoType)) != null;
+    }
+    bool WeaponModeUsesAmmoType(WeaponMode mode, AmmunitionType ammoType)
+    {
+        if (mode is RangedAttack r)
+        {
+            return r.stats.ammoType == ammoType;
+        }
+        if (mode is ThrowObject t)
+        {
+            return t.ammunitionType == ammoType;
+        }
+
+        return false;
+    }
+
+    #endregion
 }
