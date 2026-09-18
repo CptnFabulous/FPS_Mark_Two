@@ -136,7 +136,7 @@ public class Health : MonoBehaviour
             CheckpointManager checkpointManager = FindObjectOfType<CheckpointManager>();
             if (checkpointManager != null && checkpointManager.targetPlayer == player)
             {
-                checkpointManager.RespawnAtLastCheckpoint();
+                checkpointManager.TryRespawnAtLastCheckpoint();
                 return;
             }
         }

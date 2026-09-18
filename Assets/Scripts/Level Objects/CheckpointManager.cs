@@ -48,7 +48,13 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 
-    public void RespawnAtLastCheckpoint() => RespawnAtCheckpoint(targetPlayer, checkpoints[currentCheckpointIndex]);
+    public bool TryRespawnAtLastCheckpoint()
+    {
+        if (checkpoints.Length == 0) return false;
+
+        RespawnAtCheckpoint(targetPlayer, checkpoints[currentCheckpointIndex]);
+        return true;
+    }
 
     public void RespawnAtCheckpoint(Player player, Transform checkpoint)
     {
