@@ -48,9 +48,9 @@ public class EnvironmentalHazard : MonoBehaviour
     }
     public void DamageCheck(Collider other, Vector3 point, Vector3 direction, Vector3 normal)
     {
-        //Debug.Log($"{other}: checking hazard collision");
-        Entity e = EntityCache<Entity>.GetEntity(other.gameObject);
-
+        // Check the entity of the object we hit (if it's not present, return)
+        Entity victim = EntityCache<Entity>.GetEntity(other.gameObject);
+        if (victim == null) return;
 
         Entity attacker = entity;
 
@@ -66,11 +66,8 @@ public class EnvironmentalHazard : MonoBehaviour
 
         // If we damaged the object too recently, ignore
         // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
-        
-        // TO DO? Make it so if the hit object isn't part of a parent entity, just register that object instead (change the dictionary to use gameobjects instead of entities)
-        
-        if (previouslyDamaged.TryGetValue(e, out float hitTime) && (Time.time - hitTime) < damageCooldown) return;
-        previouslyDamaged[e] = Time.time; // Update the last time hit for the next check
+        if (previouslyDamaged.TryGetValue(victim, out float hitTime) && (Time.time - hitTime) < damageCooldown) return;
+        previouslyDamaged[victim] = Time.time; // Update the last time hit for the next check
 
         contactDamage.AttackObject(other.gameObject, attacker, entity, point, direction, normal);
     }
