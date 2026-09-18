@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1689957453527395859}
   - component: {fileID: 6201438979217137778}
-  - component: {fileID: 1689957453527395868}
+  - component: {fileID: 5217735986840628782}
   m_Layer: 6
   m_Name: Smoke grenades
   m_TagString: Untagged
@@ -32,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1229083836828866103}
+  - {fileID: 6266612942840096339}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6201438979217137778
@@ -52,7 +53,8 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 0}
---- !u!114 &1689957453527395868
+  ragdoll: {fileID: 0}
+--- !u!114 &5217735986840628782
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -61,10 +63,69 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689957453527395858}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06403f7bfc1547747a115d1e43ba9968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentEntity: {fileID: 6201438979217137778}
+  hudGraphic: {fileID: 0}
+  oneHanded: 1
+  isOffhand: 1
+  modes:
+  - {fileID: 1373961732404138379}
+  currentModeIndex: 0
+  switchSpeed: 0
+  indexOrder: 1
+  onDraw:
+    m_PersistentCalls:
+      m_Calls: []
+  onHolster:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!1 &4554772648240766055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6266612942840096339}
+  - component: {fileID: 1373961732404138379}
+  m_Layer: 6
+  m_Name: Smoke Grenades
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6266612942840096339
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4554772648240766055}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1689957453527395859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1373961732404138379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4554772648240766055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948948b5819f66c4f84202c313519b56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attachedTo: {fileID: 0}
+  _attachedTo: {fileID: 5217735986840628782}
   description: Throws a smoke grenade.
   icon: {fileID: 3888079278410702650, guid: 8b103585e17c3594199f539238a42240, type: 3}
   switchSpeed: 0
@@ -72,7 +133,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ammunitionType: {fileID: 11400000, guid: 9a328c29f0497934892d7ba2701b66fe, type: 2}
-  throwHandler: {fileID: 0}
   throwablePrefab: {fileID: 1229083836828866097}
   cooldown: 0.5
 --- !u!1001 &1689957453031225236

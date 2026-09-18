@@ -11,6 +11,7 @@ public class Weapon : MonoBehaviour
 
     [Header("Attack modes")]
     public bool oneHanded;
+    public bool isOffhand = false;
     public WeaponMode[] modes;
     public int currentModeIndex;
 

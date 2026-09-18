@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AmmoRefill : ItemPickup
@@ -23,7 +24,16 @@ public class AmmoRefill : ItemPickup
         if (toPickup == null) return false;
 
         string properName = toPickup.parentEntity.properName;
-        return player.weapons.equippedWeapons.Find((w) => w.parentEntity.properName == properName) == null;
+        WeaponHandler wh = player.weapons;
+        if (toPickup.isOffhand)
+        {
+            return wh.offhandAttacks.CanAdd(toPickup);
+        }
+        else
+        {
+            return wh.equippedWeapons.Find((w) => w.parentEntity.properName == properName) == null;
+        }
+
     }
 
     public override bool CanInteract(Player player, out string message)
@@ -64,19 +74,32 @@ public class AmmoRefill : ItemPickup
     }
     public override void OnPickup(Player player)
     {
-        // Check to provide weapon
-        if (CanPlayerPickUpThisWeapon(player))
+        WeaponHandler wh = player.weapons;
+
+        // Check if a new weapon was picked up
+        bool pickedUpWeapon = CanPlayerPickUpThisWeapon(player);
+        if (pickedUpWeapon)
         {
+            // Check if this weapon is a mainhand or offhand ability, and add to the appropriate list
             Weapon spawnedWeapon = Instantiate(toPickup);
-            player.weapons.AddWeapon(spawnedWeapon, true);
+            if (toPickup.isOffhand)
+            {
+                wh.offhandAttacks.TryAdd(spawnedWeapon);
+            }
+            else
+            {
+                wh.AddWeapon(spawnedWeapon, true);
+            }
         }
 
+        // Determine how much ammo needs to be added
         bool isInfinite = amountToRestore <= 0;
         int amount = isInfinite ? int.MaxValue : amountToRestore;
-
-        player.weapons.ammo.Collect(type, amount, out int remainder);
+        // Increment player ammo and modify remainder value
+        wh.ammo.Collect(type, amount, out int remainder);
         if (!isInfinite) amountToRestore = remainder;
 
-        if (limitedSupply && amountToRestore <= 0) base.OnPickup(player);
+        // If not unlimited, and weapon is picked up or all ammo is taken, delete the pickup
+        if (limitedSupply && (pickedUpWeapon || limitedSupply && amountToRestore <= 0)) base.OnPickup(player);
     }
 }

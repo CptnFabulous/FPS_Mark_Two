@@ -5,7 +5,6 @@ using UnityEngine;
 public class ThrowObject : WeaponMode
 {
     public AmmunitionType ammunitionType;
-    public ThrowHandler throwHandler;
 
     [Header("Stats")]
     public Throwable throwablePrefab;
@@ -18,6 +17,7 @@ public class ThrowObject : WeaponMode
 
     AmmunitionInventory ammoInventory => User.weaponHandler.ammo;
 
+    public ThrowHandler throwHandler => User.weaponHandler.throwHandler;
     public override LayerMask attackMask => throwHandler.attackMask;
 
     public override string hudInfo

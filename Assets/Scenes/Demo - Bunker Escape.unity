@@ -7103,7 +7103,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737478536426011706, guid: 0609a5e3d5484a54784f625cc3597efc, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5737478536426011707, guid: 0609a5e3d5484a54784f625cc3597efc, type: 3}
       propertyPath: m_RootOrder
@@ -67715,6 +67715,68 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1001 &1138805046
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2034925221}
+    m_Modifications:
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5395543551877665680, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+      propertyPath: m_Name
+      value: Fire extinguisher
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+--- !u!4 &1138805047 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4914236172249113264, guid: 9602f2528fb93904497dbbd9755c2a29, type: 3}
+  m_PrefabInstance: {fileID: 1138805046}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1139577648
 Mesh:
   m_ObjectHideFlags: 0
@@ -114837,8 +114899,16 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5952785222623807978, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 157051603}
+    - targetCorrespondingSourceObject: {fileID: 3590176935287167125, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1138805047}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+--- !u!4 &2034925221 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3590176935287167125, guid: 11d7a355631bdb54db4d99f6d1df073f, type: 3}
+  m_PrefabInstance: {fileID: 2034925220}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2036852833 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 349435704106730935, guid: 29275a26879ac084496752f28558762f, type: 3}

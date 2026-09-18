@@ -1,25 +1,20 @@
 using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
+public class OffhandAttackHandler : WeaponHandlerBase
 {
-    public List<WeaponMode> abilities;
-
     [Header("Inputs")]
     public SingleInput input;
-    public SingleInput selectorMenuInput;
-    public MultiRadialMenu menu;
-    public int selectorMenuIndex = 1;
 
     [Header("References")]
     public WeaponHandler weaponHandler;
     public InteractionHandler interactionHandler;
     public OffhandSelectorHUD selectorInfo;
 
-    int abilityIndex = 0;
     bool buttonHeld;
     int frameChanged = int.MinValue;
 
@@ -43,29 +38,34 @@ public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
         }
     }
 
-    private void Awake()
+
+    protected override void Awake()
     {
-        currentAbility = abilities[abilityIndex];
+        // Set up inputs
         input.onActionPerformed.AddListener(OnAttack);
 
-        weaponHandler.onSwitchWeapon.AddListener((_) => CancelCurrentAction(true));
+        // Set up inputs to cancel other actions
+        weaponHandler.onSwitchWeapon.AddListener((_) =>
+        {
+            // TO DO: check if the user is switching to a one-handed or two-handed weapon. If the former, don't cancel?
+            CancelCurrentAction(true);
+        });
         interactionHandler.input.onActionPerformed.AddListener((_) => CancelCurrentAction());
         //selectorMenuInput.onActionPerformed.AddListener((_) => menu.);
 
-        foreach (WeaponMode ability in abilities)
-        {
-            Weapon w = ability.attachedTo;
-            if (w != null) w.gameObject.SetActive(false);
-        }
 
-        if (selectorMenuInput != null) selectorMenuInput.onActionPerformed.AddListener((ctx) => menu.ProcessSingleMenuInput(selectorMenuIndex, ctx));
-        selectorInfo.radialMenu.onValueConfirmed.AddListener((index) => currentAbility = abilities[index]);
-        selectorInfo.PopulateMenu(this);
+        base.Awake();
     }
+
+
+
+
 
     void OnAttack(InputAction.CallbackContext context)
     {
         buttonHeld = context.ReadValueAsButton();
+
+        if (currentAbility == null) return;
         if (buttonHeld == false) return;
         if (currentAction != null) return;
 
@@ -73,10 +73,8 @@ public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
         currentAction = StartCoroutine(PerformOffhandAbility(currentAbility));
     }
 
-    public IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
+    IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
     {
-        Debug.Log("Performing offhand attack - " +  offhandAbility);
-
         // Put away current weapon (if two-handed)
         Weapon currentWeapon = weaponHandler.CurrentWeapon;
         if (currentWeapon != null && currentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
@@ -140,5 +138,29 @@ public class OffhandAttackHandler : MonoBehaviour//, ICollection<WeaponMode>
 
         // Auto-deploy the last weapon, but not if this action was triggered by switching to a new one
         if (!isSwitchingWeapons) weaponHandler.SetCurrentWeaponActive(true);
+    }
+
+
+
+    protected override void Refresh()
+    {
+        CancelCurrentAction();
+
+        foreach (Weapon w in allWeapons)
+        {
+            if (w != null) w.gameObject.SetActive(false);
+        }
+
+        base.Refresh();
+
+
+        selectorInfo.PopulateMenu(this);
+    }
+
+    public override void SwitchMode(int index)
+    {
+        if (allModes.Count <= 0) return;
+
+        currentAbility = allModes[index];
     }
 }

@@ -27,7 +27,7 @@ public class OffhandSelectorHUD : MonoBehaviour
         this.handler = handler;
 
         List<Sprite> icons = new List<Sprite>();
-        foreach (WeaponMode m in handler.abilities)
+        foreach (WeaponMode m in handler.allModes)
         {
             icons.Add(m.icon);
         }
@@ -42,11 +42,11 @@ public class OffhandSelectorHUD : MonoBehaviour
         }
     }
 
-    int CalculateIndex() => handler.abilities.IndexOf(handler.currentAbility);
-    Resource GetResourceData(int index) => handler.abilities[index].displayedResource;
+    int CalculateIndex() => handler.IndexOfMode(handler.currentAbility);
+    Resource GetResourceData(int index) => handler.allModes[index].displayedResource;
     void DisplayInfoOnSelectedMode(int index)
     {
-        WeaponMode mode = handler.abilities[index];
+        WeaponMode mode = handler.allModes[index];
 
         firingModeName.text = mode.name;
         //weaponName.text = mode.attachedTo.name;

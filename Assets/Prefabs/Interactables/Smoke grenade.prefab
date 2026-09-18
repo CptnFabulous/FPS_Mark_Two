@@ -5,6 +5,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
@@ -56,6 +57,27 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3446894300288721522}
+    - targetCorrespondingSourceObject: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1948382394}
+    - targetCorrespondingSourceObject: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1948382392}
+    - targetCorrespondingSourceObject: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1948382393}
+    - targetCorrespondingSourceObject: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4957457522651592936}
+    - targetCorrespondingSourceObject: {fileID: 1774358506814233180, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6402803617941230540}
   m_SourcePrefab: {fileID: 100100000, guid: fc539289792612640a0f89b0f1f7bf58, type: 3}
 --- !u!1 &8414875526780039942 stripped
 GameObject:
@@ -69,10 +91,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8414875526780039942}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -86,8 +119,17 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8414875526780039942}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 0.04
   m_Height: 0.16
   m_Direction: 1
@@ -106,6 +148,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   activateOnCollision: 0
+  parentEntity: {fileID: 0}
+  displayName: 
   promptMessage: Pick up
   inProgressMessage: In progress
   disabledMessage: Can't carry any more
@@ -126,8 +170,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactable: {fileID: 1948382392}
   pickupNoise: {fileID: 0}
+  toPickup: {fileID: 5217735986840628782, guid: d11b875551c066c40a899a3c2e7f1df4, type: 3}
+  idLocked: 0
+  pickupMessage: Pick up
+  idLockedMessage: ID-locked
   type: {fileID: 11400000, guid: 9a328c29f0497934892d7ba2701b66fe, type: 2}
   amountToRestore: 1
+  pickupMessageFormat: Restore {0} {1} rounds
+  fullMessageFormat: Max {0} rounds is {1}
   limitedSupply: 1
 --- !u!114 &4957457522651592936
 MonoBehaviour:
@@ -141,10 +191,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showDebugData: 0
   properName: Smoke grenade
   description: Produces a thick cloud of smoke to obscure enemy vision.
   isUnique: 0
   health: {fileID: 0}
+  audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &6402803617941230540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,4 +210,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefbb174557835d4fb7ae8f6abcd84a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootEntity: {fileID: 0}
   impactEffect: {fileID: 11400000, guid: 16f4d5a2627a7824a83c6dda7700d914, type: 2}
