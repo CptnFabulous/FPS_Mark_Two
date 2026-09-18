@@ -266,6 +266,7 @@ public class WeaponHandler : MonoBehaviour
     IEnumerator SwitchWeaponAndFiringMode(int weaponIndex, int firingModeIndex)
     {
         yield return SwitchWeapon(weaponIndex);
+        if (CurrentWeapon == null) yield break;
         yield return CurrentWeapon.SwitchMode(firingModeIndex);
     }
     public void SwitchWeaponAndModeFromIndex(int index)
