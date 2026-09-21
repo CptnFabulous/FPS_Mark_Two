@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -30,6 +31,7 @@ public class TerrainGrid : MonoBehaviour
     public Vector3 boundsMargins = Vector3.one;
     public int resolutionScale = 1;
     //[SerializeField] Vector3Int _chunkSize = new Vector3Int(10, 10, 10);
+    public NavMeshSurface[] navMeshes;
 
 #if UNITY_EDITOR
     public Texture3D debugTerrainTexture;
@@ -240,4 +242,36 @@ public class TerrainGrid : MonoBehaviour
 
         return gridCoords;
     }
+
+
+
+    public static void GenerateOctreeDataForLevelBounds(float cellWidth, out int size, out int subdivisions, out Matrix4x4 octreeToWorldMatrix)
+    {
+        BoundsInt levelBounds = TerrainGrid.current.worldBounds;
+        int largestDimension = Mathf.Max(levelBounds.size.x, levelBounds.size.y, levelBounds.size.z);
+
+        // Scale to account for cell width
+        size = Mathf.CeilToInt(largestDimension / cellWidth);
+        // Turn into a power of 2
+        size = Mathf.NextPowerOfTwo(size);
+        subdivisions = Mathf.RoundToInt(Mathf.Log(size, 2));
+
+
+
+        // size * cellWidth = largestDimension
+        // Therefore largestDimension / cellWidth = size
+
+
+        // The world bounds of the octree will be slightly larger than largestDimension on each axis
+        // Because after division the size is slightly enlarged
+        // So when it's multiplied it'll end up slightly larger.
+        // This is fine.
+        float octreeWorldSize = size * cellWidth;
+        // Create a bounds with the same centre as the level bounds, but enlarged to be a cube with the precise world size
+        Bounds octreeWorldBounds = new Bounds(levelBounds.center, new Vector3(octreeWorldSize, octreeWorldSize, octreeWorldSize));
+
+        // The 'zero' point of our matrix needs to be the 'min' of these bounds.
+        octreeToWorldMatrix = Matrix4x4.TRS(octreeWorldBounds.min, Quaternion.identity, cellWidth * Vector3.one);
+    }
+
 }

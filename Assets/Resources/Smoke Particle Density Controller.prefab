@@ -1,5 +1,53 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5517724828161478165
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7442960099011896319}
+  - component: {fileID: 5827683196755325266}
+  m_Layer: 7
+  m_Name: Smoke NavMesh Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &7442960099011896319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5517724828161478165}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6471879807133104503}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5827683196755325266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5517724828161478165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Size: {x: 5, y: 5, z: 5}
+  m_Center: {x: 0, y: 0, z: 0}
+  m_Area: 4
+  m_AffectedAgents: ffffffff
 --- !u!1 &8519083541859046660
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,6 +58,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6471879807133104503}
   - component: {fileID: 2151299590838587294}
+  - component: {fileID: 7896672494841223167}
   m_Layer: 0
   m_Name: Smoke Particle Density Controller
   m_TagString: Untagged
@@ -29,7 +78,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7442960099011896319}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2151299590838587294
@@ -46,7 +96,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   checkRadiusSizeMultiplier: 1.5
   maximumCheckRadius: 1.5
-  maxParticlesPerGridSpace: 64
+  maxParticlesPerGridSpace: 256
   gridSpaceInactiveLifetime: 10
   resolveVelocityMagnitude: 5
   deceleration: 10
+--- !u!114 &7896672494841223167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8519083541859046660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c03d397d0fd7d2943a20719d99c1f52b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  navMeshes:
+  - {fileID: 0}
+  - {fileID: 0}
+  smokeMask:
+    serializedVersion: 2
+    m_Bits: 512
+  volumePrefab: {fileID: 5827683196755325266}
+  refreshTimer: 1
+  cellWidth: 1

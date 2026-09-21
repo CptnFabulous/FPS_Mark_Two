@@ -71,7 +71,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206736610252260472}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
@@ -84,14 +84,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3200
   m_UseGeometry: 1
-  m_DefaultArea: 3
+  m_DefaultArea: 0
   m_GenerateLinks: 1
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.06666667
+  m_VoxelSize: 0.13333334
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 1
@@ -244,6 +244,9 @@ MonoBehaviour:
     m_Bits: 1152
   boundsMargins: {x: 1, y: 1, z: 1}
   resolutionScale: 1
+  navMeshes:
+  - {fileID: 7918923335932962641}
+  - {fileID: 273110743714581901}
   debugTerrainTexture: {fileID: 0}
 --- !u!114 &4690164596860252419
 MonoBehaviour:
