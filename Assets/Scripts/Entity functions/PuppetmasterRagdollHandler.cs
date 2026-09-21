@@ -26,14 +26,19 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     }
     
     public AI rootAI;
-    public PhysicsBasedNavMeshMovement pathfindingHandler;
+    //public PhysicsBasedNavMeshMovement pathfindingHandler;
     public PuppetMaster puppetmaster;
-    [SerializeField] Collider centralCollider;
+    [SerializeField] CapsuleCollider centralCollider;
     [SerializeField] Rigidbody centralRigidbody;
     [SerializeField] Transform baseTransform;
     [SerializeField] Transform rootBone;
     [SerializeField] IK[] ikComponents;
-    
+
+    /*
+    [Header("Navigation")]
+    [SerializeField] float groundingRayLength = 0.01f;
+    */
+
     [Header("Ragdollising")]
     [SerializeField] public float collapseTime = 0.1f;
     [SerializeField] AnimationCurve weightDecayCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
@@ -52,6 +57,8 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
 
 
     AIPhysicsState lastSetState;
+
+    NavMeshAgent navMeshAgent => rootAI.agent;
 
     public AIPhysicsState currentState
     {
@@ -82,7 +89,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
 
             // Determine if navmeshagent should automatically update physical position to match agent position should update.
             // Only do so if in a state where the central body isn't meant to be affected by physics.
-            rootAI.agent.updatePosition = value == AIPhysicsState.NoPhysics;
+            navMeshAgent.updatePosition = value == AIPhysicsState.NoPhysics;
 
             // Ensure last set state is set correctly. This allows other functions to change based on the desired state
             // (e.g. copying force from children to main rigidbody in update loop)
@@ -98,8 +105,50 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     private void FixedUpdate()
     {
         // If AI is set up to accept knockback, transfer any accumulated force from child colliders to main rigidbody
-        
         TryTransferForceFromChildrenToCentralRigidbody();
+
+        #region NavMeshAgent stuff
+
+        // Update physics collider size and position to match agent's
+        centralCollider.radius = navMeshAgent.radius;
+        centralCollider.height = navMeshAgent.height;
+        centralCollider.center = new Vector3(0, navMeshAgent.height / 2, 0);
+
+        /*
+        // Check if AI is animated, and standing grounded on a valid NavMesh. Disable gravity if so.
+        GroundingHandler.GetGroundingData(collider, groundingRayLength, out RaycastHit groundingData, out bool isGrounded);
+        bool agentMoving = navMeshAgent.enabled && isGrounded && navMeshAgent.velocity.sqrMagnitude > 0;
+        rigidbody.useGravity = !agentMoving;
+        */
+
+        if (!navMeshAgent.updatePosition && !centralRigidbody.isKinematic)
+        {
+            // Instead of letting the agent directly modify the position, retrieve the desired movement changes and apply them to the rigidbody
+            Vector3 currentPosition = centralRigidbody.transform.position;
+            navMeshAgent.nextPosition = currentPosition; // Ensure the navmesh's stored position always matches the object's real position in space
+            Vector3 velocity = navMeshAgent.velocity;
+            if (velocity.sqrMagnitude > 0)
+            {
+                centralRigidbody.MovePosition(currentPosition + (Time.fixedDeltaTime * velocity));
+            }
+        }
+
+        #endregion
+    }
+    private void OnDrawGizmos()
+    {
+        if (!rootAI.showDebugData) return;
+        if (MiscFunctions.CurrentCameraNotMain()) return;
+
+        Gizmos.color = Color.blue;
+        AIAction.GizmosDrawNavMeshPath(navMeshAgent.path);
+
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Vector3 centre = new Vector3(0, navMeshAgent.height / 2, 0);
+        float width = navMeshAgent.radius * 2;
+        Vector3 size = new Vector3(width, navMeshAgent.height, width);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireCube(centre, size);
     }
 
     void TransferForceFromCentralToChildRigidbodies()

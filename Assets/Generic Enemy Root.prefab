@@ -880,10 +880,6 @@ PrefabInstance:
       propertyPath: rootAI
       value: 
       objectReference: {fileID: 4137702903641763450}
-    - target: {fileID: 404736683569558719, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
-      propertyPath: pathfindingHandler
-      value: 
-      objectReference: {fileID: 6062076589948770711}
     - target: {fileID: 993932322570370537, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
       propertyPath: _rootEntity
       value: 
@@ -1066,9 +1062,6 @@ PrefabInstance:
       addedObject: {fileID: 6774321062433608729}
     - targetCorrespondingSourceObject: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6062076589948770711}
-    - targetCorrespondingSourceObject: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 7384869552421036058}
     - targetCorrespondingSourceObject: {fileID: 1328831060101473567, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
       insertIndex: -1
@@ -1217,11 +1210,6 @@ MonoBehaviour:
   _attachedTo: {fileID: 0}
   isCritical: 0
   resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
---- !u!136 &1911611086530963177 stripped
-CapsuleCollider:
-  m_CorrespondingSourceObject: {fileID: 3271273635285470028, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
-  m_PrefabInstance: {fileID: 4026937343484816805}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2029985933608884515 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3155188658226001030, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
@@ -1390,21 +1378,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6062076589948770711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2707361439851497658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2d4e6fa078602244afc3e0d3e0e4d86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootAI: {fileID: 4137702903641763450}
-  rigidbody: {fileID: 8365656880307998804}
-  collider: {fileID: 1911611086530963177}
 --- !u!114 &7384869552421036058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1870,11 +1843,6 @@ MonoBehaviour:
   _attachedTo: {fileID: 0}
   isCritical: 0
   resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
---- !u!54 &8365656880307998804 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 4898305273504300529, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
-  m_PrefabInstance: {fileID: 4026937343484816805}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8509575271845197177 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4754283547075614940, guid: 13b6268f98b09cf44b957caba40ec0c2, type: 3}
