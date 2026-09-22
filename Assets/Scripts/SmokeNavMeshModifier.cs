@@ -52,7 +52,7 @@ public class SmokeNavMeshModifier : MonoBehaviour
         octree.onOctantRemoved = RemoveVolume; // Clear unwanted volumes
 
         // TO DO: create an object pool with this transform as the pool parent.
-        ObjectPool.CreateObjectPool(volumePrefab);
+        ObjectPool.TryCreateObjectPool(volumePrefab);
         volumePrefab.gameObject.SetActive(false);
 
         // Reset transform position, rotation and scale

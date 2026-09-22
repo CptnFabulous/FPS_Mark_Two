@@ -42,7 +42,7 @@ public class ImpactEffect : ScriptableObject
         {
             //Vector3 effectDirection = normal;
             Vector3 effectDirection = Vector3.Reflect(impactDirection, normal);
-            ObjectPool.CreateObjectPool(effect, true, maxNumberOfSpawnedEffects);
+            ObjectPool.TryCreateObjectPool(effect, null, true, maxNumberOfSpawnedEffects);
             ParticleSystem effectToSpawn = ObjectPool.RequestObject(effect);
             StickObjectToSurface(effectToSpawn.transform, surfaceCollider.transform, point, effectDirection, up, 0, randomiseEffectRotation);
             // TO DO: use intensity to determine size of particles
@@ -62,8 +62,8 @@ public class ImpactEffect : ScriptableObject
                 decalProjector = new GameObject("Decal Projector").AddComponent<DecalProjector>();
                 decalProjector.gameObject.SetActive(false);
                 DontDestroyOnLoad(decalProjector);
-                ObjectPool.CreateObjectPool(decalProjector, true, maxNumberOfSpawnedEffects);
-                decalProjector.transform.SetParent(ObjectPool.GetPoolParent(decalProjector));
+                ObjectPool.TryCreateObjectPool(decalProjector, null,true, maxNumberOfSpawnedEffects);
+                decalProjector.transform.SetParent(ObjectPool.activePools[decalProjector].poolParent);
             }
 
             DecalProjector dp = ObjectPool.RequestObject(decalProjector);

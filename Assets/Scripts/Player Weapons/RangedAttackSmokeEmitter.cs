@@ -20,7 +20,7 @@ public class RangedAttackSmokeEmitter : MonoBehaviour
         // Create an object pool and request a particle system from it.
         // Determine settings beforehand, to make sure the particle system isn't disabled after being dismissed.
         // This ensures the spawned particles continue to exist in the world even when the weapon is holstered.
-        ObjectPool.CreateObjectPool(smokeCloudPrefab, true, 0, false);
+        ObjectPool.TryCreateObjectPool(smokeCloudPrefab, null, true, 0, false);
         assignedSmokeCloud = ObjectPool.RequestObject(smokeCloudPrefab);
 
         // Make it a child of the muzzle
