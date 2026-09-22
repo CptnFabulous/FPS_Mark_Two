@@ -21,7 +21,7 @@ public class Octant<T>
 
     T _leafData;
 
-    public bool hasChildren => type == OctantType.Branch || type == OctantType.Full;
+    //public bool hasChildren => type == OctantType.Branch || type == OctantType.Full;
 
     public void Refresh(Octree<T> origin, int sizePower)
     {
@@ -35,14 +35,16 @@ public class Octant<T>
         // If no more children can be found, record leaf data and return
         if (!notEmpty)
         {
-            Mark(origin, OctantType.Empty);
+            type = OctantType.Empty;
+            //Mark(origin, OctantType.Empty);
             return;
         }
 
         // If size at depth is 1 or less, that means we've subdivided as far as we can go.
         if (size <= 1)
         {
-            Mark(origin, OctantType.Leaf);
+            type = OctantType.Leaf;
+            //Mark(origin, OctantType.Leaf);
             return;
         }
 
@@ -63,10 +65,11 @@ public class Octant<T>
             // Set up child octant
             if (children[i] == null) children[i] = new Octant<T>();
             children[i].min = childMin;
+
             // Check data in child octant
             children[i].Refresh(origin, depth - 1);
 
-            // Check if a child octant is completely full (either it's a leaf node or all its children are)
+            // Check if the child we just refreshed is completely full
             bool childIsFull = children[i].type == OctantType.Leaf || children[i].type == OctantType.Full;
             // If a single child is not full, then that means this octant is not full.
             isFull &= childIsFull;
@@ -75,23 +78,59 @@ public class Octant<T>
         if (isFull)
         {
             // Mark as full, because all children are full
-            Mark(origin, OctantType.Full);
+            type = OctantType.Full;
+            //Mark(origin, OctantType.Full);
         }
         else
         {
             // Mark as branch, because there's a mixture of full and non-full
-            Mark(origin, OctantType.Branch);
+            type = OctantType.Branch;
+            //Mark(origin, OctantType.Branch);
         }
     }
     public void IterateThrough(Octree<T> origin)
     {
-        // Perform function and assign leaf data
-        origin.onOctantRefreshed.Invoke(this, ref _leafData);
-        // Do the same for all its children
-        if (!hasChildren) return;
-        for (int i = 0; i < 8; i++)
+        // Determine different outcomes for different types
+        switch (type)
         {
-            children[i].IterateThrough(origin);
+            case OctantType.Empty:
+
+                // Should be completely empty, scrub everything.
+                // Empty self
+                // Delete children
+                Empty(origin, true, true, true);
+
+                break;
+
+            case OctantType.Leaf:
+
+                // Should have data in self but not in children
+                // Populate self
+                // Delete children
+                Empty(origin, false, true, true);
+                origin.onOctantRefreshed.Invoke(this, ref _leafData);
+
+                break;
+
+            case OctantType.Full:
+
+                // Needs to have data for itself.
+                // Children should not have data (because it's covered by this), but still need to be present to prove this octant should be full.
+                // Populate self
+                // Empty children (but do not delete, the child data is necessary to prove this one is full)
+                Empty(origin, false, true, false);
+                origin.onOctantRefreshed.Invoke(this, ref _leafData);
+
+                break;
+
+            case OctantType.Branch:
+
+                // Empty self
+                // Iterate through children
+                Empty(origin, true, false, false);
+                for (int i = 0; i < 8; i++) children[i].IterateThrough(origin);
+
+                break;
         }
     }
     public void DrawGizmos(Octree<T> origin, int sizePower)
@@ -126,24 +165,9 @@ public class Octant<T>
 
             default:
                 // Draw gizmos for each child
-                for (int i = 0; i < 8; i++)
-                {
-                    children[i].DrawGizmos(origin, sizePower - 1);
-                }
+                for (int i = 0; i < 8; i++) children[i].DrawGizmos(origin, sizePower - 1);
                 break;
         }
-    }
-
-    void Mark(Octree<T> origin, OctantType type)
-    {
-        this.type = type;
-
-        // Clear data (if delegate exists)
-        if (origin.onOctantRemoved == null) return;
-
-        // If octant is not meant to have children, clear its data
-        // If meant to be empty, clear self
-        Empty(origin, type == OctantType.Empty, !hasChildren, true);
     }
 
     void Empty(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
@@ -156,19 +180,20 @@ public class Octant<T>
 
                 // Empty all child octants (and their children)
                 children[i].Empty(origin, true, true, deleteChildren);
-                // Clear this space (if specified)
+                // Delete this octant (if specified)
                 if (deleteChildren) children[i] = null;
             }
         }
 
-        // Clear self as well, if specified
-        if (emptySelf)
+        // Clear data from self (if clearing function has been assigned)
+        if (emptySelf && origin.onOctantRemoved != null)
         {
             origin.onOctantRemoved.Invoke(this);
             _leafData = default;
         }
     }
 }
+
 public class Octree<T>
 {
     public delegate void LeafDataAssignment(Octant<T> octant, ref T data);
