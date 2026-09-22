@@ -79,25 +79,22 @@ public class SmokeNavMeshModifier : MonoBehaviour
         GetWorldExtents(min, max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
         return Physics.CheckBox(centre, halfExtents, Quaternion.identity, smokeMask);
     }
-    NavMeshModifierVolume CheckToAssignVolume(Octant<NavMeshModifierVolume> octant)
+    void CheckToAssignVolume(Octant<NavMeshModifierVolume> octant, ref NavMeshModifierVolume volume)
     {
         // Don't have a volume if space is empty, or needs to be broken down further
-        switch (octant.type)
-        {
-            case OctantType.Branch:
-            case OctantType.Empty:
-                return null;
-        }
+        if (octant.type == OctantType.Branch) return;
+        if (octant.type == OctantType.Empty) return;
 
-        // Summon volume
-        NavMeshModifierVolume volume = ObjectPool.RequestObject(volumePrefab);
+        if (volume == null)
+        {
+            // Summon volume
+            volume = ObjectPool.RequestObject(volumePrefab);
+        }
 
         // Set volume position and size
         GetWorldExtents(octant.min, octant.max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
         volume.transform.localPosition = centre;
         volume.size = 2 * halfExtents;
-
-        return volume;
     }
     void RemoveVolume(Octant<NavMeshModifierVolume> octant)
     {

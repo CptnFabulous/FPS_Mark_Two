@@ -12,58 +12,37 @@ public enum OctantType
 
 public class Octant<T>
 {
-    // TO DO: make these values private, they should only be altered from a refresh calculation
-    
-    public int depth = 0;
-    public Vector3Int min = Vector3Int.zero;
-    public Vector3Int max = Vector3Int.zero; // TO DO: delete this? Depth and min are the important ones because everything else can be calculated from those
-    public Octant<T>[] children = new Octant<T>[8];
-    public OctantType type;
-    public T leafData;
+    public int depth { get; private set; }
+    public Vector3Int min { get; private set; }
+    public Vector3Int max { get; private set; } // TO DO: delete this? Depth and min are the important ones because everything else can be calculated from those
+    public Octant<T>[] children { get; private set; } = new Octant<T>[8];
+    public OctantType type { get; private set; } = OctantType.Empty;
+    public T leafData => _leafData;
 
-    //public Bounds bounds = new BoundsInt(MinAttribute, )
+    T _leafData;
+
     public bool hasChildren => type == OctantType.Branch || type == OctantType.Full;
-}
-public class Octree<T>
-{
-    public int subdivisions;
-    public System.Func<Vector3Int, Vector3Int, bool> checkOctant;
-    public System.Func<Octant<T>, T> onOctantRefreshed;
-    public System.Action<Octant<T>> onOctantRemoved;
 
-    Octant<T> _base = new Octant<T>();
-
-    public Octant<T> baseContainer => _base;
-    
-    public void Refresh()
+    public void Refresh(Octree<T> origin, int sizePower)
     {
-        RefreshOctant(_base, subdivisions);
-        if (onOctantRefreshed != null) IterateThroughOctant(_base, onOctantRefreshed);
-    }
-    public void DrawGizmos() => DrawOctantGizmos(_base, subdivisions);
-
-    void RefreshOctant(Octant<T> octant, int sizePower)
-    {
-        if (octant == null) return;
-
         // Calculate subdivision depth and size of octant
-        octant.depth = sizePower;
-        int size = CalculateGridSize(octant.depth);
+        depth = sizePower;
+        int size = Octree<T>.CalculateGridSize(depth);
         Vector3Int dimensions = new Vector3Int(size, size, size);
-        octant.max = octant.min + dimensions;
-        bool notEmpty = checkOctant.Invoke(octant.min, octant.max);
+        max = min + dimensions;
+        bool notEmpty = origin.checkOctant.Invoke(min, max);
 
         // If no more children can be found, record leaf data and return
         if (!notEmpty)
         {
-            MarkOctant(octant, OctantType.Empty);
+            Mark(origin, OctantType.Empty);
             return;
         }
 
         // If size at depth is 1 or less, that means we've subdivided as far as we can go.
         if (size <= 1)
         {
-            MarkOctant(octant, OctantType.Leaf);
+            Mark(origin, OctantType.Leaf);
             return;
         }
 
@@ -72,7 +51,6 @@ public class Octree<T>
 
         // Check in child octants
         int childSize = size / 2;
-        //Vector3Int childDimensions = new Vector3Int(childSize, childSize, childSize);
         for (int i = 0; i < 8; i++)
         {
             // Calculate check min and max
@@ -80,17 +58,16 @@ public class Octree<T>
             offset.x *= childSize;
             offset.y *= childSize;
             offset.z *= childSize;
-            Vector3Int childMin = octant.min + offset;
-            //Vector3Int childMax = childMin + childDimensions;
+            Vector3Int childMin = min + offset;
 
             // Set up child octant
-            if (octant.children[i] == null) octant.children[i] = new Octant<T>();
-            octant.children[i].min = childMin;
+            if (children[i] == null) children[i] = new Octant<T>();
+            children[i].min = childMin;
             // Check data in child octant
-            RefreshOctant(octant.children[i], octant.depth - 1);
+            children[i].Refresh(origin, depth - 1);
 
             // Check if a child octant is completely full (either it's a leaf node or all its children are)
-            bool childIsFull = octant.children[i].type == OctantType.Leaf || octant.children[i].type == OctantType.Full;
+            bool childIsFull = children[i].type == OctantType.Leaf || children[i].type == OctantType.Full;
             // If a single child is not full, then that means this octant is not full.
             isFull &= childIsFull;
         }
@@ -98,66 +75,38 @@ public class Octree<T>
         if (isFull)
         {
             // Mark as full, because all children are full
-            MarkOctant(octant, OctantType.Full);
+            Mark(origin, OctantType.Full);
         }
         else
         {
             // Mark as branch, because there's a mixture of full and non-full
-            MarkOctant(octant, OctantType.Branch);
+            Mark(origin, OctantType.Branch);
         }
     }
-    void MarkOctant(Octant<T> octant, OctantType type)
-    {
-        octant.type = type;
-
-        // Clear data (if delegate exists)
-        if (onOctantRemoved == null) return;
-
-        // If octant is not meant to have children, clear its data
-        if (!octant.hasChildren) ClearOctantChildren(octant);
-        // If meant to be empty, clear self
-        if (type == OctantType.Empty) onOctantRemoved.Invoke(octant);
-    }
-
-    void IterateThroughOctant(Octant<T> octant, System.Func<Octant<T>, T> action)
+    public void IterateThrough(Octree<T> origin)
     {
         // Perform function and assign leaf data
-        octant.leafData = action.Invoke(octant);
+        origin.onOctantRefreshed.Invoke(this, ref _leafData);
         // Do the same for all its children
-        if (!octant.hasChildren) return;
+        if (!hasChildren) return;
         for (int i = 0; i < 8; i++)
         {
-            IterateThroughOctant(octant.children[i], action);
+            children[i].IterateThrough(origin);
         }
     }
-    void ClearOctantChildren(Octant<T> octant)
+    public void DrawGizmos(Octree<T> origin, int sizePower)
     {
-        if (octant == null) return;
-
-        for (int i = 0; i < 8; i++)
-        {
-            // Delete/dismiss all data related to this octant (make sure to get its children too)
-            ClearOctantChildren(octant.children[i]);
-            onOctantRemoved.Invoke(octant);
-            // Clear this space
-            octant.children[i] = null;
-        }
-    }
-
-    void DrawOctantGizmos(Octant<T> octant, int sizePower)
-    {
-        if (octant == null) return;
-
         // Size
-        int sizeAlongAxis = CalculateGridSize(sizePower);
+        int sizeAlongAxis = Octree<T>.CalculateGridSize(sizePower);
         Vector3 size = new Vector3(sizeAlongAxis, sizeAlongAxis, sizeAlongAxis);
-        Vector3 centre = octant.min + (size / 2);
+        Vector3 centre = min + (size / 2);
 
-        switch (octant.type)
+        // Draw different gizmos based on each cell type
+        switch (type)
         {
             case OctantType.Empty:
                 // Colour based on size
-                float colourLerp = 1 - ((float)sizePower / (float)subdivisions);
+                float colourLerp = 1 - ((float)sizePower / (float)origin.subdivisions);
                 Gizmos.color = Color.Lerp(Color.white, Color.black, colourLerp);
                 // Draw
                 Gizmos.DrawWireCube(centre, size);
@@ -179,11 +128,66 @@ public class Octree<T>
                 // Draw gizmos for each child
                 for (int i = 0; i < 8; i++)
                 {
-                    DrawOctantGizmos(octant.children[i], sizePower - 1);
+                    children[i].DrawGizmos(origin, sizePower - 1);
                 }
                 break;
         }
     }
 
-    int CalculateGridSize(int sizePower) => Mathf.RoundToInt(Mathf.Pow(2, sizePower));
+    void Mark(Octree<T> origin, OctantType type)
+    {
+        this.type = type;
+
+        // Clear data (if delegate exists)
+        if (origin.onOctantRemoved == null) return;
+
+        // If octant is not meant to have children, clear its data
+        // If meant to be empty, clear self
+        Empty(origin, type == OctantType.Empty, !hasChildren, true);
+    }
+
+    void Empty(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
+    {
+        if (emptyChildren)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (children[i] == null) continue;
+
+                // Empty all child octants (and their children)
+                children[i].Empty(origin, true, true, deleteChildren);
+                // Clear this space (if specified)
+                if (deleteChildren) children[i] = null;
+            }
+        }
+
+        // Clear self as well, if specified
+        if (emptySelf)
+        {
+            origin.onOctantRemoved.Invoke(this);
+            _leafData = default;
+        }
+    }
+}
+public class Octree<T>
+{
+    public delegate void LeafDataAssignment(Octant<T> octant, ref T data);
+    
+    public int subdivisions;
+    public System.Func<Vector3Int, Vector3Int, bool> checkOctant;
+    public LeafDataAssignment onOctantRefreshed;
+    public System.Action<Octant<T>> onOctantRemoved;
+
+    Octant<T> _base = new Octant<T>();
+
+    public Octant<T> baseContainer => _base;
+    
+    public void Refresh()
+    {
+        _base.Refresh(this, subdivisions);
+        if (onOctantRefreshed != null) _base.IterateThrough(this);
+    }
+    public void DrawGizmos() => _base.DrawGizmos(this, subdivisions);
+
+    public static int CalculateGridSize(int sizePower) => Mathf.RoundToInt(Mathf.Pow(2, sizePower));
 }
