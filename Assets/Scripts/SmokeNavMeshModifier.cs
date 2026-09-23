@@ -70,7 +70,8 @@ public class SmokeNavMeshModifier : MonoBehaviour
             NavMeshSurface mesh = navMeshes[i];
             if (mesh == null) continue;
             if (mesh.enabled == false) continue;
-            mesh.BuildNavMesh();
+            // Update NavMesh (do not rebuild the entire thing as that chews through processing budget)
+            mesh.UpdateNavMesh(mesh.navMeshData);
         }
     }
 
@@ -85,11 +86,8 @@ public class SmokeNavMeshModifier : MonoBehaviour
         if (octant.type == OctantType.Branch) return;
         if (octant.type == OctantType.Empty) return;
 
-        if (volume == null)
-        {
-            // Summon volume
-            volume = ObjectPool.RequestObject(volumePrefab);
-        }
+        // Ensure a volume is present (instantiate if necessary, but do not duplicate)
+        if (volume == null) volume = ObjectPool.RequestObject(volumePrefab);
 
         // Set volume position and size
         GetWorldExtents(octant.min, octant.max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
