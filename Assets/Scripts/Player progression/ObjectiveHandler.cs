@@ -69,6 +69,8 @@ public class ObjectiveHandler : MonoBehaviour
 
     bool RequiredObjectivesCompleted()
     {
+        if (allObjectives.Count <= 0) return false;
+
         foreach (Objective o in allObjectives)
         {
             // Ignore optional objectives
