@@ -16,7 +16,6 @@ public class SmokeCloud : MonoBehaviour
 
     static SphereCollider smokeColliderPrefab;
     static Transform activeSmokeCloudParent;
-    static SmokeParticleDensityController densityControllerSingleton;
     [HideInInspector, System.NonSerialized] public Vector3[] particleOffsetResolvers;
 
     public bool emitting

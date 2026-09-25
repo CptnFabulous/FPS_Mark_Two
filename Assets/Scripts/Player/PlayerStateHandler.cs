@@ -54,7 +54,7 @@ public class PlayerStateHandler : MonoBehaviour
                     break;
                 case PlayerState.Dead:
 
-                    Debug.Log("Player has died");
+                    //Debug.Log("Player has died");
                     onDeath.Invoke();
                     navigatingMenus = true;
                     Time.timeScale = 1;
@@ -63,7 +63,7 @@ public class PlayerStateHandler : MonoBehaviour
                     break;
                 case PlayerState.Active: // Resume game
 
-                    Debug.Log("Resuming game");
+                    //Debug.Log("Resuming game");
                     onResume.Invoke();
                     SwitchMenu(headsUpDisplay);
                     navigatingMenus = false;
@@ -110,7 +110,7 @@ public class PlayerStateHandler : MonoBehaviour
     /// </summary>
     void OnPause()
     {
-        Debug.Log("Toggling pause menu");
+        //Debug.Log("Toggling pause menu");
         switch (CurrentState)
         {
             case PlayerState.Active: CurrentState = PlayerState.Paused; break;
@@ -122,7 +122,7 @@ public class PlayerStateHandler : MonoBehaviour
     /// </summary>
     void OnEnterMenu()
     {
-        Debug.Log("Toggling side menu");
+        //Debug.Log("Toggling side menu");
         switch (CurrentState)
         {
             case PlayerState.Active: CurrentState = PlayerState.InMenus; break;
@@ -131,7 +131,7 @@ public class PlayerStateHandler : MonoBehaviour
     }
     void OnCancel()
     {
-        Debug.Log("Attempting exiting menu");
+        //Debug.Log("Attempting exiting menu");
         switch (CurrentState)
         {
             case PlayerState.Paused:

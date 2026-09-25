@@ -64,6 +64,8 @@ public class RagdollTransfer : EditorWindow
 
     public static void Transfer(SkinnedMeshRenderer origin, SkinnedMeshRenderer target)
     {
+        // TO DO: ensure the target automatically finds a root bone
+        
         Transform targetTransform = target.rootBone;
 
         Transform[] allPossibleChildBones = targetTransform.GetComponentsInChildren<Transform>();

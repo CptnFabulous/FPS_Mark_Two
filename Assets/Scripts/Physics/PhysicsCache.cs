@@ -131,6 +131,9 @@ public static class EntityCache<T> where T : Entity
         T toAssign = g.GetComponentInParent<T>();
         if (toAssign == null)
         {
+            // TO DO: adapt this code to work with new ragdoll system
+            
+            
             // If a root entity can't be found, check if the collider is on a ragdoll
             // (since ragdolls are separated from their original entities to prevent wonky physics)
             // If the desired entity type is found, assign it

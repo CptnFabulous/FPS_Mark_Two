@@ -26,7 +26,6 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     }
     
     public AI rootAI;
-    //public PhysicsBasedNavMeshMovement pathfindingHandler;
     public PuppetMaster puppetmaster;
     [SerializeField] CapsuleCollider centralCollider;
     [SerializeField] Rigidbody centralRigidbody;

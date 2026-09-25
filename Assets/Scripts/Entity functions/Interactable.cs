@@ -78,7 +78,7 @@ public class Interactable : MonoBehaviour
 
     public void StartCooldown(float duration)
     {
-        Debug.Log("Starting cooldown");
+        //Debug.Log("Starting cooldown");
 
         cooldown = Cooldown(duration);
         StartCoroutine(cooldown);
@@ -96,7 +96,7 @@ public class Interactable : MonoBehaviour
     }
     public void EndCooldown()
     {
-        Debug.Log("Ending cooldown");
+        //Debug.Log("Ending cooldown");
         StopCoroutine(cooldown);
         cooldown = null;
         cooldownTimer = 0;
