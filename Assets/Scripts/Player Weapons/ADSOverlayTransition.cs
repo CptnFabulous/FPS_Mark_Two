@@ -24,7 +24,7 @@ public class ADSOverlayTransition : MonoBehaviour
 
     public void OnLerp(ADSHandler handler, float t)
     {
-        if (handler.hipfiringOnly) t = 0;
+        if (t > 0 && handler.hipfiringOnly) t = 0;
         
         // Hide canvas completely if ADS is not active
         overlayCanvas.gameObject.SetActive(t > 0);
