@@ -70,6 +70,7 @@ public class SmokeNavMeshModifier : MonoBehaviour
             NavMeshSurface mesh = navMeshes[i];
             if (mesh == null) continue;
             if (mesh.enabled == false) continue;
+            if (mesh.navMeshData == null) continue;
             // Update NavMesh (do not rebuild the entire thing as that chews through processing budget)
             mesh.UpdateNavMesh(mesh.navMeshData);
         }
