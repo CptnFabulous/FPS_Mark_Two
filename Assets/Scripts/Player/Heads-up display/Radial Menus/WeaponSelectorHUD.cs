@@ -46,7 +46,7 @@ public class WeaponSelectorHUD : MonoBehaviour
 
         // Get all the icons from all the firing modes, and put them in a list
         List<Sprite> icons = new List<Sprite>();
-        foreach (Weapon w in handler.equippedWeapons)
+        foreach (Weapon w in handler.allWeapons)
         {
             foreach (WeaponMode m in w.modes) icons.Add(m.icon);
         }
@@ -64,7 +64,7 @@ public class WeaponSelectorHUD : MonoBehaviour
         #region Add dividers and weapon icons
 
         int modeIndex = 0; // An index representing the number of modes so far in the foreach loop
-        foreach (Weapon w in handler.equippedWeapons)
+        foreach (Weapon w in handler.allWeapons)
         {
             int numberOfModes = w.modes.Length;
 
@@ -95,11 +95,11 @@ public class WeaponSelectorHUD : MonoBehaviour
         #endregion
     }
 
-    int CalculateIndex() => handler.SelectorIndexFromWeaponAndMode(handler.equippedWeaponIndex, handler.CurrentWeapon.currentModeIndex);
+    int CalculateIndex() => MiscFunctions.IndexOfInCollection(handler.allModes, handler.currentMode);// handler.SelectorIndexFromWeaponAndMode(handler.equippedWeaponIndex, handler.CurrentWeapon.currentModeIndex);
     void DisplayInfoOnSelectedMode(int index)
     {
-        handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
-        WeaponMode mode = handler.equippedWeapons[weaponIndex].modes[firingModeIndex];
+        //handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
+        WeaponMode mode = handler.allModes[index];// handler.equippedWeapons[weaponIndex].modes[firingModeIndex];
 
         firingModeName.text = mode.name;
         weaponName.text = mode.attachedTo.name;
@@ -115,8 +115,8 @@ public class WeaponSelectorHUD : MonoBehaviour
 
     Resource GetResourceData(int index)
     {
-        handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
-        WeaponMode mode = handler.equippedWeapons[weaponIndex].modes[firingModeIndex];
+        //handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
+        WeaponMode mode = handler.allModes[index];// handler.equippedWeapons[weaponIndex].modes[firingModeIndex];
         return mode.displayedResource;
     }
 }

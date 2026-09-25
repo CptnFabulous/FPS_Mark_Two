@@ -18,26 +18,7 @@ public class OffhandAttackHandler : WeaponHandlerBase
     bool buttonHeld;
     int frameChanged = int.MinValue;
 
-    WeaponMode _current;
     Coroutine currentAction;
-
-    public WeaponMode currentAbility
-    {
-        get => _current;
-        set
-        {
-            if (_current == value) return;
-
-            CancelCurrentAction();
-
-            _current = value;
-
-            //a.runtimeAnimatorController
-
-            frameChanged = Time.frameCount;
-        }
-    }
-
 
     protected override void Awake()
     {
@@ -65,12 +46,12 @@ public class OffhandAttackHandler : WeaponHandlerBase
     {
         buttonHeld = context.ReadValueAsButton();
 
-        if (currentAbility == null) return;
+        if (currentMode == null) return;
         if (buttonHeld == false) return;
         if (currentAction != null) return;
 
-        if (currentAbility.CanAttack() == false) return;
-        currentAction = StartCoroutine(PerformOffhandAbility(currentAbility));
+        if (currentMode.CanAttack() == false) return;
+        currentAction = StartCoroutine(PerformOffhandAbility(currentMode));
     }
 
     IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
@@ -134,7 +115,7 @@ public class OffhandAttackHandler : WeaponHandlerBase
             currentAction = null;
         }
 
-        if (_current != null) _current.enabled = false;
+        if (currentMode != null) currentMode.enabled = false;
 
         // Auto-deploy the last weapon, but not if this action was triggered by switching to a new one
         if (!isSwitchingWeapons) weaponHandler.SetCurrentWeaponActive(true);
@@ -153,14 +134,18 @@ public class OffhandAttackHandler : WeaponHandlerBase
 
         base.Refresh();
 
-
         selectorInfo.PopulateMenu(this);
     }
-
-    public override void SwitchMode(int index)
+    public override void SwitchMode(WeaponMode value)
     {
-        if (allModes.Count <= 0) return;
+        if (lastSetMode == value) return;
 
-        currentAbility = allModes[index];
+        CancelCurrentAction();
+
+        lastSetMode = value;
+
+        //a.runtimeAnimatorController
+
+        frameChanged = Time.frameCount;
     }
 }

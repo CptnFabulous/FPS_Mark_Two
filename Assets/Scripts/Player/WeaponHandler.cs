@@ -5,35 +5,26 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class WeaponHandler : MonoBehaviour
+public class WeaponHandler : WeaponHandlerBase
 {
-    public Player controller;
+    [Header("Inputs")]
     public SingleInput primaryInput;
     public SingleInput secondaryInput;
     public SingleInput tertiaryInput;
     public SingleInput weaponMenuInput;
 
-    [Header("Weapons")]
-    public List<Weapon> equippedWeapons;
-    public bool sortByOrderIndex = true;
+    [Header("Additional weapon data")]
     public OffhandAttackHandler offhandAttacks;
     public ThrowHandler throwHandler;
 
     [Header("Stats")]
     public AmmunitionInventory ammo;
     public AimSwayHandler swayHandler;
-
-    [Header("Selectors")]
-    public MultiRadialMenu attackSelectors;
-    public RadialMenu weaponSelector;
-    public int weaponMenuIndex = 0;
     public WeaponSelectorHUD selectorInfo;
     public NumberKeySelector hotkeyHandler;
 
-
     [Header("Accessibility")]
     public ADSHandler adsHandler;
-    public Transform holdingSocket;
     public bool toggleADS;
     public bool quickSwitchModes = true;
 
@@ -42,12 +33,9 @@ public class WeaponHandler : MonoBehaviour
     public UnityEvent<Weapon> onHolster;
     public UnityEvent<Weapon> onSwitchWeapon;
 
-    public int equippedWeaponIndex { get; private set; } = 0;
-
     public bool disableADS { get; set; }
     public bool isSwitching { get; private set; }
 
-    public Weapon CurrentWeapon => (equippedWeapons.Count > 0) ? equippedWeapons[equippedWeaponIndex] : null;
     public bool weaponDrawn
     {
         get => CurrentWeapon != null && CurrentWeapon.gameObject.activeSelf == true;
@@ -77,16 +65,17 @@ public class WeaponHandler : MonoBehaviour
             return true;
         }
     }
-
     public Transform aimAxis => swayHandler.aimAxis;
     public Vector3 AimDirection => swayHandler.aimDirection;
     public float aimSwayAngle => swayHandler.aimSwayAngle;
 
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (ammo == null) ammo = GetComponent<AmmunitionInventory>();
+        base.Awake();
 
+        // Weapon and mode switch inputs
+        hotkeyHandler.onSelectionMade.AddListener(OnWeaponHotkey);
 
         // Make it so the current weapon is automatically put away if the player dies
         controller.health.onDeath.AddListener((_) => weaponDrawn = false);
@@ -98,19 +87,8 @@ public class WeaponHandler : MonoBehaviour
         {
             if (ctx.ReadValueAsButton() == true) TertiaryInput();
         });
-
-        // Weapon and mode switch inputs
-        if (weaponMenuInput != null) weaponMenuInput.onActionPerformed.AddListener((ctx) => attackSelectors.ProcessSingleMenuInput(weaponMenuIndex, ctx));
-        weaponSelector.onValueConfirmed.AddListener(SwitchWeaponAndModeFromIndex);
-        hotkeyHandler.onSelectionMade.AddListener(OnWeaponHotkey);
-
-    }
-    private void Start()
-    {
-        UpdateAvailableWeapons();
     }
     
-
     #region Inputs
     void PrimaryFireInput(bool pressed)
     {
@@ -127,35 +105,15 @@ public class WeaponHandler : MonoBehaviour
         if (!WeaponReady) return;
         CurrentWeapon.CurrentMode.OnTertiaryInput();
     }
-    /*
-    void OnSelectWeapon(InputValue input)
-    {
-        if (input.isPressed && weaponSelector.optionsPresent)
-        {
-            // Run function to open weapon selector
-            controller.movement.lookControls.canLook = false;
-            //int index = SelectorIndexFromWeaponAndMode(equippedWeaponIndex, CurrentWeapon.currentModeIndex);
-            //Debug.Log("Switching, " + index);
-            weaponSelector.EnterMenu();
-        }
-        else
-        {
-            // Run function to exit weapon selector
-            weaponSelector.ExitMenu();
-            controller.movement.lookControls.canLook = true;
-        }
-    }
-    */
     void OnWeaponHotkey(int index)
     {
-        if (attackSelectors.menuIsOpen) return;
-        SwitchWeaponAndModeFromIndex(index);
+        if (menu.menuIsOpen) return;
+        SwitchMode(index);
     }
-    //void OnLook(InputValue input) => weaponSelector.InputDirection(input.Get<Vector2>(), controller.movement.lookControls.usingGamepad == false);
     void OnScrollWeapon(InputValue input)
     {
         if (isSwitching) return; // Wait until any previous switch operation has finished
-        if (attackSelectors.menuIsOpen) return; // Don't allow any other kinds of selection if the radial menu is open
+        if (menu.menuIsOpen) return; // Don't allow any other kinds of selection if the radial menu is open
         
         float inputValue = input.Get<float>();
         if (inputValue == 0) return; // If there's no input, do nothing
@@ -168,60 +126,28 @@ public class WeaponHandler : MonoBehaviour
             int newIndex = MathUtility.LoopIndex(CurrentWeapon.currentModeIndex + increment, CurrentWeapon.modes.Length);
             StartCoroutine(CurrentWeapon.SwitchMode(newIndex));
         }
-        else if (equippedWeapons.Count > 0) // Don't allow switching if there's nothing to switch to
+        else if (allWeapons.Count > 0) // Don't allow switching if there's nothing to switch to
         {
-            int newIndex = MathUtility.LoopIndex(equippedWeaponIndex + increment, equippedWeapons.Count);
-            StartCoroutine(SwitchWeapon(newIndex));
+            
+            int newIndex = MathUtility.LoopIndex(equippedWeaponIndex + increment, allWeapons.Count);
+            Weapon w = allWeapons[newIndex];
+            StartCoroutine(SwitchWeapon(w));
         }
     }
     #endregion
 
     #region Weapon switching
-    void UpdateAvailableWeapons()
+
+    protected override void Refresh()
     {
-        equippedWeapons.Clear();
-        foreach (Weapon w in holdingSocket.GetComponentsInChildren<Weapon>(true))
-        {
-            Debug.Log(w);
-            AddWeapon(w, false, false);
-        }
+        base.Refresh();
+
         selectorInfo.Refresh(this);
-        
-        if (CurrentWeapon != null) StartCoroutine(SwitchWeapon(equippedWeaponIndex));
+
+        if (CurrentWeapon != null) StartCoroutine(SwitchWeapon(CurrentWeapon));
     }
 
-
-    public void AddWeapon(Weapon w, bool autoSwitch, bool refreshSelector = true)
-    {
-        equippedWeapons.Add(w);
-
-        // Assign proper transform values
-        w.transform.SetParent(holdingSocket);
-        w.transform.localPosition = Vector3.zero;
-        w.transform.localRotation = Quaternion.identity;
-        // Pre-emptively disable weapon object so that switching and setup can play properly
-        w.gameObject.SetActive(false);
-
-        // Sort weapons by their index order
-        if (sortByOrderIndex)
-        {
-            equippedWeapons.Sort((a, b) => a.indexOrder.CompareTo(b.indexOrder));
-            w.transform.SetSiblingIndex(equippedWeapons.IndexOf(w));
-        }
-
-        // Refresh weapon selector
-        if (refreshSelector) selectorInfo.Refresh(this);
-
-        // Switch to new weapon, if specified
-        if (autoSwitch)
-        {
-            // Switch to first firing mode
-            int index = equippedWeapons.IndexOf(w);
-            //StartCoroutine(SwitchWeaponAndFiringMode(index, 0));
-            StartCoroutine(SwitchWeapon(index));
-        }
-    }
-
+    public override void SwitchMode(WeaponMode mode) => StartCoroutine(SwitchWeaponAndFiringMode(mode));
 
     public void SetCurrentWeaponActive(bool drawn) => StartCoroutine(SetCurrentWeaponDrawn(drawn));
     public IEnumerator SetCurrentWeaponDrawn(bool drawn)
@@ -237,74 +163,36 @@ public class WeaponHandler : MonoBehaviour
         IEnumerator coroutine = drawn ? CurrentWeapon.Draw() : CurrentWeapon.Holster();
         toInvoke.Invoke(CurrentWeapon);
         yield return coroutine;
-        //(drawn ? onDraw : onHolster).Invoke(CurrentWeapon);
-        //yield return (drawn ? CurrentWeapon.Draw() : CurrentWeapon.Holster());
     }
-    IEnumerator SwitchWeapon(int newIndex)
+    
+    IEnumerator SwitchWeapon(Weapon newWeapon)
     {
-        if (equippedWeapons.Count <= 0) yield break;
+        if (allWeapons.Count <= 0) yield break;
         if (isSwitching) yield break; // Don't attempt another switch if in the middle of another switch operation
-
-        newIndex = Mathf.Clamp(newIndex, 0, equippedWeapons.Count - 1);
 
         if (weaponDrawn)
         {
             // Do nothing if the desired weapon is already active, or the current weapon is in the middle of another task
-            if (equippedWeapons[newIndex] == CurrentWeapon) yield break;
+            if (newWeapon == CurrentWeapon) yield break;
             if (CurrentWeapon.InAction) yield break;
         }
 
         isSwitching = true;
-        onSwitchWeapon.Invoke(equippedWeapons[newIndex]);
+        onSwitchWeapon.Invoke(newWeapon);
         
         yield return SetCurrentWeaponDrawn(false); // Wait to holster current weapon
-        equippedWeaponIndex = newIndex; // Switch to new weapon index
+        lastSetMode = newWeapon.CurrentMode;
+        //equippedWeaponIndex = newIndex; // Switch to new weapon index
         yield return SetCurrentWeaponDrawn(true); // Wait to draw new weapon
 
         isSwitching = false;
     }
-    IEnumerator SwitchWeaponAndFiringMode(int weaponIndex, int firingModeIndex)
+    IEnumerator SwitchWeaponAndFiringMode(WeaponMode mode)
     {
-        yield return SwitchWeapon(weaponIndex);
+        yield return SwitchWeapon(mode.attachedTo);
         if (CurrentWeapon == null) yield break;
-        yield return CurrentWeapon.SwitchMode(firingModeIndex);
+        yield return CurrentWeapon.SwitchMode(MiscFunctions.IndexOfInCollection(CurrentWeapon.modes, mode));
     }
-    public void SwitchWeaponAndModeFromIndex(int index)
-    {
-        Debug.Log("Switching weapon and firing mode");
-        GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);
-        StartCoroutine(SwitchWeaponAndFiringMode(weaponIndex, firingModeIndex));
-    }
-    public void GetWeaponAndModeFromSelector(int index, out int weaponIndex, out int firingModeIndex)
-    {
-        weaponIndex = 0;
-        firingModeIndex = 0;
-        for (int i = 0; i < index; i++)
-        {
-            firingModeIndex++;
-            if (firingModeIndex >= equippedWeapons[weaponIndex].modes.Length)
-            {
-                weaponIndex++;
-                firingModeIndex = 0;
-            }
-        }
-    }
-    public int SelectorIndexFromWeaponAndMode(int weaponIndex, int firingModeIndex)
-    {
-        int index = 0;
-        for (int w = 0; w < equippedWeapons.Count; w++)
-        {
-            for (int m = 0; m < equippedWeapons[w].modes.Length; m++)
-            {
-                if (w == weaponIndex && m == firingModeIndex)
-                {
-                    return index;
-                }
-                index++;
-            }
-            // Calculate where to put borders and weapon graphics
-        }
-        return 0;
-    }
+
     #endregion
 }

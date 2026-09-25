@@ -14,6 +14,8 @@ public class AmmunitionInventory : MonoBehaviour
 
     private void Start()
     {
+        weaponHandler.FindAllWeaponsOnPerson();
+        weaponHandler.offhandAttacks.FindAllWeaponsOnPerson();
         for (int i = 0; i < ammunitionTypes.Length; i++)
         {
             // Unless set to start completely empty, fill each ammo type if the player has a weapon or gadget that uses it
@@ -81,14 +83,14 @@ public class AmmunitionInventory : MonoBehaviour
     bool PlayerUsesAmmoType(AmmunitionType type)
     {
         // Check if the player has a weapon or gadget equipped with this ammo type.
-        if (weaponHandler.equippedWeapons.Find((w) => WeaponUsesAmmoType(w, type)) != null) return true;
-        if (weaponHandler.offhandAttacks.allModes.FirstOrDefault((m) => WeaponModeUsesAmmoType(m, type)) != null) return true;
+        if (CollectionHasModeUsingAmmoType(weaponHandler.allModes, type)) return true;
+        if (CollectionHasModeUsingAmmoType(weaponHandler.offhandAttacks.allModes, type)) return true;
 
         return false;
     }
-    bool WeaponUsesAmmoType(Weapon w, AmmunitionType ammoType)
+    bool CollectionHasModeUsingAmmoType(IEnumerable<WeaponMode> modes, AmmunitionType ammoType)
     {
-        return w.modes.FirstOrDefault((m) => WeaponModeUsesAmmoType(m, ammoType)) != null;
+        return modes.FirstOrDefault((m) => WeaponModeUsesAmmoType(m, ammoType)) != null;
     }
     bool WeaponModeUsesAmmoType(WeaponMode mode, AmmunitionType ammoType)
     {

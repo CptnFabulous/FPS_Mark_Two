@@ -2350,23 +2350,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 5952785220977947003}
+  weapons: []
+  sortByOrderIndex: 1
+  selectorMenuInput: {fileID: 4355764684814717001}
+  menu: {fileID: 5567713105626463636}
+  selectorMenuIndex: 0
+  holdingSocket: {fileID: 5952785222623807978}
   primaryInput: {fileID: 1324250409528470411}
   secondaryInput: {fileID: 899306883574438364}
   tertiaryInput: {fileID: 1199650833410517933}
   weaponMenuInput: {fileID: 4355764684814717001}
-  equippedWeapons: []
-  sortByOrderIndex: 1
   offhandAttacks: {fileID: 2532039744584986819}
   throwHandler: {fileID: 1145182430858350181}
   ammo: {fileID: 7479822334647491782}
   swayHandler: {fileID: 395139178566883132}
-  attackSelectors: {fileID: 5567713105626463636}
-  weaponSelector: {fileID: 1942817378809579715}
   weaponMenuIndex: 0
   selectorInfo: {fileID: 7605556675667947530}
   hotkeyHandler: {fileID: 2173073572897774871}
   adsHandler: {fileID: 519165876174519061}
-  holdingSocket: {fileID: 5952785222623807978}
   toggleADS: 1
   quickSwitchModes: 1
   onDraw:
@@ -5554,17 +5555,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2138693298e1e4d40ad3fe080cdf7cf7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1942817378809579715 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8168604717116882185, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
-  m_PrefabInstance: {fileID: 7758277924342625738}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 546527b39a8bf244699538b10c47cc5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2764191434518404541 stripped

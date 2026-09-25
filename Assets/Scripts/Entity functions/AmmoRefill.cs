@@ -31,7 +31,7 @@ public class AmmoRefill : ItemPickup
         }
         else
         {
-            return wh.equippedWeapons.Find((w) => w.parentEntity.properName == properName) == null;
+            return wh.CanAdd(toPickup);//. .Find((w) => w.parentEntity.properName == properName) == null;
         }
 
     }
@@ -88,7 +88,7 @@ public class AmmoRefill : ItemPickup
             }
             else
             {
-                wh.AddWeapon(spawnedWeapon, true);
+                wh.TryAdd(spawnedWeapon, true);
             }
         }
 

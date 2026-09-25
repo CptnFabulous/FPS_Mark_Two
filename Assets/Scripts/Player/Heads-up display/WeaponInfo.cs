@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.UI;
 
 public class WeaponInfo : MonoBehaviour
 {
@@ -15,6 +13,6 @@ public class WeaponInfo : MonoBehaviour
     private void LateUpdate()
     {
         mainHand.mode = (weapons.CurrentWeapon != null) ? weapons.CurrentWeapon.CurrentMode : null;
-        offHand.mode = weapons.offhandAttacks.currentAbility;
+        offHand.mode = weapons.offhandAttacks.currentMode;
     }
 }

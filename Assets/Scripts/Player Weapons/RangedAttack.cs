@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -71,7 +72,7 @@ public class RangedAttack : WeaponMode
         shotsFired = 0;
 
         // TO DO: only have this run if the weapon is stored in the weapon handler
-        if (adsHandler != null && User.weaponHandler.equippedWeapons.Contains(attachedTo)) adsHandler.currentAttack = this;
+        if (adsHandler != null && User.weaponHandler.allWeapons.Contains(attachedTo)) adsHandler.currentAttack = this;
     }
     protected override void OnDisable()
     {

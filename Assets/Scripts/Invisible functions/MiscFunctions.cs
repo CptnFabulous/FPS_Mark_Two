@@ -67,4 +67,24 @@ public readonly struct MiscFunctions
     }
 
 
+
+
+
+
+
+
+
+    public static int IndexOfInCollection<T>(IEnumerable<T> array, T data)
+    {
+        return IndexOfInCollection(array, data, 0, array.Count());
+    }
+    public static int IndexOfInCollection<T>(IEnumerable<T> array, T data, int start, int length)
+    {
+        for (int i = start; i < start + length; i++)
+        {
+            if (array.ElementAt(i).Equals(data)) return i;
+        }
+        return -1;
+    }
+
 }

@@ -43,7 +43,7 @@ public class PropCarryingHandler : WeaponMode
         throwHandler.CancelThrow();
 
         // If a previous offhand ability was stored, switch back to that
-        if (previousOffhandAbility != null) offhandAttackHandler.currentAbility = previousOffhandAbility;
+        if (previousOffhandAbility != null) offhandAttackHandler.currentMode = previousOffhandAbility;
     }
 
     // Picking up object
@@ -71,13 +71,13 @@ public class PropCarryingHandler : WeaponMode
         toPickUp = target;
 
         // Reference offhand attack list, set active one to this
-        WeaponMode currentlySelectedAbility = offhandAttackHandler.currentAbility;
+        WeaponMode currentlySelectedAbility = offhandAttackHandler.currentMode;
         if (currentlySelectedAbility != null)
         {
             previousOffhandAbility = currentlySelectedAbility;
         }
         //previousOffhandAbility = offhandAttackHandler.currentAbility;
-        offhandAttackHandler.currentAbility = this;
+        offhandAttackHandler.currentMode = this;
         enabled = true;
 
         StartCoroutine(SwitchTo());

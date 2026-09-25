@@ -5,48 +5,69 @@ using UnityEngine;
 
 public abstract class WeaponHandlerBase : MonoBehaviour
 {
+    public Player controller;
+
+    [Header("Weapons")]
     [SerializeField] List<Weapon> weapons;
     [SerializeField] bool sortByOrderIndex = false;
 
     [Header("References")]
     [SerializeField] SingleInput selectorMenuInput;
-    [SerializeField] MultiRadialMenu menu;
-    [SerializeField] int selectorMenuIndex;
+    [SerializeField] protected MultiRadialMenu menu;
+    [SerializeField] protected int selectorMenuIndex;
     [SerializeField] Transform holdingSocket;
 
-    protected int selectionIndex;
-
     List<WeaponMode> _allModes = new List<WeaponMode>();
+    protected WeaponMode lastSetMode;
 
     public IReadOnlyList<Weapon> allWeapons => weapons;
     public IReadOnlyList<WeaponMode> allModes => _allModes;
+
+    public Weapon CurrentWeapon
+    {
+        get => currentMode != null ? currentMode.attachedTo : null;
+        set => currentMode = value.CurrentMode;
+    }
+    public WeaponMode currentMode
+    {
+        get => lastSetMode;
+        set => SwitchMode(value);
+    }
+    public int equippedWeaponIndex
+    {
+        get => MiscFunctions.IndexOfInCollection(allWeapons, CurrentWeapon);
+        set
+        {
+            value = Mathf.Clamp(value, 0, allWeapons.Count - 1);
+            CurrentWeapon = allWeapons[value];
+        }
+    }
+
 
     protected virtual void Awake()
     {
         if (menu != null && selectorMenuInput != null)
         {
             selectorMenuInput.onActionPerformed.AddListener((ctx) => menu.ProcessSingleMenuInput(selectorMenuIndex, ctx));
-            menu.menus[selectorMenuIndex].onValueConfirmed.AddListener((index) => SwitchMode(index));
+            menu.menus[selectorMenuIndex].onValueConfirmed.AddListener(SwitchMode);
         }
-
-        
     }
     private void Start()
     {
-        // TO DO: pre-emptively add all weapons that are children of holding socket
-        weapons.Clear();
-        foreach (Weapon w in holdingSocket.GetComponentsInChildren<Weapon>(true))
-        {
-            TryAdd(w, false);
-        }
-
-        Refresh();
+        // Ensure weapons initially present are added
+        FindAllWeaponsOnPerson();
 
         // Switch to first mode
-        SwitchMode(selectionIndex);
+        SwitchMode(0);
     }
 
-    public abstract void SwitchMode(int index);
+    public void SwitchMode(int index)
+    {
+        if (allModes.Count <= 0) return;
+        index = Mathf.Clamp(index, 0, allModes.Count - 1);
+        SwitchMode(allModes[index]);
+    }
+    public abstract void SwitchMode(WeaponMode mode);
 
     #region Adding and removing
 
@@ -79,7 +100,7 @@ public abstract class WeaponHandlerBase : MonoBehaviour
         // TO DO: switch to this new weapon
         if (autoSwitch)
         {
-            SwitchMode(IndexOfMode(newWeapon.CurrentMode));
+            SwitchMode(newWeapon.CurrentMode);
         }
 
         return true;
@@ -127,5 +148,14 @@ public abstract class WeaponHandlerBase : MonoBehaviour
 
     public int IndexOfMode(WeaponMode item) => _allModes.IndexOf(item);
 
+    public void FindAllWeaponsOnPerson()
+    {
+        // TO DO: pre-emptively add all weapons that are children of holding socket
+        foreach (Weapon w in holdingSocket.GetComponentsInChildren<Weapon>(true))
+        {
+            TryAdd(w, false);
+        }
 
+        //Refresh();
+    }
 }

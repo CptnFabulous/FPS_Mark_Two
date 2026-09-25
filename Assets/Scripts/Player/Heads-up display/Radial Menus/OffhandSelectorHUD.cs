@@ -42,7 +42,7 @@ public class OffhandSelectorHUD : MonoBehaviour
         }
     }
 
-    int CalculateIndex() => handler.IndexOfMode(handler.currentAbility);
+    int CalculateIndex() => handler.IndexOfMode(handler.currentMode);
     Resource GetResourceData(int index) => handler.allModes[index].displayedResource;
     void DisplayInfoOnSelectedMode(int index)
     {
