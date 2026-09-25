@@ -96,6 +96,8 @@ public class Projectile : MonoBehaviour
 
     public static void CalculateTrajectoryDelta(ref Vector3 position, ref Vector3 velocity, float deltaDistance, ProjectileData data)
     {
+        if (deltaDistance <= 0) return;
+
         // Launch a raycast to get the hit data, and calculate how far the projectile actually travels
         bool surfaceHit = Physics.SphereCast(position, data.radius, velocity, out RaycastHit rh, deltaDistance, data.hitDetection);
         float distanceTravelled = surfaceHit ? rh.distance : deltaDistance;
