@@ -145,7 +145,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
             // Different multipliers for mouse vs. gamepad
             value *= usingGamepad ? gamepadMultiplierWhileAiming : mouseMultiplierWhileAiming;
             // Reduce further based on magnification
-            value /= currentMode.optics.magnification;
+            value /= weaponHandler.adsHandler.currentMagnification;// currentMode.optics.magnification;
         }
         #endregion
 

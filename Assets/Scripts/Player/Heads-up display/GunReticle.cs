@@ -121,11 +121,12 @@ public class GunReticle : MonoBehaviour
 
     float ReticleOpacity()
     {
-        // if no ADS, just make the reticle fully visible.
-        if (ads == null) return 1;
+        // if no ADS (or locked to hipfiring), just make the reticle fully visible.
+        if (ads == null || adsHandler.hipfiringOnly) return 1;
 
         // If the reticle is never meant to be visible, show nothing
         if (ads.hideMainReticle) return 0;
+
         // If ADS does show reticle normally, have it lerp in visibility based on the ADS value.
         return Mathf.Lerp(0, 1, animationCurveForADS.Evaluate(adsHandler.timer));
     }
@@ -136,18 +137,10 @@ public class GunReticle : MonoBehaviour
 
         float angle = mode.stats.spread;
 
-        if (ads == null) return angle;
+        // Don't change reticle if no ADS data is present (or user is forced to hipfire)
+        if (ads == null || adsHandler.hipfiringOnly) return angle;
 
         // If ADS is present, animate angle so it shrinks when player activates it
         return Mathf.Lerp(0, angle, animationCurveForADS.Evaluate(adsHandler.timer));
-        /*
-        if (ads != null)
-        {
-            //angle = Mathf.Lerp(angle, 0, ads.timer);
-            angle = Mathf.Lerp(0, angle, animationCurveForADS.Evaluate(ads.timer));
-        }
-
-        return angle;
-        */
     }
 }

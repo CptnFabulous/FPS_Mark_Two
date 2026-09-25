@@ -7,6 +7,10 @@ public class ADSHandler : MonoBehaviour
 {
     public Player player;
 
+    [Header("Default stats while hipfiring")]
+    public float defaultZoom = 1.5f;
+    [Range(0, 1)] public float maxInterpolationWhenHipfiring = 0.25f;
+
     RangedAttack _currentWeapon = null;
     bool _aiming = false;
     Vector3 cosmeticSwayAxes;
@@ -32,6 +36,7 @@ public class ADSHandler : MonoBehaviour
     Transform playerMovementTransform => player.movement.transform;
     Transform upperBody => lookControls.upperBody;
     Transform aimAxis => swayHandler.aimAxis;
+    public bool hipfiringOnly => weaponHandler.disableADS;
 
     /// <summary>
     /// Is the player currently using ADS? Change this value to trigger ADS changing code
@@ -44,7 +49,7 @@ public class ADSHandler : MonoBehaviour
             bool desiredValue = value;
 
             // Don't allow it if weapon handler is currently disabling ADS
-            value = (!weaponHandler.disableADS) && value;
+            //value = (!weaponHandler.disableADS) && value;
             // Don't allow value to be true if ADS isn't even active
             value = enabled && value;
 
@@ -58,6 +63,8 @@ public class ADSHandler : MonoBehaviour
     }
     public bool betweenStates => timerLastFrame != targetValue;
     float targetValue => currentlyAiming ? 1 : 0;
+
+    public float currentMagnification => hipfiringOnly ? defaultZoom : adsData.magnification;
 
     private void Awake() => currentAttack = currentAttack;
     private void OnEnable() => timerLastFrame = timer;
@@ -81,31 +88,34 @@ public class ADSHandler : MonoBehaviour
     /// <summary>
     /// Lerps the FOV and camera direction between standard and ADS modes.
     /// </summary>
-    /// <param name="timer"></param>
-    void LerpADS(float timer)
+    /// <param name="interpolator"></param>
+    void LerpADS(float interpolator)
     {
         // Lerp FOV to desired value
         float regularFOV = lookControls.fieldOfView;
-        float zoomedFOV = regularFOV / adsData.magnification;
-        lookControls.currentFieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, timer);
+        float zoomedFOV = regularFOV / currentMagnification;
+        lookControls.currentFieldOfView = Mathf.Lerp(regularFOV, zoomedFOV, interpolator);
 
-        Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, swayHandler.aimDirection, timer);
+        float aimDownSightsInterpolator = hipfiringOnly ? 0 : interpolator;
+
+        Vector3 cameraDirection = Vector3.Slerp(aimAxis.forward, swayHandler.aimDirection, aimDownSightsInterpolator);
         upperBody.LookAt(upperBody.position + cameraDirection, aimAxis.up);
-        
+
         // Lerp sway to change weapon accuracy while aiming down sights
-        float sway = Mathf.Lerp(adsData.hipfireSwayMultiplier, swayHandler.adsMultiplier, timer);
+        float sway = Mathf.Lerp(adsData.hipfireSwayMultiplier, swayHandler.adsMultiplier, aimDownSightsInterpolator);
         swayHandler.swayMultipliers[swayHandler.adsMultiplierReference] = sway;
     }
     /// <summary>
     /// Functions similarly to LerpADS, but runs in LateUpdate() for animations and visuals.
     /// </summary>
-    /// <param name="timer"></param>
-    void LerpADSCosmetics(float timer)
+    /// <param name="interpolator"></param>
+    void LerpADSCosmetics(float interpolator)
     {
+        float aimDownSightsInterpolator = hipfiringOnly ? Mathf.Lerp(0, maxInterpolationWhenHipfiring, interpolator) : interpolator;
+
         // Rotate gun so the reticle axis transform is parallel with the player's aim direction
         Quaternion relativeRotation = TransformUtility.DifferenceBetweenRotations(adsData.reticleAxis.rotation, adsData.modelPivot.rotation);
         Quaternion rotation = lookControls.upperBody.rotation * Quaternion.Inverse(relativeRotation);
-        adsData.modelOrientationTransform.rotation = Quaternion.Lerp(adsData.hipFireOrientation.rotation, rotation, timer);
 
         // If look sway values are greater than zero, run sway cosmetics
         // This check exists to prevent unnecessary processing, and also to prevent division by zero causing weird errors
@@ -120,8 +130,10 @@ public class ADSHandler : MonoBehaviour
             Vector3 swayAxes = new Vector3(localRotationVelocity.x, localRotationVelocity.y, 0); // Only record X and Y values to prevent awkward shifting
             swayAxes = Vector3.Lerp(Vector3.zero, swayAxes.normalized * -adsData.lookSwayDegrees, intensity);
             cosmeticSwayAxes = Vector3.SmoothDamp(cosmeticSwayAxes, swayAxes, ref cosmeticSwayAngularVelocity, adsData.swayUpdateTime);
-            adsData.modelOrientationTransform.localRotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation
+            rotation *= Quaternion.Euler(cosmeticSwayAxes); // Apply sway on top of the regular rotation
         }
+
+        adsData.modelOrientationTransform.rotation = Quaternion.Lerp(adsData.hipFireOrientation.rotation, rotation, aimDownSightsInterpolator);
 
         //viewingCamera.transform.rotation = Quaternion.LookRotation(player.movement.upperBody.transform.forward, player.movement.upperBody.transform.up);
 
@@ -131,10 +143,10 @@ public class ADSHandler : MonoBehaviour
         Vector3 reticleRelativeToHead = lookControls.upperBody.forward * adsData.distanceBetweenReticleAxisAndHead;
         Vector3 position = lookControls.upperBody.position - reticleRelativeToModelTransform + reticleRelativeToHead;
 
-        float movementCurveTimer = adsData.modelMovementCurve.Evaluate(timer);
+        float movementCurveTimer = adsData.modelMovementCurve.Evaluate(aimDownSightsInterpolator);
         adsData.modelOrientationTransform.position = Vector3.Lerp(adsData.hipFireOrientation.position, position, movementCurveTimer);
 
-        adsData.onADSLerp.Invoke(this, timer);
+        adsData.onADSLerp.Invoke(this, interpolator);
     }
     void CancelADSImmediately()
     {
@@ -152,4 +164,9 @@ public class ADSHandler : MonoBehaviour
         currentlyAiming = activate;
         yield return new WaitUntil(() => currentlyAiming == activate && !betweenStates);
     }
+
+
+
+
+    
 }

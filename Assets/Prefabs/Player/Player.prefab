@@ -2655,6 +2655,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 5952785220977947003}
+  defaultZoom: 1.5
+  maxInterpolationWhenHipfiring: 0.25
 --- !u!1 &5952785222623807981
 GameObject:
   m_ObjectHideFlags: 0
@@ -3425,6 +3427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7466097e44ec34fa2b73670470eba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 0}
   weapons: []
   sortByOrderIndex: 1
   selectorMenuInput: {fileID: 6713515076335660335}
