@@ -118,7 +118,9 @@ public class ThrowHandler : MonoBehaviour
         // Activate trajectory handler, and assign values so it can calculate the correct trajectory
         arcRenderer.gameObject.SetActive(true);
         arcRenderer.mass = holding.mass;
+        arcRenderer.drag = holding.drag;
         arcRenderer.hitDetection = attackMask;
+
         // (A delegate is set up so we don't have to repeatedly input data from our end)
         float startVelocityAccountingForWeight = startingVelocity / PhysicsCache.TotalMassOfConnectedRigidbodies(holding);
         arcRenderer.getStartPositionAndVelocity = () =>

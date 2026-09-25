@@ -14,6 +14,7 @@ public class TrajectoryRenderer : MonoBehaviour
     Vector3[] positions;
 
     public System.Func<(Vector3, Vector3)> getStartPositionAndVelocity { get; set; }
+    public float drag { get; set; }
     public float mass { get; set; }
     public LayerMask hitDetection { get; set; }
     
@@ -41,24 +42,37 @@ public class TrajectoryRenderer : MonoBehaviour
         float radius = lineRenderer.widthMultiplier / 2;
 
         positions[0] = position;
-
         int positionCount = 1;
-        for (positionCount = 1; positionCount < maxVertexCount; positionCount++)
+
+        Projectile.ProjectileData data = new Projectile.ProjectileData();
+        data.mass = mass;
+        data.drag = drag;
+        data.radius = radius;
+        data.hitDetection = hitDetection;
+        data.onTravel = () =>
+        {
+            //Debug.Log($"{positions.Length}, {positionCount}");
+            if (positionCount >= maxVertexCount) return;
+            positions[positionCount] = position;
+            positionCount++;
+        };
+        data.onHit = (rh) =>
+        {
+            surfaceHit = true;
+            thingHit = rh;
+            return Projectile.ProjecileHitResult.Bounce;
+        };
+
+        for (int i = positionCount; i < maxVertexCount; i++)
         {
             float deltaTime = lengthPerSegment / velocity.magnitude;
-            surfaceHit = Projectile.CalculateTrajectoryDelta(ref position, ref velocity, mass, radius, deltaTime, hitDetection, out thingHit);
 
-            // If something is hit, we've reached the end of the trajectory.
-            if (surfaceHit)
-            {
-                positions[positionCount] = thingHit.point;
-                positionCount += 1;
-                break;
-            }
+            Projectile.CalculateTrajectoryDelta(ref position, ref velocity, lengthPerSegment, data);
 
-            // If nothing is hit, return the next position along the trajectory.
-            positions[positionCount] = position;
+            if (positionCount >= maxVertexCount) break;
+            if (velocity.magnitude <= 0) break;
         }
+
         lineRenderer.positionCount = positionCount;
         lineRenderer.SetPositions(positions);
 

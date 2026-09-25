@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7059086101645604881}
   - component: {fileID: 7059086101645604909}
   - component: {fileID: 7059086101645604911}
+  - component: {fileID: 7635084634214175306}
   m_Layer: 6
   m_Name: Bullet
   m_TagString: Untagged
@@ -52,6 +53,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &7059086101645604909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,3 +207,16 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 0
+--- !u!114 &7635084634214175306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7059086101645604908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b04208d9df46a7c4e934278bef8d8312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  degreesCelsius: 260

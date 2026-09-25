@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public enum ProjecileHitResult
+    {
+        Embed,
+        Bounce,
+        Penetrate
+    }
+
+    public struct ProjectileData
+    {
+        public float mass; // Presently unused
+        public float drag;
+        public float radius;
+        public LayerMask hitDetection;
+        public System.Action onTravel;
+        public System.Func<RaycastHit, ProjecileHitResult> onHit;
+    }
+
     public Entity entity;
     public Entity spawnedBy;
 
@@ -19,19 +36,27 @@ public class Projectile : MonoBehaviour
     public RaycastHit surfaceHit;
     Vector3 velocity;
 
+    ProjectileData projectileData;
+
     void Start()
     {
         velocity = transform.forward * startingVelocity;
+
+        projectileData.drag = 0;
+        projectileData.radius = diameter / 2;
+        projectileData.hitDetection = detection.mask;
+        projectileData.onHit = (rh) =>
+        {
+            OnHit(rh);
+            return ProjecileHitResult.Embed;
+        };
     }
     void Update()
     {
         transform.LookAt(transform.position + velocity);
 
         Vector3 position = transform.position;
-
-        bool thingHit = CalculateTrajectoryDelta(ref position, ref velocity, weight, diameter, Time.deltaTime, detection.mask, out surfaceHit);
-        if (thingHit) OnHit(surfaceHit);
-
+        CalculateTrajectoryDelta(ref position, ref velocity, Time.deltaTime * velocity.magnitude, projectileData);
         transform.position = position;
     }
     public void OnHit(RaycastHit thingHit)
@@ -41,18 +66,6 @@ public class Projectile : MonoBehaviour
     }
 
     #region Additional functions
-    public void Ricochet(ref Vector3 position, ref Vector3 velocity, float lengthToTravel, RaycastHit surfaceHit, float velocityDecayMultiplier = 0.75f)
-    {
-        position = surfaceHit.point;
-
-        // Change velocity
-        velocity = Vector3.Reflect(velocity, surfaceHit.normal);
-        velocity *= velocityDecayMultiplier;
-        // Check how close the hit point is, and how far the projectile needs to travel after ricocheting
-        float outDistance = lengthToTravel - surfaceHit.distance;
-        // Update position based on position after ricocheting
-        position = surfaceHit.point + outDistance * velocity.normalized;
-    }
     public void SpawnObjectAtImpactPoint(GameObject prefab)
     {
         Instantiate(prefab, surfaceHit.point, Quaternion.identity);
@@ -81,34 +94,78 @@ public class Projectile : MonoBehaviour
     }
     #endregion
 
-    public static bool CalculateTrajectoryDelta(ref Vector3 position, ref Vector3 velocity, float mass, float radius, float deltaTime, LayerMask hitDetection, out RaycastHit rh)
+    public static void CalculateTrajectoryDelta(ref Vector3 position, ref Vector3 velocity, float deltaDistance, ProjectileData data)
     {
-        // TO DO: have different variants of this for regular raycasts, boxcasts, capsulecasts, etc., to count for different object shapes
+        // Launch a raycast to get the hit data, and calculate how far the projectile actually travels
+        bool surfaceHit = Physics.SphereCast(position, data.radius, velocity, out RaycastHit rh, deltaDistance, data.hitDetection);
+        float distanceTravelled = surfaceHit ? rh.distance : deltaDistance;
+        position += velocity.normalized * distanceTravelled;
 
-        float lengthToTravel = velocity.magnitude * deltaTime;
-        bool surfaceHit = Physics.SphereCast(position, radius, velocity, out rh, lengthToTravel, hitDetection);
-        if (surfaceHit)
-        {
-            // TO DO: update position and velocity differently in response to surface hit
-            // Determine whether to penetrate, ricochet or embed
+        // Calculate how long it took, so we can perform over-time effects (to predict what the velocity should be by the time it reaches its hit point
+        float deltaTime = distanceTravelled / velocity.magnitude;
 
-            // As of yet, ignore that stuff and just stop movement as soon as we hit something
-            return true;
-        }
-        else
-        {
-            // Move bullet linearly as expected
-            position += velocity.normalized * lengthToTravel;
-        }
+        // Account for drag (replicate Unity's rigidbody system)
+        // TO DO: maybe have a setting to switch between realistic physics, how Unity does it?
+        velocity = velocity * (1 - deltaTime * data.drag);
 
         // Alter velocity based on external factors
         Vector3 velocityChange = Vector3.zero;
         velocityChange += Physics.gravity * deltaTime; // Gravity
         // To do: wind
-        // To do: modify velocity change based on drag
 
+        // Apply to overall velocity value
         velocity += velocityChange;
 
-        return surfaceHit;
+        float remainingDistance = deltaDistance - distanceTravelled;
+
+        if (data.onTravel != null) data.onTravel.Invoke();
+
+        if (!surfaceHit) return;
+
+        //Debug.Log($"Hit {rh.collider}");
+
+        // Figure out what to do if a surface was hit.
+        ProjecileHitResult result = data.onHit.Invoke(rh);
+
+        // Should the bullet bounce, embed or penetrate?
+
+        // If embed, stop all velocity
+        // If bounce, reflect velocity off normal
+        // If penetrate, do nothing?
+
+        // If bounce or penetrate, invoke another cast of this function for the remaining distance
+
+        switch (result)
+        {
+            case ProjecileHitResult.Embed:
+
+                velocity = Vector3.zero;
+
+                break;
+
+            case ProjecileHitResult.Bounce:
+
+                // Alter velocity based on angle of hit
+                float dot = Vector3.Dot(velocity.normalized, -rh.normal.normalized);
+
+                // Straight-on = 1, skating = 0
+                float angleMultiplier = (1 - dot);
+                velocity *= angleMultiplier;
+
+                // Reflect velocity off surface
+                velocity = Vector3.Reflect(velocity, rh.normal);
+
+                // TO DO: reduce velocity based on bounce coefficient?
+
+                CalculateTrajectoryDelta(ref position, ref velocity, remainingDistance, data);
+
+                break;
+
+            case ProjecileHitResult.Penetrate:
+
+                CalculateTrajectoryDelta(ref position, ref velocity, remainingDistance, data);
+
+                break;
+        }
     }
 }
