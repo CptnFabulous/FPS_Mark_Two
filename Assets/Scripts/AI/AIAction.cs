@@ -66,7 +66,10 @@ public static class AIAction
 
     public static bool LineOfSight(Vector3 from, Vector3 to, Entity fromEntity, Entity toEntity, LayerMask detection, bool printDebugMessages = false)
     {
-        return LineOfSight(from, to, detection, (rh) => fromEntity.HitOwnCollider(rh) || toEntity.HitOwnCollider(rh), printDebugMessages);
+        return LineOfSight(from, to, detection, (rh) =>
+        {
+            return (fromEntity != null && fromEntity.HitOwnCollider(rh)) || (toEntity != null && toEntity.HitOwnCollider(rh));
+        }, printDebugMessages);
     }
     public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, System.Func<RaycastHit, bool> isException, bool printDebugMessages = false)
     {

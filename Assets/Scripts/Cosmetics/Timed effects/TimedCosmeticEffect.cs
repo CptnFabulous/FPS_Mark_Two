@@ -21,7 +21,7 @@ public class TimedCosmeticEffect : MonoBehaviour
 
     private void OnValidate()
     {
-        effects.Invoke(timer);
+        if (effects != null) effects.Invoke(timer);
     }
     /*
     private void Awake()
