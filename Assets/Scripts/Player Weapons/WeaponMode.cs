@@ -42,7 +42,7 @@ public abstract class WeaponMode : MonoBehaviour
     {
         yield return new WaitForSeconds(switchSpeed);
     }
-    public virtual IEnumerator SwitchFrom() => null;
+    public virtual IEnumerator CancelAsync() => null;
 
     public abstract bool CanAttack();
     protected abstract IEnumerator AttackSequence();

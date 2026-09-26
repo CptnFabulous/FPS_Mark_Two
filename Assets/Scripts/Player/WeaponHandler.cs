@@ -174,7 +174,7 @@ public class WeaponHandler : WeaponHandlerBase
         {
             // Do nothing if the desired weapon is already active, or the current weapon is in the middle of another task
             if (newWeapon == CurrentWeapon) yield break;
-            if (CurrentWeapon.InAction) yield break;
+            //if (CurrentWeapon.InAction) yield break;
         }
 
         isSwitching = true;

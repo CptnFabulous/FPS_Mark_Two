@@ -96,7 +96,7 @@ public class OffhandAttackHandler : WeaponHandlerBase
             yield return new WaitUntil(() => !offhandAbility.inAttack);
 
             // Put away offhand weapon
-            yield return offhandAbility.SwitchFrom();
+            yield return offhandAbility.CancelAsync();
             offhandAbility.enabled = false;
         }
 

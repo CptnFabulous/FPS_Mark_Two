@@ -93,13 +93,13 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator SwitchMode(int newModeIndex)
     {
-        if (InAction == true) yield break;
+        //if (InAction == true) yield break;
         if (newModeIndex == currentModeIndex) yield break;
 
         isSwitching = true;
 
         // End current mode
-        yield return CurrentMode.SwitchFrom();
+        yield return CurrentMode.CancelAsync();
         CurrentMode.enabled = false;
 
         // Officially switch modes

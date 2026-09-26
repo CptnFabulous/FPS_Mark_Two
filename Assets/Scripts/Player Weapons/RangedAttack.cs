@@ -244,7 +244,7 @@ public class RangedAttack : WeaponMode
 
     
 
-    public override IEnumerator SwitchFrom()
+    public override IEnumerator CancelAsync()
     {
         Debug.Log("Switching away from " + this);
         // Cancel reload
@@ -261,6 +261,6 @@ public class RangedAttack : WeaponMode
             yield return adsHandler.ChangeADSAsync(false);
         }
 
-        yield return base.SwitchFrom();
+        yield return base.CancelAsync();
     }
 }
