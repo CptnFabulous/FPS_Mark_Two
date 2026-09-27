@@ -82,7 +82,8 @@ public class Weapon : MonoBehaviour
         
         isSwitching = true;
 
-        // Do necessary stuff to disable mode (but don't switch away from it)
+        // Do necessary stuff to disable mode (but don't switch away from it yet)
+        yield return CurrentMode.CancelAsync();
         CurrentMode.enabled = false;
 
         onHolster.Invoke();
