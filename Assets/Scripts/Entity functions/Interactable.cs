@@ -20,6 +20,8 @@ public class Interactable : MonoBehaviour
     public UnityEvent<Player> onInteract;
     public InteractionCheck canInteract;
 
+    public static System.Action<InteractionMessage> onThingInteractedWith;
+
     public Collider collider => c ??= GetComponent<Collider>();
     Collider c;
 
@@ -53,7 +55,7 @@ public class Interactable : MonoBehaviour
     public virtual void OnInteract(Player interactedWith)
     {
         onInteract.Invoke(interactedWith);
-        Notification<InteractionMessage>.Transmit(new InteractionMessage(interactedWith, this));
+        onThingInteractedWith?.Invoke(new InteractionMessage(interactedWith, this));
     }
 
     private void OnCollisionEnter(Collision collision)

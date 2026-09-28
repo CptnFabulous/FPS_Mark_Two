@@ -22,7 +22,7 @@ public class PlayerHealthHUD : MonoBehaviour
 
         //healthMeter.Refresh(playerTracking.health.data);
         healthMeter.obtainValues = () => playerTracking.health.data;
-        Notification<DamageMessage>.Receivers += CheckToRunEffects;
+        Health.onEntityDamaged += CheckToRunEffects;
 
         indicatorPrefab.gameObject.SetActive(false);
         indicatorPrefab.animation.playOnAwake = true;

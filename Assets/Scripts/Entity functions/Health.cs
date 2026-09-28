@@ -55,6 +55,9 @@ public class Health : MonoBehaviour
     static float minTimeAfterThrowBeforeCollision = 1f;
     static float multiplierForStaticCollisions = 1;
 
+    public static System.Action<DamageMessage> onEntityDamaged;
+    public static System.Action<KillMessage> onEntityKilled;
+
     public bool IsAlive => data.current > 0;
     public Entity attachedTo => e ??= GetComponentInParent<Entity>();
     public Hitbox[] hitboxes
@@ -113,23 +116,11 @@ public class Health : MonoBehaviour
 
 
         (isHealing ? onHeal : onDamage).Invoke(damageMessage);
-        Notification<DamageMessage>.Transmit(damageMessage);
-
-        /*
-        // If this attack is the one that killed the entity, run death events
-        if (!IsAlive && wasAlive)
-        {
-            attachedTo.DebugLog($"Dying of {type}");
-            KillMessage killMessage = new KillMessage(attacker, this, type);
-            onDeath.Invoke(killMessage);
-            Notification<KillMessage>.Transmit(killMessage);
-        }
-        */
+        onEntityDamaged?.Invoke(damageMessage);
 
         // If this attack is the one that killed the entity, run death events
         if (IsAlive || !wasAlive) return;
 
-        
         // If the player, check that they can respawn at a checkpoint
         if (attachedTo is Player player)
         {
@@ -141,12 +132,11 @@ public class Health : MonoBehaviour
             }
         }
         
-        
-
+        // Send kill message
         attachedTo.DebugLog($"Dying of {type}");
         KillMessage killMessage = new KillMessage(attacker, this, type);
         onDeath.Invoke(killMessage);
-        Notification<KillMessage>.Transmit(killMessage);
+        onEntityKilled?.Invoke(killMessage);
     }
     public void Heal(int value, Entity healer, Entity toolUsed) => Damage(-value, 0, false, DamageType.Healing, healer, toolUsed, Vector3.zero);
     

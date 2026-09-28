@@ -42,6 +42,6 @@ public class HeadsUpDisplay : MonoBehaviour
 
     private void Awake()
     {
-        Notification<DamageMessage>.Receivers += CheckToPlayDamageEffects;
+        Health.onEntityDamaged += CheckToPlayDamageEffects;
     }
 }
