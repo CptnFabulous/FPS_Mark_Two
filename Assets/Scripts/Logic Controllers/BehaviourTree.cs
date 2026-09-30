@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class BehaviourTree : BehaviourTreeNode
+public abstract class BehaviourTreeBase : BehaviourTreeNode, IReadOnlyList<BehaviourTreeNode>
 {
     public enum BehaviourTreeType
     {
@@ -15,9 +16,8 @@ public class BehaviourTree : BehaviourTreeNode
         /// </summary>
         Troubleshooting,
     }
-    
-    public BehaviourTreeNode[] nodes;
-    public BehaviourTreeType type;
+
+    public abstract BehaviourTreeType type { get; }
 
     BehaviourTreeNode currentNode;
     //Coroutine currentCoroutine;
@@ -25,6 +25,17 @@ public class BehaviourTree : BehaviourTreeNode
     bool cancelledPrematurely = false;
 
     WaitForCoroutineOrCancel coroutineRunner;
+
+    public abstract int Count { get; }
+    public abstract BehaviourTreeNode this[int index] { get; }
+    public abstract IEnumerator<BehaviourTreeNode> GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+
+
+
+
+
 
     private void Awake()
     {
@@ -35,15 +46,15 @@ public class BehaviourTree : BehaviourTreeNode
     }
     private void OnDisable()
     {
-        for (int i = 0; i < nodes.Length; i++) nodes[i].enabled = false;
+        for (int i = 0; i < Count; i++) this[i].enabled = false;
     }
 
     protected override IEnumerator PerformTask()
     {
-        for (int i = 0; i < nodes.Length; i++)
+        for (int i = 0; i < Count; i++)
         {
             // Start running the next node, and wait until completion
-            yield return RunNewNode(nodes[i]);
+            yield return RunNewNode(this[i]);
 
             // Use DidTaskSucceed() to determine succes (unless task was cancelled prematurely)
             if (!cancelledPrematurely) success = currentNode.Result();
@@ -120,4 +131,22 @@ public class BehaviourTree : BehaviourTreeNode
         cancelledPrematurely = true;
         this.success = success;
     }
+
+}
+
+public class BehaviourTree : BehaviourTreeBase
+{
+
+    [SerializeField] BehaviourTreeType _type;
+    [SerializeField] public List<BehaviourTreeNode> nodes;
+
+    public override BehaviourTreeType type => _type;
+    public override BehaviourTreeNode this[int index]
+    {
+        get => nodes[index];
+    }
+    public override int Count => nodes.Count;
+
+
+    public override IEnumerator<BehaviourTreeNode> GetEnumerator() => nodes.GetEnumerator();
 }
