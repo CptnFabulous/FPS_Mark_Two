@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class BehaviourTreeBase : BehaviourTreeNode, IReadOnlyList<BehaviourTreeNode>
+public abstract class BehaviourTreeBranch : BehaviourTreeNode, IReadOnlyList<BehaviourTreeNode>
 {
     public enum BehaviourTreeType
     {
@@ -31,8 +31,14 @@ public abstract class BehaviourTreeBase : BehaviourTreeNode, IReadOnlyList<Behav
     public abstract IEnumerator<BehaviourTreeNode> GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    // Should I make it so behaviour trees don't retain any data at all, and rely entirely on the controller to be a link to other objects?
 
-
+    // Idea:
+    // Have a variant that specified a base node and a series of 'solution' nodes.
+    // Automatically generates sequential branches of 'perform solution' and 'retry original action'
+    // Or should I just set up code to reset the current state?
+    // E.g. an AI moving along a route and dealing with obstacles
+    // Once an obstacle is dealt with, the AI should reset its troubleshooting priority (in case they encounter another obstacle they previously tried to solve)
 
 
 
@@ -134,7 +140,7 @@ public abstract class BehaviourTreeBase : BehaviourTreeNode, IReadOnlyList<Behav
 
 }
 
-public class BehaviourTree : BehaviourTreeBase
+public class CustomBehaviourTreeBranch : BehaviourTreeBranch
 {
 
     [SerializeField] BehaviourTreeType _type;

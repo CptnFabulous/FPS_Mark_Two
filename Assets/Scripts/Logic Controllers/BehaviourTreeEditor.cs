@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 #if UNITY_EDITOR
 
-[CustomEditor(typeof(BehaviourTree))]
+[CustomEditor(typeof(CustomBehaviourTreeBranch))]
 public class BehaviourTreeEditor : Editor
 {
-    BehaviourTreeBase targetTree => target as BehaviourTreeBase;
+    BehaviourTreeBranch targetTree => target as BehaviourTreeBranch;
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
@@ -34,18 +35,20 @@ public class BehaviourTreeEditorWindow : EditorWindow
     
 
     Vector2 nodeSize = new Vector2(160, 20);
-    float nodeSpacing = 10;
+    float nodeSpacing = 0;
     float branchBorder = 15;
     float branchSpacing = 25;
 
 
-    public static BehaviourTreeBase target;
+    public static BehaviourTreeBranch target;
     Vector2 scrollPosition = Vector2.zero;
 
 
 
     int windowsDrawn;
 
+    //System.Action drawWindows;
+    //System.Action drawContent;
 
     //GUIStyle branchStyle;
 
@@ -67,24 +70,19 @@ public class BehaviourTreeEditorWindow : EditorWindow
     }
     private void OnGUI()
     {
-
         /*
-        void DragHandle(ref Vector3 position, int index, string name)
-        {
-            Vector2 size = new Vector2(50, 50);
-            Rect r = new Rect(position, size);
-            position = GUI.Window(index, r, (_) => GUI.DragWindow(), name).position;
-        }
+        EditorUtility.DragHandle(ref p0, 0, "P0", out Rect r0);
+        EditorUtility.DragHandle(ref p1, 1, "P1", out Rect r1);
+        EditorUtility.DragHandle(ref p2, 2, "P2", out Rect r2);
+        EditorUtility.DragHandle(ref p3, 3, "P3", out Rect r3);
 
-        DragHandle(ref p0, 0, "P0");
-        DragHandle(ref p1, 1, "P1");
-        DragHandle(ref p2, 2, "P2");
-        DragHandle(ref p3, 3, "P3");
+        EditorUtility.DrawArrow(r0, r1);
 
         Handles.BeginGUI();
         Handles.DrawBezier(p0, p1, p2, p3, Color.red, null, 2);
         Handles.EndGUI();
         */
+
 
         if (target == null)
         {
@@ -100,6 +98,9 @@ public class BehaviourTreeEditorWindow : EditorWindow
 
         #region Draw windows
 
+        //drawWindows = null;
+        //drawContent = null;
+
         windowsDrawn = 0;
         BeginWindows();
 
@@ -112,6 +113,9 @@ public class BehaviourTreeEditorWindow : EditorWindow
         // TO DO: draw finish
         // TO DO: draw arrow connecting main branch and finish
 
+        //drawWindows?.Invoke();
+        //drawContent?.Invoke();
+
         EndWindows();
 
         DrawObjectsWithOrder.DrawQueuedThings();
@@ -122,46 +126,27 @@ public class BehaviourTreeEditorWindow : EditorWindow
     }
 
 
-    void DrawBranch(BehaviourTreeBase branch, int layerIndex, Vector2 position, out Rect branchRect)
+    void DrawBranch(BehaviourTreeBranch branch, int layerIndex, Vector2 position, out Rect branchRect)
     {
-        // TO DO: make different functions for different node types
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        // Initial rect, will be resized to account for everything inside branch
         branchRect = new Rect(position, Vector2.zero);
 
+        // Borders
         Vector2 borderMin = new Vector2(branchBorder, Mathf.Max(branchBorder, 40));
         Vector2 borderMax = new Vector2(branchBorder, branchBorder);
 
-        // Calculate how each node needs to be placed
+        // Calculate offsets and directions for placing nodes
         bool isVertical = NodeIsVertical(branch);
+        Vector2 straightOffset = CalculateOffsetForNextNode(nodeSize, nodeSpacing, isVertical);
+        Vector2 perpendicularOffset = CalculateOffsetForNextNode(nodeSize, branchSpacing, !isVertical);
+        Vector2 straight = straightOffset.normalized;
+        Vector2 perpendicular = perpendicularOffset.normalized;
 
-        Vector2 offsetPerNode = CalculateOffsetForNextNode(nodeSize, nodeSpacing, isVertical);
-        Vector2 offsetForSubBranch = CalculateOffsetForNextNode(nodeSize, branchSpacing, !isVertical);
+        // Is this a custom branch? Will determine if this branch can be edited by the user
+        CustomBehaviourTreeBranch customBranch = branch as CustomBehaviourTreeBranch;
+        bool optionsCanBeAltered = customBranch != null;
 
-        Vector2 normalDirection = offsetPerNode.normalized;
-        Vector2 perpendicular = offsetForSubBranch.normalized;
-
-
-        int nextLayer = layerIndex + 1;
-
-
-
-        
-
-
-        Vector2 arrowStartPos = Vector2.zero;
-        Vector2 arrowStartDir = Vector2.zero;
+        // Initial position, updated each time a new node is drawn to ensure consistent layouts
         Vector2 positionInBranch = position + borderMin;
         for (int i = 0; i < branch.Count; i++)
         {
@@ -172,113 +157,75 @@ public class BehaviourTreeEditorWindow : EditorWindow
             // In that case it's recursive, we don't want to draw another version of it and create an infinite loop.
             // Draw a line leading from the end of the previous node to the start of that branch.
 
-            
+
+            // Draw the initial field for the node
+            Rect standardNodeRect = new Rect(positionInBranch, nodeSize);
+            /*
+            drawContent += () =>
+            {
+                
+            };
+            */
+
+            BehaviourTreeNode newNode = EditorGUI.ObjectField(standardNodeRect, new GUIContent(node.name), node, typeof(BehaviourTreeNode), true) as BehaviourTreeNode;
+            if (optionsCanBeAltered && newNode != node)
+            {
+                string message = $"{customBranch.name}: changed node #{i} to {newNode}";
+                //Debug.Log(message);
+                customBranch.nodes[i] = newNode;
+                Undo.RecordObject(customBranch, message);
+            }
+
+
 
 
             Rect newRect;
+            Vector2 nodePosition = positionInBranch;
 
-            Vector2 nodePosition;
-            Vector2 arrowEnd;
-            Vector2 arrowEndDir;
-            Vector2 newArrowStart;
-            Vector2 newArrowStartDir;
+            BehaviourTreeBranch twig = node as BehaviourTreeBranch;
+            bool isTwig = node is BehaviourTreeBranch;
 
-            BehaviourTreeBase twig = node as BehaviourTreeBase;
-            bool isTwig = node is BehaviourTreeBase;
-
-            // Determines if the next child node should be offset
-            bool offsetNode = isTwig && NodeIsVertical(twig) == isVertical;
-            nodePosition = positionInBranch;
-            if (offsetNode) nodePosition += offsetForSubBranch;
+            bool offsetNode = isTwig;// && NodeIsVertical(twig) == isVertical;
+            if (offsetNode) nodePosition += perpendicularOffset;
 
             // Draw new state and expand the branch rect to include it
             if (isTwig)
             {
-                DrawBranch(twig, nextLayer + 1, nodePosition, out newRect);
+                DrawBranch(twig, layerIndex + 1, nodePosition, out newRect);
+
+                // Draw arrow connecting from side of standardNodeRect to newRect
+                float topOfRect = standardNodeRect.height * 0.5f / newRect.height;
+                /*drawContent += () => */EditorWindowUtility.DrawArrow(standardNodeRect, perpendicular, newRect, perpendicular, 0.5f, topOfRect);
+
                 positionInBranch += CalculateOffsetForNextNode(newRect.size, nodeSpacing, isVertical);
+
+                // Draw arrow connecting from end of branch to start of next node
+                Rect nextNodeRect = new Rect(positionInBranch, nodeSize);
+                /*drawContent += () => */EditorWindowUtility.DrawArrow(newRect, -perpendicular, nextNodeRect, straight, 0.5f, 0.5f);
             }
             else
             {
-                newRect = new Rect(positionInBranch, nodeSize);
-                BehaviourTreeNode newNode = EditorGUI.ObjectField(newRect, new GUIContent(node.name), node, typeof(BehaviourTreeNode), true) as BehaviourTreeNode;
-                positionInBranch += offsetPerNode;
-            }
-            RectEncapsulate(ref branchRect, newRect);
-
-            // Determine how the arrow should be drawn connecting the current state with the previous one
-            if (offsetNode)
-            {
-                Vector2 arrowOffset = 0.25f * newRect.size * normalDirection;
-                arrowEnd = CalculateArrowPoint(newRect, perpendicular) - arrowOffset;
-                arrowEndDir = perpendicular;
-                newArrowStart = CalculateArrowPoint(newRect, perpendicular) + arrowOffset;
-                newArrowStartDir = -perpendicular;
-            }
-            else
-            {
-                arrowEnd = CalculateArrowPoint(newRect, normalDirection);
-                arrowEndDir = normalDirection;
-                newArrowStart = CalculateArrowPoint(newRect, -normalDirection);
-                newArrowStartDir = normalDirection;
+                newRect = standardNodeRect;
+                positionInBranch += straightOffset;
             }
 
-            if (i > 0)
-            {
-                DrawArrow(arrowStartPos, arrowStartDir, arrowEnd, arrowEndDir);
-                //DrawObjectsWithOrder.QueueThingToDraw(nextLayer, () => DrawArrow(arrowStart, normalDirection, arrowEnd, normalDirection));
-            }
-            arrowStartPos = newArrowStart;
-            arrowStartDir = newArrowStartDir;
-
+            RectUtility.RectEncapsulate(ref branchRect, newRect);
         }
 
         branchRect.max += borderMax;
 
+        GUIStyle branchWindowStyle = new GUIStyle();
+        //branchWindowStyle.
+        //EditorGUI.Wi
 
-        DrawButton(layerIndex, branch, branchRect);
+        // Draw background
+        // TO DO: have it not render over the text and arrows
+        Rect windowRect = branchRect;
+        /*drawWindows += () => */GUI.Box(windowRect, branch.name);
+
+        //GUI.BeginClip
+        //GUI.Window()
     }
-
-    void DrawButton(int index, BehaviourTreeNode node, Rect rect)
-    {
-        string name = node.name;
-        /*
-        if (node is BehaviourTreeBase branch)
-        {
-            string typeName = Enum.GetName(typeof(BehaviourTree.BehaviourTreeType), branch.type);
-            name = $"{node.name} ({typeName})";
-        }
-        */
-        DrawButton(index, rect, name);
-    }
-    void DrawButton(int index, Rect rect, string name)
-    {
-
-
-        
-
-        GUI.Box(rect, name);
-        return;
-
-        // Add to some kind of list
-
-        DrawObjectsWithOrder.QueueThingToDraw(index, () =>
-        {
-            GUI.Box(rect, name);
-            /*
-            if (GUI.Button(rect, name))
-            {
-                
-                Editor e = Editor.CreateEditor(node);
-                e.OnInspectorGUI();
-                DestroyImmediate(e);
-                
-            }
-            */
-        });
-
-        
-    }
-    
 
     Vector2 CalculateOffsetForNextNode(Vector2 size, float spacing, bool vertical)
     {
@@ -291,68 +238,17 @@ public class BehaviourTreeEditorWindow : EditorWindow
             return new Vector2(size.x + spacing, 0);
         }
     }
-    Vector2 CalculateArrowPoint(Rect rect, Vector2 direction)
+    bool NodeIsVertical(BehaviourTreeBranch branch)
     {
-        direction = direction.normalized;
-        direction.x = -direction.x;
-        direction.y = -direction.y;
+        return true;
 
-        direction.x += 1;
-        direction.x *= 0.5f;
-        direction.y += 1;
-        direction.y *= 0.5f;
-
-
-        float x = Mathf.Lerp(rect.min.x, rect.max.x, direction.x);
-        float y = Mathf.Lerp(rect.min.y, rect.max.y, direction.y);
-        return new Vector2(x, y);
-    }
-
-    void RectEncapsulate(ref Rect target, Vector2 position)
-    {
-        target.min = Vector2.Min(target.min, position);
-        target.max = Vector2.Min(target.max, position);
-    }
-    void RectEncapsulate(ref Rect target, Rect newRect)
-    {
-        target.min = Vector2.Min(target.min, newRect.min);
-        target.max = Vector2.Max(target.max, newRect.max);
-    }
-
-
-    bool NodeIsVertical(BehaviourTreeBase branch)
-    {
-        bool isVertical = branch.type == BehaviourTreeBase.BehaviourTreeType.Troubleshooting;
+        bool isVertical = branch.type == BehaviourTreeBranch.BehaviourTreeType.Troubleshooting;
         isVertical = !isVertical;
-        isVertical = true;
 
         return isVertical;
     }
 
 
-
-
-
-
-    void DrawArrow(Vector2 startPos, Vector2 startDir, Vector2 endPos, Vector2 endDir, float arrowDistance = 5)
-    {
-
-        Handles.BeginGUI();
-
-        // Draw line
-        float multiplier = (endPos - startPos).magnitude * 0.5f;
-        Vector2 p2 = startPos + (multiplier * startDir);
-        Vector2 p3 = endPos + (multiplier * -endDir);
-        Handles.DrawBezier(startPos, endPos, p2, p3, Color.white, null, 2);
-        
-        // Draw arrowhead
-        Vector2 sidewaysOffset = arrowDistance * Vector2.Perpendicular(endDir);
-        Vector2 backwardOffset = arrowDistance * -endDir;
-        Handles.DrawLine(endPos, endPos + backwardOffset + sidewaysOffset);
-        Handles.DrawLine(endPos, endPos + backwardOffset + -sidewaysOffset);
-
-        Handles.EndGUI();
-    }
 }
 
 
@@ -361,7 +257,7 @@ public static class DrawObjectsWithOrder
 {
     static System.Action[] drawCalls;
     
-    static int start = 0;
+    static int start = int.MaxValue;
     static int end = 0;
 
     public static void QueueThingToDraw(int layerOrder, System.Action drawThing)

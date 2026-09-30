@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RunBehaviourTree : StateFunction
 {
-    public BehaviourTree behaviourTree;
+    public CustomBehaviourTreeBranch behaviourTree;
     public StateFunction onSuccess;
     public StateFunction onFailure;
 

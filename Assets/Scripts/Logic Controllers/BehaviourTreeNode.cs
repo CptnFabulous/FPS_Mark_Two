@@ -19,12 +19,12 @@ public abstract class BehaviourTreeNode : MonoBehaviour
     
     
     
-    protected BehaviourTreeBase currentHost;
+    protected BehaviourTreeBranch currentHost;
 
     /// <summary>
     /// Recurses up through the behaviour tree to find the original sequence of behaviours.
     /// </summary>
-    public BehaviourTreeBase trunk
+    public BehaviourTreeBranch trunk
     {
         get
         {
@@ -39,7 +39,7 @@ public abstract class BehaviourTreeNode : MonoBehaviour
     /// </summary>
     /// <param name="host"></param>
     /// <returns></returns>
-    public IEnumerator StartTask(BehaviourTreeBase host)
+    public IEnumerator StartTask(BehaviourTreeBranch host)
     {
         // Assigns the current host
         // So we can keep track of the hierarchy
