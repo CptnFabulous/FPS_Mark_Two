@@ -58,6 +58,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     AIPhysicsState lastSetState;
 
     NavMeshAgent navMeshAgent => rootAI.agent;
+    public Collider[] ragdollColliders => colliders;
 
     public AIPhysicsState currentState
     {

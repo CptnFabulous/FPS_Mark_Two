@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using CptnFabulous.MiscUtility;
 
 public class AI : Character
 {
@@ -49,6 +50,16 @@ public class AI : Character
             }
 
             return 0;
+        }
+    }
+
+    public override Bounds bounds
+    {
+        get
+        {
+            if (physicsStateHandler == null) return base.bounds;
+
+            return TransformUtility.CombinedBounds(physicsStateHandler.colliders);
         }
     }
     public override Vector3 MovementDirection => agent.velocity;
