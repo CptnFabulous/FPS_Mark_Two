@@ -59,7 +59,7 @@ public class AI : Character
         {
             if (physicsStateHandler == null) return base.bounds;
 
-            return TransformUtility.CombinedBounds(physicsStateHandler.colliders);
+            return TransformUtility.CombinedBounds(physicsStateHandler.ragdollColliders);
         }
     }
     public override Vector3 MovementDirection => agent.velocity;
