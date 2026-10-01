@@ -22,11 +22,13 @@ public class OctreeTest : MonoBehaviour
         octree.DrawGizmos();
     }
 
-    bool CheckIfOccupied(Vector3Int min, Vector3Int max)
+    bool CheckIfOccupied(BoundsInt cellBounds)
     {
         Bounds bounds = new Bounds();
-        bounds.min = min;
-        bounds.max = max;
+        bounds.min = cellBounds.min;
+        bounds.max = cellBounds.max;
+
+
 
         // Convert position and size values from local to world space
         Matrix4x4 matrix = transform.localToWorldMatrix;

@@ -7,7 +7,8 @@ using CptnFabulous.ObjectPool;
 
 public class SmokeNavMeshModifier : MonoBehaviour
 {
-    [SerializeField] LayerMask smokeMask = ~0;
+    [SerializeField] DetectionProfile smokeMask;
+    [SerializeField] LayerMask terrainMask = ~0;
     [SerializeField] NavMeshModifierVolume volumePrefab;
     [SerializeField] float refreshTimer = 0.2f;
     [SerializeField] float cellWidth = 1;
@@ -76,10 +77,14 @@ public class SmokeNavMeshModifier : MonoBehaviour
         }
     }
 
-    bool DoesOctantContainSmoke(Vector3Int min, Vector3Int max)
+    bool DoesOctantContainSmoke(BoundsInt bounds)
+    {
+        return DoesOctantContainColliders(bounds.min, bounds.max, smokeMask.mask);
+    }
+    bool DoesOctantContainColliders(Vector3Int min, Vector3Int max, LayerMask layerMask)
     {
         GetWorldExtents(min, max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
-        return Physics.CheckBox(centre, halfExtents, Quaternion.identity, smokeMask);
+        return Physics.CheckBox(centre, halfExtents, Quaternion.identity, layerMask);
     }
     void CheckToAssignVolume(Octant<NavMeshModifierVolume> octant, ref NavMeshModifierVolume volume)
     {
@@ -111,91 +116,3 @@ public class SmokeNavMeshModifier : MonoBehaviour
         halfExtents = matrix.MultiplyVector(bounds.extents);
     }
 }
-
-// This is an old version.
-// It uses the density controller's grid spaces to determine where smoke is
-// But my new octree-based version is both more performant and way cooler to show off.
-/*
-public class SmokeNavMeshModifier : MonoBehaviour
-{
-    public NavMeshSurface[] navMeshes;
-    public int particleDensityThreshold = 0;
-    public NavMeshModifierVolume volumePrefab;
-    public float refreshTimer = 0.2f;
-
-
-    NavMeshModifierVolume[] activeVolumes = new NavMeshModifierVolume[1024];
-    int activeVolumeCount;
-
-    float lastTimeRefreshed;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //volumePrefab = new GameObject("Smoke NavMesh Modifier Volume").AddComponent<NavMeshModifierVolume>();
-        volumePrefab.center = Vector3.zero;
-
-        float gridSize = SmokeParticleDensityController.GetSingleton().gridSpaceSize;
-        volumePrefab.size = new Vector3(gridSize, gridSize, gridSize);
-
-        // TO DO: create an object pool with this transform as the pool parent.
-        ObjectPool.CreateObjectPool(volumePrefab);
-        volumePrefab.gameObject.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Time.time - lastTimeRefreshed > refreshTimer)
-        {
-            RefreshMesh();
-            lastTimeRefreshed = Time.time;
-        }
-    }
-
-
-
-    public void RefreshMesh()
-    {
-        SmokeParticleDensityController controller = SmokeParticleDensityController.GetSingleton();
-
-        // For each grid space that currently has particles, add it to a list.
-        int spacesWithSmoke = 0;
-        for (int i = 0; i < controller.gridSpaces.Count; i++)
-        {
-            SmokeParticleDensityController.ParticleGridSpace gridSpace = controller.gridSpaces.Values.ElementAt(i);
-            if (gridSpace.numberOfParticles <= particleDensityThreshold) continue;
-
-            // For each grid space with a certain particle density, ensure a modifier volume is assigned.
-            if (activeVolumes[spacesWithSmoke] == null)
-            {
-                activeVolumes[spacesWithSmoke] = ObjectPool.RequestObject(volumePrefab);
-            }
-
-            // Position the volume to the corresponding point in space.
-            activeVolumes[spacesWithSmoke].transform.localPosition = gridSpace.worldPosition;
-
-            // Keep track of how many volumes are needed
-            spacesWithSmoke++;
-        }
-
-        // If there are less modifier volumes needed compared to last frame, dismiss any extras
-        for (int i = spacesWithSmoke; i < activeVolumeCount; i++)
-        {
-            ObjectPool.DismissObject(activeVolumes[i]);
-        }
-
-        // Refresh how many volumes are present this frame
-        activeVolumeCount = spacesWithSmoke;
-
-        // Rebuild navmeshes
-        for (int i = 0; i < navMeshes.Length; i++)
-        {
-            NavMeshSurface mesh = navMeshes[i];
-            if (mesh == null) continue;
-            if (mesh.enabled == false) continue;
-            mesh.BuildNavMesh();
-        }
-    }
-}
-*/

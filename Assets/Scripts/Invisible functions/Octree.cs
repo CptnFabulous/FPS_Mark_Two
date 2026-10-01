@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public enum OctantType
@@ -10,33 +11,62 @@ public enum OctantType
     Full // No empty space in it or any children
 }
 
-public class Octant<T>
+public class Octant<T>// : IReadOnlyList<Octant<T>>
 {
-    public int depth { get; private set; }
-    public Vector3Int min { get; private set; }
-    public Vector3Int max { get; private set; } // TO DO: delete this? Depth and min are the important ones because everything else can be calculated from those
+    public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, int order)
+    {
+        this.origin = origin;
+        this.parent = parent;
+        this.subdivisions = subdivisions;
+        this.order = order;
+    }
+
+    public Octree<T> origin { get; private set; }
+    public Octant<T> parent { get; private set; }
+    public int subdivisions { get; private set; }
+    public int order { get; private set; }
+    public BoundsInt bounds { get; private set; }
+    public Vector3Int min => bounds.min;
+    public Vector3Int max => bounds.max;
+
     public Octant<T>[] children { get; private set; } = new Octant<T>[8];
     public OctantType type { get; private set; } = OctantType.Empty;
     public T leafData => _leafData;
 
     T _leafData;
 
+    public int layer => origin.subdivisions - subdivisions;
+
     //public bool hasChildren => type == OctantType.Branch || type == OctantType.Full;
 
-    public void Refresh(Octree<T> origin, int sizePower)
+    /// <summary>
+    /// Check if octant meeting the criteria actually matters. If not, we can treat it as occupied even if it isn't.
+    ///<para>If check is not present, treat as true by default.</para>
+    /// </summary>
+    /// <returns></returns>
+    public bool DoesCriteriaMatterWithThisOctant() => (origin.doesCheckMatter == null) || origin.doesCheckMatter.Invoke(bounds);
+
+    public void Refresh(Vector3Int boundsMin)
     {
         // Calculate subdivision depth and size of octant
-        depth = sizePower;
-        int size = Octree<T>.CalculateGridSize(depth);
+        //this.subdivisions = subdivisions;
+        int size = Octree<T>.CalculateGridSize(this.subdivisions);
         Vector3Int dimensions = new Vector3Int(size, size, size);
-        max = min + dimensions;
-        bool notEmpty = origin.checkOctant.Invoke(min, max);
+
+        BoundsInt newBounds = new BoundsInt();
+        newBounds.min = boundsMin;
+        newBounds.max = boundsMin + dimensions;
+        bounds = newBounds;
+
+        bool notEmpty = origin.checkOctant.Invoke(bounds);
+
+        //Debug.Log($"Subdivisions = {subdivisions}, layer = {layer}, size = {size}");
+
 
         // If no more children can be found, record leaf data and return
         if (!notEmpty)
         {
             type = OctantType.Empty;
-            //Mark(origin, OctantType.Empty);
             return;
         }
 
@@ -44,7 +74,6 @@ public class Octant<T>
         if (size <= 1)
         {
             type = OctantType.Leaf;
-            //Mark(origin, OctantType.Leaf);
             return;
         }
 
@@ -55,22 +84,29 @@ public class Octant<T>
         int childSize = size / 2;
         for (int i = 0; i < 8; i++)
         {
+            // Set up child octant
+            if (children[i] == null)
+            {
+                children[i] = new Octant<T>(this.origin, this, this.subdivisions - 1, i);
+            }
+
             // Calculate check min and max
             Vector3Int offset = SmokeParticleDensityController.neighbourOffsets[i];
             offset.x *= childSize;
             offset.y *= childSize;
             offset.z *= childSize;
             Vector3Int childMin = min + offset;
+            //children[i].min = childMin;
 
-            // Set up child octant
-            if (children[i] == null) children[i] = new Octant<T>();
-            children[i].min = childMin;
+            // Calculate data inside child octant
+            children[i].Refresh(childMin);
 
-            // Check data in child octant
-            children[i].Refresh(origin, depth - 1);
+            // Check if this octant can be counted as part of a 'full' parent octant
+            bool childIsFull = false;
+            childIsFull = childIsFull || children[i].type == OctantType.Leaf;
+            childIsFull = childIsFull || children[i].type == OctantType.Full;
+            childIsFull = childIsFull || children[i].DoesCriteriaMatterWithThisOctant() == false;
 
-            // Check if the child we just refreshed is completely full
-            bool childIsFull = children[i].type == OctantType.Leaf || children[i].type == OctantType.Full;
             // If a single child is not full, then that means this octant is not full.
             isFull &= childIsFull;
         }
@@ -79,16 +115,14 @@ public class Octant<T>
         {
             // Mark as full, because all children are full
             type = OctantType.Full;
-            //Mark(origin, OctantType.Full);
         }
         else
         {
             // Mark as branch, because there's a mixture of full and non-full
             type = OctantType.Branch;
-            //Mark(origin, OctantType.Branch);
         }
     }
-    public void IterateThrough(Octree<T> origin)
+    public void IterateThrough()
     {
         // Determine different outcomes for different types
         switch (type)
@@ -128,15 +162,15 @@ public class Octant<T>
                 // Empty self
                 // Iterate through children
                 Empty(origin, true, false, false);
-                for (int i = 0; i < 8; i++) children[i].IterateThrough(origin);
+                for (int i = 0; i < 8; i++) children[i].IterateThrough();
 
                 break;
         }
     }
-    public void DrawGizmos(Octree<T> origin, int sizePower)
+    public void DrawGizmos()
     {
         // Size
-        int sizeAlongAxis = Octree<T>.CalculateGridSize(sizePower);
+        int sizeAlongAxis = Octree<T>.CalculateGridSize(subdivisions);
         Vector3 size = new Vector3(sizeAlongAxis, sizeAlongAxis, sizeAlongAxis);
         Vector3 centre = min + (size / 2);
 
@@ -145,7 +179,7 @@ public class Octant<T>
         {
             case OctantType.Empty:
                 // Colour based on size
-                float colourLerp = 1 - ((float)sizePower / (float)origin.subdivisions);
+                float colourLerp = 1 - ((float)subdivisions / (float)origin.subdivisions);
                 Gizmos.color = Color.Lerp(Color.white, Color.black, colourLerp);
                 // Draw
                 Gizmos.DrawWireCube(centre, size);
@@ -165,7 +199,7 @@ public class Octant<T>
 
             default:
                 // Draw gizmos for each child
-                for (int i = 0; i < 8; i++) children[i].DrawGizmos(origin, sizePower - 1);
+                for (int i = 0; i < 8; i++) children[i].DrawGizmos();
                 break;
         }
     }
@@ -192,6 +226,39 @@ public class Octant<T>
             _leafData = default;
         }
     }
+
+
+
+
+
+
+    /*
+    public int Count
+    {
+        get
+        {
+            // Add together the counts of each non-null octant
+        }
+    }
+
+    public Octant<T> this[int index]
+    {
+        get
+        {
+
+        }
+    }
+
+    public IEnumerator<Octant<T>> GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        throw new System.NotImplementedException();
+    }
+    */
 }
 
 public class Octree<T>
@@ -199,20 +266,28 @@ public class Octree<T>
     public delegate void LeafDataAssignment(Octant<T> octant, ref T data);
     
     public int subdivisions;
-    public System.Func<Vector3Int, Vector3Int, bool> checkOctant;
+    public System.Func<BoundsInt, bool> checkOctant;
+    public System.Func<BoundsInt, bool> doesCheckMatter;
     public LeafDataAssignment onOctantRefreshed;
     public System.Action<Octant<T>> onOctantRemoved;
 
-    Octant<T> _base = new Octant<T>();
+    Octant<T> _base;
 
-    public Octant<T> baseContainer => _base;
+    public Octant<T> baseContainer => _base ??= new Octant<T>(this, null, subdivisions, 0);
     
     public void Refresh()
     {
-        _base.Refresh(this, subdivisions);
-        if (onOctantRefreshed != null) _base.IterateThrough(this);
+        baseContainer.Refresh(Vector3Int.zero);
+        if (onOctantRefreshed != null) baseContainer.IterateThrough();
     }
-    public void DrawGizmos() => _base.DrawGizmos(this, subdivisions);
+    public void DrawGizmos() => baseContainer.DrawGizmos();
 
-    public static int CalculateGridSize(int sizePower) => Mathf.RoundToInt(Mathf.Pow(2, sizePower));
+    public static int CalculateGridSize(int divisions) => Mathf.RoundToInt(Mathf.Pow(2, divisions));
+
+
+
+
+
+
+
 }
