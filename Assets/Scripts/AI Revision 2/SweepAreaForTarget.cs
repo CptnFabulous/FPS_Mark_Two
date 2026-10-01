@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.UIElements;
 
 public class SweepAreaForTarget : AIStateFunction
 {
@@ -68,7 +66,7 @@ public class SweepAreaForTarget : AIStateFunction
         }
 
         // If the AI has reached the current destination but still has more points to check, find the next one to go to.
-        if (rootAI.reachedDestination) GetNextDestination();
+        if (movement.reachedDestination) GetNextDestination();
     }
     private void OnDrawGizmosSelected()
     {

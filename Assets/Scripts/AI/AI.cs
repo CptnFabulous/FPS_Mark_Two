@@ -17,10 +17,9 @@ public class AI : Character
 
     [Header("Movement and pathing")]
     public NavMeshAgent agent;
+    public AIMovement movement;
     public PhysicsAffectedAI physicsHandler;
     public PuppetmasterRagdollHandler physicsStateHandler;
-    public float baseMovementSpeed = 5;
-    public float destinationThreshold = 1;
 
     [Header("Aiming and targeting")]
     public AIAim aiming;
@@ -70,13 +69,6 @@ public class AI : Character
     }    
     public override WeaponHandler weaponHandler => null;
 
-    public bool reachedDestination => agent.remainingDistance < destinationThreshold;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        if (agent != null) agent.speed = baseMovementSpeed;
-    }
 
 #if UNITY_EDITOR
     private void OnGUI()
@@ -109,19 +101,5 @@ public class AI : Character
     {
         base.Die();
         stateController.SwitchToState(deathState);
-    }
-
-    public IEnumerator TravelToDestination(Vector3 position)
-    {
-        if (agent == null) yield break;
-
-        agent.isStopped = false;
-
-        //Debug.DrawLine(transform.position, position, Color.cyan, 5);
-        agent.SetDestination(position);
-
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        yield return new WaitUntil(() => reachedDestination);
     }
 }

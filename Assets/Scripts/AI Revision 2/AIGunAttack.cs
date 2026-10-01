@@ -150,8 +150,13 @@ public class AIGunAttack : MonoBehaviour
 
     void SetSpeedMultiplier(float multiplier)
     {
-        NavMeshAgent agent = rootAI.agent;
-        if (agent != null) agent.speed = rootAI.baseMovementSpeed * multiplier;
+        if (rootAI.movement == null) return;
+
+        rootAI.movement.speedMultiplierStack["Attack telegraph"] = multiplier;
+        
+        //NavMeshAgent agent = rootAI.agent;
+        //if (agent != null) agent.move.speed = rootAI.baseMovementSpeed * multiplier;
+
     }
     public bool AttackNotBlocked(Vector3 aimOrigin) => AIAction.LineOfSight(aimOrigin, targetPosition, rootAI, target, weapon.attackMask);
 

@@ -16,7 +16,7 @@ public class ScanSightline : AIStateFunction
     public override IEnumerator AsyncProcedure()
     {
         // Move to location of sightline
-        yield return rootAI.TravelToDestination(sightline.position);
+        yield return movement.TravelToDestination(sightline.position);
 
         // Once at sightline, continually scan it for targets
         Vector2 angles = new Vector2(horizontalAngle, verticalAngle);

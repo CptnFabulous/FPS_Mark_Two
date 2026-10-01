@@ -83,7 +83,7 @@ public class InvestigateLocations : AIStateFunction
         // Go to suspicious location.
         rootAI.DebugLog($"Travelling to suspicious position");
         aim.LookInNeutralDirection();
-        yield return rootAI.TravelToDestination(pointToCheck);
+        yield return movement.TravelToDestination(pointToCheck);
 
         // Look around said position
         rootAI.DebugLog($"Looking around target's last-known position");
