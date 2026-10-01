@@ -21,6 +21,14 @@ public class AIMovement : MonoBehaviour
     void Update()
     {
         navMeshAgent.speed = baseMovementSpeed * speedMultiplierStack.calculatedValue;
+
+        // If enemy is moving through smoke, reduce their speed
+        if (rootAI.waryOfSmoke)
+        {
+            Bounds bounds = rootAI.bounds;
+            bool insideSmoke = Physics.CheckBox(bounds.center, 0.5f * bounds.extents, Quaternion.identity, smokeDetection.mask);
+            speedMultiplierStack["Moving through smoke"] = insideSmoke ? speedPenaltyInSmoke : 1;
+        }
     }
 
     public IEnumerator TravelToDestination(Vector3 position)

@@ -69,6 +69,11 @@ public class AI : Character
     }    
     public override WeaponHandler weaponHandler => null;
 
+    /// <summary>
+    /// Does the enemy change their AI behaviours to account for smoke?
+    /// <para>True by default, but will be modfied in future to account for things like if this NPC has thermal vision, or how reckless/stupid they are.</para>
+    /// </summary>
+    public bool waryOfSmoke => true;
 
 #if UNITY_EDITOR
     private void OnGUI()
