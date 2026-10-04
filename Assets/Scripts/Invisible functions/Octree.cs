@@ -13,18 +13,20 @@ public enum OctantType
 
 public class Octant<T>// : IReadOnlyList<Octant<T>>
 {
-    public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, int order)
+    public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, string key/*, int order*/)
     {
         this.origin = origin;
         this.parent = parent;
         this.subdivisions = subdivisions;
-        this.order = order;
+        this.key = key;
+        //this.order = order;
     }
 
     public Octree<T> origin { get; private set; }
     public Octant<T> parent { get; private set; }
     public int subdivisions { get; private set; }
-    public int order { get; private set; }
+    public string key { get; private set; }
+    //public int order { get; private set; }
     public BoundsInt bounds { get; private set; }
     public Vector3Int min => bounds.min;
     public Vector3Int max => bounds.max;
@@ -44,13 +46,13 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
     ///<para>If check is not present, treat as true by default.</para>
     /// </summary>
     /// <returns></returns>
-    public bool DoesCriteriaMatterWithThisOctant() => (origin.doesCheckMatter == null) || origin.doesCheckMatter.Invoke(bounds);
+    public bool DoesCriteriaMatterWithThisOctant() => (origin.doesCheckMatter == null) || origin.doesCheckMatter.Invoke(this);
 
     public void Refresh(Vector3Int boundsMin)
     {
         // Calculate subdivision depth and size of octant
         //this.subdivisions = subdivisions;
-        int size = Octree<T>.CalculateGridSize(this.subdivisions);
+        int size = Octree<T>.CalculateGridSize(subdivisions);
         Vector3Int dimensions = new Vector3Int(size, size, size);
 
         BoundsInt newBounds = new BoundsInt();
@@ -87,7 +89,7 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             // Set up child octant
             if (children[i] == null)
             {
-                children[i] = new Octant<T>(this.origin, this, this.subdivisions - 1, i);
+                children[i] = new Octant<T>(origin, this, subdivisions - 1, key + i.ToString()/*, i*/);
             }
 
             // Calculate check min and max
@@ -96,7 +98,6 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             offset.y *= childSize;
             offset.z *= childSize;
             Vector3Int childMin = min + offset;
-            //children[i].min = childMin;
 
             // Calculate data inside child octant
             children[i].Refresh(childMin);
@@ -226,39 +227,6 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             _leafData = default;
         }
     }
-
-
-
-
-
-
-    /*
-    public int Count
-    {
-        get
-        {
-            // Add together the counts of each non-null octant
-        }
-    }
-
-    public Octant<T> this[int index]
-    {
-        get
-        {
-
-        }
-    }
-
-    public IEnumerator<Octant<T>> GetEnumerator()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        throw new System.NotImplementedException();
-    }
-    */
 }
 
 public class Octree<T>
@@ -267,14 +235,18 @@ public class Octree<T>
     
     public int subdivisions;
     public System.Func<BoundsInt, bool> checkOctant;
-    public System.Func<BoundsInt, bool> doesCheckMatter;
+    public System.Func<Octant<T>, bool> doesCheckMatter;
     public LeafDataAssignment onOctantRefreshed;
     public System.Action<Octant<T>> onOctantRemoved;
 
     Octant<T> _base;
 
-    public Octant<T> baseContainer => _base ??= new Octant<T>(this, null, subdivisions, 0);
-    
+    public Octant<T> baseContainer => _base ??= new Octant<T>(this, null, subdivisions, ""/*, 0*/);
+
+
+    int maxSize => Mathf.RoundToInt(Mathf.Pow(2, subdivisions));
+    public int maxPossibleUniqueCells => Mathf.RoundToInt(Mathf.Pow(maxSize, 3));
+
     public void Refresh()
     {
         baseContainer.Refresh(Vector3Int.zero);
@@ -284,10 +256,32 @@ public class Octree<T>
 
     public static int CalculateGridSize(int divisions) => Mathf.RoundToInt(Mathf.Pow(2, divisions));
 
+    /// <summary>
+    /// Using a numerical key generated from another octant, find one in the same position in this octree.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public Octant<T> GetOctantByKey(string key)
+    {
+        Octant<T> latest = baseContainer;
 
+        // Iterate through each character in the key, parsed into a number.
+        // If the string is empty, it returns the base container.
+        for (int i = 0; i < key.Length; i++)
+        {
+            // Parse the correct index. If parsing fails, return latest valid result.
+            int index = (int)char.GetNumericValue(key[i]);
+            if (index < 0) return latest;
 
+            // Get the child. If no more children are found, return latest valid result.
+            Octant<T> child = latest.children[index];
+            if (child == null) return latest;
 
+            // Assign child octant so we can check it in the next loop
+            latest = child;
+        }
 
-
-
+        return latest;
+    }
+    public Octant<T> FindMatchingOctant<T1>(Octant<T1> otherOctant) => GetOctantByKey(otherOctant.key);
 }

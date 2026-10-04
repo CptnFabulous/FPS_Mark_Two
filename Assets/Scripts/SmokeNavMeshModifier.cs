@@ -14,8 +14,15 @@ public class SmokeNavMeshModifier : MonoBehaviour
     [SerializeField] float cellWidth = 1;
 
     Octree<NavMeshModifierVolume> octree;
+    Octree<bool> terrainOctree;
     Matrix4x4 octreeToWorldMatrix;
     float lastTimeRefreshed;
+
+
+
+
+    //Dictionary<BoundsInt, bool> cellContainsTerrain = new Dictionary<BoundsInt, bool>();
+
 
     NavMeshSurface[] navMeshes => TerrainGrid.current.navMeshes;
 
@@ -47,8 +54,16 @@ public class SmokeNavMeshModifier : MonoBehaviour
         TerrainGrid.GenerateOctreeDataForLevelBounds(cellWidth, out _, out int subdivisions, out octreeToWorldMatrix);
         octree.subdivisions = subdivisions;
 
+        // Set up a second, identically-sized octree, and do a single check for terrain
+        terrainOctree = new Octree<bool>();
+        terrainOctree.subdivisions = subdivisions;
+        terrainOctree.checkOctant = ScanForLevelGeometry;
+        terrainOctree.Refresh();
+        
+
         // Assign delegates to octree
         octree.checkOctant = DoesOctantContainSmoke; // Use box checks to look for smoke colliders
+        octree.doesCheckMatter = DoesOctantContainLevelGeometry;
         octree.onOctantRefreshed = CheckToAssignVolume; // Assign NavMeshModifierVolumes for each leaf or full octant
         octree.onOctantRemoved = RemoveVolume; // Clear unwanted volumes
 
@@ -62,6 +77,10 @@ public class SmokeNavMeshModifier : MonoBehaviour
     }
     void RefreshMesh()
     {
+        // TO DO: make this code work over multiple frames? Even if it's only done on every occasional frame, it still causes lag spikes.
+        // Since when you split up an octant it just acts like a smaller octant, I should probably be able to set up some code to only refresh and iterate through parts of the octant per frame.
+        // Maybe the refresh function can have ratio floats representing the start and fraction, and based off the volume determine how much it can iterate through
+
         // Refresh octree (the delegates inside it will do the appropriate checks and assign the necessary volumes)
         octree.Refresh();
 
@@ -81,10 +100,41 @@ public class SmokeNavMeshModifier : MonoBehaviour
     {
         return DoesOctantContainColliders(bounds.min, bounds.max, smokeMask.mask);
     }
+    bool ScanForLevelGeometry(BoundsInt bounds)
+    {
+        return DoesOctantContainColliders(bounds.min, bounds.max, terrainMask);
+    }
     bool DoesOctantContainColliders(Vector3Int min, Vector3Int max, LayerMask layerMask)
     {
         GetWorldExtents(min, max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
         return Physics.CheckBox(centre, halfExtents, Quaternion.identity, layerMask);
+    }
+    bool DoesOctantContainLevelGeometry(Octant<NavMeshModifierVolume> octant)
+    {
+        // TO DO: I think I need to improve the check further.
+        // Maybe instead of just checking for level geometry, I check for NavMesh geometry specifically.
+
+        Octant<bool> matchingOctant = terrainOctree.GetOctantByKey(octant.key);
+
+        if (matchingOctant == null) return false;
+
+        return matchingOctant.type != OctantType.Empty;
+
+        /*
+        bool dataFound = terrainOctree.octantDictionary.TryGetValue(octant.bounds, out Octant<bool> o);
+        if (!dataFound) return false;
+
+        return o.type != OctantType.Empty;
+        */
+
+        /*
+        bool containsGeometry;
+        if (cellContainsTerrain.TryGetValue(bounds, out containsGeometry)) return containsGeometry;
+
+        containsGeometry = DoesOctantContainColliders(bounds.min, bounds.max, terrainMask);
+        cellContainsTerrain[bounds] = containsGeometry;
+        return containsGeometry;
+        */
     }
     void CheckToAssignVolume(Octant<NavMeshModifierVolume> octant, ref NavMeshModifierVolume volume)
     {
