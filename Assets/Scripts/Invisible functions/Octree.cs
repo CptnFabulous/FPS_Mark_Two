@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
+using System.Linq;
 using UnityEngine;
 
 public enum OctantType
@@ -11,7 +11,7 @@ public enum OctantType
     Full // No empty space in it or any children
 }
 
-public class Octant<T>// : IReadOnlyList<Octant<T>>
+public class Octant<T>// : IEnumerable<Octant<T>>
 {
     public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, string key/*, int order*/)
     {
@@ -48,10 +48,9 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
     /// <returns></returns>
     public bool DoesCriteriaMatterWithThisOctant() => (origin.doesCheckMatter == null) || origin.doesCheckMatter.Invoke(this);
 
-    public void Refresh(Vector3Int boundsMin)
+    public void Scan(Vector3Int boundsMin)
     {
         // Calculate subdivision depth and size of octant
-        //this.subdivisions = subdivisions;
         int size = Octree<T>.CalculateGridSize(subdivisions);
         Vector3Int dimensions = new Vector3Int(size, size, size);
 
@@ -61,9 +60,6 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
         bounds = newBounds;
 
         bool notEmpty = origin.checkOctant.Invoke(bounds);
-
-        //Debug.Log($"Subdivisions = {subdivisions}, layer = {layer}, size = {size}");
-
 
         // If no more children can be found, record leaf data and return
         if (!notEmpty)
@@ -79,17 +75,18 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             return;
         }
 
+        // Check in child octants
+        int childSize = size / 2;
+
         // Set up a value so we can check if this octant is completely full
         bool isFull = true;
 
-        // Check in child octants
-        int childSize = size / 2;
         for (int i = 0; i < 8; i++)
         {
             // Set up child octant
             if (children[i] == null)
             {
-                children[i] = new Octant<T>(origin, this, subdivisions - 1, key + i.ToString()/*, i*/);
+                children[i] = new Octant<T>(origin, this, subdivisions - 1, key + i.ToString());
             }
 
             // Calculate check min and max
@@ -100,7 +97,7 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             Vector3Int childMin = min + offset;
 
             // Calculate data inside child octant
-            children[i].Refresh(childMin);
+            children[i].Scan(childMin);
 
             // Check if this octant can be counted as part of a 'full' parent octant
             bool childIsFull = false;
@@ -123,8 +120,45 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             type = OctantType.Branch;
         }
     }
-    public void IterateThrough()
+
+    public void ProcessAllCells()
     {
+        IEnumerator enumerator = ProcessCells();
+        while (enumerator.MoveNext()) continue;
+        return;
+        
+
+        // TO DO: the following code doesn't work! Not all the cells are deleted properly.
+        // But if I can fix that it should be perfect.
+
+        /*
+        IEnumerator<Octant<T>> cellIterator = CellIterator();
+        while (cellIterator.MoveNext())
+        {
+            Octant<T> current = cellIterator.Current;
+            switch (current.type)
+            {
+                case OctantType.Empty:
+                case OctantType.Branch:
+
+                    origin.onOctantRemoved.Invoke(current);
+                    current._leafData = default;
+
+                    break;
+
+                case OctantType.Leaf:
+                case OctantType.Full:
+
+                    origin.onOctantRefreshed.Invoke(current, ref current._leafData);
+
+                    break;
+            }
+
+        }
+        */
+
+
+        /*
         // Determine different outcomes for different types
         switch (type)
         {
@@ -167,6 +201,7 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
 
                 break;
         }
+        */
     }
     public void DrawGizmos()
     {
@@ -205,7 +240,15 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
         }
     }
 
+    // The latest version that actually works
+    
     void Empty(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
+    {
+        IEnumerator emptyEnumerator = EmptyCells(origin, emptySelf, emptyChildren, deleteChildren);
+        while (emptyEnumerator.MoveNext()) continue;
+    }
+
+    IEnumerator EmptyCells(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
     {
         if (emptyChildren)
         {
@@ -213,9 +256,14 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
             {
                 if (children[i] == null) continue;
 
-                // Empty all child octants (and their children)
-                children[i].Empty(origin, true, true, deleteChildren);
-                // Delete this octant (if specified)
+                // For each child present, yield on its EmptyChildren() as well before proceeding
+                
+                IEnumerator childEnumerator = children[i].EmptyCells(origin, true, true, deleteChildren);
+                while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+                // Should work in theory, but seems not to in practice
+                //yield return children[i].EmptyEnumerator(origin, true, true, deleteChildren);
+
+                // Clear child octant from its array position
                 if (deleteChildren) children[i] = null;
             }
         }
@@ -225,8 +273,110 @@ public class Octant<T>// : IReadOnlyList<Octant<T>>
         {
             origin.onOctantRemoved.Invoke(this);
             _leafData = default;
+            yield return this;
         }
     }
+
+    public IEnumerator ProcessCells()
+    {
+        IEnumerator emptyEnumerator = type switch
+        {
+            OctantType.Empty => EmptyCells(origin, true, true, true), // Completely empty
+            OctantType.Leaf => EmptyCells(origin, false, true, true), // Retain self but have no children
+            OctantType.Full => EmptyCells(origin, false, true, false), // Retain self, empty children but don't delete them
+            OctantType.Branch => EmptyCells(origin, true, false, false), // Empty self but keep children as-is
+        };
+        while (emptyEnumerator.MoveNext()) yield return emptyEnumerator.Current;
+
+        switch (type)
+        {
+            // If octant is meant to contain data, refresh it accordingly
+            case OctantType.Leaf:
+            case OctantType.Full:
+
+                origin.onOctantRefreshed.Invoke(this, ref _leafData);
+                yield return this;
+
+                break;
+
+            // If octant is branch, continue iterating and refreshing children
+            case OctantType.Branch:
+
+                for (int i = 0; i < 8; i++)
+                {
+                    IEnumerator childEnumerator = children[i].ProcessCells();
+                    while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+                }
+
+                break;
+        }
+    }
+    
+    
+
+    
+    IEnumerator<Octant<T>> EmptyIterator(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
+    {
+        if (emptyChildren)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (children[i] == null) continue;
+
+                // For each child present, yield on its EmptyChildren() as well before proceeding
+
+                IEnumerator<Octant<T>> childEnumerator = children[i].EmptyIterator(origin, true, true, deleteChildren);
+                while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+
+                // Should work in theory, but seems not to in practice
+                //yield return children[i].EmptyIterator(origin, true, true, deleteChildren);
+
+                // Clear child octant from its array position
+                if (deleteChildren) children[i] = null;
+            }
+        }
+
+        // Yield if this octant needs to be emptied
+        if (emptySelf && origin.onOctantRemoved != null)
+        {
+            yield return this;
+        }
+    }
+
+
+    public IEnumerator<Octant<T>> CellIterator()
+    {
+        IEnumerator<Octant<T>> emptyIterator = type switch
+        {
+            OctantType.Empty => EmptyIterator(origin, true, true, true), // Completely empty
+            OctantType.Leaf => EmptyIterator(origin, false, true, true), // Retain self but have no children
+            OctantType.Full => EmptyIterator(origin, false, true, false), // Retain self, empty children but don't delete them
+            OctantType.Branch => EmptyIterator(origin, true, false, false), // Empty self but keep children as-is
+        };
+        while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
+
+        switch (type)
+        {
+            case OctantType.Leaf:
+            case OctantType.Full:
+
+                // Yield if this octant needs to be populated
+                yield return this;
+
+                break;
+
+        }
+
+        if (type != OctantType.Branch) yield break;
+
+        // If non-empty children are present, continue iterating through them.
+        for (int i = 0; i < 8; i++)
+        {
+            IEnumerator<Octant<T>> childEnumerator = children[i].CellIterator();
+            while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+        }
+    }
+    
 }
 
 public class Octree<T>
@@ -241,17 +391,29 @@ public class Octree<T>
 
     Octant<T> _base;
 
-    public Octant<T> baseContainer => _base ??= new Octant<T>(this, null, subdivisions, ""/*, 0*/);
+    public Octant<T> baseContainer => _base ??= new Octant<T>(this, null, subdivisions, "");
 
-
-    int maxSize => Mathf.RoundToInt(Mathf.Pow(2, subdivisions));
-    public int maxPossibleUniqueCells => Mathf.RoundToInt(Mathf.Pow(maxSize, 3));
-
+    
+    public int maxPossibleUniqueCells
+    {
+        get
+        {
+            int final = 0;
+            for (int i = 0; i < subdivisions; i++)
+            {
+                final += Mathf.RoundToInt(Mathf.Pow(8, i));
+            }
+            return final;
+        }
+    }
+    
     public void Refresh()
     {
-        baseContainer.Refresh(Vector3Int.zero);
-        if (onOctantRefreshed != null) baseContainer.IterateThrough();
+        Scan();
+        if (onOctantRefreshed != null) baseContainer.ProcessAllCells();
     }
+    public void Scan() => baseContainer.Scan(Vector3Int.zero);
+
     public void DrawGizmos() => baseContainer.DrawGizmos();
 
     public static int CalculateGridSize(int divisions) => Mathf.RoundToInt(Mathf.Pow(2, divisions));
@@ -269,9 +431,7 @@ public class Octree<T>
         // If the string is empty, it returns the base container.
         for (int i = 0; i < key.Length; i++)
         {
-            // Parse the correct index. If parsing fails, return latest valid result.
-            int index = (int)char.GetNumericValue(key[i]);
-            if (index < 0) return latest;
+            if (MiscFunctions.TryParseCharToInt(key[i], out int index) == false) return latest;
 
             // Get the child. If no more children are found, return latest valid result.
             Octant<T> child = latest.children[index];
@@ -284,4 +444,5 @@ public class Octree<T>
         return latest;
     }
     public Octant<T> FindMatchingOctant<T1>(Octant<T1> otherOctant) => GetOctantByKey(otherOctant.key);
+
 }
