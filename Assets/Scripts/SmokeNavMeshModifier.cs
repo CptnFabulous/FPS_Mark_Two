@@ -20,86 +20,12 @@ public class SmokeNavMeshModifier : MonoBehaviour
     float lastTimeRefreshed;
     int totalCellCount;
 
-
-
-    //Dictionary<BoundsInt, bool> cellContainsTerrain = new Dictionary<BoundsInt, bool>();
-
-
     IEnumerator refreshNavMeshVolumes;
     int cellsRefreshed;
 
     NavMeshSurface[] navMeshes => TerrainGrid.current.navMeshes;
 
     void Start()
-    {
-        Setup();
-    }
-    void Update()
-    {
-        // Trigger refreshing on a timer to save performance, since it doesn't need to be done every frame
-        if (Time.time - lastTimeRefreshed > refreshDelay)
-        {
-            // Start refreshing.
-            // Create a new iterator and keep track of the last time we refreshed this.
-            octree.Scan();
-
-            // Figure out how many cells we need to process
-            totalCellCount = 0;
-            IEnumerator iterator = octree.baseContainer.CellIterator(false);
-            while (iterator.MoveNext()) totalCellCount++;
-
-            refreshNavMeshVolumes = octree.baseContainer.CellIterator(true);
-            lastTimeRefreshed = Time.time;
-            cellsRefreshed = 0;
-        }
-
-
-        // Iterate through octree, updating NavMeshModifierVolumes
-        if (refreshNavMeshVolumes != null)
-        {
-            // Calculate how many frames we need to refresh over, and how many cells to refresh per frame
-            float framesToIterateOver = 1;
-            if (Time.timeScale != 0) framesToIterateOver = refreshDelay / Time.deltaTime * refreshTimeMultiplier;
-            int cellsToRefreshPerFrame = Mathf.CeilToInt(totalCellCount / framesToIterateOver);
-
-            Debug.Log($"{totalCellCount}, {framesToIterateOver}, {cellsToRefreshPerFrame}");
-
-            for (int i = 0; i < cellsToRefreshPerFrame; i++)
-            {
-                // Iterate through enumerator up to a count of 'cellsRefreshedPerFrame', or until the enumerator ends.
-                if (refreshNavMeshVolumes.MoveNext())
-                {
-                    cellsRefreshed++;
-                    continue;
-                }
-
-                // Once the enumerator has ended, delete it and update the navmeshes
-                for (int n = 0; n < navMeshes.Length; n++)
-                {
-                    NavMeshSurface mesh = navMeshes[n];
-                    if (mesh == null) continue;
-                    if (mesh.enabled == false) continue;
-                    if (mesh.navMeshData == null) continue;
-                    // Update NavMesh (do not rebuild the entire thing as that chews through processing budget)
-                    mesh.UpdateNavMesh(mesh.navMeshData);
-                }
-
-                refreshNavMeshVolumes = null;
-                Debug.Log(cellsRefreshed);
-
-                break;
-            }
-        }
-    }
-    private void OnDrawGizmosSelected()
-    {
-        if (octree == null) return;
-
-        Gizmos.matrix = octreeToWorldMatrix;
-        octree.DrawGizmos();
-    }
-
-    void Setup()
     {
         // Create octree, and determine how big it needs to be
         octree = new Octree<NavMeshModifierVolume>();
@@ -126,29 +52,92 @@ public class SmokeNavMeshModifier : MonoBehaviour
         transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         transform.localScale = Vector3.one;
     }
-
-    /*
-    void RefreshMesh()
+    void Update()
     {
-        // TO DO: make this code work over multiple frames? Even if it's only done on every occasional frame, it still causes lag spikes.
-        // Since when you split up an octant it just acts like a smaller octant, I should probably be able to set up some code to only refresh and iterate through parts of the octant per frame.
-        // Maybe the refresh function can have ratio floats representing the start and fraction, and based off the volume determine how much it can iterate through
-
-        // Refresh octree (the delegates inside it will do the appropriate checks and assign the necessary volumes)
-        octree.Refresh();
-
-        // Rebuild NavMesh
-        for (int i = 0; i < navMeshes.Length; i++)
+        /*
+        // Trigger refreshing on a timer to save performance, since it doesn't need to be done every frame
+        if (Time.time - lastTimeRefreshed > refreshDelay)
         {
-            NavMeshSurface mesh = navMeshes[i];
-            if (mesh == null) continue;
-            if (mesh.enabled == false) continue;
-            if (mesh.navMeshData == null) continue;
-            // Update NavMesh (do not rebuild the entire thing as that chews through processing budget)
-            mesh.UpdateNavMesh(mesh.navMeshData);
+            // Scan and process all cells
+            octree.Refresh();
+            // Update navmeshes
+            for (int n = 0; n < navMeshes.Length; n++)
+            {
+                NavMeshSurface mesh = navMeshes[n];
+                if (mesh == null) continue;
+                if (mesh.enabled == false) continue;
+                if (mesh.navMeshData == null) continue;
+                // Update NavMesh (do not rebuild the entire thing as that chews through processing budget)
+                mesh.UpdateNavMesh(mesh.navMeshData);
+            }
+            // Reset timer
+            lastTimeRefreshed = Time.time;
+        }
+
+        return;
+        */
+
+        // Trigger refreshing on a timer to save performance, since it doesn't need to be done every frame
+        if (Time.time - lastTimeRefreshed > refreshDelay)
+        {
+            // Figure out which cells 
+            octree.Scan();
+
+            lastTimeRefreshed = Time.time;
+
+            // Figure out how many cells we need to process
+            totalCellCount = 0;
+            IEnumerator iterator = octree.baseContainer.CellIterator(false);
+            while (iterator.MoveNext()) totalCellCount++;
+            // Set the enumerator to start processing cells
+            refreshNavMeshVolumes = octree.baseContainer.CellIterator(true);
+            cellsRefreshed = 0;
+        }
+
+        // Iterate through octree, updating NavMeshModifierVolumes
+        if (refreshNavMeshVolumes != null)
+        {
+            // Calculate how many frames we need to refresh over, and how many cells to refresh per frame
+            float framesToIterateOver = 1;
+            if (Time.timeScale != 0) framesToIterateOver = refreshDelay / Time.deltaTime * refreshTimeMultiplier;
+            int cellsToRefreshPerFrame = Mathf.CeilToInt(totalCellCount / framesToIterateOver);
+
+            //Debug.Log($"{totalCellCount}, {framesToIterateOver}, {cellsToRefreshPerFrame}");
+
+            for (int i = 0; i < cellsToRefreshPerFrame; i++)
+            {
+                // Iterate through enumerator up to a count of 'cellsRefreshedPerFrame', or until the enumerator ends.
+                if (refreshNavMeshVolumes.MoveNext())
+                {
+                    cellsRefreshed++;
+                    continue;
+                }
+
+                // All cells have been processed! Update the navmeshes
+                //Debug.Log(cellsRefreshed);
+                for (int n = 0; n < navMeshes.Length; n++)
+                {
+                    NavMeshSurface mesh = navMeshes[n];
+                    if (mesh == null) continue;
+                    if (mesh.enabled == false) continue;
+                    if (mesh.navMeshData == null) continue;
+                    // Update NavMesh instead of rebuilding it, the latter chews through processing budget
+                    mesh.UpdateNavMesh(mesh.navMeshData);
+                }
+
+                // Cancel loop and delete enumerator, to prepare for the next time it needs to be refreshed
+                refreshNavMeshVolumes = null;
+                break;
+            }
         }
     }
-    */
+    private void OnDrawGizmosSelected()
+    {
+        if (octree == null) return;
+
+        Gizmos.matrix = octreeToWorldMatrix;
+        octree.DrawGizmos();
+    }
 
     bool DoesOctantContainSmoke(BoundsInt bounds)
     {
