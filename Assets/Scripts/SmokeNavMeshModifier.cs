@@ -44,10 +44,10 @@ public class SmokeNavMeshModifier : MonoBehaviour
 
             // Figure out how many cells we need to process
             totalCellCount = 0;
-            IEnumerator iterator = octree.baseContainer.CellIterator();
+            IEnumerator iterator = octree.baseContainer.CellIterator(false);
             while (iterator.MoveNext()) totalCellCount++;
 
-            refreshNavMeshVolumes = octree.baseContainer.ProcessCells();
+            refreshNavMeshVolumes = octree.baseContainer.CellIterator(true);
             lastTimeRefreshed = Time.time;
             cellsRefreshed = 0;
         }

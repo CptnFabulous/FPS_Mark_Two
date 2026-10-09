@@ -11,22 +11,20 @@ public enum OctantType
     Full // No empty space in it or any children
 }
 
-public class Octant<T>// : IEnumerable<Octant<T>>
+public class Octant<T>
 {
-    public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, string key/*, int order*/)
+    public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, string key)
     {
         this.origin = origin;
         this.parent = parent;
         this.subdivisions = subdivisions;
         this.key = key;
-        //this.order = order;
     }
 
     public Octree<T> origin { get; private set; }
     public Octant<T> parent { get; private set; }
     public int subdivisions { get; private set; }
     public string key { get; private set; }
-    //public int order { get; private set; }
     public BoundsInt bounds { get; private set; }
     public Vector3Int min => bounds.min;
     public Vector3Int max => bounds.max;
@@ -38,8 +36,10 @@ public class Octant<T>// : IEnumerable<Octant<T>>
     T _leafData;
 
     public int layer => origin.subdivisions - subdivisions;
+    public System.Func<BoundsInt, bool> meetsCriteria => origin.checkOctant;
+    public Octree<T>.LeafDataAssignment onOctantRefreshed => origin.onOctantRefreshed;
+    public System.Action<Octant<T>> onOctantRemoved => origin.onOctantRemoved;
 
-    //public bool hasChildren => type == OctantType.Branch || type == OctantType.Full;
 
     /// <summary>
     /// Check if octant meeting the criteria actually matters. If not, we can treat it as occupied even if it isn't.
@@ -59,7 +59,7 @@ public class Octant<T>// : IEnumerable<Octant<T>>
         newBounds.max = boundsMin + dimensions;
         bounds = newBounds;
 
-        bool notEmpty = origin.checkOctant.Invoke(bounds);
+        bool notEmpty = meetsCriteria.Invoke(bounds);
 
         // If no more children can be found, record leaf data and return
         if (!notEmpty)
@@ -123,85 +123,8 @@ public class Octant<T>// : IEnumerable<Octant<T>>
 
     public void ProcessAllCells()
     {
-        IEnumerator enumerator = ProcessCells();
+        IEnumerator enumerator = CellIterator(true);
         while (enumerator.MoveNext()) continue;
-        return;
-        
-
-        // TO DO: the following code doesn't work! Not all the cells are deleted properly.
-        // But if I can fix that it should be perfect.
-
-        /*
-        IEnumerator<Octant<T>> cellIterator = CellIterator();
-        while (cellIterator.MoveNext())
-        {
-            Octant<T> current = cellIterator.Current;
-            switch (current.type)
-            {
-                case OctantType.Empty:
-                case OctantType.Branch:
-
-                    origin.onOctantRemoved.Invoke(current);
-                    current._leafData = default;
-
-                    break;
-
-                case OctantType.Leaf:
-                case OctantType.Full:
-
-                    origin.onOctantRefreshed.Invoke(current, ref current._leafData);
-
-                    break;
-            }
-
-        }
-        */
-
-
-        /*
-        // Determine different outcomes for different types
-        switch (type)
-        {
-            case OctantType.Empty:
-
-                // Should be completely empty, scrub everything.
-                // Empty self
-                // Delete children
-                Empty(origin, true, true, true);
-
-                break;
-
-            case OctantType.Leaf:
-
-                // Should have data in self but not in children
-                // Populate self
-                // Delete children
-                Empty(origin, false, true, true);
-                origin.onOctantRefreshed.Invoke(this, ref _leafData);
-
-                break;
-
-            case OctantType.Full:
-
-                // Needs to have data for itself.
-                // Children should not have data (because it's covered by this), but still need to be present to prove this octant should be full.
-                // Populate self
-                // Empty children (but do not delete, the child data is necessary to prove this one is full)
-                Empty(origin, false, true, false);
-                origin.onOctantRefreshed.Invoke(this, ref _leafData);
-
-                break;
-
-            case OctantType.Branch:
-
-                // Empty self
-                // Iterate through children
-                Empty(origin, true, false, false);
-                for (int i = 0; i < 8; i++) children[i].IterateThrough();
-
-                break;
-        }
-        */
     }
     public void DrawGizmos()
     {
@@ -240,82 +163,7 @@ public class Octant<T>// : IEnumerable<Octant<T>>
         }
     }
 
-    // The latest version that actually works
-    
-    void Empty(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
-    {
-        IEnumerator emptyEnumerator = EmptyCells(emptySelf, emptyChildren, deleteChildren);
-        while (emptyEnumerator.MoveNext()) continue;
-    }
-
-    IEnumerator EmptyCells(bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
-    {
-        if (emptyChildren)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                if (children[i] == null) continue;
-
-                // For each child present, yield on its EmptyChildren() as well before proceeding
-                
-                IEnumerator childEnumerator = children[i].EmptyCells(true, true, deleteChildren);
-                while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
-                // Should work in theory, but seems not to in practice
-                //yield return children[i].EmptyEnumerator(true, true, deleteChildren);
-
-                // Clear child octant from its array position
-                if (deleteChildren) children[i] = null;
-            }
-        }
-
-        // Clear data from self (if clearing function has been assigned)
-        if (emptySelf && origin.onOctantRemoved != null)
-        {
-            origin.onOctantRemoved.Invoke(this);
-            _leafData = default;
-            yield return this;
-        }
-    }
-
-    public IEnumerator ProcessCells()
-    {
-        IEnumerator emptyEnumerator = type switch
-        {
-            OctantType.Empty => EmptyCells(true, true, true), // Completely empty
-            OctantType.Leaf => EmptyCells(false, true, true), // Retain self but have no children
-            OctantType.Full => EmptyCells(false, true, false), // Retain self, empty children but don't delete them
-            OctantType.Branch => EmptyCells(true, false, false), // Empty self but keep children as-is
-        };
-        while (emptyEnumerator.MoveNext()) yield return emptyEnumerator.Current;
-
-        switch (type)
-        {
-            // If octant is meant to contain data, refresh it accordingly
-            case OctantType.Leaf:
-            case OctantType.Full:
-
-                origin.onOctantRefreshed.Invoke(this, ref _leafData);
-                yield return this;
-
-                break;
-
-            // If octant is branch, continue iterating and refreshing children
-            case OctantType.Branch:
-
-                for (int i = 0; i < 8; i++)
-                {
-                    IEnumerator childEnumerator = children[i].ProcessCells();
-                    while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
-                }
-
-                break;
-        }
-    }
-    
-    
-
-    
-    IEnumerator<Octant<T>> EmptyIterator(bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
+    IEnumerator<Octant<T>> EmptyIterator(bool processCells, bool emptySelf, bool emptyChildren, bool deleteChildren)
     {
         if (emptyChildren)
         {
@@ -325,11 +173,10 @@ public class Octant<T>// : IEnumerable<Octant<T>>
 
                 // For each child present, yield on its EmptyChildren() as well before proceeding
 
-                IEnumerator<Octant<T>> childEnumerator = children[i].EmptyIterator(true, true, deleteChildren);
+                IEnumerator<Octant<T>> childEnumerator = children[i].EmptyIterator(processCells, true, true, deleteChildren);
                 while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
-
                 // Should work in theory, but seems not to in practice
-                //yield return children[i].EmptyIterator(origin, true, true, deleteChildren);
+                //yield return children[i].EmptyIterator(processCells, true, true, deleteChildren);
 
                 // Clear child octant from its array position
                 if (deleteChildren) children[i] = null;
@@ -337,30 +184,56 @@ public class Octant<T>// : IEnumerable<Octant<T>>
         }
 
         // Yield if this octant needs to be emptied
-        if (emptySelf && origin.onOctantRemoved != null)
+        if (emptySelf && onOctantRemoved != null)
         {
+            if (processCells)
+            {
+                onOctantRemoved.Invoke(this);
+                _leafData = default;
+            }
             yield return this;
         }
     }
 
 
-    public IEnumerator<Octant<T>> CellIterator()
+    public IEnumerator<Octant<T>> CellIterator(bool processCells)
     {
         IEnumerator<Octant<T>> emptyIterator = type switch
         {
-            OctantType.Empty => EmptyIterator(true, true, true), // Completely empty
-            OctantType.Leaf => EmptyIterator(false, true, true), // Retain self but have no children
-            OctantType.Full => EmptyIterator(false, true, false), // Retain self, empty children but don't delete them
-            OctantType.Branch => EmptyIterator(true, false, false), // Empty self but keep children as-is
+            OctantType.Empty => EmptyIterator(processCells, true, true, true), // Completely empty
+            OctantType.Leaf => EmptyIterator(processCells, false, true, true), // Retain self but have no children
+            OctantType.Full => EmptyIterator(processCells, false, true, false), // Retain self, empty children but don't delete them
+            OctantType.Branch => EmptyIterator(processCells, true, false, false), // Empty self but keep children as-is
         };
         while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
 
+
+
+        // TO DO: I need to modify the events to run for all kinds of states.
+        // E.g. once I make a 3D pathfinding system, I want to use the empty octants as the nodes, not the full ones.
+        // Or maybe I should change 'empty' and 'full' to something like 'invalid' and 'valid'?
+        // Check if a space is empty.
+        // If space is not empty, break it down further to check which parts are empty and which aren't.
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         switch (type)
         {
             case OctantType.Leaf:
             case OctantType.Full:
 
                 // Yield if this octant needs to be populated
+                if (processCells && onOctantRefreshed != null)
+                {
+                    onOctantRefreshed.Invoke(this, ref _leafData);
+                }
                 yield return this;
 
                 break;
@@ -372,7 +245,7 @@ public class Octant<T>// : IEnumerable<Octant<T>>
         // If non-empty children are present, continue iterating through them.
         for (int i = 0; i < 8; i++)
         {
-            IEnumerator<Octant<T>> childEnumerator = children[i].CellIterator();
+            IEnumerator<Octant<T>> childEnumerator = children[i].CellIterator(processCells);
             while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
         }
     }
