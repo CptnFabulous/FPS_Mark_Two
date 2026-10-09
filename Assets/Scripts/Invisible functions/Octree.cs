@@ -244,11 +244,11 @@ public class Octant<T>// : IEnumerable<Octant<T>>
     
     void Empty(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
     {
-        IEnumerator emptyEnumerator = EmptyCells(origin, emptySelf, emptyChildren, deleteChildren);
+        IEnumerator emptyEnumerator = EmptyCells(emptySelf, emptyChildren, deleteChildren);
         while (emptyEnumerator.MoveNext()) continue;
     }
 
-    IEnumerator EmptyCells(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
+    IEnumerator EmptyCells(bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
     {
         if (emptyChildren)
         {
@@ -258,10 +258,10 @@ public class Octant<T>// : IEnumerable<Octant<T>>
 
                 // For each child present, yield on its EmptyChildren() as well before proceeding
                 
-                IEnumerator childEnumerator = children[i].EmptyCells(origin, true, true, deleteChildren);
+                IEnumerator childEnumerator = children[i].EmptyCells(true, true, deleteChildren);
                 while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
                 // Should work in theory, but seems not to in practice
-                //yield return children[i].EmptyEnumerator(origin, true, true, deleteChildren);
+                //yield return children[i].EmptyEnumerator(true, true, deleteChildren);
 
                 // Clear child octant from its array position
                 if (deleteChildren) children[i] = null;
@@ -281,10 +281,10 @@ public class Octant<T>// : IEnumerable<Octant<T>>
     {
         IEnumerator emptyEnumerator = type switch
         {
-            OctantType.Empty => EmptyCells(origin, true, true, true), // Completely empty
-            OctantType.Leaf => EmptyCells(origin, false, true, true), // Retain self but have no children
-            OctantType.Full => EmptyCells(origin, false, true, false), // Retain self, empty children but don't delete them
-            OctantType.Branch => EmptyCells(origin, true, false, false), // Empty self but keep children as-is
+            OctantType.Empty => EmptyCells(true, true, true), // Completely empty
+            OctantType.Leaf => EmptyCells(false, true, true), // Retain self but have no children
+            OctantType.Full => EmptyCells(false, true, false), // Retain self, empty children but don't delete them
+            OctantType.Branch => EmptyCells(true, false, false), // Empty self but keep children as-is
         };
         while (emptyEnumerator.MoveNext()) yield return emptyEnumerator.Current;
 
@@ -315,7 +315,7 @@ public class Octant<T>// : IEnumerable<Octant<T>>
     
 
     
-    IEnumerator<Octant<T>> EmptyIterator(Octree<T> origin, bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
+    IEnumerator<Octant<T>> EmptyIterator(bool emptySelf = true, bool emptyChildren = true, bool deleteChildren = true)
     {
         if (emptyChildren)
         {
@@ -325,7 +325,7 @@ public class Octant<T>// : IEnumerable<Octant<T>>
 
                 // For each child present, yield on its EmptyChildren() as well before proceeding
 
-                IEnumerator<Octant<T>> childEnumerator = children[i].EmptyIterator(origin, true, true, deleteChildren);
+                IEnumerator<Octant<T>> childEnumerator = children[i].EmptyIterator(true, true, deleteChildren);
                 while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
 
                 // Should work in theory, but seems not to in practice
@@ -348,10 +348,10 @@ public class Octant<T>// : IEnumerable<Octant<T>>
     {
         IEnumerator<Octant<T>> emptyIterator = type switch
         {
-            OctantType.Empty => EmptyIterator(origin, true, true, true), // Completely empty
-            OctantType.Leaf => EmptyIterator(origin, false, true, true), // Retain self but have no children
-            OctantType.Full => EmptyIterator(origin, false, true, false), // Retain self, empty children but don't delete them
-            OctantType.Branch => EmptyIterator(origin, true, false, false), // Empty self but keep children as-is
+            OctantType.Empty => EmptyIterator(true, true, true), // Completely empty
+            OctantType.Leaf => EmptyIterator(false, true, true), // Retain self but have no children
+            OctantType.Full => EmptyIterator(false, true, false), // Retain self, empty children but don't delete them
+            OctantType.Branch => EmptyIterator(true, false, false), // Empty self but keep children as-is
         };
         while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
 
