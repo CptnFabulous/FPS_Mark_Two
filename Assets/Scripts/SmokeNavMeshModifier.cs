@@ -11,6 +11,7 @@ public class SmokeNavMeshModifier : MonoBehaviour
     [SerializeField] LayerMask terrainMask = ~0;
     [SerializeField] NavMeshModifierVolume volumePrefab;
     [SerializeField] float refreshDelay = 0.5f;
+    [SerializeField] float refreshTimeMultiplier = 1f;
     [SerializeField] float cellWidth = 1;
 
     Octree<NavMeshModifierVolume> octree;
@@ -58,7 +59,7 @@ public class SmokeNavMeshModifier : MonoBehaviour
         {
             // Calculate how many frames we need to refresh over, and how many cells to refresh per frame
             float framesToIterateOver = 1;
-            if (Time.timeScale != 0) framesToIterateOver = refreshDelay / Time.deltaTime;
+            if (Time.timeScale != 0) framesToIterateOver = refreshDelay / Time.deltaTime * refreshTimeMultiplier;
             int cellsToRefreshPerFrame = Mathf.CeilToInt(totalCellCount / framesToIterateOver);
 
             Debug.Log($"{totalCellCount}, {framesToIterateOver}, {cellsToRefreshPerFrame}");
