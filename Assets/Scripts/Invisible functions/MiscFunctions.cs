@@ -87,4 +87,10 @@ public readonly struct MiscFunctions
         return -1;
     }
 
+    public static bool TryParseCharToInt(char c, out int value)
+    {
+        value = (int)char.GetNumericValue(c);
+        //int.TryParse(c, out index);
+        return value >= 0;
+    }
 }
