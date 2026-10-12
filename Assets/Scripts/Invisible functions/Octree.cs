@@ -5,10 +5,10 @@ using UnityEngine;
 
 public enum OctantType
 {
-    Branch, // Contains a mixture of empty and full space
-    Empty, // Completely empty, nothing to check further
-    Leaf, // Not empty but cannot be subdivided further
-    Full // No empty space in it or any children
+    Branch, // Contains a mixture of valid and invalid spaces
+    Invalid, // Nothing in this space meets criteria
+    Leaf, // Meets criteria, but cannot be subdivided further
+    FullyValid // All children count for criteria
 }
 
 public class Octant<T>
@@ -30,15 +30,15 @@ public class Octant<T>
     public Vector3Int max => bounds.max;
 
     public Octant<T>[] children { get; private set; } = new Octant<T>[8];
-    public OctantType type { get; private set; } = OctantType.Empty;
+    public OctantType type { get; private set; } = OctantType.Invalid;
     public T leafData => _leafData;
 
     T _leafData;
 
     public int layer => origin.subdivisions - subdivisions;
     public System.Func<BoundsInt, bool> meetsCriteria => origin.checkOctant;
-    public Octree<T>.LeafDataAssignment onOctantRefreshed => origin.onOctantRefreshed;
-    public System.Action<Octant<T>> onOctantRemoved => origin.onOctantRemoved;
+    public Octree<T>.LeafDataAssignment refreshOctant => origin.refreshOctant;
+    public Octree<T>.LeafDataAssignment clearOctant => origin.clearOctant;
 
 
     /// <summary>
@@ -64,7 +64,7 @@ public class Octant<T>
         // If no more children can be found, record leaf data and return
         if (!notEmpty)
         {
-            type = OctantType.Empty;
+            type = OctantType.Invalid;
             return;
         }
 
@@ -102,7 +102,7 @@ public class Octant<T>
             // Check if this octant can be counted as part of a 'full' parent octant
             bool childIsFull = false;
             childIsFull = childIsFull || children[i].type == OctantType.Leaf;
-            childIsFull = childIsFull || children[i].type == OctantType.Full;
+            childIsFull = childIsFull || children[i].type == OctantType.FullyValid;
             childIsFull = childIsFull || children[i].DoesCriteriaMatterWithThisOctant() == false;
 
             // If a single child is not full, then that means this octant is not full.
@@ -112,7 +112,7 @@ public class Octant<T>
         if (isFull)
         {
             // Mark as full, because all children are full
-            type = OctantType.Full;
+            type = OctantType.FullyValid;
         }
         else
         {
@@ -123,8 +123,35 @@ public class Octant<T>
 
     public void ProcessAllCells()
     {
-        IEnumerator enumerator = CellIterator(true);
+        IEnumerator<Octant<T>> enumerator = CellIterator(true);
         while (enumerator.MoveNext()) continue;
+        enumerator.Dispose();
+        
+
+        /*
+        Debug.Log($"Synchronous refresh on frame {Time.frameCount}");
+
+        int expectedCount = 0;
+        IEnumerator<Octant<T>> before = CellIterator(false);
+        while (before.MoveNext()) expectedCount++;
+        before.Dispose();
+        Debug.Log(expectedCount);
+        
+
+        int actualCount = 0;
+        IEnumerator<Octant<T>> enumerator = CellIterator(true);
+        while (enumerator.MoveNext()) actualCount++;
+        enumerator.Dispose();
+        Debug.Log(actualCount);
+
+        
+        int afterCount = 0;
+        IEnumerator<Octant<T>> after = CellIterator(true);
+        while (after.MoveNext()) afterCount++;
+        after.Dispose();
+        Debug.Log(afterCount);
+        */
+        
     }
     public void DrawGizmos()
     {
@@ -136,7 +163,7 @@ public class Octant<T>
         // Draw different gizmos based on each cell type
         switch (type)
         {
-            case OctantType.Empty:
+            case OctantType.Invalid:
                 // Colour based on size
                 float colourLerp = 1 - ((float)subdivisions / (float)origin.subdivisions);
                 Gizmos.color = Color.Lerp(Color.white, Color.black, colourLerp);
@@ -145,15 +172,15 @@ public class Octant<T>
                 break;
 
             case OctantType.Leaf:
-                // Colour the cell differently to show it's the end of the subdivision
+                // Colour the cell differently and draw it full rather than wireframe, to show it's the end of the subdivision
                 Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(centre, size);
+                Gizmos.DrawCube(centre, size);
                 break;
 
-            case OctantType.Full:
-                // Colour the cell differently to show it's the end of the subdivision
+            case OctantType.FullyValid:
+                // Colour the cell differently and draw it full rather than wireframe, to show it's the end of the subdivision
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(centre, size);
+                Gizmos.DrawCube(centre, size);
                 break;
 
             default:
@@ -163,81 +190,68 @@ public class Octant<T>
         }
     }
 
-    IEnumerator<Octant<T>> EmptyIterator(bool processCells, bool emptySelf, bool emptyChildren, bool deleteChildren)
+    public IEnumerator<Octant<T>> EmptyIterator(bool processCells, bool emptySelf, bool emptyChildren, bool deleteChildren)
     {
-        if (emptyChildren)
+        //if (processCells)  Debug.Log($"Should empty: {type}, {emptySelf}, {emptyChildren}, {deleteChildren}");
+        if (emptyChildren || deleteChildren)
         {
             for (int i = 0; i < 8; i++)
             {
                 if (children[i] == null) continue;
 
-                // For each child present, yield on its EmptyChildren() as well before proceeding
-
+                // For each child present, yield on its EmptyIterator() as well before proceeding.
+                // If this octant needs its children emptied, obviously all their children and so on need to be emptied as well.
                 IEnumerator<Octant<T>> childEnumerator = children[i].EmptyIterator(processCells, true, true, deleteChildren);
                 while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
-                // Should work in theory, but seems not to in practice
-                //yield return children[i].EmptyIterator(processCells, true, true, deleteChildren);
+                childEnumerator.Dispose();
 
                 // Clear child octant from its array position
-                if (deleteChildren) children[i] = null;
+                if (processCells && deleteChildren) children[i] = null;
             }
         }
 
         // Yield if this octant needs to be emptied
-        if (emptySelf && onOctantRemoved != null)
+        if (emptySelf)
         {
+            yield return this;
             if (processCells)
             {
-                onOctantRemoved.Invoke(this);
-                _leafData = default;
+                _leafData = clearOctant.Invoke(this);
             }
-            yield return this;
         }
     }
 
 
     public IEnumerator<Octant<T>> CellIterator(bool processCells)
     {
+        /*
         IEnumerator<Octant<T>> emptyIterator = type switch
         {
-            OctantType.Empty => EmptyIterator(processCells, true, true, true), // Completely empty
+            //OctantType.Invalid => 
             OctantType.Leaf => EmptyIterator(processCells, false, true, true), // Retain self but have no children
-            OctantType.Full => EmptyIterator(processCells, false, true, false), // Retain self, empty children but don't delete them
+            OctantType.FullyValid => EmptyIterator(processCells, false, true, false), // Retain self, empty children but don't delete them
             OctantType.Branch => EmptyIterator(processCells, true, false, false), // Empty self but keep children as-is
+            _ => EmptyIterator(processCells, true, true, true), // If invalid (or anything else), completely empty
         };
         while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
-
-
-
-        // TO DO: I need to modify the events to run for all kinds of states.
-        // E.g. once I make a 3D pathfinding system, I want to use the empty octants as the nodes, not the full ones.
-        // Or maybe I should change 'empty' and 'full' to something like 'invalid' and 'valid'?
-        // Check if a space is empty.
-        // If space is not empty, break it down further to check which parts are empty and which aren't.
+        emptyIterator.Dispose();
+        */
         
+        bool selfMustBeEmpty = type == OctantType.Invalid || type == OctantType.Branch;
+        bool childrenMustBeEmpty = type != OctantType.Branch;
+        bool deleteChildren = type == OctantType.Invalid || type == OctantType.Leaf;
+        IEnumerator<Octant<T>> emptyIterator = EmptyIterator(processCells, selfMustBeEmpty, childrenMustBeEmpty, deleteChildren);
+        while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
+        emptyIterator.Dispose();
         
-        
-        
-        
-        
-        
-        
-        
-        
-        switch (type)
+        // Yield if this octant needs to be populated (leaf or fully valid)
+        if (!selfMustBeEmpty)
         {
-            case OctantType.Leaf:
-            case OctantType.Full:
-
-                // Yield if this octant needs to be populated
-                if (processCells && onOctantRefreshed != null)
-                {
-                    onOctantRefreshed.Invoke(this, ref _leafData);
-                }
-                yield return this;
-
-                break;
-
+            yield return this;
+            if (processCells)
+            {
+                _leafData = refreshOctant.Invoke(this);
+            }
         }
 
         if (type != OctantType.Branch) yield break;
@@ -247,6 +261,7 @@ public class Octant<T>
         {
             IEnumerator<Octant<T>> childEnumerator = children[i].CellIterator(processCells);
             while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+            childEnumerator.Dispose();
         }
     }
     
@@ -254,17 +269,37 @@ public class Octant<T>
 
 public class Octree<T>
 {
-    public delegate void LeafDataAssignment(Octant<T> octant, ref T data);
+    public delegate T LeafDataAssignment(Octant<T> octant);
     
     public int subdivisions;
     public System.Func<BoundsInt, bool> checkOctant;
     public System.Func<Octant<T>, bool> doesCheckMatter;
-    public LeafDataAssignment onOctantRefreshed;
-    public System.Action<Octant<T>> onOctantRemoved;
+    public LeafDataAssignment refreshOctant;
+    public LeafDataAssignment clearOctant;
 
     Octant<T> _base;
 
-    public Octant<T> baseContainer => _base ??= new Octant<T>(this, null, subdivisions, "");
+    public Octant<T> baseContainer
+    {
+        get
+        {
+            if (_base == null || subdivisions != _base.subdivisions)
+            {
+                if (_base != null)
+                {
+                    // If _base exists but has wrong subdivisions, fully clear it
+                    IEnumerator<Octant<T>> clearEntirely = _base.EmptyIterator(true, true, true, true);
+                    while (clearEntirely.MoveNext()) continue;
+                    clearEntirely.Dispose();
+                }
+
+                // Create new base octant with correct values
+                _base = new Octant<T>(this, null, subdivisions, "");
+            }
+
+            return _base;
+        }
+    }
 
     
     public int maxPossibleUniqueCells
@@ -283,7 +318,7 @@ public class Octree<T>
     public void Refresh()
     {
         Scan();
-        if (onOctantRefreshed != null) baseContainer.ProcessAllCells();
+        if (refreshOctant != null) baseContainer.ProcessAllCells();
     }
     public void Scan() => baseContainer.Scan(Vector3Int.zero);
 

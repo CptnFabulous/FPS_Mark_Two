@@ -112,12 +112,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03d397d0fd7d2943a20719d99c1f52b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navMeshes:
-  - {fileID: 0}
-  - {fileID: 0}
-  smokeMask:
+  smokeMask: {fileID: 11400000, guid: 10c1d3eaaed90464d8475c5b0e37e4e0, type: 2}
+  terrainMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 1152
   volumePrefab: {fileID: 5827683196755325266}
-  refreshTimer: 1
+  refreshDelay: 0.5
+  refreshTimeMultiplier: 1
   cellWidth: 1

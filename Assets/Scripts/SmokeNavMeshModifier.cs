@@ -11,7 +11,7 @@ public class SmokeNavMeshModifier : MonoBehaviour
     [SerializeField] LayerMask terrainMask = ~0;
     [SerializeField] NavMeshModifierVolume volumePrefab;
     [SerializeField] float refreshDelay = 0.5f;
-    [SerializeField] float refreshTimeMultiplier = 1f;
+    [SerializeField, Range(0, 1)] float refreshTimeMultiplier = 1f;
     [SerializeField] float cellWidth = 1;
 
     Octree<NavMeshModifierVolume> octree;
@@ -20,7 +20,7 @@ public class SmokeNavMeshModifier : MonoBehaviour
     float lastTimeRefreshed;
     int totalCellCount;
 
-    IEnumerator refreshNavMeshVolumes;
+    IEnumerator<Octant<NavMeshModifierVolume>> refreshNavMeshVolumes;
     int cellsRefreshed;
 
     NavMeshSurface[] navMeshes => TerrainGrid.current.navMeshes;
@@ -41,10 +41,10 @@ public class SmokeNavMeshModifier : MonoBehaviour
         // Assign delegates to octree
         octree.checkOctant = DoesOctantContainSmoke; // Use box checks to look for smoke colliders
         octree.doesCheckMatter = DoesOctantContainLevelGeometry;
-        octree.onOctantRefreshed = CheckToAssignVolume; // Assign NavMeshModifierVolumes for each leaf or full octant
-        octree.onOctantRemoved = RemoveVolume; // Clear unwanted volumes
+        octree.refreshOctant = CheckToAssignVolume; // Assign NavMeshModifierVolumes for each leaf or full octant
+        octree.clearOctant = RemoveVolume; // Clear unwanted volumes
 
-        // TO DO: create an object pool with this transform as the pool parent.
+        // Create an object pool with this transform as the pool parent.
         ObjectPool.TryCreateObjectPool(volumePrefab);
         volumePrefab.gameObject.SetActive(false);
 
@@ -76,10 +76,17 @@ public class SmokeNavMeshModifier : MonoBehaviour
 
         return;
         */
+        
 
         // Trigger refreshing on a timer to save performance, since it doesn't need to be done every frame
         if (Time.time - lastTimeRefreshed > refreshDelay)
         {
+            /*
+            if (cellsRefreshed < totalCellCount)
+            {
+                Debug.Log($"Cells refreshed = {cellsRefreshed}/{totalCellCount}, time taken = {Time.time - lastTimeRefreshed}/{refreshDelay}");
+            }
+            */
             // Figure out which cells 
             octree.Scan();
 
@@ -87,48 +94,58 @@ public class SmokeNavMeshModifier : MonoBehaviour
 
             // Figure out how many cells we need to process
             totalCellCount = 0;
-            IEnumerator iterator = octree.baseContainer.CellIterator(false);
+            IEnumerator<Octant<NavMeshModifierVolume>> iterator = octree.baseContainer.CellIterator(false);
             while (iterator.MoveNext()) totalCellCount++;
+            iterator.Dispose();
             // Set the enumerator to start processing cells
             refreshNavMeshVolumes = octree.baseContainer.CellIterator(true);
             cellsRefreshed = 0;
         }
 
         // Iterate through octree, updating NavMeshModifierVolumes
-        if (refreshNavMeshVolumes != null)
+        if (refreshNavMeshVolumes == null) return;
+
+        // Calculate how many frames we need to refresh over, and how many cells to refresh per frame
+        // If timescale or time multiplier is set to zero, just refresh everything at once.
+        int cellsToRefreshPerFrame = int.MaxValue;
+        if (refreshTimeMultiplier > 0 && Time.timeScale > 0)
         {
-            // Calculate how many frames we need to refresh over, and how many cells to refresh per frame
-            float framesToIterateOver = 1;
-            if (Time.timeScale != 0) framesToIterateOver = refreshDelay / Time.deltaTime * refreshTimeMultiplier;
-            int cellsToRefreshPerFrame = Mathf.CeilToInt(totalCellCount / framesToIterateOver);
+            // Err on the higher side, we'd rather get them done too early than too late.
+            float framesToIterateOver = refreshDelay / Time.deltaTime * refreshTimeMultiplier;
+            cellsToRefreshPerFrame = Mathf.CeilToInt(totalCellCount / framesToIterateOver);
+        }
 
-            //Debug.Log($"{totalCellCount}, {framesToIterateOver}, {cellsToRefreshPerFrame}");
+        //Debug.Log($"{totalCellCount}, {framesToIterateOver}, {cellsToRefreshPerFrame}");
 
-            for (int i = 0; i < cellsToRefreshPerFrame; i++)
+        for (int i = 0; i < cellsToRefreshPerFrame; i++)
+        {
+            // Iterate through enumerator up to a count of 'cellsRefreshedPerFrame', or until the enumerator ends.
+            if (refreshNavMeshVolumes.MoveNext())
             {
-                // Iterate through enumerator up to a count of 'cellsRefreshedPerFrame', or until the enumerator ends.
-                if (refreshNavMeshVolumes.MoveNext())
-                {
-                    cellsRefreshed++;
-                    continue;
-                }
-
-                // All cells have been processed! Update the navmeshes
-                //Debug.Log(cellsRefreshed);
-                for (int n = 0; n < navMeshes.Length; n++)
-                {
-                    NavMeshSurface mesh = navMeshes[n];
-                    if (mesh == null) continue;
-                    if (mesh.enabled == false) continue;
-                    if (mesh.navMeshData == null) continue;
-                    // Update NavMesh instead of rebuilding it, the latter chews through processing budget
-                    mesh.UpdateNavMesh(mesh.navMeshData);
-                }
-
-                // Cancel loop and delete enumerator, to prepare for the next time it needs to be refreshed
-                refreshNavMeshVolumes = null;
-                break;
+                //Octant<NavMeshModifierVolume> octant = refreshNavMeshVolumes.Current;
+                //Debug.Log($"{octant.type}, {octant.leafData != null}");
+                cellsRefreshed++;
+                continue;
             }
+
+            // All cells have been processed! Update the navmeshes
+            Debug.Log($"Cells refreshed = {cellsRefreshed}/{totalCellCount}" +
+                $"\nTime taken = {Time.time - lastTimeRefreshed}/{refreshDelay}" +
+                $"\nRough refreshes per frame {cellsToRefreshPerFrame}");
+            for (int n = 0; n < navMeshes.Length; n++)
+            {
+                NavMeshSurface mesh = navMeshes[n];
+                if (mesh == null) continue;
+                if (mesh.enabled == false) continue;
+                if (mesh.navMeshData == null) continue;
+                // Update NavMesh instead of rebuilding it, the latter chews through processing budget
+                mesh.UpdateNavMesh(mesh.navMeshData);
+            }
+
+            // Cancel loop and delete enumerator, to prepare for the next time it needs to be refreshed
+            refreshNavMeshVolumes.Dispose();
+            refreshNavMeshVolumes = null;
+            break;
         }
     }
     private void OnDrawGizmosSelected()
@@ -159,25 +176,51 @@ public class SmokeNavMeshModifier : MonoBehaviour
 
         Octant<bool> matchingOctant = terrainOctree.FindMatchingOctant(octant);
         if (matchingOctant == null) return false;
-        return matchingOctant.type != OctantType.Empty;
+        return matchingOctant.type != OctantType.Invalid;
     }
-    void CheckToAssignVolume(Octant<NavMeshModifierVolume> octant, ref NavMeshModifierVolume volume)
+    NavMeshModifierVolume CheckToAssignVolume(Octant<NavMeshModifierVolume> octant)
     {
         // Don't have a volume if space is empty, or needs to be broken down further
-        if (octant.type == OctantType.Branch) return;
-        if (octant.type == OctantType.Empty) return;
+        if (octant.type == OctantType.Branch) return RemoveVolume(octant);
+        if (octant.type == OctantType.Invalid) return RemoveVolume(octant);
+
+        NavMeshModifierVolume volume = octant.leafData;
 
         // Ensure a volume is present (instantiate if necessary, but do not duplicate)
-        if (volume == null) volume = ObjectPool.RequestObject(volumePrefab);
+        if (volume == null)
+        {
+            volume = ObjectPool.RequestObject(volumePrefab);
+            volume.transform.parent = transform;
+            volume.name = $"New volume";
+        }
+        else
+        {
+            volume.name = $"Existing volume";
+        }
+
+        volume.name += $": {octant.key}, {octant.type}";
+
 
         // Set volume position and size
         GetWorldExtents(octant.min, octant.max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
         volume.transform.localPosition = centre;
         volume.size = 2 * halfExtents;
+
+        return volume;
     }
-    void RemoveVolume(Octant<NavMeshModifierVolume> octant)
+    NavMeshModifierVolume RemoveVolume(Octant<NavMeshModifierVolume> octant)
     {
-        ObjectPool.DismissObject(octant.leafData);
+        
+
+        NavMeshModifierVolume volume = octant.leafData;
+
+        if (volume != null)
+        {
+            volume.name = $"Deleted volume: {octant.key}, {octant.type}";
+        }
+
+        ObjectPool.DismissObject(volume);
+        return null;
     }
 
     void GetWorldExtents(Vector3Int min, Vector3Int max, Matrix4x4 matrix, out Vector3 centre, out Vector3 halfExtents)
