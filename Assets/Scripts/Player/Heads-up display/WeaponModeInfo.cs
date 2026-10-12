@@ -16,18 +16,27 @@ public class WeaponModeInfo : MonoBehaviour
         get => _m;
         set
         {
+            meter.obtainValues = null;
+            
             _m = value;
 
             bool active = _m != null;
             enabled = active;
             gameObject.SetActive(active);
+
+            if (value != null)
+            {
+                meter.obtainValues += () => mode.displayedResource;
+            }
         }
     }
 
+    /*
     private void Awake()
     {
         if (meter != null) meter.obtainValues += () => mode.displayedResource;
     }
+    */
     private void LateUpdate()
     {
         if (mode == null) return;
