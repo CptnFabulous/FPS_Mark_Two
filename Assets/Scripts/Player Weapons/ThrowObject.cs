@@ -65,8 +65,11 @@ public class ThrowObject : WeaponMode
     protected override IEnumerator AttackSequence()
     {
         SpawnNewThrowable();
-        
+
+        // TO DO: have wind-up animation
+
         // Prepare to throw the object
+        throwHandler.arcRenderer.accountForBounce = true;
         yield return throwHandler.Throw(() => PrimaryHeld);
 
         // Prep and throw the object, and clear 'readyToThrow'

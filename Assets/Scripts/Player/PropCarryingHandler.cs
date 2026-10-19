@@ -102,6 +102,7 @@ public class PropCarryingHandler : WeaponMode
     protected override IEnumerator AttackSequence()
     {
         Rigidbody thrown = throwHandler.holding;
+        throwHandler.arcRenderer.accountForBounce = false;
         yield return throwHandler.Throw(() => PrimaryHeld);
         onThrow.Invoke(thrown);
 

@@ -13,6 +13,7 @@ public class TrajectoryRenderer : MonoBehaviour
 
     Vector3[] positions;
 
+    public bool accountForBounce { get; set; } = true;
     public System.Func<(Vector3, Vector3)> getStartPositionAndVelocity { get; set; }
     public float drag { get; set; }
     public float mass { get; set; }
@@ -60,7 +61,9 @@ public class TrajectoryRenderer : MonoBehaviour
         {
             surfaceHit = true;
             thingHit = rh;
-            return Projectile.ProjecileHitResult.Bounce;
+
+            if (accountForBounce) return Projectile.ProjecileHitResult.Bounce;
+            return Projectile.ProjecileHitResult.Embed;
         };
 
         for (int i = positionCount; i < maxVertexCount; i++)
