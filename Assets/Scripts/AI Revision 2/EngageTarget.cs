@@ -15,10 +15,9 @@ public class EngageTarget : TravelToDestination
     //bool findNewPositionIfCompromised = true;
     [SerializeField] float minTargetDistance = 5;
     [SerializeField] float maxTargetDistance = 15;
-    
-    [Header("Seeking cover")]
     [SerializeField, Min(0), Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
-    float coverDistance = 2;
+    float distanceToCover = 3;
+    [SerializeField] float distanceFromAllies = 5;
 
     [Header("Alternate states")]
     [SerializeField] AIStateFunction onTargetEliminated;
@@ -43,6 +42,10 @@ public class EngageTarget : TravelToDestination
             controller.SwitchToState(onTargetEliminated);
             return;
         }
+
+        // TO DO? Check how many allies are currently attacking the target.
+        // If enough are, be alert but stand by in case they're killed, so AI can step in if necessary.
+        // I need to figure out a good way of doing this.
 
         // If the AI has been unable to get line of sight on the target for an extended period, start searching more proactively.
         float timeSinceTargetLost = Time.time - targetManager.lastTimeSeenTarget;
@@ -128,8 +131,8 @@ public class EngageTarget : TravelToDestination
         Bounds targetBounds = target.bounds;
 
         // Check if distance is not too close or too far
-        float distance = Vector3.Distance(position, targetBounds.center);
-        if (distance != Mathf.Clamp(distance, minTargetDistance, maxTargetDistance))
+        float distanceToTarget = Vector3.Distance(position, targetBounds.center);
+        if (distanceToTarget != Mathf.Clamp(distanceToTarget, minTargetDistance, maxTargetDistance))
         {
             //Debug.Log($"Distance ({distance}) isn't right. Min = {minDistance}, max = {maxDistance}");
             return false;
@@ -141,9 +144,9 @@ public class EngageTarget : TravelToDestination
         if (lineOfSight == false) return false;
 
         // Check if the position is close to cover
-        if (coverDistance > 0)
+        if (distanceToCover > 0)
         {
-            bool foundCover = AIPathing.FindCover(rootAI, position, target.LookTransform.position, coverDistance, out AIGridPoints.GridPoint point);
+            bool foundCover = AIPathing.FindCover(rootAI, position, target.LookTransform.position, distanceToCover, out AIGridPoints.GridPoint point);
             if (foundCover == false)
             {
                 //Debug.Log("Wants cover but can't find any");
@@ -152,8 +155,8 @@ public class EngageTarget : TravelToDestination
             //Debug.DrawRay(point.position, Vector3.up, Color.white);
         }
 
-        // Check if the position is occupied
-        //if (AIPathing.PositionIsOccupied(position, ai.agent)) return false; 
+        // Check that the path isn't too close to any points that allies are moving to
+        if (memory.AreEnoughAlliesInvestigating(position, distanceFromAllies, 1, out _)) return false;
 
         return true;
     }

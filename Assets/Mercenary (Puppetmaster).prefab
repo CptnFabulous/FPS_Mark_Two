@@ -206,7 +206,8 @@ MonoBehaviour:
   checkDistance: 100
   minTargetDistance: 1
   maxTargetDistance: 40
-  coverDistance: 3
+  distanceToCover: 3
+  distanceFromAllies: 10
   onTargetEliminated: {fileID: 7469330485749069052}
   timeAfterSightLossUntilSearch: 5
   searchForMissingTarget: {fileID: 6165961012720261874}
@@ -422,7 +423,8 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 0.05882353
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7384869552421036058, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 9058628101594886162, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
