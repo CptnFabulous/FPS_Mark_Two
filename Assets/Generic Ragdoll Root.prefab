@@ -1113,7 +1113,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rootAI: {fileID: 0}
-  pathfindingHandler: {fileID: 0}
   puppetmaster: {fileID: 7831327297097816994}
   centralCollider: {fileID: 3271273635285470028}
   centralRigidbody: {fileID: 4898305273504300529}
@@ -4975,6 +4974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 687637763277673682}
   - component: {fileID: 3271273635285470028}
+  - component: {fileID: 7688323356306457477}
   m_Layer: 3
   m_Name: Capsule Collider
   m_TagString: Untagged
@@ -5020,6 +5020,21 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &7688323356306457477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5628553553042008210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _attachedTo: {fileID: 0}
+  isCritical: 0
+  resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!1 &5777414958542081350
 GameObject:
   m_ObjectHideFlags: 0

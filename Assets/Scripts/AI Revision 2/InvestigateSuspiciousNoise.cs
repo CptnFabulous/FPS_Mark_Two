@@ -10,7 +10,7 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
 
     [Header("Sounds")]
     public int basePriority = 0;
-    public float soundWaitDuration = 0;
+    //public float soundWaitDuration = 0;
     public List<DiegeticSound> suspiciousNoises;
 
     [Header("Damage")]
@@ -39,7 +39,7 @@ public class InvestigateSuspiciousNoise : MonoBehaviour
         //locationSearchState.rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}");
 
         StateFunction previousState = GetPreviousState();
-        if (locationSearchState.TrySearchForNewPosition(sound.originPoint, soundWaitDuration, previousState, priority, false, false))
+        if (locationSearchState.TrySearchForNewPosition(sound.originPoint, 0, previousState, priority, false, false))
         {
             rootAI.DebugLog($"Investigating {sound.sound.name} at {sound.originPoint}. Will switch to {previousState.name} if failed");
         }

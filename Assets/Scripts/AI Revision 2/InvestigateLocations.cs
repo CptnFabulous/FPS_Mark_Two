@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public class InvestigateLocations : AIStateFunction
 {
     [Header("Investigating")]
     public float delayBetweenChangingTargetLocation = 10;
+    public int searchTeamSize = 3;
+    public float allyDistanceThreshold = 5;
 
     [Header("State transitions")]
     [SerializeField] List<StateFunction> statesToSwitchFrom;
@@ -57,6 +58,9 @@ public class InvestigateLocations : AIStateFunction
             }
         }
 
+        // If enough allies are already heading towards that point, there's no need to investigate further.
+        if (memory.AreEnoughAlliesInvestigating(pointToCheck, allyDistanceThreshold, searchTeamSize, out _)) return false;
+
         rootAI.DebugLog("Will search for position");
 
         this.pointToCheck = pointToCheck;
@@ -64,6 +68,9 @@ public class InvestigateLocations : AIStateFunction
         this.onFail = onFail;
         priorityLevel = priority;
         lastTimeOfTargetChange = Time.time;
+
+        // If AI wishes to immediately travel to destination, set destination on the same frame so that AreEnoughAlliesInvestigating() can check properly if allies are going there.
+        if (waitDuration <= 0) navMeshAgent.SetDestination(pointToCheck);
 
         // Force refresh
         controller.SwitchToState(this, true);
