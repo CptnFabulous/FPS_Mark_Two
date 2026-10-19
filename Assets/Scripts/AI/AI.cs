@@ -14,6 +14,7 @@ public class AI : Character
     [Header("Sensing and reaction")]
     public FieldOfView visionCone;
     public DiegeticAudioListener hearing;
+    public AIMemory memory;
 
     [Header("Movement and pathing")]
     public NavMeshAgent agent;

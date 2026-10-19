@@ -13,9 +13,11 @@ public abstract class AIStateFunction : StateFunction
     AI _root;
     public AI rootAI => _root ??= GetComponentInParent<AI>();
     public NavMeshAgent navMeshAgent => rootAI.agent;
+    public AIMovement movement => rootAI.movement;
     public AIAim aim => rootAI.aiming;
     public FieldOfView visionCone => rootAI.visionCone;
     public DiegeticAudioListener hearing => rootAI.hearing;
+    public AIMemory memory => rootAI.memory;
     public AITargetManager targetManager => rootAI.targeting;
     public Vector3 standingPosition => navMeshAgent.transform.position;
 
