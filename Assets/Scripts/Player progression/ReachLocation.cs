@@ -13,15 +13,15 @@ public class ReachLocation : Objective
 
     Bounds GetAreaBounds()
     {
-        if (area.TryGetComponent(out level))
+        if (level != null || area.TryGetComponent(out level))
         {
             return level.bounds;
         }
-        else if (area.TryGetComponent(out collider))
+        else if (collider != null || area.TryGetComponent(out collider))
         {
             return collider.bounds;
         }
-        else if (area.TryGetComponent(out renderer))
+        else if (renderer != null || area.TryGetComponent(out renderer))
         {
             return renderer.bounds;
         }
