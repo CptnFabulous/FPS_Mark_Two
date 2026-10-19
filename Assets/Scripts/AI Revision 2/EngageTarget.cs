@@ -14,6 +14,7 @@ public class EngageTarget : TravelToDestination
     int maxNumberOfChecks = 100;
     //bool findNewPositionIfCompromised = true;
     [SerializeField] float minTargetDistance = 5;
+    [SerializeField] float idealTargetDistance = 10;
     [SerializeField] float maxTargetDistance = 15;
     [SerializeField, Min(0), Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
     float distanceToCover = 3;
@@ -89,11 +90,27 @@ public class EngageTarget : TravelToDestination
 
     protected override bool GetPath(ref NavMeshPath path)
     {
+        if (target == null) return false;
+
         // Is the point within the appropriate min and max distance of the target?
         // Will the AI have appropriate line of sight to the target?
         List<AIGridPoints.GridPoint> points = AIGridPoints.Current.GetPoints(navMeshAgent.transform.position, 0, checkDistance);
-        CollectionUtility.ShuffleList(points); // Shuffle points to ensure some randomisation in the final result, so the agents don't all cluster around the one ideal point
 
+        //CollectionUtility.ShuffleList(points); // Shuffle points to ensure some randomisation in the final result, so the agents don't all cluster around the one ideal point
+        // TO DO: how can I keep results semi-ordered, but still have some randomness?
+        // Maybe I can divide the results into grades, and then shuffle results within those grades?
+
+        // Try to pick spots closer to the ideal distance
+        Vector3 targetPosition = target.bounds.center;
+        CollectionUtility.SortListWithOnePredicate(points, (p) =>
+        {
+            // For each position, get distance to target
+            float distance = (targetPosition - p.position).magnitude;
+            // Figure out how different that distance is from the ideal distance
+            return Mathf.Abs(distance - idealTargetDistance);
+        });
+
+        // Now that we've figured out our priorities, check through each point until a valid one is found
         int count = Mathf.Min(points.Count, maxNumberOfChecks);
         for (int i = 0; i < count; i++)
         {
