@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -107,7 +108,7 @@ public class GunMagazine : MonoBehaviour
 
         bool cancelledDuringOperation = false;
 
-        yield return MiscFunctions.WaitOnLerp(delayBetweenLoads, (ref float t) =>
+        yield return AsyncUtility.WaitOnLerp(delayBetweenLoads, (ref float t) =>
         {
             if (CanReload) return;
             if (currentlyReloading) return;

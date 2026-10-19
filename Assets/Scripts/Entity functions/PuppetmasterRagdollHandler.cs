@@ -209,7 +209,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
         currentState = AIPhysicsState.Ragdoll;
 
         // Reduce puppet and IK weights to zero over a short period
-        yield return MiscFunctions.WaitOnLerp(collapseTime, (ref float t) =>
+        yield return AsyncUtility.WaitOnLerp(collapseTime, (ref float t) =>
         {
             float interpolator = weightDecayCurve.Evaluate(t);
             puppetmaster.muscleWeight = interpolator;
@@ -244,7 +244,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
         // Re-enable animations (still keep physics), but don't immediately reset weights
         currentState = AIPhysicsState.Physics;
         // Slowly interpolate weights up to full power, over specific timeframes
-        yield return MiscFunctions.WaitOnLerp(standUpTime, (ref float t) =>
+        yield return AsyncUtility.WaitOnLerp(standUpTime, (ref float t) =>
         {
             float timeElapsed = t * standUpTime;
 

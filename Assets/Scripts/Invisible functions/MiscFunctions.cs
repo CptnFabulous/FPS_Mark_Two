@@ -7,23 +7,6 @@ using UnityEngine.Rendering.Universal;
 
 public readonly struct MiscFunctions
 {
-    #region IEnumerators
-    public delegate void LerpLoop(ref float t);
-    public static IEnumerator WaitOnLerp(float secondsToWait, LerpLoop frameAction)
-    {
-        float t = 0;
-        do
-        {
-            t += Time.deltaTime / secondsToWait;
-            t = Mathf.Clamp01(t);
-            frameAction.Invoke(ref t);
-            if (t > 1) yield break;
-            yield return t;
-        }
-        while (t < 1);
-    }
-    #endregion
-
     #region Finding components
 
     /// <summary>
@@ -42,7 +25,7 @@ public readonly struct MiscFunctions
     #endregion
 
     public static bool CurrentCameraNotMain() => Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay;
-
+    
     public static bool GetToggleableInput(bool currentState, bool buttonPressed, bool isToggled)
     {
         if (isToggled == false) currentState = buttonPressed;
