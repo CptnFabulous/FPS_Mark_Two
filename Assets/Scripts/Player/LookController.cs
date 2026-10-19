@@ -51,7 +51,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
     {
         get
         {
-            Vector2 input = GetProcessedAimInput();
+            Vector2 input = GetProcessedAimInput(false);
             return Quaternion.Euler(-input.y, input.x, 0) * mainBodyTransform.rotation;
         }
     }
@@ -108,7 +108,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
     /// Returns the player's aim input, accounting for sensivity, inverted axes and aim acceleration.
     /// </summary>
     /// <returns></returns>
-    public Vector2 GetProcessedAimInput()
+    public Vector2 GetProcessedAimInput(bool delta)
     {
         // If value is zero, no need to perform additional processing
         if (rawAimInput.sqrMagnitude <= 0) return rawAimInput;
@@ -116,8 +116,8 @@ public class LookController : MonoBehaviour, ICharacterLookController
         Vector2 value = rawAimInput; // Get raw input value
         bool usingGamepad = cameraInput.usingGamepad;
 
-        RangedAttack currentMode = null;
-        bool inADS = weaponHandler != null && weaponHandler.IsUsingADS(out currentMode);
+        //RangedAttack currentMode = null;
+        bool inADS = weaponHandler != null && weaponHandler.IsUsingADS(out _);
 
         #region Aim acceleration
         // If player is using a gamepad and out of ADS, apply mouse acceleration
@@ -136,7 +136,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
         }
         else
         {
-            value *= baseMouseSensitivity * mouseSensitivityRange;
+            value = baseMouseSensitivity * mouseSensitivityRange * value;
         }
 
         // Apply ADS multipliers for easier aiming
@@ -147,7 +147,7 @@ public class LookController : MonoBehaviour, ICharacterLookController
             // Reduce further based on magnification
             value /= weaponHandler.adsHandler.currentMagnification;// currentMode.optics.magnification;
         }
-        #endregion
+#endregion
 
         #region Invert axes
         // Invert axes if appropriate
@@ -155,12 +155,11 @@ public class LookController : MonoBehaviour, ICharacterLookController
         if (invertY) value.y = -value.y;
         #endregion
 
+        if (delta) value *= Time.deltaTime;
+
         return value;
     }
 
-    /*
-    void OnLook(InputValue input) => RegisterLookInput(input.Get<Vector2>());
-    */
     /// <summary>
     /// Register raw input values and aim start time (for aim acceleration)
     /// </summary>
@@ -176,8 +175,43 @@ public class LookController : MonoBehaviour, ICharacterLookController
         // Reset player aim time on start or direction change, for aim acceleration calculations
         if (SignWithZero(newInput.x) != SignWithZero(rawAimInput.x)) aimStartTime = Time.time;
 
+        /*
+        if (debug)
+        {
+            if (Time.frameCount > lastFrameUpdated)
+            {
+                timesUpdatedPerFrame = 0;
+                //rawAimInput = Vector2.zero;
+            }
+
+            timesUpdatedPerFrame++;
+            lastFrameUpdated = Time.frameCount;
+
+            Debug.Log($"Registering aim input ({rawAimInput} > {newInput}), times updated = {timesUpdatedPerFrame}, last frame updated = {lastFrameUpdated}");
+        }
+        */
+        
+
+
         rawAimInput = newInput; // Update rawAimInput to new value
     }
+
+    /*
+    bool debug = true;
+    int lastFrameUpdated;
+    int timesUpdatedPerFrame;
+
+    void OnGUI()
+    {
+        if (!debug) return;
+        float w = 100;
+        float h = 20;
+        GUI.TextArea(new Rect(0, 0, w, h), $"{rawAimInput}");
+        GUI.TextArea(new Rect(0, 20, w, h), $"{timesUpdatedPerFrame}");
+        GUI.TextArea(new Rect(0, 40, w, h), $"{lastFrameUpdated}");
+    }
+    */
+    
 
     void Start()
     {
@@ -187,10 +221,11 @@ public class LookController : MonoBehaviour, ICharacterLookController
     }
     void Update()
     {
-        Vector2 delta = GetProcessedAimInput();
+        Vector2 delta = GetProcessedAimInput(true);
+        //Vector2 delta = 0.02f * GetProcessedAimInput(false);
         if (delta.sqrMagnitude > 0)
         {
-            delta *= Time.deltaTime;
+            //delta *= Time.deltaTime;
             lookAngles += delta;
         }
     }

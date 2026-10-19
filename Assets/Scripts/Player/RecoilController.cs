@@ -22,7 +22,7 @@ public class RecoilController : MonoBehaviour
         if (recoil.sqrMagnitude <= 0) return;
 
         // If the player is putting out a strong enough input to be deliberately adjusting their aim from their current direction, don't recover the recoil.
-        if (lookControls.GetProcessedAimInput().magnitude > aimSpeedToCancelRecoilRecovery)
+        if (lookControls.GetProcessedAimInput(false).magnitude > aimSpeedToCancelRecoilRecovery)
         {
             CancelRecoil();
         }
