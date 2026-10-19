@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 531869264667872883}
   - component: {fileID: 531869264667872844}
+  - component: {fileID: 4377481952718279590}
   - component: {fileID: 531869264667872847}
   - component: {fileID: 531869264667872882}
   - component: {fileID: 8351489611099910409}
@@ -74,6 +75,18 @@ MonoBehaviour:
   health: {fileID: 0}
   audioSource: {fileID: 0}
   ragdoll: {fileID: 0}
+--- !u!114 &4377481952718279590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531869264667872840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d10a62ff205bf764190e39aedf997bf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &531869264667872847
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -121,7 +134,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &8351489611099910409
 MonoBehaviour:
   m_ObjectHideFlags: 0
