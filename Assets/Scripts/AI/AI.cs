@@ -108,4 +108,19 @@ public class AI : Character
         base.Die();
         stateController.SwitchToState(deathState);
     }
+
+    public override bool ShouldPlayPhysicsEffects(Collision collision)
+    {
+        // Just mark as true if there's no fancy active ragdoll stuff to worry about
+        if (physicsStateHandler == null) return true;
+
+        // If enemy is ragdollised, always allow
+        if (physicsStateHandler.currentState == AIPhysicsState.Ragdoll) return true;
+
+        // Don't allow physics impact effects if puppetmaster colliders happen to clip into something static as a result of their animations
+        if (collision.rigidbody == null) return false;
+        if (collision.rigidbody.isKinematic) return false;
+
+        return true;
+    }
 }

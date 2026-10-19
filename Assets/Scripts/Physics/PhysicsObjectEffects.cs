@@ -25,6 +25,8 @@ public class PhysicsObjectEffects : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (rootEntity.ShouldPlayPhysicsEffects(collision) == false) return;
+        
         if (Time.time - lastTimeEffectPlayed < effectCooldown) return;
         lastTimeEffectPlayed = Time.time;
         

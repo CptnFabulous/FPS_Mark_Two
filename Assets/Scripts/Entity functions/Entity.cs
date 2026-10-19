@@ -94,6 +94,8 @@ public class Entity : MonoBehaviour
 
     public bool isBeingRendered => MiscFunctions.DoAnyMeetCriteria(renderers, (r) => r.isVisible);
 
+    public virtual bool ShouldPlayPhysicsEffects(Collision collision) => true;
+
     /*
     public float timeScale = 1;
     public Vector3 gravity = Physics.gravity;
