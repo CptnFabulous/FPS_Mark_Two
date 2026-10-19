@@ -34,7 +34,9 @@ public class DiegeticAudioListener : MonoBehaviour
         {
             if (_agentID == -1)
             {
-                _agentID = AIAction.GetNavMeshAgentIDByName("Sound propagation");
+                // TO DO: only using humanoid agent because sound propagation agent is messed up.
+                // Later on I'll need to make a proper 3D pathfinding system, not just for flying enemies but for sound propagation too.
+                _agentID = AIAction.GetNavMeshAgentIDByName("Humanoid");
             }
             return _agentID;
         }
