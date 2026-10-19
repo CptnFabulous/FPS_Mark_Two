@@ -11,6 +11,17 @@ public abstract class Throwable : MonoBehaviour
     public Rigidbody rb => _rigidbody;
 
     public abstract void OnThrow();
+    public abstract void Disable();
+
+
+    private void Awake()
+    {
+        Disable();
+    }
+    private void OnDisable()
+    {
+        Disable();
+    }
 
     public void OnDrawGizmos()
     {
