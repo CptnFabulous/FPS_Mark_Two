@@ -150,6 +150,7 @@ public class MapScreen : MonoBehaviour
         {
             foreach (Objective objective in ObjectiveHandler.current.allObjectives)
             {
+                if (objective.isHidden) continue;
                 if (objective.status != ObjectiveStatus.Active) continue;
                 if (objective.location == null) continue;
 

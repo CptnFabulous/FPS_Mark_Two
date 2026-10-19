@@ -43,6 +43,19 @@ public class ObjectiveInfo : MonoBehaviour
         for (int i = 0; i < objectivesToShow.Count; i++)
         {
             Objective objective = objectivesToShow[i];
+
+            bool hidden = objective.isHidden;
+            
+            if (hidden)
+            {
+                if (displays.TryGetValue(objective, out TMP_Text unneededDisplay))
+                {
+                    unneededDisplay.gameObject.SetActive(false);
+                }
+                continue;
+            }
+            
+            
             if (displays.ContainsKey(objective) == false)
             {
                 // If a display is not present, create a new one

@@ -15,6 +15,8 @@ public enum ObjectiveStatus
 public abstract class Objective : MonoBehaviour
 {
     [Multiline] public string description;
+    public bool hiddenBeforeCompletion = false;
+    public bool hiddenAfterCompletion = false;
     public bool optional;
 
     [Tooltip("These must be completed before this objective can start being progressed towards.")]
@@ -36,6 +38,19 @@ public abstract class Objective : MonoBehaviour
     {
         get => GetSerializedProgress();
         set => Setup(value);
+    }
+    public bool isHidden
+    {
+        get
+        {
+            switch (status)
+            {
+                case ObjectiveStatus.Active: return hiddenBeforeCompletion;
+                case ObjectiveStatus.Completed: return hiddenAfterCompletion;
+            }
+
+            return false;
+        }
     }
 
     public void Update()
@@ -65,9 +80,11 @@ public abstract class Objective : MonoBehaviour
         // If active, check success and failure states
         if (_status == ObjectiveStatus.Active)
         {
+            //Debug.Log($"{this}: Checking if complete");
             // If objective is undo-able, also check that the necessary later objectives are completed to lock success
             if (DetermineSuccess() && ReadyToMarkCompleted())
             {
+                //Debug.Log($"{this}: completed!");
                 // If successful, change state to success and invoke success event
                 _status = ObjectiveStatus.Completed;
                 OnCompleted();

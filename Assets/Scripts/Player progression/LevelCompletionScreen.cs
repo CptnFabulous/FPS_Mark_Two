@@ -58,6 +58,7 @@ public class LevelCompletionScreen : MonoBehaviour
 
         List<Objective> optionalObjectives = new List<Objective>(objectives.allObjectives);
         optionalObjectives.RemoveAll((o) => o.optional == false);
+        optionalObjectives.RemoveAll((o) => o.hiddenAfterCompletion); // Don't count for objectives that just act as hidden flags
         int remaining = optionalObjectives.Count;
         optionalObjectives.RemoveAll((o) => o.status != ObjectiveStatus.Completed);
         remaining -= optionalObjectives.Count; // Subtract to get the number of bonus objectives the player didn't complete.
