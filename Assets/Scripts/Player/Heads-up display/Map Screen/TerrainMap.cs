@@ -10,6 +10,9 @@ public class TerrainMap : MonoBehaviour
     public Transform playerTransform => player.transform;
     public bool autoMapped;
 
+    [Header("Scanning")]
+    public float scanDelay = 0.5f;
+
     [Header("Fill texture")]
     public Texture3D progressTexture;
     [SerializeField] AnimationCurve fillRadiusCurve = AnimationCurve.Linear(6, 1, 8, 0);
@@ -18,6 +21,7 @@ public class TerrainMap : MonoBehaviour
 
     Scene sceneOfMap;
     Vector3 lastPosition;
+    float lastTimeScanned = Mathf.NegativeInfinity;
 
     static TerrainGrid terrainGrid => TerrainGrid.current;
     Vector3Int textureResolution => terrainGrid.gridSize;
@@ -47,6 +51,14 @@ public class TerrainMap : MonoBehaviour
     }
 
     private void Update()
+    {
+        if (Time.time - lastTimeScanned < scanDelay) return;
+
+        Scan();
+        lastTimeScanned = Time.time;
+    }
+
+    void Scan()
     {
         if (playerTransform.position == lastPosition) return;
         lastPosition = playerTransform.position;
