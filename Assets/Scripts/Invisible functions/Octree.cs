@@ -242,10 +242,7 @@ public class Octant<T>
         if (emptySelf)
         {
             yield return this;
-            if (processCells)
-            {
-                _leafData = clearOctant.Invoke(this);
-            }
+            if (processCells && clearOctant != null) _leafData = clearOctant.Invoke(this);
         }
     }
 
@@ -276,10 +273,7 @@ public class Octant<T>
         if (!selfMustBeEmpty)
         {
             yield return this;
-            if (processCells)
-            {
-                _leafData = refreshOctant.Invoke(this);
-            }
+            if (processCells && refreshOctant != null) _leafData = refreshOctant.Invoke(this);
         }
 
         if (type != OctantType.Branch) yield break;
