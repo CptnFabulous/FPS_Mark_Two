@@ -667,6 +667,7 @@ GameObject:
   - component: {fileID: 1767135050966285526}
   - component: {fileID: 1089699023991111611}
   - component: {fileID: 5026345879746902877}
+  - component: {fileID: 368934900379376927}
   m_Layer: 7
   m_Name: 2-wide Door
   m_TagString: Untagged
@@ -708,6 +709,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &277230755582789473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -720,18 +722,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57899c2929fa3934fa1417c62e4371c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorBody: {fileID: 7576206814814002272}
-  joint: {fileID: 6581783332922128889}
   handleInteractable: {fileID: 4580208244626205554}
-  angleForOpen: 30
-  openForce: {x: 0, y: 100, z: 0}
-  openDirection: {fileID: 927652023762282002}
   lockingMechanism: {fileID: 0}
   startLocked: 0
-  lockRotation: {x: 0, y: 0, z: 0}
-  pushPrompt: Push
-  pullPrompt: Pull
-  lockedPrompt: Locked
+  lockedPrompt: Inaccessible
   unlockPrompt: Unlock
   onOpen:
     m_PersistentCalls:
@@ -745,6 +739,14 @@ MonoBehaviour:
   onLock:
     m_PersistentCalls:
       m_Calls: []
+  doorBody: {fileID: 7576206814814002272}
+  joint: {fileID: 6581783332922128889}
+  angleForOpen: 30
+  openForce: {x: 0, y: 100, z: 0}
+  openDirection: {fileID: 927652023762282002}
+  lockRotation: {x: 0, y: 0, z: 0}
+  pushPrompt: Push
+  pullPrompt: Pull
 --- !u!114 &4229157345536167172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1280,6 +1282,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &368934900379376927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504314181815121710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e95dc5ff2b64380880dd7ac5922847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Size: {x: 2, y: 2.5, z: 1}
+  m_Center: {x: 0, y: 1.25, z: -0.125}
+  m_Area: 5
+  m_AffectedAgents: ffffffff
 --- !u!1 &8272370969559252973
 GameObject:
   m_ObjectHideFlags: 0
