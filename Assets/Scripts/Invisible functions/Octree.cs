@@ -177,7 +177,7 @@ public class Octant<T>
         */
         
     }
-    public void DrawGizmos()
+    public void DrawGizmos(Color invalid, Color branch, Color leaf, Color full)
     {
         Vector3 centre = bounds.center;
         Vector3 size = bounds.size;
@@ -185,29 +185,35 @@ public class Octant<T>
         // Draw different gizmos based on each cell type
         switch (type)
         {
+            
             case OctantType.Invalid:
-                // Colour based on size
-                float colourLerp = 1 - ((float)subdivisions / (float)origin.subdivisions);
-                Gizmos.color = Color.Lerp(Color.white, Color.black, colourLerp);
-                // Draw
-                Gizmos.DrawWireCube(centre, size);
-                break;
 
+                if (depth > 0) break;
+
+                Gizmos.color = invalid;
+                Gizmos.DrawWireCube(centre, size);
+
+                break;
+            
             case OctantType.Leaf:
                 // Colour the cell differently and draw it full rather than wireframe, to show it's the end of the subdivision
-                Gizmos.color = Color.green;
+                Gizmos.color = leaf;
                 Gizmos.DrawCube(centre, size);
                 break;
 
             case OctantType.FullyValid:
                 // Colour the cell differently and draw it full rather than wireframe, to show it's the end of the subdivision
-                Gizmos.color = Color.red;
+                Gizmos.color = full;
                 Gizmos.DrawCube(centre, size);
                 break;
 
-            default:
+            case OctantType.Branch:
+
+                Gizmos.color = depth > 0 ? branch : invalid;
+                Gizmos.DrawWireCube(centre, size);
+
                 // Draw gizmos for each child
-                for (int i = 0; i < 8; i++) children[i].DrawGizmos();
+                for (int i = 0; i < 8; i++) children[i].DrawGizmos(invalid, branch, leaf, full);
                 break;
         }
     }
@@ -350,7 +356,11 @@ public class Octree<T>
     }
     public IEnumerator<Octant<T>> ScanIterator() => baseContainer.ScanIterator();
 
-    public void DrawGizmos() => baseContainer.DrawGizmos();
+    public void DrawGizmos() => DrawGizmos(Color.white, Color.grey, new Color(0.25f, 0.25f, 0.25f), new Color(1f, 0.1f, 0));
+    public void DrawGizmos(Color whole, Color branch, Color leaf, Color full)
+    {
+        baseContainer.DrawGizmos(whole, branch, leaf, full);
+    }
 
     public static int CalculateGridSize(int divisions) => Mathf.RoundToInt(Mathf.Pow(2, divisions));
 
