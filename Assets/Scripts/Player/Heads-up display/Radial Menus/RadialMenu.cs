@@ -25,7 +25,8 @@ public class RadialMenu : MonoBehaviour
     List<RectTransform> visualElements = new List<RectTransform>();
 
     int _currentIndex; // Don't edit this directly except from inside 'value' setter
-    int previousIndex;
+    int lastConfirmedIndex;
+    int confirmedIndex;
     System.Func<int> calculateCurrentIndex;
     Vector2 cursorDirection;
     HeadsUpDisplay ph;
@@ -205,7 +206,14 @@ public class RadialMenu : MonoBehaviour
         else
         {
             //SetActiveState(false);
-            if (applySelectionOnExit) onValueConfirmed.Invoke(currentValue);
+            if (applySelectionOnExit)
+            {
+                // Register which index has been confirmed, and also keep track of the last-selected value
+                lastConfirmedIndex = confirmedIndex;
+                confirmedIndex = currentValue;
+                // Invoke events for final confirmation
+                onValueConfirmed.Invoke(currentValue);
+            }
         }
     }
     
@@ -217,16 +225,14 @@ public class RadialMenu : MonoBehaviour
         bool differentValue = _currentIndex != newIndex;
         if (!differentValue && !forceRefresh) return;
 
-        // Only update the previous index if the new value is actually different
-        if (differentValue) previousIndex = _currentIndex;
-        // Finally set the new value
+        // Set the new value and trigger events
         _currentIndex = newIndex;
         onValueChanged.Invoke(_currentIndex);
     }
     public void SwapToPreviousValue()
     {
-        SetCurrentValue(previousIndex);
-        onValueConfirmed.Invoke(currentValue);
+        SetCurrentValue(lastConfirmedIndex);
+        SetMenuActive(false, true);
     }
     #endregion
 
