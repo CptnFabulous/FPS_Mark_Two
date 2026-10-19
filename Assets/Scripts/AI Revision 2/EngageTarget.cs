@@ -51,14 +51,13 @@ public class EngageTarget : TravelToDestination
         float timeSinceTargetLost = Time.time - targetManager.lastTimeSeenTarget;
         if (timeSinceTargetLost >= timeAfterSightLossUntilSearch)
         {
-            // Check if there's data to search for the last selected position. If so, do that. 
-            if (searchForMissingTarget != null)
+            // Check if there's data to search for the last selected position.
+            Vector3 lastPosition = targetManager.lastValidHit.point;
+            if (searchForMissingTarget != null && searchForMissingTarget.TrySearchForNewPosition(lastPosition, 0, onTargetLost, 1, true, true))
             {
-                if (searchForMissingTarget.TrySearchForNewPosition(targetManager.lastValidHit.point, 0, onTargetLost, 1, true, true))
-                {
-                    rootAI.DebugLog($"Target lost");
-                    return;
-                }
+                // If so, do nothing else this frame.
+                rootAI.DebugLog($"Searching for last target position");
+                return;
             }
             else
             {
