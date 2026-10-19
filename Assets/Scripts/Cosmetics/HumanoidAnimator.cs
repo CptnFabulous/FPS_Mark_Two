@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,6 +94,7 @@ public class HumanoidAnimator : MonoBehaviour
     /// <summary>
     /// Run this animation when standing up from being ragdollised. Overrides existing states and ensure the animator goes right to the correct animation
     /// </summary>
+    [Obsolete]
     public void RecoverFromRagdoll()
     {
         /*
@@ -110,5 +112,39 @@ public class HumanoidAnimator : MonoBehaviour
         // Later on, I want to add code for things like displaying footstep decals
         footsteps.defaultSound.Play(transform.position, character, 1);
         //footsteps.Play()
+    }
+
+    public static void CalculateBasePositionBasedOnRagdoll(Transform baseTransform, Transform rootBone, Bounds ragdollBounds, out Vector3 position, out Quaternion rotation, out float dot)
+    {
+        Vector3 up = baseTransform.up;//-Physics.gravity;
+
+        // Check what direction the enemy would face after standing up, based on their ragdoll direction
+        // If we compare the direction to up and it's zero, that means it's perfectly forward.
+        Vector3 ragdollForward = rootBone.forward;
+        dot = Vector3.Dot(rootBone.forward, baseTransform.up);
+        if (dot < 0)
+        {
+            // Less than 0 means ragdoll is closer to lying on its face. Use the 'up' vector instead of 'forward'
+            ragdollForward = rootBone.up;
+        }
+        else if (dot > 0)
+        {
+            // More than 0 means ragdoll is closer to lying on its back. Use the 'down' vector instead of 'forward'
+            ragdollForward = -rootBone.up;
+        }
+
+        // Calculate the direction the AI should face in to roughly match the ragdoll (while remaining upright)
+        Vector3 aiForward = Vector3.ProjectOnPlane(ragdollForward, up);
+
+        // Adjust transform to be roughly in the centre-bottom of the ragdoll's bounds
+        // TO DO: have code that converts ragdoll bounds to the AI's local space instead of world space
+
+        Vector3 bottom = ragdollBounds.center;
+        bottom.y = ragdollBounds.min.y;
+        position = bottom;
+
+
+        // Adjust direction to face roughly in the same 'forward' direction as the ragdoll
+        rotation = Quaternion.LookRotation(aiForward, up);
     }
 }
