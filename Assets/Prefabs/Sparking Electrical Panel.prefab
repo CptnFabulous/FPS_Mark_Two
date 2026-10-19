@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 236343528}
   - component: {fileID: 236343529}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Line (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   m_Component:
   - component: {fileID: 455153672}
   - component: {fileID: 455153673}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Line (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 986857568}
   - component: {fileID: 986857569}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Line (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,7 +428,7 @@ GameObject:
   - component: {fileID: 1322235198}
   - component: {fileID: 1322235200}
   - component: {fileID: 1322235199}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Kill box (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,7 +510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1673981475}
   - component: {fileID: 1673981476}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -649,7 +649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1859730624}
   - component: {fileID: 1859730625}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Line (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -790,7 +790,7 @@ GameObject:
   - component: {fileID: 975937460168454919}
   - component: {fileID: 975937460168454916}
   - component: {fileID: 975937460168454917}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Frame (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -806,8 +806,8 @@ Transform:
   m_GameObject: {fileID: 975937460168454923}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000008940696, y: -0, z: -0.7071069, w: 0.7071067}
-  m_LocalPosition: {x: -1.4500166, y: 0.000005722046, z: 0.1000005}
-  m_LocalScale: {x: 3, y: 0.1, z: 0.2}
+  m_LocalPosition: {x: -1.45, y: 0.000005722046, z: 0.05}
+  m_LocalScale: {x: 3, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 975937460477862161}
@@ -895,7 +895,7 @@ GameObject:
   - component: {fileID: 975937460184971974}
   - component: {fileID: 975937460184971975}
   - component: {fileID: 975937460184971972}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -999,9 +999,8 @@ GameObject:
   - component: {fileID: 975937460477862161}
   - component: {fileID: 975937460477862166}
   - component: {fileID: 7234027802475353143}
-  - component: {fileID: 3423205243447846807}
   - component: {fileID: 8643732918526894}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Sparking Electrical Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1052,6 +1051,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 0}
   audioSource: {fileID: 7234027802475353143}
+  ragdoll: {fileID: 0}
 --- !u!82 &7234027802475353143
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1148,22 +1148,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!208 &3423205243447846807
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 975937460477862167}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 2, y: 2, z: 0.35}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0.35}
-  m_TimeToStationary: 0.5
 --- !u!114 &8643732918526894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1189,7 +1173,7 @@ GameObject:
   - component: {fileID: 975937461400477293}
   - component: {fileID: 975937461400477298}
   - component: {fileID: 975937461400477299}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Frame (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1294,7 +1278,7 @@ GameObject:
   - component: {fileID: 975937461758546341}
   - component: {fileID: 975937461758546346}
   - component: {fileID: 975937461758546347}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Frame (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1310,8 +1294,8 @@ Transform:
   m_GameObject: {fileID: 975937461758546345}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00000008940696, y: -0, z: -0.7071069, w: 0.7071067}
-  m_LocalPosition: {x: 1.4500009, y: -0.00000071525574, z: 0.10000026}
-  m_LocalScale: {x: 3, y: 0.1, z: 0.2}
+  m_LocalPosition: {x: 1.45, y: -0.00000071525574, z: 0.05}
+  m_LocalScale: {x: 3, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 975937460477862161}
@@ -1399,7 +1383,7 @@ GameObject:
   - component: {fileID: 975937462052796634}
   - component: {fileID: 975937462052796635}
   - component: {fileID: 4243999321073250292}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Kill box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1511,7 +1495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4040108441878074676, guid: d0b512bb0dafbcc4585432280bbe9474, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4040108441878074676, guid: d0b512bb0dafbcc4585432280bbe9474, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1519,7 +1503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6459029414983651283, guid: d0b512bb0dafbcc4585432280bbe9474, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6459029414983651283, guid: d0b512bb0dafbcc4585432280bbe9474, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1579,7 +1563,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8762318010546744621, guid: d0b512bb0dafbcc4585432280bbe9474, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8762318010546744621, guid: d0b512bb0dafbcc4585432280bbe9474, type: 3}
       propertyPath: m_IsActive
