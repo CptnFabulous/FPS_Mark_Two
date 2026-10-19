@@ -33,6 +33,8 @@ public class CrouchController : MonoBehaviour
         get => crouched;
         set => TryChangeCrouch(value);
     }
+    float targetValue => isCrouching ? 1 : 0;
+    public bool transitioning => crouchTimer != targetValue;
 
     /// <summary>
     /// Receives the player's input value to change if they're crouching or standing.
@@ -115,9 +117,7 @@ public class CrouchController : MonoBehaviour
     private void Update()
     {
         // Calculate value for lerping
-        float targetValue = isCrouching ? 1 : 0;
         crouchTimer = Mathf.MoveTowards(crouchTimer, targetValue, Time.deltaTime / crouchTransitionTime);
-
         LerpCrouch(crouchTimer);
     }
 

@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,5 +54,27 @@ public class Player : Character
         weapons.enabled = false;
         rigidbody.constraints = RigidbodyConstraints.None;
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
+    }
+
+    public override bool ShouldPlayPhysicsEffects(Collision collision)
+    {
+        // TO DO: modify the crouch check to only matter if the collision occurred with a floor, and not a wall or ceiling
+        /*
+        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision);
+        if (Vector3.Dot(normal, Physics.gravity.normalized) > -0.5f)
+        {
+
+        }
+        */
+        
+        // Sometimes crouching or standing up retriggers a collision.
+        // This can alert enemies, which is exactly what you're trying not to do when crouching.
+        CrouchController crouchHandler = movement.crouchController;
+        if (crouchHandler != null)
+        {
+            if (crouchHandler.transitioning) return false;
+        }
+
+        return true;
     }
 }
