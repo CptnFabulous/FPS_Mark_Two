@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using CptnFabulous.MiscUtility;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +23,8 @@ public class DiegeticSound : ScriptableObject
 
     [SerializeField] AudioClip[] sounds;
     //[SerializeField] AudioMixerGroup mixerGroup;
-    [SerializeField] float decibels = 80;
+    public float decibels = 80;
+    public float range = 10;
     [SerializeField, Range(-3, 3)] float minPitchVariance = 1;
     [SerializeField, Range(-3, 3)] float maxPitchVariance = 1;
     /*
@@ -37,6 +39,7 @@ public class DiegeticSound : ScriptableObject
 
     //public void Play(Entity entity) => Play(entity.bounds.center, entity);
     public void Play(ParticleCollisionInfo pce) => Play(pce.particleData.intersection, pce.sourceEntity, pce.strengthRatio);
+    public void Play(Entity entity) => Play(entity.bounds.center, entity);
     public void Play(AudioSource source) => Play(source.transform.position, source.GetComponentInParent<Entity>(), source);
     public void Play(Vector3 point, Entity sourceEntity, float multiplier = 1, float minimumVolume = 0)
     {
@@ -63,6 +66,11 @@ public class DiegeticSound : ScriptableObject
         {
             AudioSource.PlayClipAtPoint(clip, point, volumeForPlayer);
         }
+
+
+        DebugUtility.DrawDebugWireSphere(point, range * multiplier, Color.magenta, 1);
+
+
 
         // TO DO: play text in subtitles, if close enough for the player to hear
 
@@ -91,6 +99,6 @@ public class DiegeticSound : ScriptableObject
         #endregion
 
         // Do the actual check
-        DiegeticAudioListener.DiegeticCheck(this, decibels * multiplier, sourceEntity);
+        DiegeticAudioListener.DiegeticCheck(this, multiplier, sourceEntity);
     }
 }

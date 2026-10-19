@@ -1,4 +1,3 @@
-using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +40,7 @@ public class DiegeticAudioListener : MonoBehaviour
         }
     }
 
+    [SerializeField] float sensitivityMultiplier = 1;
     [SerializeField] float minVolumeToHear = 1;
     [SerializeField] float maxDistance = 10;
     [SerializeField] LayerMask soundLayerMask = ~0;
@@ -54,13 +54,13 @@ public class DiegeticAudioListener : MonoBehaviour
     private void OnEnable() => active.Add(this);
     private void OnDisable() => active.Remove(this);
 
-    public static void DiegeticCheck(DiegeticSound sound, float decibels, Entity source)
+    public static void DiegeticCheck(DiegeticSound sound, float multiplier, Entity source)
     {
         // For the sake of simplifying the AI work, the sound 'plays' at the exact position as the entity that caused it.
         foreach (DiegeticAudioListener listener in active)
         {
             // Check if the listener can hear the sound
-            if (listener.CheckIfListenerCanHearSound(sound, source, decibels, out float heardDecibels) == false) continue;
+            if (listener.CheckIfListenerCanHearSound(sound, source, multiplier, out float heardDecibels) == false) continue;
 
             // TO DO POSSIBLY: check if the sound is not being drowned out by other sounds the entity is currently hearing
             // Add each heard sound to a list, and remove all entries whose times are long enough ago for the sound to expire.
@@ -72,48 +72,58 @@ public class DiegeticAudioListener : MonoBehaviour
         }
     }
 
-    bool CheckIfListenerCanHearSound(DiegeticSound sound, Entity source, float decibels, out float heardDecibels)
+    bool CheckIfListenerCanHearSound(DiegeticSound sound, Entity source, float multiplier, out float heardVolume)
     {
-        heardDecibels = 0;
+        float debugDuration = 1;
+        Color successColor = Color.green;
+        Color failColor = Color.red;
+        bool allowDebug = source.showDebugData && rootEntity.showDebugData;
+
+
+        heardVolume = 0;
 
         // Ignore own sounds
         if (source == rootEntity) return false;
         // Ignore sounds coming from friendly characters
         if (rootEntity.IsHostileTowards(source) == false) return false;
 
-        float travelDistance;
+
+
+        // TO DO: should I just use distance, or keep relying on the inverse square stuff?
+
+        float maxVolume = sound.decibels * multiplier;
+        float maxDistance = sound.range * multiplier * sensitivityMultiplier;
+
         Vector3 origin = source.CentreOfMass;
         Vector3 destination = transform.position;
 
-        //rootEntity.DebugLog($"Checking sound {sound} from {origin}");
-
         // Check how far it takes the sound to travel, based on how the sound would reach the target.
-        // First, check if it's a clear line of sight to the target.
+        float travelDistance;
         if (AIAction.LineOfSight(origin, destination, source, rootEntity, soundLayerMask))
         {
-            // Clear shot between the source and destination!
+            // If sound can directly travel to target, just get that distance
             travelDistance = Vector3.Distance(origin, destination);
+            if (allowDebug) Debug.DrawLine(origin, destination, successColor, debugDuration);
         }
         else
         {
-            // Not a straight shot, check if the sound reaches the target via reverb
-            bool validPath = ReverbPath(origin, destination, maxDistance, soundNavMeshMask, out travelDistance);
+            // If direct line fails, do a check for sound bouncing around corners
+            bool validPath = ReverbPath(origin, destination, soundNavMeshMask, out travelDistance, allowDebug);
+            if (allowDebug) AIAction.DebugDrawNavMeshPath(reverbPath, validPath ? successColor : failColor, debugDuration);
+
             if (!validPath)
             {
-                //rootEntity.DebugLog($"Cannot reach target, sound completely blocked");
+                if (allowDebug) rootEntity.DebugLog($"Checking {sound.name} from {source.name}, sound completely blocked");
                 return false;
             }
-
-            // TO DO POSSIBLY IF I FEEL IT'S NECESSARY: under whatever criteria, get the hit objects from the line of sight check and reduce the sound volume based on the types of objects hit
         }
 
-        // Check if the sound is loud enough for the listener to hear it. If not, cancel
-        heardDecibels = decibels * MathUtility.InverseSquareValueMultiplier(travelDistance);
-        bool canHear = heardDecibels >= minVolumeToHear;
+        // Calculate if sound could travel to enemy ears, and approximate heard volume
+        // This math is probably not that accurate and will need to be improved.
+        heardVolume = maxVolume * (travelDistance / maxDistance);
+        bool canHear = travelDistance < maxDistance;
 
-        //rootEntity.DebugLog($"Outgoing volume = {decibels}. Incoming volume {heardDecibels}/{minVolumeToHear}");
-        //Debug.DrawLine(origin, destination, canHear ? Color.cyan : Color.blue, 1);
-
+        if (allowDebug) rootEntity.DebugLog($"Checking {sound.name} from {source.name}, result = {canHear}\n{travelDistance}/{maxDistance}\n{heardVolume}/{maxVolume}");
         return canHear;
     }
 
@@ -124,36 +134,27 @@ public class DiegeticAudioListener : MonoBehaviour
     /// <param name="destination"></param>
     /// <param name="travelDistance"></param>
     /// <returns></returns>
-    public static bool ReverbPath(Vector3 origin, Vector3 destination, float maxDistance, int navMeshMask, out float travelDistance)
+    public static bool ReverbPath(Vector3 origin, Vector3 destination, int navMeshMask, out float travelDistance, bool debug = false)
     {
-        travelDistance = 0;
-
-
         // Ensure a path asset exists
         if (reverbPath == null) reverbPath = new NavMeshPath();
 
-
-
-        // Try to calculate a path
-        
         // Generate filter
         NavMeshQueryFilter filter = new NavMeshQueryFilter();
         filter.agentTypeID = agentID;
         filter.areaMask = navMeshMask;
-        //rootEntity.DebugLog($"{filter.agentTypeID}, {filter.areaMask}");
-        bool pathCalculated = NavMesh.CalculatePath(origin, destination, filter, reverbPath);
 
+        // Try to calculate a path
+        bool pathCalculated = NavMesh.CalculatePath(origin, destination, filter, reverbPath);
         //bool pathCalculated = NavMesh.CalculatePath(start, end, navMeshMask, reverbPath);
 
+        // Update distance to reflect path length
+        travelDistance = AIAction.NavMeshPathDistance(reverbPath);
 
-
-        //Debug.Log($"{pathCalculated}, {reverbPath.status}");
+        if (debug) Debug.Log($"{pathCalculated}, {reverbPath.status}. Length = {travelDistance}, point count = {reverbPath.corners.Length}");
         if (!pathCalculated) return false;
         if (reverbPath.status != NavMeshPathStatus.PathComplete) return false;
 
-        // Update distance to reflect path corners (plus distance from real to sampled ends)
-        
-        travelDistance = AIAction.NavMeshPathDistance(reverbPath);
         return true;
     }
 }
