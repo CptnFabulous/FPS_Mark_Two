@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using CptnFabulous.MiscUtility;
 
 public enum OctantType
 {
@@ -20,7 +21,7 @@ public class Octant<T>
         this.subdivisions = subdivisions;
         this.key = key;
 
-        // TO DO: create bounds
+        // Create bounds
         int size = Octree<T>.CalculateGridSize(subdivisions);
         Vector3Int dimensions = new Vector3Int(size, size, size);
 
@@ -28,6 +29,18 @@ public class Octant<T>
         newBounds.min = boundsMin;
         newBounds.max = boundsMin + dimensions;
         bounds = newBounds;
+    }
+    
+    public static Octant<T> FromParent(Octant<T> parent, int orderIndex)
+    {
+        int childSize = parent.size / 2; // Calculate size that each child octant needs to be
+        // Calculate check min and max
+        Vector3Int offset = VoxelUtility.corners[orderIndex];
+        offset.x *= childSize;
+        offset.y *= childSize;
+        offset.z *= childSize;
+        Vector3Int childMin = parent.min + offset;
+        return new Octant<T>(parent.origin, parent, parent.subdivisions - 1, childMin, parent.key + orderIndex.ToString());
     }
 
     public Octree<T> origin { get; private set; }
@@ -85,7 +98,7 @@ public class Octant<T>
         }
 
         // Check in child octants
-        int childSize = size / 2; // Calculate size that each child octant needs to be
+        //int childSize = size / 2; // Calculate size that each child octant needs to be
         bool isFull = true; // Set up a value so we can check if this octant is completely full
 
         for (int i = 0; i < 8; i++)
@@ -93,6 +106,7 @@ public class Octant<T>
             // Set up child octant
             if (children[i] == null)
             {
+                /*
                 // Calculate check min and max
                 Vector3Int offset = SmokeParticleDensityController.neighbourOffsets[i];
                 offset.x *= childSize;
@@ -100,6 +114,8 @@ public class Octant<T>
                 offset.z *= childSize;
                 Vector3Int childMin = min + offset;
                 children[i] = new Octant<T>(origin, this, subdivisions - 1, childMin, key + i.ToString());
+                */
+                children[i] = Octant<T>.FromParent(this, i);
             }
 
             // Calculate data inside child octant

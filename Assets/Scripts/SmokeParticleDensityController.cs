@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,19 +46,6 @@ public class SmokeParticleDensityController : MonoBehaviour
     public float deceleration = 10f;
 
     Dictionary<Vector3Int, ParticleGridSpace> dictionary = new Dictionary<Vector3Int, ParticleGridSpace>();
-
-
-    public static readonly Vector3Int[] neighbourOffsets = new Vector3Int[]
-    {
-        new Vector3Int(0, 0, 0),
-        new Vector3Int(1, 0, 0),
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(1, 1, 0),
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(1, 0, 1),
-        new Vector3Int(0, 1, 1),
-        new Vector3Int(1, 1, 1),
-    };
 
     public float gridSpaceSize => maximumCheckRadius * 2;
 
@@ -227,7 +215,7 @@ public class SmokeParticleDensityController : MonoBehaviour
         // In this case, each time one of the base offsets is 'one', it's replaced with the actual offset direction for that axis.
         for (int i = 0; i < 8; i++)
         {
-            Vector3Int neighbour = particleGridPosition + (neighbourOffsets[i] * offsetDirection);
+            Vector3Int neighbour = particleGridPosition + (VoxelUtility.corners[i] * offsetDirection);
 
             // If a grid space is found, check it. Otherwise move to the next coordinate.
             if (dictionary.TryGetValue(neighbour, out ParticleGridSpace space) == false) continue;
