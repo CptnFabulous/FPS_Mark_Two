@@ -31,7 +31,6 @@ public class FieldOfView : MonoBehaviour
     HashSet<Entity> previouslyScanned = new HashSet<Entity>();
     Entity[] foundTargets = new Entity[256];
     RaycastHit[] foundTargetHits = new RaycastHit[256];
-    int numberOfTargets = 0;
 
     static GenericComparer<Vector2Int> gridSorter = new GenericComparer<Vector2Int>();
 
@@ -49,7 +48,7 @@ public class FieldOfView : MonoBehaviour
 
     public T FindObjectInFieldOfView<T>(System.Predicate<T> criteria, LayerMask cullingMask, out RaycastHit hit) where T : Entity
     {
-        ScanObjectsInFieldOfView(criteria, cullingMask, 1);
+        int numberOfTargets = FindObjectsInFieldOfViewNonAlloc(criteria, cullingMask, ref foundTargets, ref foundTargetHits, 1);
         if (numberOfTargets >= 1)
         {
             hit = foundTargetHits[0];
@@ -59,9 +58,16 @@ public class FieldOfView : MonoBehaviour
         hit = new RaycastHit();
         return null;
     }
+    /// <summary>
+    /// Creates an array of everything found with the desired criteria. Creates garbage.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="criteria"></param>
+    /// <param name="cullingMask"></param>
+    /// <returns></returns>
     public T[] FindObjectsInFieldOfView<T>(System.Predicate<T> criteria, LayerMask cullingMask) where T : Entity
     {
-        ScanObjectsInFieldOfView(criteria, cullingMask, overlapSphereResults.Length);
+        int numberOfTargets = FindObjectsInFieldOfViewNonAlloc(criteria, cullingMask, ref foundTargets, ref foundTargetHits, overlapSphereResults.Length);
 
         T[] entities = new T[numberOfTargets];
         for (int i = 0; i < numberOfTargets; i++)
@@ -72,12 +78,22 @@ public class FieldOfView : MonoBehaviour
         return entities;
     }
 
-    void ScanObjectsInFieldOfView<T>(System.Predicate<T> criteria, LayerMask cullingMask, int maxResults) where T : Entity
+    /// <summary>
+    /// Checks for all entities in the AI's field of views, and writes results to a pair of arrays.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="criteria"></param>
+    /// <param name="cullingMask">An additional layer mask on top of the AI's own vision mask, to easily pare down unwanted results.</param>
+    /// <param name="foundTargets">Contains all targets spotted. Corresponds exactly with <paramref name="foundTargetHits"/></param>
+    /// <param name="foundTargetHits">Contains the raycast data for where each target was spotted. Corresponds exactly with <paramref name="foundTargets"/></param>
+    /// <param name="maxResults"></param>
+    /// <returns>The number of entities the AI can currently see.</returns>
+    public int FindObjectsInFieldOfViewNonAlloc<T>(System.Predicate<T> criteria, LayerMask cullingMask, ref Entity[] foundTargets, ref RaycastHit[] foundTargetHits, int maxResults) where T : Entity
     {
         previouslyScanned.Clear();
-        numberOfTargets = 0;
+        int numberOfEntityResults = 0;
 
-        int numberOfResults;
+        int numberOfColliderResults;
         if (viewingAngles.x <= 180 && viewingAngles.y <= 180)
         {
             // If viewing angle fits comfortably inside a frustum, make a box encompassing it.
@@ -91,18 +107,18 @@ public class FieldOfView : MonoBehaviour
             Vector3 halfExtents = new Vector3(Mathf.Abs(rightmostPoint.x), Mathf.Abs(downMostPoint.y), halfRange);
 
             // Boxcast
-            numberOfResults = Physics.OverlapBoxNonAlloc(boxCentre, halfExtents, overlapSphereResults, transform.rotation, cullingMask);
+            numberOfColliderResults = Physics.OverlapBoxNonAlloc(boxCentre, halfExtents, overlapSphereResults, transform.rotation, cullingMask);
         }
         else
         {
             // For extra wide FOVs, just use an entire sphere
-            numberOfResults = Physics.OverlapSphereNonAlloc(transform.position, viewRange, overlapSphereResults, cullingMask);
+            numberOfColliderResults = Physics.OverlapSphereNonAlloc(transform.position, viewRange, overlapSphereResults, cullingMask);
         }
-        //int numberOfResults = Physics.OverlapSphereNonAlloc(transform.position, viewRange, overlapSphereResults, cullingMask);
 
         //rootAI.DebugLog($"Checking for objects in field of view. Number of results = {numberOfResults}");
-        for (int i = 0; i < numberOfResults; i++)
+        for (int i = 0; i < numberOfColliderResults; i++)
         {
+            #region Check that entity meets criteria
             //rootAI.DebugLog($"Checking {overlapSphereResults[i]}");
 
             // Check that an entity exists
@@ -132,23 +148,34 @@ public class FieldOfView : MonoBehaviour
             ViewStatus status = VisionConeCheck(entity, out RaycastHit rh);
             if (status != ViewStatus.Visible)
             {
-                //.DebugLog($"View status = {status}, aborting");
+                //rootAI.DebugLog($"View status = {status}, aborting");
                 continue;
             }
 
+            #endregion
+
             //rootAI.DebugLog($"Target {entity} is valid, adding");
-            foundTargets[numberOfTargets] = entity;
-            foundTargetHits[numberOfTargets] = rh;
-            numberOfTargets++;
+            foundTargets[numberOfEntityResults] = entity;
+            foundTargetHits[numberOfEntityResults] = rh;
+            numberOfEntityResults++;
 
             // Don't continue if we've obtained the necessary number of results
-            if (numberOfTargets >= maxResults) return;
+            if (numberOfEntityResults >= maxResults) break;
         }
+
+        return numberOfEntityResults;
     }
 
+    /// <summary>
+    /// Checks if the AI can see to a specific position.
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="hit"></param>
+    /// <returns></returns>
     public ViewStatus VisionConeCheck(Vector3 point, out RaycastHit hit) => PositionCheck(point, out hit, null);
     /// <summary>
-    /// Calculates and runs a sweep of raycasts to check a cone-shaped area for colliders. This check will also detect partially-hidden colliders, but is performance-intensive and should not be run regularly.
+    /// Calculates and runs a sweep of raycasts to check a cone-shaped area for an entity's colliders, including partially-hidden ones.
+    /// <para>Computationally expensive and should only be run when searching for specific things.</para>
     /// </summary>
     public ViewStatus VisionConeCheck(Entity targetEntity, out RaycastHit hit)
     {
@@ -257,8 +284,14 @@ public class FieldOfView : MonoBehaviour
         return ViewStatus.OutOfRange;
     }
 
-
-    ViewStatus PositionCheck(Vector3 point, out RaycastHit hit, IEnumerable<Collider> targetColliders)
+    /// <summary>
+    /// Checks if looking at <paramref name="point"/> will result in the AI seeing one of <paramref name="targetColliders"/>.
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="hit"></param>
+    /// <param name="targetColliders"></param>
+    /// <returns></returns>
+    public ViewStatus PositionCheck(Vector3 point, out RaycastHit hit, IEnumerable<Collider> targetColliders)
     {
         Vector3 direction = point - transform.position;
         hit = new RaycastHit();
