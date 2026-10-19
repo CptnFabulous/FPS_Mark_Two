@@ -28,8 +28,6 @@ public class OctreeTest : MonoBehaviour
         bounds.min = cellBounds.min;
         bounds.max = cellBounds.max;
 
-
-
         // Convert position and size values from local to world space
         Matrix4x4 matrix = transform.localToWorldMatrix;
         Vector3 centre = matrix.MultiplyPoint3x4(bounds.center);

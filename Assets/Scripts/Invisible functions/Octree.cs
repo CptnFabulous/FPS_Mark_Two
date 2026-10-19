@@ -9,7 +9,7 @@ public enum OctantType
     Branch, // Contains a mixture of valid and invalid spaces
     Invalid, // Nothing in this space meets criteria
     Leaf, // Meets criteria, but cannot be subdivided further
-    FullyValid // All children count for criteria
+    FullyValid, // All children count for criteria
 }
 
 public class Octant<T>
@@ -151,31 +151,6 @@ public class Octant<T>
         while (enumerator.MoveNext()) continue;
         enumerator.Dispose();
         
-
-        /*
-        Debug.Log($"Synchronous refresh on frame {Time.frameCount}");
-
-        int expectedCount = 0;
-        IEnumerator<Octant<T>> before = CellIterator(false);
-        while (before.MoveNext()) expectedCount++;
-        before.Dispose();
-        Debug.Log(expectedCount);
-        
-
-        int actualCount = 0;
-        IEnumerator<Octant<T>> enumerator = CellIterator(true);
-        while (enumerator.MoveNext()) actualCount++;
-        enumerator.Dispose();
-        Debug.Log(actualCount);
-
-        
-        int afterCount = 0;
-        IEnumerator<Octant<T>> after = CellIterator(true);
-        while (after.MoveNext()) afterCount++;
-        after.Dispose();
-        Debug.Log(afterCount);
-        */
-        
     }
     public void DrawGizmos(Color invalid, Color branch, Color leaf, Color full)
     {
@@ -213,7 +188,10 @@ public class Octant<T>
                 Gizmos.DrawWireCube(centre, size);
 
                 // Draw gizmos for each child
-                for (int i = 0; i < 8; i++) children[i].DrawGizmos(invalid, branch, leaf, full);
+                for (int i = 0; i < 8; i++)
+                {
+                    children[i].DrawGizmos(invalid, branch, leaf, full);
+                }
                 break;
         }
     }
@@ -287,6 +265,64 @@ public class Octant<T>
         }
     }
     
+
+
+
+
+
+    /// <summary>
+    /// Scans and refreshes octants at the same time before moving onto the next. Almost like turning it into multiple octrees for different sections.
+    /// <para>Ensures less delay between scanning and processing even with asynchronous operation, but means a minimum of (8^<paramref name="startDepth"/>) cells to update.</para>
+    /// </summary>
+    /// <param name="startDepth"></param>
+    /// <returns></returns>
+    public IEnumerator<Octant<T>> FullRefreshIterator(int startDepth)
+    {
+        // Once we're deep enough to scan properly, start iterating through this octant like it's a base
+        if (depth >= startDepth)
+        {
+            // Scan
+            IEnumerator<Octant<T>> scanEnumerator = ScanIterator();
+            while (scanEnumerator.MoveNext()) yield return scanEnumerator.Current;
+            scanEnumerator.Dispose();
+            // Process
+            IEnumerator<Octant<T>> processEnumerator = CellIterator(true);
+            while (processEnumerator.MoveNext()) yield return processEnumerator.Current;
+            processEnumerator.Dispose();
+
+            yield break;
+        }
+
+
+
+
+
+        // TO DO: mark this octant as a branch
+        // TO DO: delete cell contents?
+        // TO DO: make sure irrelevant octants aren't drawn as gizmos?
+
+
+        type = OctantType.Branch;
+        IEnumerator<Octant<T>> emptyIterator = EmptyIterator(true, true, false, false);
+        while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
+        emptyIterator.Dispose();
+
+
+
+
+        // Check in child octants
+        //int childSize = size / 2;
+        for (int i = 0; i < 8; i++)
+        {
+            // TO DO: Set up child octant
+            if (children[i] == null) children[i] = Octant<T>.FromParent(this, i);
+
+            // Keep iterating down until we're deep enough to actually start scanning and processing.
+            IEnumerator<Octant<T>> childEnumerator = children[i].FullRefreshIterator(startDepth);
+            while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+            childEnumerator.Dispose();
+        }
+    }
 }
 
 public class Octree<T>
