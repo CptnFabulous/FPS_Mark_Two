@@ -60,6 +60,7 @@ public class CheckpointManager : MonoBehaviour
     {
         player.transform.position = checkpoint.position;
         player.lookController.lookRotation = checkpoint.rotation;
+        player.rigidbody.velocity = Vector3.zero;
 
         int amountToHeal = Mathf.CeilToInt(player.health.data.max * healthRatioOnRespawn);
         player.health.Heal(amountToHeal, null, null);
