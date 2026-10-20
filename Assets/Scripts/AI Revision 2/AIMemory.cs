@@ -20,7 +20,7 @@ public class AIMemory : MonoBehaviour
             if (_allies == null || _allies.Count == 0)
             {
                 _allies = new List<AI>();
-                _allies.AddRange(FindObjectsOfType<AI>());
+                _allies.AddRange(FindObjectsOfType<AI>(true));
                 _allies.RemoveAll(x => x.affiliation != rootAI.affiliation);
             }
 
@@ -43,6 +43,7 @@ public class AIMemory : MonoBehaviour
         rootAI.DebugLog($"Checking if any allies are too close. Ally count = {allies.Count}");
         foreach (AI ally in allies)
         {
+            if (ally.isActiveAndEnabled == false) continue;
             if (ally.health.IsAlive == false) continue;
             if (ally.agent == null) continue;
 
