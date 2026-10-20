@@ -626,7 +626,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   locationSearchState: {fileID: 414535660375231210}
   basePriority: 0
-  soundWaitDuration: 0
   suspiciousNoises:
   - {fileID: 11400000, guid: 9b099937e029c8a4c8a96a55539d9517, type: 2}
   - {fileID: 11400000, guid: 6e70f8f002e7a6640b21a46446f2a4c1, type: 2}
@@ -687,8 +686,10 @@ MonoBehaviour:
   currentAttack: {fileID: 3013230456739492696}
   checkDistance: 100
   minTargetDistance: 1
+  idealTargetDistance: 10
   maxTargetDistance: 40
-  coverDistance: 3
+  distanceToCover: 3
+  distanceFromAllies: 5
   onTargetEliminated: {fileID: 1998196516955973173}
   timeAfterSightLossUntilSearch: 5
   searchForMissingTarget: {fileID: 414535660375231210}
@@ -1079,6 +1080,7 @@ MonoBehaviour:
   soundCue: {fileID: 0}
   animationTrigger: 
   aimStats: {fileID: 4605831353781806781}
+  ragdollHandler: {fileID: 0}
 --- !u!1 &7555169701559161300
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,10 +1155,11 @@ MonoBehaviour:
   deathState: {fileID: 9024660467528656084}
   visionCone: {fileID: 3071744553832184711}
   hearing: {fileID: 5217320388601188730}
+  memory: {fileID: 0}
   agent: {fileID: 7555169701559161297}
+  movement: {fileID: 0}
   physicsHandler: {fileID: 726081221385024944}
-  baseMovementSpeed: 3.5
-  destinationThreshold: 1
+  physicsStateHandler: {fileID: 0}
   aiming: {fileID: 7555169702278949065}
   targeting: {fileID: 8243332005579471133}
   animator: {fileID: 2618738036890045085}
@@ -1352,6 +1355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7466f070aaef8a040870f04ced06dd74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensitivityMultiplier: 1
   minVolumeToHear: 0.1
   maxDistance: 10
   soundLayerMask:
@@ -1590,6 +1594,8 @@ MonoBehaviour:
   animationTrigger: 
   aimStats: {fileID: 4605831353781806781}
   delayBetweenChangingTargetLocation: 10
+  searchTeamSize: 3
+  allyDistanceThreshold: 5
   statesToSwitchFrom:
   - {fileID: 2618743024015922463}
   - {fileID: 1998196516955973173}

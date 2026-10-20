@@ -391,6 +391,7 @@ GameObject:
   - component: {fileID: 5438377952590165758}
   - component: {fileID: 2603796428523769575}
   - component: {fileID: 2539674625455532549}
+  - component: {fileID: 4398774852389168716}
   m_Layer: 6
   m_Name: Steam Valve
   m_TagString: Untagged
@@ -439,6 +440,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 5438377952590165758}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &5438377952590165758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,6 +460,7 @@ MonoBehaviour:
     criticalLevel: 0
   godmode: 0
   deadDescription: depressurised
+  poise: {fileID: 0}
   onDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -520,6 +523,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   degreesCelsius: 100
+--- !u!208 &4398774852389168716
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4973556070369201380}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.075, y: 1.05, z: 0.15}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.15}
+  m_TimeToStationary: 0.5
 --- !u!1 &4973556070530330630
 GameObject:
   m_ObjectHideFlags: 0

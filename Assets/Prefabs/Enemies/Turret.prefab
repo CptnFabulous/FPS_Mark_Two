@@ -334,17 +334,17 @@ MonoBehaviour:
   health: {fileID: 2065538367267534249}
   audioSource: {fileID: 1594795221519742183}
   ragdoll: {fileID: 0}
-  capsuleCollider: {fileID: 0}
   stamina: {fileID: 0}
   affiliation: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
   stateController: {fileID: 2029478338685448919}
   deathState: {fileID: 2696593574557045607}
   visionCone: {fileID: 341427546881165341}
   hearing: {fileID: 0}
+  memory: {fileID: 0}
   agent: {fileID: 0}
+  movement: {fileID: 0}
   physicsHandler: {fileID: 0}
-  baseMovementSpeed: 5
-  destinationThreshold: 1
+  physicsStateHandler: {fileID: 0}
   aiming: {fileID: 4804942558870988031}
   targeting: {fileID: 1927864505839106716}
   animator: {fileID: 0}
@@ -573,6 +573,7 @@ MonoBehaviour:
   soundCue: {fileID: 0}
   animationTrigger: 
   aimStats: {fileID: 0}
+  ragdollHandler: {fileID: 0}
 --- !u!1 &2877341007131606204
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,8 +839,10 @@ MonoBehaviour:
   currentAttack: {fileID: 492860660033172326}
   checkDistance: 30
   minTargetDistance: 5
+  idealTargetDistance: 10
   maxTargetDistance: 15
-  coverDistance: 2
+  distanceToCover: 3
+  distanceFromAllies: 5
   onTargetEliminated: {fileID: 8816799217935229477}
   timeAfterSightLossUntilSearch: 5
   searchForMissingTarget: {fileID: 0}
@@ -6273,6 +6276,7 @@ MonoBehaviour:
   parentEntity: {fileID: 4609959751622302532}
   hudGraphic: {fileID: 0}
   oneHanded: 0
+  isOffhand: 0
   modes:
   - {fileID: 871875569795541140}
   currentModeIndex: 0

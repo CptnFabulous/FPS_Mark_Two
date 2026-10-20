@@ -165,10 +165,11 @@ MonoBehaviour:
   deathState: {fileID: 8228195018892187921}
   visionCone: {fileID: 5408000333064649662}
   hearing: {fileID: 7336316630286964025}
+  memory: {fileID: 0}
   agent: {fileID: 7598960036072189789}
+  movement: {fileID: 0}
   physicsHandler: {fileID: 3786704764931412000}
-  baseMovementSpeed: 3.5
-  destinationThreshold: 1
+  physicsStateHandler: {fileID: 0}
   aiming: {fileID: 4014998913346090943}
   targeting: {fileID: 8028347785578566076}
   animator: {fileID: 0}
@@ -1207,6 +1208,7 @@ MonoBehaviour:
   soundCue: {fileID: 0}
   animationTrigger: 
   aimStats: {fileID: 6689053609956011697}
+  ragdollHandler: {fileID: 0}
 --- !u!1 &4714460751924256609
 GameObject:
   m_ObjectHideFlags: 0
