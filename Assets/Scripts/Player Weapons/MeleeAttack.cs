@@ -139,8 +139,6 @@ public class MeleeAttack : WeaponMode//, IInterruptableAction
         if (animator != null) animator.SetTrigger(cooldownTrigger);
         yield return new WaitForSeconds(cooldownTime);
         #endregion
-
-        currentAttack = null;
     }
 
 

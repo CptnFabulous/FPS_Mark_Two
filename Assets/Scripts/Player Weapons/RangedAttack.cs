@@ -198,7 +198,6 @@ public class RangedAttack : WeaponMode
 
         // Reset shot timer
         shotsFired = 0;
-        currentAttack = null;
     }
     
     /// <summary>

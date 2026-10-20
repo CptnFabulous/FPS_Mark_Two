@@ -107,7 +107,6 @@ public class PropCarryingHandler : WeaponMode
         onThrow.Invoke(thrown);
 
         OnAttack();
-        currentAttack = null;
     }
     public override void OnAttack()
     {

@@ -81,8 +81,6 @@ public class ThrowObject : WeaponMode
         yield return new WaitForSeconds(cooldown);
 
         //SpawnNewThrowable();
-
-        currentAttack = null;
     }
 
     void SpawnNewThrowable()

@@ -11,7 +11,7 @@ public abstract class WeaponMode : MonoBehaviour
     public float switchSpeed;
     public UnityEvent onSwitch;
 
-    protected Coroutine currentAttack;
+    Coroutine currentAttack;
 
     Character _user;
     public bool PrimaryHeld { get; protected set; } = false;
@@ -58,7 +58,7 @@ public abstract class WeaponMode : MonoBehaviour
         if (inAttack) return;
         if (CanAttack() == false) return;
 
-        currentAttack = StartCoroutine(AttackSequence());
+        currentAttack = StartCoroutine(InvokeAttackSequence());
     }
     public void SetSecondaryInput(bool active)
     {
@@ -68,6 +68,12 @@ public abstract class WeaponMode : MonoBehaviour
     protected abstract void OnSecondaryInputChanged(bool held);
     public abstract void OnTertiaryInput();
     
+    IEnumerator InvokeAttackSequence()
+    {
+        yield return AttackSequence();
+        currentAttack = null;
+    }
+
     protected virtual void OnDisable()
     {
         SetPrimaryInput(false);
