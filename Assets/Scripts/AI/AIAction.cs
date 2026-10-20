@@ -65,17 +65,17 @@ public static class AIAction
         return false;
     }
 
-    public static bool LineOfSight(Vector3 from, Vector3 to, Entity fromEntity, Entity toEntity, LayerMask detection, bool printDebugMessages = false)
+    public static bool LineOfSight(Vector3 from, Vector3 to, out RaycastHit hit, Entity fromEntity, Entity toEntity, LayerMask detection, bool printDebugMessages = false)
     {
-        return LineOfSight(from, to, detection, (rh) =>
+        return LineOfSight(from, to, out hit, detection, (rh) =>
         {
             return (fromEntity != null && fromEntity.HitOwnCollider(rh)) || (toEntity != null && toEntity.HitOwnCollider(rh));
         }, printDebugMessages);
     }
-    public static bool LineOfSight(Vector3 from, Vector3 to, LayerMask detection, System.Func<RaycastHit, bool> isException, bool printDebugMessages = false)
+    public static bool LineOfSight(Vector3 from, Vector3 to, out RaycastHit hit, LayerMask detection, System.Func<RaycastHit, bool> isException, bool printDebugMessages = false)
     {
         Vector3 direction = to - from;
-        return !RaycastWithExceptions(from, direction, out _, direction.magnitude, detection, isException, QueryTriggerInteraction.UseGlobal, printDebugMessages);
+        return !RaycastWithExceptions(from, direction, out hit, direction.magnitude, detection, isException, QueryTriggerInteraction.UseGlobal, printDebugMessages);
     }
     public static bool LineOfSightToTarget(Vector3 origin, Vector3 direction, out RaycastHit hit, float viewRange, LayerMask viewDetection, IEnumerable<Collider> targetColliders, System.Func<RaycastHit, bool> isException)
     {
