@@ -101,7 +101,7 @@ public class DiegeticAudioListener : MonoBehaviour
 
         // Check how far it takes the sound to travel, based on how the sound would reach the target.
         float travelDistance;
-        if (AIAction.LineOfSight(origin, destination, source, rootEntity, soundLayerMask))
+        if (AIAction.LineOfSight(origin, destination, out _, source, rootEntity, soundLayerMask))
         {
             // If sound can directly travel to target, just get that distance
             travelDistance = Vector3.Distance(origin, destination);

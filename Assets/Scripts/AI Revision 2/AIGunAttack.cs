@@ -66,7 +66,7 @@ public class AIGunAttack : MonoBehaviour
         if (target.health.IsAlive == false) return false;
 
         // Check that the AI can get line of sight to its target, and that the current attack won't be blocked.
-        bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin);
+        bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin, out _);
 
         // If attack has already started, shift aim linearly towards target
         if (attackState != AttackState.None)
@@ -158,7 +158,7 @@ public class AIGunAttack : MonoBehaviour
         //if (agent != null) agent.move.speed = rootAI.baseMovementSpeed * multiplier;
 
     }
-    public bool AttackNotBlocked(Vector3 aimOrigin) => AIAction.LineOfSight(aimOrigin, targetPosition, rootAI, target, weapon.attackMask);
+    public bool AttackNotBlocked(Vector3 aimOrigin, out RaycastHit hit) => AIAction.LineOfSight(aimOrigin, targetPosition, out hit, rootAI, target, weapon.attackMask);
 
     public static IEnumerator CancellableYieldForSeconds(float seconds)
     {

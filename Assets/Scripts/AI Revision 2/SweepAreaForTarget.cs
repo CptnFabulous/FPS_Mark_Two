@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,7 +22,7 @@ public class SweepAreaForTarget : AIStateFunction
     //Vector3 originOfCheckRadius => targetManager.lastKnownPosition;
     Vector3 originOfCheckRadius => standingPosition;
 
-    List<AIGridPoints.GridPoint> pointsToCheck;
+    List<AIGridPoints.GridPoint> pointsToCheck = new List<AIGridPoints.GridPoint>();
     //float lastTimeDestinationUpdated;
 
     protected override void OnEnable()
@@ -36,7 +35,7 @@ public class SweepAreaForTarget : AIStateFunction
     }
     private void OnDisable()
     {
-        pointsToCheck = null;
+        pointsToCheck.Clear();
     }
     void Update()
     {
@@ -55,7 +54,7 @@ public class SweepAreaForTarget : AIStateFunction
             Debug.Log($"{rootAI}: all points have been searched");
             if (failState != null)
             {
-                pointsToCheck = null;
+                pointsToCheck.Clear();
                 controller.SwitchToState(failState);
             }
             else // If no fail state is specified, start another search
@@ -84,21 +83,22 @@ public class SweepAreaForTarget : AIStateFunction
     {
         //rootAI.DebugLog("Starting new search");
 
-        // Get a copy of the cached grid points
+        AIGridPoints points = AIGridPoints.Current;
+
+        // Wipe old points
+        pointsToCheck.Clear();
+
+        // Sample points based on whether or not the AI is in a valid level area.
         LevelArea areaToSearch = LevelArea.FindAreaOfPosition(targetManager.lastKnownPosition);
-        //Debug.Log($"{this}: area to search = " + areaToSearch);
         if (areaToSearch != null)
         {
-            pointsToCheck = AIGridPoints.Current.GetGridPointsInArea(areaToSearch);
+            // Sample grid points in area
+            points.GetPoints((p) => areaToSearch.Contains(p.position), ref pointsToCheck);
         }
         else
         {
-            pointsToCheck = new List<AIGridPoints.GridPoint>(AIGridPoints.Current.gridPoints);
-            // Remove all points outside the search range
-            if (maxSearchDistance > 0)
-            {
-                pointsToCheck.RemoveAll((point) => Vector3.Distance(point.position, standingPosition) > maxSearchDistance);
-            }
+            // Get points across the entire level, but only within the search range
+            points.GetPoints((p) => points.IsWithinRadius(p, standingPosition, 0, maxSearchDistance), ref pointsToCheck);
         }
         
         // Assign a new destination

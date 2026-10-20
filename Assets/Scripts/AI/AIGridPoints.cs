@@ -25,6 +25,11 @@ public class AIGridPoints : MonoBehaviour
     #region Singleton for current level
     public static AIGridPoints Current => instance ??= FindObjectOfType<AIGridPoints>();
     static AIGridPoints instance;
+    /// <summary>
+    /// An array that can be used to quickly sample points from, without creating more garbage. This is accessible from anywhere, so if another sample operation uses this the previous data will be wiped.
+    /// </summary>
+    public static GridPoint[] sampleArray = new GridPoint[8192];
+
     #endregion
 
     #region Generation variables
@@ -64,7 +69,7 @@ public class AIGridPoints : MonoBehaviour
     public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
     #endregion
 
-    public List<GridPoint> gridPoints
+    public IReadOnlyList<GridPoint> gridPoints
     {
         get
         {
@@ -179,6 +184,38 @@ public class AIGridPoints : MonoBehaviour
     }
     #endregion
 
+    public void GetPoints(System.Func<GridPoint, bool> criteria, ref List<GridPoint> collection)
+    {
+        for (int i = 0; i < gridPoints.Count; i++)
+        {
+            // Ignore if criteria not met
+            bool valid = criteria.Invoke(gridPoints[i]);
+            if (!valid) continue;
+            // Add point to list
+            collection.Add(gridPoints[i]);
+        }
+    }
+    public int GetPointsNonAlloc(System.Func<GridPoint, bool> criteria, ref GridPoint[] collection, int maxNumberOfChecks = -1)
+    {
+        int validPoints = 0;
+        for (int i = 0; i < gridPoints.Count; i++)
+        {
+            // Ignore if criteria not met
+            bool valid = criteria.Invoke(gridPoints[i]);
+            if (!valid) continue;
+
+            // Add point
+            collection[validPoints] = gridPoints[i];
+            validPoints++;
+
+            // Cancel once we can't take any more
+            if (validPoints >= collection.Length) break;
+            if (maxNumberOfChecks >= 0 && validPoints >= maxNumberOfChecks) break;
+        }
+
+        return validPoints;
+    }
+
     /// <summary>
     /// Gets all grid points within a minimum and maximum radius of a certain position.
     /// </summary>
@@ -186,57 +223,39 @@ public class AIGridPoints : MonoBehaviour
     /// <param name="minRadius"></param>
     /// <param name="maxRadius"></param>
     /// <returns></returns>
-    public List<GridPoint> GetPoints(Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
+    public int GetPointsInRadius(ref GridPoint[] collection, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
-        return gridPoints.FindAll(p =>
-        {
-            // If checking for cover, exclude points that aren't cover
-            if (onlyIncludeCover && p.isCover == false)
-            {
-                return false;
-            }
-
-            // Check that the distance is correct
-            float distance = Vector3.Distance(p.position, centre);
-            if (distance < minRadius || distance > maxRadius)
-            {
-                return false;
-            }
-
-            // Point is valid
-            return true;
-        });
+        return GetPointsNonAlloc((p) => IsWithinRadius(p, centre, minRadius, maxRadius, onlyIncludeCover), ref collection);
     }
-    /// <summary>
-    /// Get a specified number of points within a minimum and maximum radius, sampled for somewhat even distribution
-    /// </summary>
-    /// <param name="number"></param>
-    /// <param name="centre"></param>
-    /// <param name="minRadius"></param>
-    /// <param name="maxRadius"></param>
-    /// <returns></returns>
-    public GridPoint[] GetSpecificNumberOfPoints(int number, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
+    public int GetGridPointsInArea(LevelArea rootArea, ref GridPoint[] collection)
     {
-        List<GridPoint> points = GetPoints(centre, minRadius, maxRadius, onlyIncludeCover);
-        if (points.Count <= number) // Return all results if there are less than desired by the number
+        if (rootArea == null) return -1;
+        return GetPointsNonAlloc((p) => rootArea.Contains(p.position), ref collection);
+    }
+
+
+
+
+
+
+
+
+    public bool IsWithinRadius(GridPoint p, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
+    {
+        // If checking for cover, exclude points that aren't cover
+        if (onlyIncludeCover && p.isCover == false)
         {
-            return points.ToArray();
+            return false;
         }
 
-        List<GridPoint> desired = new List<GridPoint>();
-        for (int i = 0; i < number; i++) // For the specified number of results
+        // Check that the distance is correct
+        float distance = Vector3.Distance(p.position, centre);
+        if (distance < minRadius || distance > maxRadius)
         {
-            // Create an index by dividing the length by result number and then multiplying by the check number.
-            // For example, 45 entries and 15 desired checks means the number increments by 3. When looking for the sixth entry, this would mean checking the eighteenth entry in the array.
-            int index = Mathf.RoundToInt(points.Count / number * i);
-            desired.Add(points[index]);
+            return false;
         }
 
-        return desired.ToArray();
-    }
-    public List<GridPoint> GetGridPointsInArea(LevelArea rootArea)
-    {
-        if (rootArea == null) return null;
-        return gridPoints.FindAll((p) => rootArea.Contains(p.position));
+        // Point is valid
+        return true;
     }
 }

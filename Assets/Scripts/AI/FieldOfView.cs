@@ -311,7 +311,7 @@ public class FieldOfView : MonoBehaviour
             // Perform a simple range check
             if (direction.magnitude > calculatedRange) return ViewStatus.OutOfRange;
             // Perform a simple line of sight check. If we hit something, line of sight is blocked
-            bool seen = AIAction.LineOfSight(transform.position, point, viewDetection.mask, rootAI.HitOwnCollider);
+            bool seen = AIAction.LineOfSight(transform.position, point, out _, viewDetection.mask, rootAI.HitOwnCollider);
             //Debug.Log($"Simple check, line of sight = {seen}");
             return seen ? ViewStatus.Visible : ViewStatus.BehindCover;
         }

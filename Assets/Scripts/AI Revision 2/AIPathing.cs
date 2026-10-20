@@ -48,17 +48,27 @@ public static class AIPathing
         return Physics.SphereCast(position, agent.radius, agent.transform.up, out _, agent.height, AIGridPoints.Current.environmentMask);
     }
 
+    /// <summary>
+    /// Can the AI find a point within the specified distance, where line of sight to danger origin is blocked?
+    /// </summary>
+    /// <param name="ai"></param>
+    /// <param name="positionToCheckFrom"></param>
+    /// <param name="dangerOrigin"></param>
+    /// <param name="distance"></param>
+    /// <param name="coverPoint"></param>
+    /// <returns></returns>
     public static bool FindCover(AI ai, Vector3 positionToCheckFrom, Vector3 dangerOrigin, float distance, out AIGridPoints.GridPoint coverPoint)
     {
-        // Find all points within distance
-        // Check for a point where line of sight to danger origin is blocked
+        // Sample grid points within check radius
+        int coverPointCount = AIGridPoints.Current.GetPointsInRadius(ref AIGridPoints.sampleArray, positionToCheckFrom, 0, distance, true);
+        // Shuffle to ensure randomness
+        MiscFunctions.Shuffle(AIGridPoints.sampleArray, 0, coverPointCount);
 
         NavMeshAgent agent = ai.agent;
-
-        List<AIGridPoints.GridPoint> points = AIGridPoints.Current.GetPoints(positionToCheckFrom, 0, distance, true);
-        CollectionUtility.ShuffleList(points);
-        foreach (AIGridPoints.GridPoint point in points)
+        for (int i = 0; i < coverPointCount; i++)
         {
+            AIGridPoints.GridPoint point = AIGridPoints.sampleArray[i];
+
             // Recreate the character's bounds, at the cover spot being checked
             Bounds characterBounds = ai.bounds;
             characterBounds.center -= agent.transform.position;

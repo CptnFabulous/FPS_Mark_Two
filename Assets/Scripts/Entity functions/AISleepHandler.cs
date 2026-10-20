@@ -66,7 +66,7 @@ public class AISleepHandler : MonoBehaviour
                 // Check if this camera can render this renderer
                 if (PhysicsUtility.IsLayerInLayerMask(c.cullingMask, r.gameObject.layer) == false) return false;
                 // Check if line of sight is established
-                if (!AIAction.LineOfSight(c.transform.position, r.transform.position, null, rootAI, c.cullingMask)) return false;
+                if (!AIAction.LineOfSight(c.transform.position, r.transform.position, out _, null, rootAI, c.cullingMask)) return false;
                 return true;
             });
         });

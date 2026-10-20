@@ -29,9 +29,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5364798808588403679}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2476372425257712513}
   - {fileID: 5068863385019751024}
@@ -51,7 +53,6 @@ Transform:
   - {fileID: 5068863386104712155}
   - {fileID: 5068863386305950883}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7624755565991279501
 MonoBehaviour:
@@ -71,6 +72,7 @@ MonoBehaviour:
   isUnique: 0
   health: {fileID: 7433403664448753733}
   audioSource: {fileID: 0}
+  ragdoll: {fileID: 0}
 --- !u!114 &7433403664448753733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,10 +87,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     name: New Resource
-    max: 1
-    current: 1
-    criticalLevel: 5
+    max: 2
+    current: 2
+    criticalLevel: 1
   godmode: 0
+  deadDescription: dead
+  poise: {fileID: 0}
   onDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -135,9 +139,17 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5364798808588403679}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 2, y: 2, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7660734357641084
@@ -192,6 +204,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -247,6 +260,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &2476372425257712513 stripped
 Transform:
@@ -263,6 +279,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -318,15 +335,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214172646897618 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798807963189483}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863385791785544 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798807963189483}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214172646897618 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798807963189483}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798808076269722
@@ -334,6 +354,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -389,15 +410,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214172735377315 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798808076269722}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863385770955321 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798808076269722}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214172735377315 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798808076269722}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798808311600873
@@ -405,6 +429,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -460,6 +485,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863385468517450 stripped
 Transform:
@@ -476,6 +504,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -531,6 +560,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863385239379449 stripped
 Transform:
@@ -547,6 +579,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -602,6 +635,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863385137847648 stripped
 Transform:
@@ -618,6 +654,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -673,6 +710,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863385065887410 stripped
 Transform:
@@ -689,6 +729,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -744,6 +785,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863385019751024 stripped
 Transform:
@@ -760,6 +804,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -815,15 +860,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214171880951863 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798808833959694}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863385017453997 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798808833959694}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214171880951863 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798808833959694}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798808937648564
@@ -831,6 +879,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -886,15 +935,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214171744003725 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798808937648564}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863387034024727 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798808937648564}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214171744003725 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798808937648564}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798809043325390
@@ -902,6 +954,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -957,6 +1010,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863386871724909 stripped
 Transform:
@@ -973,6 +1029,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -1028,15 +1085,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214171356808428 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798809358398421}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863386615372150 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798809358398421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214171356808428 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798809358398421}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798809381007782
@@ -1044,6 +1104,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -1099,6 +1160,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863386538236677 stripped
 Transform:
@@ -1115,6 +1179,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -1170,15 +1235,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214171279208523 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798809565988722}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863386420325841 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798809565988722}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214171279208523 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798809565988722}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798809684598272
@@ -1186,6 +1254,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -1241,6 +1310,9 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
 --- !u!4 &5068863386305950883 stripped
 Transform:
@@ -1257,6 +1329,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -1312,15 +1385,18 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214170997685931 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798809818188178}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863386170254129 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798809818188178}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214170997685931 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798809818188178}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5364798809887924600
@@ -1328,6 +1404,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5364798808588403677}
     m_Modifications:
     - target: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
@@ -1383,14 +1460,17 @@ PrefabInstance:
       value: Wooden Plank
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
---- !u!54 &5809214170789533249 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
-  m_PrefabInstance: {fileID: 5364798809887924600}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5068863386104712155 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 876970969259813539, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
+  m_PrefabInstance: {fileID: 5364798809887924600}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &5809214170789533249 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 1940455046560724793, guid: 1f1664b3a18f443499494e99854aafbf, type: 3}
   m_PrefabInstance: {fileID: 5364798809887924600}
   m_PrefabAsset: {fileID: 0}

@@ -84,7 +84,7 @@ public class DirectionalAttackMessage : AttackMessage
         if (targetAngle >= perceivedSpread) return false;
 
         // Check if an unobstructed linear path is available between the origin and target point
-        if (AIAction.LineOfSight(originPoint, closestPointInsideAngle, origin, character, hitDetection))
+        if (AIAction.LineOfSight(originPoint, closestPointInsideAngle, out _, origin, character, hitDetection))
         {
             return false;
         }
@@ -120,7 +120,7 @@ public class AOEAttackMessage : AttackMessage
         if (distanceToTarget >= perceivedRadius) return false;
 
         // Check if an unobstructed linear path is available between the origin and target point
-        if (AIAction.LineOfSight(centre, closestPoint, origin, character, hitDetection))
+        if (AIAction.LineOfSight(centre, closestPoint, out _, origin, character, hitDetection))
         {
             return false;
         }

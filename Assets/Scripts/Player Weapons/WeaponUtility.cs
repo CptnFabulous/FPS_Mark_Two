@@ -57,7 +57,7 @@ public static class WeaponUtility
 
             // Check for blockages between the origin and the hit point
             Vector3 hitLocation = e.bounds.ClosestPoint(origin);
-            bool lineOfSightCheck = AIAction.LineOfSight(origin, hitLocation, hitDetection, e.HitOwnCollider);
+            bool lineOfSightCheck = AIAction.LineOfSight(origin, hitLocation, out _, hitDetection, e.HitOwnCollider);
             if (lineOfSightCheck == false) continue;
 
             entities.Add(e);
