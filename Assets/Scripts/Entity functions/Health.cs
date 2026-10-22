@@ -25,9 +25,10 @@ public enum DamageType
 
 public class Health : MonoBehaviour
 {
+    public bool godmode = false;
+
     [Header("Stats")]
     public Resource data = new Resource(100, 100, 20);
-    public bool godmode = false;
     public string deadDescription = "dead";
     public CharacterPoise poise;
 
