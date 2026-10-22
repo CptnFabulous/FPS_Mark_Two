@@ -21,6 +21,7 @@ public class AIMemory : MonoBehaviour
             {
                 _allies = new List<AI>();
                 _allies.AddRange(FindObjectsOfType<AI>(true));
+                _allies.Remove(rootAI);
                 _allies.RemoveAll(x => x.affiliation != rootAI.affiliation);
             }
 
