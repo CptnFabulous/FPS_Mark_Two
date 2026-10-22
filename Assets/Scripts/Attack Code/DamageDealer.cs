@@ -19,7 +19,7 @@ public class DamageDealer
 
     public bool AttackObject(GameObject target, Entity attacker, Entity attackingWith, Vector3 point, Vector3 direction, Vector3 normal, float multiplier = 1)
     {
-        attackingWith.DebugLog($"Attacking {target}");
+        if (attackingWith != null) attackingWith.DebugLog($"Attacking {target}");
         //if (attacker.transform.IsChildOf(target.transform)) return false;
 
         // Check that it's not hitting an ally (do nothing if so)
@@ -57,7 +57,7 @@ public class DamageDealer
         if (rb != null)
         {
             Vector3 knockbackVector = knockback * multiplier * direction.normalized;
-            attackingWith.DebugLog($"Adding {knockbackVector} (magnitude = {knockbackVector.magnitude}) to {rb}");
+            if (attackingWith != null) attackingWith.DebugLog($"Adding {knockbackVector} (magnitude = {knockbackVector.magnitude}) to {rb}");
             rb.AddForceAtPosition(knockbackVector, point, ForceMode.Impulse);
 
             // Tell the attacker's health script that it just applied velocity to a physics object, to prevent self damage from physics glitches

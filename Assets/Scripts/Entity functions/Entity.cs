@@ -129,7 +129,7 @@ public class Entity : MonoBehaviour
         // Delete the actual object.
         // (Unless it's a player, don't delete them so the game over screen can play)
         // TO DO: check if this object was spawned from an object pool. If so, return it to the pool.
-        if (this is Player player == false) Destroy(gameObject);
+        if ((this is Player player) == false) Destroy(gameObject);
     }
 
 

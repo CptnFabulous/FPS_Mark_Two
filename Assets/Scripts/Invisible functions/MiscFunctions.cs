@@ -77,6 +77,115 @@ public readonly struct MiscFunctions
         //int.TryParse(c, out index);
         return value >= 0;
     }
+
+
+    // So from how I understand it:
+    // When you create an IEnumerator it's basically an instance of 'iterate through a collection', with some kind of loop deciding how to advance.
+    // Yielding basically means 'stop on this one and perform the appropriate task'.
+    // MoveNext() means 'move to the next one'.
+
+
+    /*
+    // This function was made by someone else, I just copied it.
+    public static IEnumerator<T> Skip<T>(IEnumerable<T> items, int skipCount)
+    {
+        IEnumerator<T> inner = items.GetEnumerator();
+        for (int i = 0; i < skipCount; i++)
+        {
+            inner.MoveNext();
+        }
+
+        while (inner.MoveNext())
+        {
+            yield return inner.Current;
+        }
+    }
+    public static IEnumerator<T> Take<T>(IEnumerable<T> items, int count)
+    {
+        IEnumerator<T> inner = items.GetEnumerator();
+        for (int i = 0; i < count; i++)
+        {
+            if (inner.MoveNext())
+            {
+                yield return inner.Current;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    */
+    public static IEnumerator<T> Skip<T>(IEnumerator<T> inner, int skipCount)
+    {
+        // Skip all values up to skipCount
+        for (int i = 0; i < skipCount; i++) inner.MoveNext();
+        // Iterate through everything after that
+        while (inner.MoveNext()) yield return inner.Current;
+    }
+    public static IEnumerator<T> Take<T>(IEnumerator<T> inner, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (inner.MoveNext() == false) yield break;
+            yield return inner.Current;
+        }
+    }
+
+    public static IEnumerator<T> SkipAndTake<T>(IEnumerator<T> inner, int start, int count)
+    {
+        inner = Skip(inner, start);
+        inner = Take(inner, count);
+        return inner;
+    }
+
+
+    public static void IterateThroughEnumerator<T>(IEnumerator<T> enumerator, System.Action<T> action)
+    {
+        while (enumerator.MoveNext())
+        {
+            T item = enumerator.Current;
+            action.Invoke(item);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public static float InverseSquareByDistance(float startingValue, float distance)
+    {
+        // Square distance
+        // Divide starting value by (square distance)
+        // Value at distance
+        if (distance <= 0) return startingValue;
+        return startingValue / (distance * distance);
+    }
+    public static float InverseSquareByThreshold(float startingValue, float threshold)
+    {
+        // In reverse
+        // If A * B = C, and C / A = B, then C / B = A
+        // Divide starting value by threshold to get squared distance
+        // Square root of squared distance
+        float squaredDistance = startingValue / threshold;
+        return Mathf.Sqrt(squaredDistance);
+    }
+
+
+
+
+
+
+
+
+
+
+
     public static void Shuffle<T>(IList<T> list, int start, int length)
     {
         for (int i = start; i < length; i++)

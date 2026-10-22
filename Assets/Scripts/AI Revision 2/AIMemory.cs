@@ -36,12 +36,11 @@ public class AIMemory : MonoBehaviour
 
 
 
-    public bool AreEnoughAlliesInvestigating(Vector3 position, float distanceThreshold, int sufficientAllies, out int allyCount)
+    public bool AreEnoughAlliesInvestigating(Vector3 position, float distanceThreshold, int maxAllies, out int allyCount, bool quitAsSoonAsThresholdReached = true)
     {
         allyCount = 0;
 
         float squaredThreshold = distanceThreshold * distanceThreshold;
-        rootAI.DebugLog($"Checking if any allies are too close. Ally count = {allies.Count}");
         foreach (AI ally in allies)
         {
             if (ally.isActiveAndEnabled == false) continue;
@@ -57,10 +56,10 @@ public class AIMemory : MonoBehaviour
             if (allyDistanceSquared >= squaredThreshold) continue;
 
             allyCount++;
-            if (allyCount >= sufficientAllies) return true;
+            if (quitAsSoonAsThresholdReached && allyCount >= maxAllies) return true;
         }
 
-        return false;
+        return allyCount >= maxAllies;
     }
 
 }

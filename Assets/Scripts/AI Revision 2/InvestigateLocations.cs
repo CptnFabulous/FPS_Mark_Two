@@ -70,13 +70,18 @@ public class InvestigateLocations : AIStateFunction
         lastTimeOfTargetChange = Time.time;
 
         // If AI wishes to immediately travel to destination, set destination on the same frame so that AreEnoughAlliesInvestigating() can check properly if allies are going there.
-        if (waitDuration <= 0) navMeshAgent.SetDestination(pointToCheck);
+        //if (waitDuration <= 0) navMeshAgent.SetDestination(pointToCheck);
 
         // Force refresh
         controller.SwitchToState(this, true);
         return true;
     }
 
+    public override void BeforeEntry()
+    {
+        // If AI wishes to immediately travel to destination, set destination on the same frame so that AreEnoughAlliesInvestigating() can check properly if allies are going there.
+        if (waitDuration <= 0) navMeshAgent.SetDestination(pointToCheck);
+    }
     public override IEnumerator AsyncProcedure()
     {
         rootAI.DebugLog("Looking at suspicious position");
@@ -86,6 +91,8 @@ public class InvestigateLocations : AIStateFunction
             yield return aim.RotateTowardsPositionAsync(pointToCheck);
             yield return new WaitForSeconds(waitDuration);
         }
+
+        // TO DO: check again if destination is worth investigating?
 
         // Go to suspicious location.
         rootAI.DebugLog($"Travelling to suspicious position");

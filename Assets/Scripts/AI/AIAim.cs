@@ -36,15 +36,14 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     /// The world-space position the AI is looking towards. If shifting, represents reference position. If rotating, represents the desired target.
     /// </summary>
     Vector3 lookingTowards;
+    Vector3 lookTargetPosition;
     AILookMode _currentLookMode = AILookMode.FreeLookAngle;
 
     // Sweep variables
     System.Func<Vector3> getDirectionForSweep;
     Vector2 sweepAngles;
-    //float delayBetweenSweeps = 0.5f;
     Vector3[] lookTargetAngles;
-
-    Vector3 lookTargetPosition;
+    int sweepPointIndex;
 
     #region Properties
 
@@ -179,26 +178,53 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         {
             case AILookMode.SweepSightline:
 
-                Matrix4x4 viewAngleMatrix = Matrix4x4.TRS(viewAxis.position, SweepDirectionQuaternion(), Vector3.one);
+                Vector3 headPos = viewAxis.position;
+                Quaternion baseRotation = SweepDirectionQuaternion();
+
+                Matrix4x4 viewAngleMatrix = Matrix4x4.TRS(headPos, baseRotation, Vector3.one);
                 Gizmos.matrix = viewAngleMatrix;
-                Vector3 headPos = Vector3.zero;
 
                 // Draw total range covered by sweep
                 Gizmos.color = Color.yellow;
-                DebugUtility.DrawAngledGizmoFrustum(headPos, sweepAngles.x, sweepAngles.y, maxRange, minRange);
+                DebugUtility.DrawAngledGizmoFrustum(Vector3.zero, sweepAngles.x, sweepAngles.y, maxRange, minRange);
                 // Draw range the AI needs to turn in
                 Gizmos.color = Color.blue;
-                DebugUtility.DrawAngledGizmoFrustum(headPos, horizontalSweepDistance, verticalSweepDistance, maxRange, minRange);
+                DebugUtility.DrawAngledGizmoFrustum(Vector3.zero, horizontalSweepDistance, verticalSweepDistance, maxRange, minRange);
+
+
+                Gizmos.matrix = Matrix4x4.identity;
 
                 // Draw points to shift towards (don't proceed if there aren't any calculated)
                 if (enabled && lookTargetAngles != null)
                 {
-                    Gizmos.color = Color.red;
                     for (int i = 0; i < lookTargetAngles.Length; i++)
                     {
-                        Vector3 direction = SweepPointEuler(i) * Vector3.forward;
+                        bool currentPointToLookTowards = i == sweepPointIndex;
+                        Gizmos.color = currentPointToLookTowards ? Color.green : Color.red;
+                        
+                        Vector3 direction = SweepPointDirection(i, baseRotation);
+                        //Vector3 direction = SweepPointEuler(i) * Vector3.forward;
                         Gizmos.DrawLine(headPos + (direction * minRange), headPos + (direction * maxRange));
+
+                        if (i >= 1)
+                        {
+                            Vector3 previous = SweepPointDirection(i - 1, baseRotation);
+                            Gizmos.DrawLine(headPos + (previous * minRange), headPos + (direction * minRange));
+                        }
                     }
+
+                    /*
+                    for (int i = 1; i < lookTargetAngles.Length; i++)
+                    {
+                        bool currentPointToLookTowards = i == sweepPointIndex;
+                        Gizmos.color = currentPointToLookTowards ? Color.green : Color.red;
+
+                        Vector3 directionA = SweepPointDirection(i - 1, baseRotation);
+                        Vector3 directionB = SweepPointDirection(i, baseRotation);
+                        //Vector3 direction = SweepPointEuler(i) * Vector3.forward;
+                        Gizmos.DrawLine(headPos + (directionA * minRange), headPos + (directionB * minRange));
+                    }
+                    */
                 }
 
                 break;
@@ -233,6 +259,19 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
 
     #region Look functions
+
+    // Rotate look
+    // Rotate look async
+    // Rotate look fire and forget
+    // Shift look
+    // Shift look async
+    // Shift look fire and forget
+    // Look in neutral direction (fire and forget)
+    // Sweep sightline async
+    // Sweep sightline fire and forget
+    
+    // An async function being triggered externally should override all other functions
+
 
     public void RotateFreeLookTowards(Vector3 position)
     {
@@ -302,17 +341,22 @@ public class AIAim : MonoBehaviour, ICharacterLookController
 
     #region Async functions
 
-    public IEnumerator RotateTowardsPositionAsync(Vector3 position)
+    public IEnumerator RotateTowardsPositionAsync(Vector3 position) => RotateTowardsPositionAsync(() => position);
+    public IEnumerator RotateTowardsPositionAsync(System.Func<Vector3> getPosition)
     {
         _currentLookMode = AILookMode.FreeLookAngle;
-        yield return RotateTowardsAsync(position);
+        yield return RotateTowardsAsync(getPosition);
     }
-    IEnumerator RotateTowardsAsync(Vector3 position)
+    IEnumerator RotateTowardsAsync(System.Func<Vector3> getPosition)
     {
-        while (enabled && !IsLookingAt(position))
+        while (enabled)
         {
             yield return null;
+            Vector3 position = getPosition.Invoke();
+
             RotateLookTowards(position);
+            // Cancel once we've reached the position
+            if (IsLookingAt(position)) yield break;
 
             // TO DO: if AI is unable to rotate any further towards the target, yield break
         }
@@ -327,12 +371,9 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         while (enabled && _currentLookMode == AILookMode.StraightForward)
         {
             yield return null;
-
             Vector3 direction = neutralLookDirection;
             RotateLookTowards(LookOrigin + direction);
-            Debug.DrawRay(LookOrigin, 2 * direction.normalized, Color.green);
         }
-        if (_currentLookMode == AILookMode.StraightForward) ai.DebugLog($"Neutral direction look ended, new look mode = {Enum.GetName(typeof(AILookMode), _currentLookMode)}");
     }
     /// <summary>
     /// Sets the AI to track its aim back and forth along an angle and sightline.
@@ -342,7 +383,6 @@ public class AIAim : MonoBehaviour, ICharacterLookController
     /// <param name="delayBetweenSweeps">How long after the AI tracks its aim to one point, before it starts tracking to the next.</param>
     public IEnumerator SweepSightlineAsync(System.Func<Vector3> obtainDirection, Vector2 angles, float delayBetweenSweeps, bool looping = true)
     {
-
         #region Set stats
 
         getDirectionForSweep = obtainDirection;
@@ -412,25 +452,49 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         // Declare this component is currently doing a sightline sweep
         _currentLookMode = AILookMode.SweepSightline;
 
+        IEnumerator RotateToNextPoint(float index)
+        {
+            return RotateTowardsAsync(() =>
+            {
+                Vector3 direction = SweepPointDirection(index, SweepDirectionQuaternion());
+                return viewAxis.position + direction;
+            });
+        }
+
         // Shift look between different positions
         while (enabled && _currentLookMode == AILookMode.SweepSightline)
         {
             // Lerp look between points
-            for (int i = 0; i < lookTargetAngles.Length; i++)
+            for (sweepPointIndex = 0; sweepPointIndex < lookTargetAngles.Length; sweepPointIndex++)
             {
-                Quaternion sweepPointOffsetQuaternion = SweepPointEuler(i);
-                Quaternion desiredQuaternion = sweepPointOffsetQuaternion * SweepDirectionQuaternion();
-                Vector3 desiredDirection = desiredQuaternion * Vector3.forward;
+                int prev = sweepPointIndex - 1;
+                // If moving from one point to another in the collection, include a midpoint first to ensure the AI rotates in the right direction.
+                if (sweepPointIndex >= 1)
+                {
+                    // Calculate midway point to ensure rotation is in the right direction
+                    float inbetween = sweepPointIndex - 0.5f;
+                    ai.DebugLog($"Rotating from point {sweepPointIndex - 1} to {inbetween}");
+                    yield return RotateToNextPoint(inbetween);
+                    /*
+                    yield return RotateTowardsAsync(() =>
+                    {
+                        Vector3 midpointDirection = SweepPointDirection(inbetween, SweepDirectionQuaternion());
+                        return viewAxis.position + midpointDirection;
+                    });
+                    */
+                }
 
 
-                Vector3 toLookTowards = viewAxis.position + desiredDirection;
-
-                //Debug.Log($"{ai} SweepSightlineAsync() point {i + 1}/{lookTargetAngles.Length}, frame {Time.frameCount}");
-                //Debug.Log($"{ai} SweepSightlineAsync() point {i + 1}/{lookTargetAngles.Length}, frame {Time.frameCount}. {viewAxis.position + viewAxis.forward}, {toLookTowards}");
-                //Debug.Log($"Euler angles = {lookTargetAngles[i]}. Quaternions = {sweepPointOffsetQuaternion}, {desiredQuaternion}");
-                //Debug.Log($"{desiredDirection}, {toLookTowards}.");
-
-                yield return RotateTowardsAsync(toLookTowards);
+                // Rotate to actual point
+                ai.DebugLog($"Rotating to {sweepPointIndex}");
+                yield return RotateToNextPoint(sweepPointIndex);
+                /*
+                yield return RotateTowardsAsync(() =>
+                {
+                    Vector3 desiredDirection = SweepPointDirection(sweepPointIndex, SweepDirectionQuaternion());
+                    return viewAxis.position + desiredDirection;
+                });
+                */
 
                 // Wait for the desired delay before looking towards the next target.
                 yield return new WaitForSeconds(delayBetweenSweeps);
@@ -447,11 +511,46 @@ public class AIAim : MonoBehaviour, ICharacterLookController
         //Debug.Log($"{direction}, {upAxis}");
         return Quaternion.LookRotation(direction, upAxis);
     }
-    Quaternion SweepPointEuler(int index)
+    
+    Quaternion SweepPointRotation(int i, Quaternion baseRotation)
     {
-        //Debug.Log(lookTargetAngles[index]);
-        return Quaternion.Euler(lookTargetAngles[index]);
+        Quaternion sweepPointOffsetQuaternion = Quaternion.Euler(lookTargetAngles[i]);
+        Quaternion desiredQuaternion = sweepPointOffsetQuaternion * baseRotation;
+        return desiredQuaternion;
     }
+    /*
+    Vector3 SweepPointDirection(float i, Quaternion baseRotation)
+    {
+        int lower = Mathf.FloorToInt(i);
+        int upper = Mathf.CeilToInt(i);
+        Quaternion before = SweepPointRotation(lower, baseRotation);
+        Quaternion after = SweepPointRotation(upper, baseRotation);
+
+        Quaternion finalRotation = Quaternion.Lerp(before, after, i - lower);
+        return finalRotation * Vector3.forward;
+    }
+    */
+    /*
+    Vector3 SweepPointDirection(int i, Quaternion baseRotation)
+    {
+        return SweepPointRotation(i, baseRotation) * Vector3.forward;
+    }
+    */
+
+
+    Vector3 SweepPointDirection(float i, Quaternion baseRotation)
+    {
+        int lower = Mathf.FloorToInt(i);
+        int upper = Mathf.CeilToInt(i);
+        Vector3 beforeAngles = lookTargetAngles[lower];
+        Vector3 afterAngles = lookTargetAngles[upper];
+        Vector3 eulerAngles = Vector3.Lerp(beforeAngles, afterAngles, (float)i - lower);
+
+        Quaternion sweepPointOffsetQuaternion = Quaternion.Euler(eulerAngles);
+        Quaternion desiredQuaternion = sweepPointOffsetQuaternion * baseRotation;
+        return desiredQuaternion * Vector3.forward;
+    }
+
 
     #endregion
 

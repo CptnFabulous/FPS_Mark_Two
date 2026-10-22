@@ -89,9 +89,27 @@ public class TerrainGrid : MonoBehaviour
         Debug.Log("Creating mesh");
 
         NavMeshTriangulation triangulation = NavMesh.CalculateTriangulation();
+
         mapMesh = new Mesh();
         mapMesh.SetVertices(triangulation.vertices);
-        mapMesh.SetIndices(triangulation.indices, MeshTopology.Triangles, 0);
+
+        int walkableArea = NavMesh.GetAreaFromName("Walkable");
+        List<int> validTriangles = new List<int>();
+        for (int i = 0; i < triangulation.areas.Length; i++)
+        {
+            if (triangulation.areas[i] != walkableArea) continue;
+            
+            int firstTriangleIndex = i * 3;
+
+            validTriangles.Add(triangulation.indices[firstTriangleIndex]);
+            validTriangles.Add(triangulation.indices[firstTriangleIndex + 1]);
+            validTriangles.Add(triangulation.indices[firstTriangleIndex + 2]);
+        }
+
+        mapMesh.SetIndices(validTriangles.ToArray(), MeshTopology.Triangles, 0);
+        //mapMesh.SetIndices(triangulation.indices, MeshTopology.Triangles, 0);
+
+        mapMesh.Optimize();
         mapMesh.RecalculateBounds();
         mapMesh.RecalculateNormals();
         mapMesh.RecalculateTangents();

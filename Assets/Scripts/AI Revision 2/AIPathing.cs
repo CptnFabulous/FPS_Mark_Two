@@ -59,9 +59,8 @@ public static class AIPathing
     /// <returns></returns>
     public static bool FindCover(AI ai, Vector3 positionToCheckFrom, Vector3 dangerOrigin, float distance, out AIGridPoints.GridPoint coverPoint)
     {
-        // Sample grid points within check radius
+        // Sample grid points within check radius (shuffle for variety)
         int coverPointCount = AIGridPoints.Current.GetPointsInRadius(ref AIGridPoints.sampleArray, positionToCheckFrom, 0, distance, true);
-        // Shuffle to ensure randomness
         MiscFunctions.Shuffle(AIGridPoints.sampleArray, 0, coverPointCount);
 
         NavMeshAgent agent = ai.agent;
@@ -90,10 +89,4 @@ public static class AIPathing
         coverPoint = new AIGridPoints.GridPoint();
         return false;
     }
-    /*
-    public void ReduceSpeedBasedOnStepHeight(NavMeshAgent agent, float modifier)
-    {
-        agent.
-    }
-    */
 }

@@ -5,19 +5,53 @@ using CptnFabulous.MiscUtility;
 
 public class PatrolArea : AIStateFunction
 {
-    public InvestigateLocations investigateState;
+    public AIPatrolRoute patrolRoute;
+    int targetPositionIndex;
+    bool reverse;
 
-    protected override void OnEnable()
+    public override IEnumerator AsyncProcedure()
     {
-        base.OnEnable();
-        navMeshAgent.isStopped = true;
+        // If patrol data is null, just stand in place.
+        if (patrolRoute == null)
+        {
+            navMeshAgent.isStopped = true;
+            yield break;
+        }
+
+        // TO DO: get closest point on patrol route to current position
+        // Get the index and set currentPointOnRoute to that
+
+
+        reverse = patrolRoute.reverse;
+
+        // For loop of moving to each position
+        while (patrolRoute != null)
+        {
+            yield return movement.TravelToDestination(patrolRoute.positions[targetPositionIndex].position);
+
+            int newIndex = targetPositionIndex + 1;
+        }
+
+
     }
     private void OnDisable()
     {
         navMeshAgent.isStopped = false;
     }
-    private void Update()
+}
+
+
+public class AIPatrolRoute : MonoBehaviour
+{
+    public Transform[] positions;
+    public bool reverse;
+    public bool endToEnd;
+
+    private void OnDrawGizmos()
     {
-        // TO DO: get rid of the navmeshagent stopping bits and have the AI move around an area based on a defined path.
+        if (MiscFunctions.CurrentCameraNotMain()) return;
+
+        DebugUtility.DrawGizmoLineSequence(positions.Length, (i) => positions[i].position, !endToEnd);
     }
+
 }
