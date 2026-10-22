@@ -267,7 +267,7 @@ public class EngageTarget : AIStateFunction
             bool foundCover = AIPathing.FindCover(rootAI, position, target.attackOrigin, distanceToCover, out _);
             if (!foundCover)
             {
-                Debug.Log("Too far from any cover");
+                rootAI.DebugLog("Too far from any cover");
                 return false;
             }
         }
