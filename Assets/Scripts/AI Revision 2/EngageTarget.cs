@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using CptnFabulous.MiscUtility;
-using TMPro;
 
-public class EngageTarget : TravelToDestination
+public class EngageTarget : AIStateFunction
 {
     [Header("Attack")]
     [SerializeField] AIGunAttack currentAttack;
 
     [Header("Seeking target")]
-    [SerializeField] float checkDistance = 30;
+    [SerializeField] float maxMoveDistance = 100;
     int maxNumberOfChecks = 100;
     //bool findNewPositionIfCompromised = true;
     [SerializeField] float minTargetDistance = 5;
@@ -29,206 +27,237 @@ public class EngageTarget : TravelToDestination
     [SerializeField] InvestigateLocations searchForMissingTarget;
     [SerializeField] AIStateFunction onTargetLost;
 
+    NavMeshPath calculatedPath;
+    float lastTimePathWasValid = Mathf.NegativeInfinity;
+    static readonly SortWithOnePredicate<AIGridPoints.GridPoint> predicate = new SortWithOnePredicate<AIGridPoints.GridPoint>();
+
     public Character target => targetManager.target;
-    public float maxMoveDistance => checkDistance > 0 ? checkDistance : Mathf.Infinity;
+    public Vector3 lastSightedPoint => targetManager.lastValidHit.point;
 
     private void OnDisable()
     {
         currentAttack.CancelAttack();
     }
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        calculatedPath ??= new NavMeshPath();
+        TryAcquirePath(ref calculatedPath, out _);
+    }
     public void Update()
     {
-        // Check if enemy has been killed/deleted
+        #region Check if enemy has been killed/deleted
+
         if (targetManager.targetExists == false)
         {
             controller.SwitchToState(onTargetEliminated);
             return;
         }
 
-        // TO DO? Check how many allies are currently attacking the target.
-        // If enough are, be alert but stand by in case they're killed, so AI can step in if necessary.
-        // I need to figure out a good way of doing this.
+        #endregion
 
-        // If the AI has been unable to get line of sight on the target for an extended period, start searching more proactively.
+        #region If the AI has been unable to get line of sight on the target for an extended period, try searching more proactively.
+
         float timeSinceTargetLost = Time.time - targetManager.lastTimeSeenTarget;
         if (timeSinceTargetLost >= timeAfterSightLossUntilSearch)
         {
-            // Check if there's data to search for the last selected position.
-            Vector3 lastPosition = targetManager.lastValidHit.point;
-            if (searchForMissingTarget != null && searchForMissingTarget.TrySearchForNewPosition(lastPosition, 0, onTargetLost, 1, true, true))
+            // If AI can't or won't search, proceed straight to 'on target lost'
+            bool willSearch = searchForMissingTarget != null && searchForMissingTarget.TrySearchForNewPosition(lastSightedPoint, 0, onTargetLost, 1, true, true);
+            if (!willSearch)
             {
-                // If so, do nothing else this frame.
-                rootAI.DebugLog($"Searching for last target position");
-                return;
-            }
-            else
-            {
-                // If not, go straight to the 'on target lost' state.
                 controller.SwitchToState(onTargetLost);
                 return;
             }
         }
 
-        // If path is no longer viable, select a new one
+        #endregion
+
+
+
+
+
+
         if (navMeshAgent != null)
         {
-            rootAI.showDebugData = true;
-            bool destinationIsStale = VantagePointIsValid(navMeshAgent.destination) == false;
-            rootAI.DebugLog($"Destination stale = {destinationIsStale}");
-            rootAI.showDebugData = false;
-            if (destinationIsStale)
+            // Keep track of last time destination was valid.
+            // If current path is invalid, try setting a new one.
+
+            // If AI goes for too long without being able to find a new path, proceed to an alternate state?
+
+
+
+
+            Vector3 destination = navMeshAgent.destination;
+
+            rootAI.StartDebug();
+
+            if (VantagePointIsValid(destination))
             {
-                bool pathFound = GetPath(ref calculatedPath);
-                if (pathFound) navMeshAgent.SetPath(calculatedPath);
+                // Existing destination is fine
+                lastTimePathWasValid = Time.time;
+                rootAI.DebugLog($"{destination} still valid");
             }
+            else if (TryAcquirePath(ref calculatedPath, out Vector3 newDestination))
+            {
+                // Old destination is bad, but we found a new one
+                rootAI.DebugLog($"{destination} invalid, {newDestination} found");
+            }
+            else
+            {
+                // Cannot find a valid path. If this 
+                rootAI.DebugLog($"{destination} invalid, no new position found");
+            }
+
+            rootAI.StopDebug();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
-        
-        // Run attack routines
+
+        #region Run attack routines
+
         bool canPerformAttackRoutine = currentAttack.RunAttackRoutine();
         if (!canPerformAttackRoutine)
         {
             // If AI can't see the target, keep its sight trained on the last position.
-            aim.RotateFreeLookTowards(rootAI.targeting.lastValidHit.point);
+            aim.RotateFreeLookTowards(lastSightedPoint);
         }
+
+        #endregion
     }
 
-
-    static SortWithOnePredicate<AIGridPoints.GridPoint> predicate = new SortWithOnePredicate<AIGridPoints.GridPoint>();
-
-    protected override bool GetPath(ref NavMeshPath path)
+    bool TryAcquirePath(ref NavMeshPath path, out Vector3 destination)
     {
+        destination = navMeshAgent.transform.position;
         if (target == null) return false;
+        
+        #region Get initial spread of points, using simple checks to weed out the obviously bad positions
 
         Vector3 targetPosition = target.bounds.center;
 
-        // Sample points within appropriate min and max distance
-        AIGridPoints allPoints = AIGridPoints.Current;
-        int numberOfPoints = allPoints.GetPointsInRadius(ref AIGridPoints.sampleArray, navMeshAgent.transform.position, 0, checkDistance);
-        rootAI.DebugLog(numberOfPoints);
-
-        // Set up sorting data, and sort array
-        predicate.obtainValue = (p) =>
+        // Get initial sample of grid points, using simple checks to remove the vast majority before sorting
+        int sampledPointCount = AIGridPoints.Current.GetPointsNonAlloc(ref AIGridPoints.sampleArray, (point) =>
         {
-            // For each position, get distance to target
-            float distance = (targetPosition - p.position).magnitude;
-            // Figure out how different that distance is from the ideal distance
-            return Mathf.Abs(distance - idealTargetDistance);
-        };
-        predicate.reverse = false;
-        System.Array.Sort(AIGridPoints.sampleArray, 0, numberOfPoints, predicate);
+            // Use hypothetical look origin, to make sure distance is valid
+            Vector3 lookOrigin = AIAction.HypotheticalLookOrigin(rootAI, point.position);
+            bool withinRadius = AIGridPoints.IsWithinRadius(lookOrigin, targetPosition, minTargetDistance, maxTargetDistance);
+            if (!withinRadius) return false;
 
-
-
-        // OLD METHOD: an entire list is created every time. Creates garbage.
-        /*
-        // Is the point within the appropriate min and max distance of the target?
-        // Will the AI have appropriate line of sight to the target?
-        List<AIGridPoints.GridPoint> sampledPoints = allPoints.GetPoints(navMeshAgent.transform.position, 0, checkDistance);
-        Debug.Log(sampledPoints.Count);
-
-        //CollectionUtility.ShuffleList(points); // Shuffle points to ensure some randomisation in the final result, so the agents don't all cluster around the one ideal point
-        // TO DO: how can I keep results semi-ordered, but still have some randomness?
-        // Maybe I can divide the results into grades, and then shuffle results within those grades?
-
-        // Try to pick spots closer to the ideal distance
-        CollectionUtility.SortListWithOnePredicate(sampledPoints, (p) =>
-        {
-            // For each position, get distance to target
-            float distance = (targetPosition - p.position).magnitude;
-            // Figure out how different that distance is from the ideal distance
-            return Mathf.Abs(distance - idealTargetDistance);
+            return true;
         });
 
-        int numberOfPoints = sampledPoints.Count;
-        */
+        rootAI.DebugLog($"Number of sampled points = {sampledPointCount}");
 
-        // Now that we've figured out our priorities, check through each point until a valid one is found
-        int count = Mathf.Min(numberOfPoints, maxNumberOfChecks);
+        #endregion
+
+        #region Sort array using necessary criteria
+
+        float idealDistanceSquared = idealTargetDistance * idealTargetDistance;
+
+        predicate.reverse = false;
+        predicate.obtainValue = (p) =>
+        {
+            float cost = 1;
+
+            /*
+            // Get distance to target, and figure out how close it is to the ideal distance
+            cost *= Mathf.Abs(Vector3.Distance(targetPosition, p.position) - idealTargetDistance);
+            // Also sort based on how far it is from the player's current position
+            cost *= Vector3.Distance(p.position, rootAI.transform.position);
+            */
+
+            // Get distance to target, and figure out how close it is to the ideal distance
+            float distanceToTargetSquared = (targetPosition - p.position).sqrMagnitude;
+            cost *= Mathf.Abs(distanceToTargetSquared - idealDistanceSquared);
+
+            // Also sort based on how far it is from the player's current position
+            cost *= (p.position - rootAI.transform.position).sqrMagnitude;
+            // Use square magnitudes to reduce
+            return cost;
+        };
+        System.Array.Sort(AIGridPoints.sampleArray, 0, sampledPointCount, predicate);
+
+        #endregion
+
+        // Now the values are sorted, try the complex checks on each value until a valid one is found
+        int count = Mathf.Min(sampledPointCount, maxNumberOfChecks);
         for (int i = 0; i < count; i++)
         {
             Vector3 position = AIGridPoints.sampleArray[i].position;
 
-            bool valid = VantagePointIsValid(position);
-            if (!valid) continue;
+            // Check that the AI can realistically attack the player from this position.
+            if (!VantagePointIsValid(position, false)) continue;
+            // Check that the AI's navmeshagent can form a valid path to this point.
+            if (!AIPathing.CanMoveToDestination(rootAI, position, maxMoveDistance, ref path)) continue;
+            // Check that the path can be assigned properly
+            if (!navMeshAgent.SetPath(calculatedPath)) continue;
 
-            bool validPath = AIPathing.CanMoveToDestination(rootAI, position, maxMoveDistance, ref path);
-            if (validPath == false) continue;
-
-            //Debug.Log($"Selected {i + 1}/{count}");
-            return true; // Return the first point that meets the criteria
+            // Final data assignment for confirmed position and path
+            destination = position;
+            lastTimePathWasValid = Time.time;
+            return true;
         }
-        
+
+        // No valid points were found
         return false;
     }
-    protected override bool IsPathViable()
-    {
-        // Check if the vantage point is still viable.
-        // Unless the AI is seeking cover, in which case check the current cover position in case it's compromised.
-        // TO DO: make seeking cover be a separate state
-        bool valid = VantagePointIsValid(navMeshAgent.destination);
-        //Debug.Log($"{this}: IsPathViable() check = {valid}");
-        return valid;
-    }
-    public bool VantagePointIsValid(Vector3 position)
-    {
-        if (rootAI == null)
-        {
-            rootAI.DebugLog("No valid root AI somehow");
-            return false;
-        }
-        if (target == null)
-        {
-            rootAI.DebugLog("No valid target");
-            return false;
-        }
-        //Debug.DrawRay(position, Vector3.up, Color.yellow);
 
-        Bounds targetBounds = target.bounds;
-
+    public bool VantagePointIsValid(Vector3 position, bool checkDistance = true)
+    {
         // Check if distance is not too close or too far
-        float distanceToTarget = Vector3.Distance(position, targetBounds.center);
-
-        if (distanceToTarget < minTargetDistance)
+        if (checkDistance)
         {
-            rootAI.DebugLog($"Distance ({distanceToTarget}) is closer than min distance {minTargetDistance}");
-            return false;
+            Vector3 targetPosition = target.bounds.center;
+            float distanceToTarget = Vector3.Distance(position, targetPosition);
+            if (distanceToTarget < minTargetDistance)
+            {
+                rootAI.DebugLog($"{distanceToTarget} < {minTargetDistance}");
+                return false;
+            }
+            if (distanceToTarget > maxTargetDistance)
+            {
+                rootAI.DebugLog($"{distanceToTarget} > {maxTargetDistance}");
+                return false;
+            }
         }
-        if (distanceToTarget > maxTargetDistance)
-        {
-            rootAI.DebugLog($"Distance ({distanceToTarget}) is further than max distance {maxTargetDistance}");
-            return false;
-        }
-
-        // Check if line of sight between destination and target is not compromised
+        
+        // Ensure line of sight is not compromised
         Vector3 lookOriginFromVantagePoint = AIAction.HypotheticalLookOrigin(rootAI, position);
         bool lineOfSight = currentAttack.AttackNotBlocked(lookOriginFromVantagePoint, out RaycastHit rh);
         if (lineOfSight == false)
         {
-            GameObject g = rh.collider.gameObject;
-            Entity entityHit = EntityCache<Entity>.GetEntity(rh.collider.gameObject);
-            if (entityHit != null) g = entityHit.gameObject;
+            rootAI.DebugLog($"Line of sight blocked by {rh.collider}");
+            return false;
+        }
 
-            rootAI.DebugLog($"Line of sight blocked by {g.name})");
+        // Check that the path isn't too close to any points that allies are moving to
+        if (memory.AreEnoughAlliesInvestigating(position, distanceFromAllies, 1, out _))
+        {
+            rootAI.DebugLog("Too many enemies investigating same spot");
             return false;
         }
 
         // Check if the position is close to cover
         if (distanceToCover > 0)
         {
-            bool foundCover = AIPathing.FindCover(rootAI, position, target.attackOrigin, distanceToCover, out AIGridPoints.GridPoint point);
-            if (foundCover == false)
+            bool foundCover = AIPathing.FindCover(rootAI, position, target.attackOrigin, distanceToCover, out _);
+            if (!foundCover)
             {
-                rootAI.DebugLog("Wants cover but can't find any");
+                Debug.Log("Too far from any cover");
                 return false;
             }
-            //Debug.DrawRay(point.position, Vector3.up, Color.white);
-        }
-
-        // Check that the path isn't too close to any points that allies are moving to
-        if (memory.AreEnoughAlliesInvestigating(position, distanceFromAllies, 1, out int alliesInArea))
-        {
-            rootAI.DebugLog($"Too many allies ({alliesInArea}) are clustered around the same vantage point");
-            return false;
         }
 
         return true;

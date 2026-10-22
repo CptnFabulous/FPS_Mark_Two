@@ -26,14 +26,15 @@ public abstract class TravelToDestination : AIStateFunction
         {
             navMeshAgent.isStopped = false;
 
-            bool pathFound = GetPath(ref calculatedPath);
+            bool pathFound = GetPath(ref calculatedPath, out Vector3 destination);
+            //Debug.Log($"Entering {name}, path found = {pathFound} ({destination})");
             if (pathFound) navMeshAgent.path = calculatedPath;
         }
     }
 
 
     protected abstract bool IsPathViable();
-    protected abstract bool GetPath(ref NavMeshPath path/*out AIGridPoints.GridPoint destination*/);
+    protected abstract bool GetPath(ref NavMeshPath path, out Vector3 destination);
 
 
     

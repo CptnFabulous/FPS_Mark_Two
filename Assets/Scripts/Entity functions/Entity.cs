@@ -67,6 +67,11 @@ public class Entity : MonoBehaviour
     public Rigidbody rigidbody => ComponentUtility.AutoCache(ref _rb, gameObject, ComponentGetType.InChild);
     public Renderer[] renderers => MiscFunctions.GetImmediateComponentsInChildren<Renderer, Entity>(this, ref _renderers);
 
+    /// <summary>
+    /// Where an AI would expect this entity to attack from, if it's capable of attacking things.
+    /// </summary>
+    public virtual Vector3 attackOrigin => CentreOfMass;
+
     protected virtual void Awake()
     {
         if (!isUnique && !string.IsNullOrEmpty(properName)) gameObject.name = properName;

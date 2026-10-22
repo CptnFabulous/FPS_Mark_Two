@@ -195,7 +195,7 @@ public class AIGridPoints : MonoBehaviour
             collection.Add(gridPoints[i]);
         }
     }
-    public int GetPointsNonAlloc(System.Func<GridPoint, bool> criteria, ref GridPoint[] collection, int maxNumberOfChecks = -1)
+    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1)
     {
         int validPoints = 0;
         for (int i = 0; i < gridPoints.Count; i++)
@@ -225,12 +225,12 @@ public class AIGridPoints : MonoBehaviour
     /// <returns></returns>
     public int GetPointsInRadius(ref GridPoint[] collection, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
-        return GetPointsNonAlloc((p) => IsWithinRadius(p, centre, minRadius, maxRadius, onlyIncludeCover), ref collection);
+        return GetPointsNonAlloc(ref collection, (p) => IsWithinRadius(p, centre, minRadius, maxRadius, onlyIncludeCover));
     }
-    public int GetGridPointsInArea(LevelArea rootArea, ref GridPoint[] collection)
+    public int GetGridPointsInArea(ref GridPoint[] collection, LevelArea rootArea)
     {
         if (rootArea == null) return -1;
-        return GetPointsNonAlloc((p) => rootArea.Contains(p.position), ref collection);
+        return GetPointsNonAlloc(ref collection, (p) => rootArea.Contains(p.position));
     }
 
 
@@ -240,7 +240,7 @@ public class AIGridPoints : MonoBehaviour
 
 
 
-    public bool IsWithinRadius(GridPoint p, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
+    public static bool IsWithinRadius(GridPoint p, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
     {
         // If checking for cover, exclude points that aren't cover
         if (onlyIncludeCover && p.isCover == false)
@@ -248,12 +248,14 @@ public class AIGridPoints : MonoBehaviour
             return false;
         }
 
+        return IsWithinRadius(p.position, centre, minRadius, maxRadius);
+    }
+    public static bool IsWithinRadius(Vector3 point, Vector3 centre, float minRadius, float maxRadius)
+    {
         // Check that the distance is correct
-        float distance = Vector3.Distance(p.position, centre);
-        if (distance < minRadius || distance > maxRadius)
-        {
-            return false;
-        }
+        float distance = Vector3.Distance(point, centre);
+        if (distance < minRadius) return false;
+        if (distance > maxRadius) return false;
 
         // Point is valid
         return true;

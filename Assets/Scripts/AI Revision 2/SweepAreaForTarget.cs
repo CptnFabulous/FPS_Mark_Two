@@ -98,7 +98,7 @@ public class SweepAreaForTarget : AIStateFunction
         else
         {
             // Get points across the entire level, but only within the search range
-            points.GetPoints((p) => points.IsWithinRadius(p, standingPosition, 0, maxSearchDistance), ref pointsToCheck);
+            points.GetPoints((p) => AIGridPoints.IsWithinRadius(p, standingPosition, 0, maxSearchDistance), ref pointsToCheck);
         }
         
         // Assign a new destination

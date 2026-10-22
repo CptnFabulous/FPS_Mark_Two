@@ -29,4 +29,6 @@ public abstract class Character : Entity
     public abstract Vector3 MovementDirection { get; }
     public Vector3 LocalMovementDirection => transform.InverseTransformDirection(MovementDirection);
     public abstract WeaponHandler weaponHandler { get; }
+
+    public override Vector3 attackOrigin => LookTransform.position;
 }

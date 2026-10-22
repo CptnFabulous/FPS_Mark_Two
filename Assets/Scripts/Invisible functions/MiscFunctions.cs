@@ -2,6 +2,7 @@ using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -75,5 +76,29 @@ public readonly struct MiscFunctions
         value = (int)char.GetNumericValue(c);
         //int.TryParse(c, out index);
         return value >= 0;
+    }
+    public static void Shuffle<T>(IList<T> list, int start, int length)
+    {
+        for (int i = start; i < length; i++)
+        {
+            int r = UnityEngine.Random.Range(start, length);
+            if (r == i) continue;
+            T swapping = list[i];
+            list[i] = list[r];
+            list[r] = swapping;
+        }
+    }
+}
+
+public class SortWithOnePredicate<T> : IComparer<T>
+{
+    public System.Func<T, IComparable> obtainValue;
+    public bool reverse = false;
+
+    public int Compare(T x, T y)
+    {
+        IComparable _a = obtainValue.Invoke(x);
+        IComparable _b = obtainValue.Invoke(y);
+        return reverse ? _b.CompareTo(_a) : _a.CompareTo(_b);
     }
 }
