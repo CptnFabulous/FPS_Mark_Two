@@ -38,7 +38,7 @@ public class FieldOfView : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (rootAI.showDebugData == false) return;
+        if (!rootAI.ShouldDebug()) return;
         if (MiscFunctions.CurrentCameraNotMain()) return;
 
         Gizmos.color = Color.yellow;

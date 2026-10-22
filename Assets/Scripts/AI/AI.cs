@@ -79,7 +79,7 @@ public class AI : Character
 #if UNITY_EDITOR
     private void OnGUI()
     {
-        if (showDebugData == false) return;
+        if (!ShouldDebug()) return;
 
         Camera camera = Camera.main;
         //Vector3 worldPosition = LookTransform.position + 0.5f * Vector3.up;

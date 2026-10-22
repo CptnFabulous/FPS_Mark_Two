@@ -3,12 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DebugMode
+{
+    None,
+    EnableViaScript,
+    Always,
+}
+
 public class Entity : MonoBehaviour
 {
     public static IReadOnlyList<Entity> existing => _existing;
     static List<Entity> _existing = new List<Entity>();
     
-    public bool showDebugData = false;
+    public DebugMode showDebugData = DebugMode.None;
 
     public string properName = "New Entity";
     public string description = "[PLACEHOLDER]";
@@ -120,19 +127,43 @@ public class Entity : MonoBehaviour
         if (this is Player player == false) Destroy(gameObject);
     }
 
+
+    #region Debugging
+
+    bool currentlyDebugging;
+
     [HideInCallstack]
     public void DebugLog(string message)
     {
-        if (showDebugData) Debug.Log($"{this}: {message}, frame {Time.frameCount}");
+        if (ShouldDebug()) Debug.Log($"{this}: {message}, frame {Time.frameCount}");
     }
     [HideInCallstack]
     public void DebugLogError(string message)
     {
-        if (showDebugData) Debug.LogError($"{this}: {message}, frame {Time.frameCount}");
+        if (ShouldDebug()) Debug.LogError($"{this}: {message}, frame {Time.frameCount}");
     }
     [HideInCallstack]
     public void DebugLog(object target)
     {
-        if (showDebugData) Debug.Log($"{this}: {target}, frame {Time.frameCount}");
+        if (ShouldDebug()) Debug.Log($"{this}: {target}, frame {Time.frameCount}");
     }
+    public bool ShouldDebug()
+    {
+        return showDebugData switch
+        {
+            DebugMode.Always => true,
+            DebugMode.EnableViaScript => currentlyDebugging,
+            _ => false,
+        };
+    }
+
+    public void StartDebug()
+    {
+        currentlyDebugging = true;
+    }
+    public void StopDebug()
+    {
+        currentlyDebugging = false;
+    }
+    #endregion
 }

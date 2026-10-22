@@ -137,7 +137,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        if (!rootAI.showDebugData) return;
+        if (!rootAI.ShouldDebug()) return;
         if (MiscFunctions.CurrentCameraNotMain()) return;
 
         Gizmos.color = Color.blue;

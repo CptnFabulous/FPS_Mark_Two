@@ -79,7 +79,7 @@ public class DiegeticAudioListener : MonoBehaviour
         float debugDuration = 1;
         Color successColor = Color.green;
         Color failColor = Color.red;
-        bool allowDebug = source.showDebugData && rootEntity.showDebugData;
+        bool allowDebug = source.ShouldDebug() && rootEntity.ShouldDebug();
 
 
         heardVolume = 0;
