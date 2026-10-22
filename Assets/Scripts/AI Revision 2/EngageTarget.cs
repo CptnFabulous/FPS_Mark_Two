@@ -18,6 +18,7 @@ public class EngageTarget : AIStateFunction
     [SerializeField, Min(0), Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
     float distanceToCover = 3;
     [SerializeField] float distanceFromAllies = 5;
+    [SerializeField] public DetectionProfile terrainDetection;
 
     [Header("Alternate states")]
     [SerializeField] AIStateFunction onTargetEliminated;
@@ -102,6 +103,12 @@ public class EngageTarget : AIStateFunction
                 // Old destination is bad, but we found a new one
                 rootAI.DebugLog($"{destination} invalid, {newDestination} found");
             }
+            /*
+            else if (Time.time - lastTimePathWasValid > )
+            {
+                // Take action for if AI is unable to damage target
+            }
+            */
             else
             {
                 // Cannot find a valid path. If this 
@@ -155,10 +162,24 @@ public class EngageTarget : AIStateFunction
             bool withinRadius = AIGridPoints.IsWithinRadius(lookOrigin, targetPosition, minTargetDistance, maxTargetDistance);
             if (!withinRadius) return false;
 
+            // Do a simple raycast check for stuff that will obviously block the attack, but isn't as accurate (and expensive) as our proper line of sight check
+            if (Physics.Linecast(lookOrigin, targetPosition, out RaycastHit rh, terrainDetection.mask)) return false;
+
             return true;
         });
 
         rootAI.DebugLog($"Number of sampled points = {sampledPointCount}");
+        /*
+        for (int i = 0; i < sampledPointCount; i++)
+        {
+            Debug.DrawRay(AIGridPoints.sampleArray[i].position, Vector3.up, Color.magenta, 5);
+        }
+
+        EditorApplication.isPaused = true;
+        throw new System.NotImplementedException();
+        */
+
+
 
         #endregion
 
@@ -170,21 +191,12 @@ public class EngageTarget : AIStateFunction
         predicate.obtainValue = (p) =>
         {
             float cost = 1;
-
-            /*
-            // Get distance to target, and figure out how close it is to the ideal distance
-            cost *= Mathf.Abs(Vector3.Distance(targetPosition, p.position) - idealTargetDistance);
-            // Also sort based on how far it is from the player's current position
-            cost *= Vector3.Distance(p.position, rootAI.transform.position);
-            */
-
             // Get distance to target, and figure out how close it is to the ideal distance
             float distanceToTargetSquared = (targetPosition - p.position).sqrMagnitude;
             cost *= Mathf.Abs(distanceToTargetSquared - idealDistanceSquared);
-
             // Also sort based on how far it is from the player's current position
             cost *= (p.position - rootAI.transform.position).sqrMagnitude;
-            // Use square magnitudes to reduce
+            // Use square magnitudes to reduce performance cost, while keeping values proportional for accurate comparisons
             return cost;
         };
         System.Array.Sort(AIGridPoints.sampleArray, 0, sampledPointCount, predicate);
