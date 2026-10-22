@@ -1000,6 +1000,7 @@ GameObject:
   - component: {fileID: 975937460477862166}
   - component: {fileID: 7234027802475353143}
   - component: {fileID: 8643732918526894}
+  - component: {fileID: 5441691601954852966}
   m_Layer: 7
   m_Name: Sparking Electrical Panel
   m_TagString: Untagged
@@ -1161,6 +1162,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   degreesCelsius: 100
+--- !u!208 &5441691601954852966
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 975937460477862167}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.75, y: 1.75, z: 0.25}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0.25}
+  m_TimeToStationary: 0.5
 --- !u!1 &975937461400477297
 GameObject:
   m_ObjectHideFlags: 0
