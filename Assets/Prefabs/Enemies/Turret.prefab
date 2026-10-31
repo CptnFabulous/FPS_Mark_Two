@@ -457,12 +457,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b63a9b2426f8f348b87938ba438c9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  godmode: 0
   data:
     name: New Resource
     max: 50
     current: 50
     criticalLevel: 10
-  godmode: 0
   deadDescription: destroyed
   poise: {fileID: 0}
   onDamage:
@@ -834,15 +834,14 @@ MonoBehaviour:
   soundCue: {fileID: 11400000, guid: 79329b2a8bf6b0546b734c994652b244, type: 2}
   animationTrigger: 
   aimStats: {fileID: 666227203567971798}
-  destinationThreshold: 0.5
-  endStateOnceDestinationReached: 1
   currentAttack: {fileID: 492860660033172326}
-  checkDistance: 30
+  maxMoveDistance: 100
   minTargetDistance: 5
   idealTargetDistance: 10
   maxTargetDistance: 15
   distanceToCover: 3
   distanceFromAllies: 5
+  terrainDetection: {fileID: 0}
   onTargetEliminated: {fileID: 8816799217935229477}
   timeAfterSightLossUntilSearch: 5
   searchForMissingTarget: {fileID: 0}

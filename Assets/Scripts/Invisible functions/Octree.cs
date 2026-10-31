@@ -118,26 +118,15 @@ public class Octant<T> : IEnumerable<Octant<T>>
             yield break;
         }
 
-        // Check in child octants
-        //int childSize = size / 2; // Calculate size that each child octant needs to be
-        bool isFull = true; // Set up a value so we can check if this octant is completely full
+
+        // Make a value for if this octant is entirely full
+        // If we aren't checking, set to false by default and bypass the whole thing
+        bool noEmptiesDetected = origin.checkForEntirelyFullOctants;
 
         for (int i = 0; i < 8; i++)
         {
-            // Set up child octant
-            if (children[i] == null)
-            {
-                /*
-                // Calculate check min and max
-                Vector3Int offset = SmokeParticleDensityController.neighbourOffsets[i];
-                offset.x *= childSize;
-                offset.y *= childSize;
-                offset.z *= childSize;
-                Vector3Int childMin = min + offset;
-                children[i] = new Octant<T>(origin, this, subdivisions - 1, childMin, key + i.ToString());
-                */
-                children[i] = Octant<T>.FromParent(this, i);
-            }
+            // Ensure child octant is set up
+            if (children[i] == null) children[i] = FromParent(this, i);
 
             // Calculate data inside child octant
             IEnumerator<Octant<T>> childScanEnumerator = children[i].ScanIterator();
@@ -145,16 +134,19 @@ public class Octant<T> : IEnumerable<Octant<T>>
             childScanEnumerator.Dispose();
 
             // Check if this octant can be counted as part of a 'full' parent octant
-            bool childIsFull = false;
-            childIsFull = childIsFull || children[i].type == OctantType.Leaf;
-            childIsFull = childIsFull || children[i].type == OctantType.FullyValid;
-            childIsFull = childIsFull || children[i].DoesCriteriaMatterWithThisOctant() == false;
-
-            // If a single child is not full, then that means this octant is not full.
-            isFull &= childIsFull;
+            // (assuming we haven't already found a not-full sibling)
+            if (noEmptiesDetected)
+            {
+                bool childIsFull = false;
+                childIsFull = childIsFull || children[i].type == OctantType.Leaf;
+                childIsFull = childIsFull || children[i].type == OctantType.FullyValid;
+                childIsFull = childIsFull || children[i].DoesCriteriaMatterWithThisOctant() == false;
+                // If a single child is not full, then that means this octant is not full.
+                noEmptiesDetected &= childIsFull;
+            }
         }
 
-        if (isFull)
+        if (noEmptiesDetected)
         {
             // Mark as full, because all children are full
             type = OctantType.FullyValid;
@@ -360,6 +352,7 @@ public class Octree<T> : IEnumerable<Octant<T>>
     public LeafDataAssignment refreshOctant;
     public LeafDataAssignment clearOctant;
     public Matrix4x4 matrix = Matrix4x4.identity;
+    public bool checkForEntirelyFullOctants = true;
 
     Octant<T> _base;
 
