@@ -219,7 +219,7 @@ public class AIGridPoints : MonoBehaviour
             collection.Add(gridPoints[i]);
         }
     }
-    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1, System.Func<Bounds, bool> ignoreOctant = null)
+    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1, System.Func<Bounds, bool> octantWorthChecking = null)
     {
         int validPoints = 0;
 
@@ -259,7 +259,7 @@ public class AIGridPoints : MonoBehaviour
             if (octant.type == OctantType.Invalid) continue;
 
             // Check if this octant is even worth investigating, or if the entire thing can be written off.
-            if (ignoreOctant != null && ignoreOctant.Invoke(octant.transformedBounds)) continue;
+            if (octantWorthChecking != null && octantWorthChecking.Invoke(octant.transformedBounds) == false) continue;
 
             // Check that a valid grid point exists
             GridPoint gridPoint = octant.leafData;
