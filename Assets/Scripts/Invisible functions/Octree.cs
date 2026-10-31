@@ -39,7 +39,7 @@ public class Octant<T>
         offset.x *= childSize;
         offset.y *= childSize;
         offset.z *= childSize;
-        Vector3Int childMin = parent.min + offset;
+        Vector3Int childMin = parent.bounds.min + offset;
         return new Octant<T>(parent.origin, parent, parent.subdivisions - 1, childMin, parent.key + orderIndex.ToString());
     }
 
@@ -48,8 +48,7 @@ public class Octant<T>
     public int subdivisions { get; private set; }
     public string key { get; private set; }
     public BoundsInt bounds { get; private set; }
-    public Vector3Int min => bounds.min;
-    public Vector3Int max => bounds.max;
+    public Bounds transformedBounds => MiscFunctions.TransformBounds(bounds.min, bounds.max, origin.matrix);
 
 
     public int depth => key.Length;
@@ -62,7 +61,7 @@ public class Octant<T>
     T _leafData;
 
     public int layer => origin.subdivisions - subdivisions;
-    public System.Func<BoundsInt, bool> meetsCriteria => origin.checkOctant;
+    public Octree<T>.CheckOctant meetsCriteria => origin.checkOctant;
     public Octree<T>.LeafDataAssignment refreshOctant => origin.refreshOctant;
     public Octree<T>.LeafDataAssignment clearOctant => origin.clearOctant;
 
@@ -77,7 +76,7 @@ public class Octant<T>
     public IEnumerator<Octant<T>> ScanIterator()
     {
         // Check if this octant meets criteria
-        bool notEmpty = meetsCriteria.Invoke(bounds);
+        bool notEmpty = meetsCriteria.Invoke(transformedBounds);
         yield return this;
 
         // If no more children can be found, mark as totally invalid
@@ -327,13 +326,15 @@ public class Octant<T>
 
 public class Octree<T>
 {
+    public delegate bool CheckOctant(Bounds bounds);
     public delegate T LeafDataAssignment(Octant<T> octant);
     
     public int subdivisions;
-    public System.Func<BoundsInt, bool> checkOctant;
+    public CheckOctant checkOctant;
     public System.Func<Octant<T>, bool> doesCheckMatter;
     public LeafDataAssignment refreshOctant;
     public LeafDataAssignment clearOctant;
+    public Matrix4x4 matrix = Matrix4x4.identity;
 
     Octant<T> _base;
 
@@ -421,4 +422,8 @@ public class Octree<T>
     }
     public Octant<T> FindMatchingOctant<T1>(Octant<T1> otherOctant) => GetOctantByKey(otherOctant.key);
 
+
+
+
+    
 }

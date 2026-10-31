@@ -8,6 +8,23 @@ using UnityEngine.Rendering.Universal;
 
 public readonly struct MiscFunctions
 {
+    public static Bounds TransformBounds(Vector3 min, Vector3 max, Matrix4x4 matrix)
+    {
+        // Create local bounds
+        Bounds localBounds = new Bounds();
+        localBounds.min = min;
+        localBounds.max = max;
+        return TransformBounds(localBounds, matrix);
+    }
+    public static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix)
+    {
+        // Convert position and size values from local to world space
+        Vector3 centre = matrix.MultiplyPoint3x4(bounds.center);
+        Vector3 halfExtents = matrix.MultiplyVector(bounds.extents);
+        // Return final bounds
+        return new Bounds(centre, 2 * halfExtents);
+    }
+
     #region Finding components
 
     /// <summary>

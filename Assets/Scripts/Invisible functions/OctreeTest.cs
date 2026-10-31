@@ -14,6 +14,7 @@ public class OctreeTest : MonoBehaviour
     {
         octree.subdivisions = subdivisions;
         octree.checkOctant = CheckIfOccupied;
+        octree.matrix = transform.localToWorldMatrix;
         octree.Refresh();
     }
     private void OnDrawGizmos()
@@ -22,17 +23,5 @@ public class OctreeTest : MonoBehaviour
         octree.DrawGizmos();
     }
 
-    bool CheckIfOccupied(BoundsInt cellBounds)
-    {
-        Bounds bounds = new Bounds();
-        bounds.min = cellBounds.min;
-        bounds.max = cellBounds.max;
-
-        // Convert position and size values from local to world space
-        Matrix4x4 matrix = transform.localToWorldMatrix;
-        Vector3 centre = matrix.MultiplyPoint3x4(bounds.center);
-        Vector3 halfExtents = matrix.MultiplyVector(bounds.extents);
-
-        return Physics.CheckBox(centre, halfExtents, Quaternion.identity, layers);
-    }
+    bool CheckIfOccupied(Bounds bounds) => Physics.CheckBox(bounds.center, bounds.extents, Quaternion.identity, layers);
 }

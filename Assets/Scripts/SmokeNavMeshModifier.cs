@@ -38,10 +38,12 @@ public class SmokeNavMeshModifier : MonoBehaviour
         terrainOctree = new Octree<bool>();
         terrainOctree.subdivisions = subdivisions;
         terrainOctree.checkOctant = ScanForLevelGeometry;
+        terrainOctree.matrix = octreeToWorldMatrix;
         terrainOctree.Refresh();
 
         // Assign delegates to octree
         octree.checkOctant = DoesOctantContainSmoke; // Use box checks to look for smoke colliders
+        octree.matrix = octreeToWorldMatrix;
         octree.doesCheckMatter = DoesOctantContainLevelGeometry;
         octree.refreshOctant = CheckToAssignVolume; // Assign NavMeshModifierVolumes for each leaf or full octant
         octree.clearOctant = RemoveVolume; // Clear unwanted volumes
@@ -362,24 +364,16 @@ public class SmokeNavMeshModifier : MonoBehaviour
 
 
 
-    bool DoesOctantContainSmoke(BoundsInt bounds)
-    {
-        return DoesOctantContainColliders(bounds.min, bounds.max, smokeMask.mask);
-    }
-    bool ScanForLevelGeometry(BoundsInt bounds)
+    bool DoesOctantContainSmoke(Bounds bounds) => DoesOctantContainColliders(bounds, smokeMask.mask);
+    bool ScanForLevelGeometry(Bounds bounds)
     {
         // TO DO: I think I need to improve the check further.
         // Maybe instead of just checking for level geometry, I check for NavMesh geometry specifically.
-        return DoesOctantContainColliders(bounds.min, bounds.max, terrainMask);
+        return DoesOctantContainColliders(bounds, terrainMask);
     }
-    bool DoesOctantContainColliders(Vector3Int min, Vector3Int max, LayerMask layerMask)
-    {
-        GetWorldExtents(min, max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
-        return Physics.CheckBox(centre, halfExtents, Quaternion.identity, layerMask);
-    }
+    bool DoesOctantContainColliders(Bounds bounds, LayerMask layerMask) => Physics.CheckBox(bounds.center, bounds.extents, Quaternion.identity, layerMask);
     bool DoesOctantContainLevelGeometry(Octant<NavMeshModifierVolume> octant)
     {
-
         Octant<bool> matchingOctant = terrainOctree.FindMatchingOctant(octant);
         if (matchingOctant == null) return false;
         return matchingOctant.type != OctantType.Invalid;
@@ -418,9 +412,9 @@ public class SmokeNavMeshModifier : MonoBehaviour
 
 
         // Set volume position and size
-        GetWorldExtents(octant.min, octant.max, octreeToWorldMatrix, out Vector3 centre, out Vector3 halfExtents);
-        volume.transform.localPosition = centre;
-        volume.size = 2 * halfExtents;
+        Bounds worldBounds = octant.transformedBounds;
+        volume.transform.localPosition = worldBounds.center;
+        volume.size = 2 * worldBounds.extents;
 
 
         return volume;
@@ -444,16 +438,5 @@ public class SmokeNavMeshModifier : MonoBehaviour
         Debug.Log($"Volume dismissed, count = {pool.activePrefabs.Count}, {pool.onStandby.Count}");
         */
         return null;
-    }
-
-    void GetWorldExtents(Vector3Int min, Vector3Int max, Matrix4x4 matrix, out Vector3 centre, out Vector3 halfExtents)
-    {
-        // Create bounds
-        Bounds bounds = new Bounds();
-        bounds.min = min;
-        bounds.max = max;
-        // Convert position and size values from local to world space
-        centre = matrix.MultiplyPoint3x4(bounds.center);
-        halfExtents = matrix.MultiplyVector(bounds.extents);
     }
 }
