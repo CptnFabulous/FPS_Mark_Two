@@ -17,7 +17,7 @@ public class AIGridPoints : MonoBehaviour
         public Vector3 position => navMeshData.position;
         public bool isCover => coverDirections != null && coverDirections.Count > 0;
 
-        public GridPoint(AIGridPoints origin, Vector3 position, float gridSpacing)
+        public GridPoint(AIGridPoints origin, Vector3 position, float gridSpacing, ref HashSet<Vector3> alreadyTaken)
         {
             //Debug.Log("Creating new grid point");
             navMeshData = new NavMeshHit();
@@ -26,14 +26,17 @@ public class AIGridPoints : MonoBehaviour
 
             // Check that this point is on the NavMesh
             bool success = NavMesh.SamplePosition(position, out NavMeshHit hit, gridSpacing, ~0);
-            //Debug.Log(success);
             if (!success) return;
 
-            // TO DO: launch a raycast (that can hit backfaces) to check for obstructions
-            Vector3 hitCastPoint = hit.position + (0.1f * origin.floorNormal);
-            bool obstructionDetected = Physics.Linecast(position, hitCastPoint, out _, origin.environmentMask);
-            //Debug.Log(!obstructionDetected);
+            if (alreadyTaken.Contains(hit.position)) return;
+
+            /*
+            // Launch a raycast (that can hit backfaces) to check for obstructions
+            Vector3 rayOrigin = hit.position + (0.1f * origin.floorNormal);
+            Vector3 direction = position - rayOrigin;
+            bool obstructionDetected = Physics.Raycast(rayOrigin, direction, out _, direction.magnitude, origin.environmentMask);
             if (obstructionDetected) return;
+            */
 
             // TO DO: I think this can be changed to not store so much unnecessary data.
             // Since the possible cover check directions are always the same, I could use a flag system to keep track of them.
@@ -45,6 +48,8 @@ public class AIGridPoints : MonoBehaviour
 
             navMeshData = hit;
             origin.CoverCheck(hit.position, out _cover, out _coverHits);
+
+            alreadyTaken.Add(hit.position);
         }
     }
 
@@ -72,6 +77,7 @@ public class AIGridPoints : MonoBehaviour
     public float halfCoverHeight = 0.9f;
     public int numberOfDirectionChecksForCover = 8;
 
+    HashSet<Vector3> positionsWithPoints = new HashSet<Vector3>();
     Octree<GridPoint> octree = new Octree<GridPoint>();
     List<GridPoint> _points = null;
 
@@ -146,6 +152,8 @@ public class AIGridPoints : MonoBehaviour
         // Ensure map is generated
         TerrainGrid.current.GenerateMap();
 
+        positionsWithPoints.Clear();
+
         // Create new octree
         octree = new Octree<GridPoint>();
         TerrainGrid.GenerateOctreeDataForLevelBounds(gridSpacing, out _, out int subdivisions, out Matrix4x4 octreeToWorldMatrix);
@@ -159,7 +167,7 @@ public class AIGridPoints : MonoBehaviour
         {
             Bounds bounds = octant.transformedBounds;
             float distance = 0.5f * new Vector3(gridSpacing, gridSpacing, gridSpacing).magnitude;
-            return new GridPoint(this, bounds.center, distance);
+            return new GridPoint(this, bounds.center, distance, ref positionsWithPoints);
         };
         octree.clearOctant = (_) => new GridPoint();
 
@@ -257,9 +265,13 @@ public class AIGridPoints : MonoBehaviour
             GridPoint gridPoint = octant.leafData;
             if (!gridPoint.valid) continue;
 
+            //Debug.Log("Valid grid point");
+
             // Ensure grid point meets criteria
             bool valid = criteria.Invoke(gridPoint);
             if (!valid) continue;
+
+            //Debug.Log("Meets criteria");
 
             // Add point
             collection[validPoints] = gridPoint;
@@ -303,6 +315,7 @@ public class AIGridPoints : MonoBehaviour
         // If checking for cover, exclude points that aren't cover
         if (onlyIncludeCover && p.isCover == false)
         {
+            //Debug.Log($"Distance check disqualified, point is not cover. {p.coverDirections}");
             return false;
         }
 
@@ -312,6 +325,7 @@ public class AIGridPoints : MonoBehaviour
     {
         // Check that the distance is correct
         float distance = Vector3.Distance(point, centre);
+        //Debug.Log($"Distance check: {distance}, {minRadius}, {maxRadius}");
         if (distance < minRadius) return false;
         if (distance > maxRadius) return false;
 
