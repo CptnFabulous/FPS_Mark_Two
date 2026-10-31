@@ -1,24 +1,50 @@
-using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.SceneManagement;
 
 public class AIGridPoints : MonoBehaviour
 {
-    public struct GridPoint
+    public readonly struct GridPoint
     {
-        public Vector3 position => navMeshData.position;
-        public Vector3[] coverDirections { get; private set; }
-        public bool isCover => coverDirections.Length > 0;
-        public NavMeshHit navMeshData { get; private set; }
+        public readonly NavMeshHit navMeshData;
+        readonly List<Vector3> _cover;
+        readonly List<RaycastHit> _coverHits;
 
-        public GridPoint(NavMeshHit navMeshData, Vector3[] coverDirections)
+        public IReadOnlyList<Vector3> coverDirections => _cover;
+        public IReadOnlyList<RaycastHit> coverHits => _coverHits;
+        public bool valid => navMeshData.hit;
+        public Vector3 position => navMeshData.position;
+        public bool isCover => coverDirections != null && coverDirections.Count > 0;
+
+        public GridPoint(AIGridPoints origin, Vector3 position, float gridSpacing)
         {
-            this.navMeshData = navMeshData;
-            this.coverDirections = coverDirections;
+            //Debug.Log("Creating new grid point");
+            navMeshData = new NavMeshHit();
+            _cover = null;
+            _coverHits = null;
+
+            // Check that this point is on the NavMesh
+            bool success = NavMesh.SamplePosition(position, out NavMeshHit hit, gridSpacing, ~0);
+            //Debug.Log(success);
+            if (!success) return;
+
+            // TO DO: launch a raycast (that can hit backfaces) to check for obstructions
+            Vector3 hitCastPoint = hit.position + (0.1f * origin.floorNormal);
+            bool obstructionDetected = Physics.Linecast(position, hitCastPoint, out _, origin.environmentMask);
+            //Debug.Log(!obstructionDetected);
+            if (obstructionDetected) return;
+
+            // TO DO: I think this can be changed to not store so much unnecessary data.
+            // Since the possible cover check directions are always the same, I could use a flag system to keep track of them.
+            // This would only work with up to 32 distinct cover directions, but I think that would be total overkill anyway.
+
+            // I feel like I should also make cover data into a dictionary, and not need the grid point struct.
+            // Or maybe not? Because there's also stuff like NavMeshHit data in it.
+            // I'll keep that as is. But updating the cover system to use flags would be pretty cool.
+
+            navMeshData = hit;
+            origin.CoverCheck(hit.position, out _cover, out _coverHits);
         }
     }
 
@@ -36,7 +62,6 @@ public class AIGridPoints : MonoBehaviour
 
     [Header("Casting criteria")]
     public LayerMask environmentMask = ~0;
-    public Bounds levelBounds = new Bounds(Vector3.zero, Vector3.one * 50);
     
     public Vector3 floorEulerAngles;
     
@@ -47,25 +72,12 @@ public class AIGridPoints : MonoBehaviour
     public float halfCoverHeight = 0.9f;
     public int numberOfDirectionChecksForCover = 8;
 
+    Octree<GridPoint> octree = new Octree<GridPoint>();
     List<GridPoint> _points = null;
 
-    float raycastHeightPadding = 5;
-
-    public Bounds bounds => levelBounds;
-    public Vector2Int GridSize
-    {
-        get
-        {
-            int x = Mathf.FloorToInt(bounds.size.x / gridSpacing);
-            int z = Mathf.FloorToInt(bounds.size.z / gridSpacing);
-            return new Vector2Int(x, z);
-        }
-    }
     public Quaternion floorRotation => Quaternion.Euler(floorEulerAngles);
     public Vector3 floorNormal => floorRotation * Vector3.up;
-
-
-    float coverCheckRaycastDistance => MathUtility.LengthOfDiagonal(gridSpacing, gridSpacing);
+    float coverCheckRaycastDistance => new Vector2(gridSpacing, gridSpacing).magnitude;
     public float coverCheckAngleSize => 360f / numberOfDirectionChecksForCover;
     #endregion
 
@@ -73,15 +85,7 @@ public class AIGridPoints : MonoBehaviour
     {
         get
         {
-            if (_points == null)
-            {
-                Generate();
-                /*
-                // Set up listeners so whenever the scene (and terrain) change, the grid points are updated
-                SceneManager.sceneLoaded += (_, _) => Generate();
-                SceneManager.sceneUnloaded += (_) => Generate();
-                */
-            }
+            if (_points == null) Generate();
             return _points;
         }
     }
@@ -89,25 +93,44 @@ public class AIGridPoints : MonoBehaviour
     public void OnDrawGizmosSelected()
     {
         if (MiscFunctions.CurrentCameraNotMain()) return;
-        
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(bounds.center, bounds.size);
 
-        if (gridPoints != null)
+        if (octree == null) return;
+
+        Vector3 coverOffset = halfCoverHeight * floorNormal;
+
+        void DrawGridPoint(GridPoint gridPoint)
         {
-            for (int i = 0; i < gridPoints.Count; i++)
-            {
-                Gizmos.color = gridPoints[i].isCover ? Color.green : Color.red;
-                Gizmos.DrawRay(gridPoints[i].position, floorNormal);
+            Gizmos.color = gridPoint.isCover ? Color.green : Color.red;
+            Gizmos.DrawRay(gridPoint.position, floorNormal);
 
-                foreach (Vector3 direction in gridPoints[i].coverDirections)
-                {
-                    Gizmos.color = Color.cyan;
-                    Gizmos.DrawRay(gridPoints[i].position + floorNormal, direction * coverCheckRaycastDistance);
-                }
-                
+            if (!gridPoint.isCover) return;
+
+            Gizmos.color = Color.cyan;
+            foreach (Vector3 direction in gridPoint.coverDirections)
+            {
+                Gizmos.DrawRay(gridPoint.position + coverOffset, direction * coverCheckRaycastDistance);
             }
         }
+
+        IEnumerator<Octant<GridPoint>> enumerator = octree.baseContainer.CellIterator(false);
+        while (enumerator.MoveNext())
+        {
+            // Ignore if grid point is invalid
+            GridPoint gridPoint = enumerator.Current.leafData;
+            if (gridPoint.valid == false) continue;
+
+            // Draw cube representing octant
+            Gizmos.color = Color.grey;
+            Bounds bounds = enumerator.Current.transformedBounds;
+            Gizmos.DrawWireCube(bounds.center, bounds.size);
+
+            // Draw line connecting the cube to the actual start point
+            Gizmos.DrawLine(bounds.center, gridPoint.position);
+
+            // Draw the actual grid point and its data
+            DrawGridPoint(gridPoint);
+        }
+        enumerator.Dispose();
     }
 
     #region Generation
@@ -115,72 +138,65 @@ public class AIGridPoints : MonoBehaviour
     [ContextMenu("Force regeneration")]
     public void Generate()
     {
-        _points = GenerateGrid(bounds);
+        GenerateOctree(out octree);
     }
-    List<GridPoint> GenerateGrid(Bounds levelBounds)
+
+    public void GenerateOctree(out Octree<GridPoint> octree)
     {
-        List<GridPoint> newPoints = new List<GridPoint>();
+        // Ensure map is generated
+        TerrainGrid.current.GenerateMap();
 
-        for (int x = 0; x < GridSize.x; x++)
+        // Create new octree
+        octree = new Octree<GridPoint>();
+        TerrainGrid.GenerateOctreeDataForLevelBounds(gridSpacing, out _, out int subdivisions, out Matrix4x4 octreeToWorldMatrix);
+        octree.subdivisions = subdivisions;
+        octree.matrix = octreeToWorldMatrix;
+        // Check for valid level geometry
+        octree.checkOctant = (bounds) => Physics.CheckBox(bounds.center, bounds.extents, floorRotation, environmentMask);
+        // Sample a NavMesh position within said octant (make sure to do every leaf octant, even if an entire parent octant is full)
+        octree.checkForEntirelyFullOctants = false;
+        octree.refreshOctant = (octant) =>
         {
-            for (int z = 0; z < GridSize.y; z++)
-            {
-                float positionX = x * gridSpacing;
-                float positionZ = z * gridSpacing;
+            Bounds bounds = octant.transformedBounds;
+            float distance = 0.5f * new Vector3(gridSpacing, gridSpacing, gridSpacing).magnitude;
+            return new GridPoint(this, bounds.center, distance);
+        };
+        octree.clearOctant = (_) => new GridPoint();
 
-                Vector3 origin = new Vector3(levelBounds.min.x + positionX, levelBounds.max.y, levelBounds.min.z + positionZ);
-                float distance = levelBounds.size.y - minAgentHeight;
+        // Trigger full refresh
+        octree.Refresh();
 
-                // Calculate extra distance for raycasts
-                origin.y += raycastHeightPadding;
-                distance += raycastHeightPadding * 2;
-                //distance = Mathf.Max(distance, raycastHeightPadding * 2);
-
-                //Debug.DrawRay(origin, -floorNormal * distance, Color.black, 20);
-                while (Physics.Raycast(origin, -floorNormal, out RaycastHit rh, distance, environmentMask))
-                {
-                    // Reset the positions for the next raycast
-                    origin = rh.point + (minAgentHeight * -floorNormal);
-                    distance -= rh.distance;
-
-                    // Check that this point is on the NavMesh
-                    if (NavMesh.SamplePosition(rh.point, out NavMeshHit hit, gridSpacing, ~0) == false) continue;
-
-                    Vector3[] coverDirections = CoverCheck(hit.position).ToArray(); // Calculate cover points
-                    newPoints.Add(new GridPoint(hit, coverDirections)); // Assemble values and add to the list
-                }
-                
-            }
-        }
-
-        /*
-        // Sort points on each position axis
-        for (int i = 0; i < 3; i++)
+        // Iterate through created points, adding all valid ones to the list
+        if (_points == null) _points = new List<GridPoint>();
+        _points.Clear();
+        IEnumerator<Octant<GridPoint>> enumerator = octree.baseContainer.CellIterator(false);
+        while (enumerator.MoveNext())
         {
-            newPoints.Sort((lhs, rhs) => lhs.position[i].CompareTo(rhs.position[i]));
+            GridPoint gridPoint = enumerator.Current.leafData;
+            if (gridPoint.valid) _points.Add(gridPoint);
         }
-        */
+        enumerator.Dispose();
 
-        return newPoints;
+        Debug.Log($"Generated grid points using octree, count = {_points.Count}");
     }
-    public List<Vector3> CoverCheck(Vector3 position)
+
+    public void CoverCheck(Vector3 position, out List<Vector3> directions, out List<RaycastHit> hits)
     {
-        List<Vector3> directions = new List<Vector3>();
+        directions = new List<Vector3>();
+        hits = new List<RaycastHit>();
 
         
         Vector3 rayOrigin = position + (halfCoverHeight * floorNormal);
-        //Vector3 rayOrigin = position + (minAgentHeight / 2 * floorNormal);
 
         for (int i = 0; i < numberOfDirectionChecksForCover; i++)
         {
             Vector3 rayDirection = Quaternion.Euler(0, coverCheckAngleSize * i, 0) * Vector3.forward;
-            if (Physics.Raycast(rayOrigin, rayDirection, out _, coverCheckRaycastDistance, environmentMask))
+            if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit rh, coverCheckRaycastDistance, environmentMask))
             {
                 directions.Add(rayDirection);
+                hits.Add(rh);
             }
         }
-
-        return directions;
     }
     #endregion
 
@@ -195,23 +211,65 @@ public class AIGridPoints : MonoBehaviour
             collection.Add(gridPoints[i]);
         }
     }
-    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1)
+    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1, System.Func<Bounds, bool> ignoreOctant = null)
     {
         int validPoints = 0;
-        for (int i = 0; i < gridPoints.Count; i++)
+
+        // If we don't care about the octants, just iterate through everything linearly.
+        if (ignoreOctant == null)
         {
-            // Ignore if criteria not met
-            bool valid = criteria.Invoke(gridPoints[i]);
+            // Iterate through list linearly
+            for (int i = 0; i < gridPoints.Count; i++)
+            {
+                // Ignore if criteria not met
+                bool valid = criteria.Invoke(gridPoints[i]);
+                if (!valid) continue;
+
+                // Add point
+                collection[validPoints] = gridPoints[i];
+                validPoints++;
+
+                // Cancel once we can't take any more
+                if (validPoints >= collection.Length) break;
+                if (maxNumberOfChecks >= 0 && validPoints >= maxNumberOfChecks) break;
+            }
+
+            return validPoints;
+        }
+
+        // TO DO: is creating an enumerator and iterating through it what creates all the garbage?
+        // Or am I creating GridPoints by referencing them?
+        // If I have a struct (value type) with a list inside (reference type), and I make a copy by referencing it, does it reference the original list or make a copy?
+
+        // Iterate through octree
+        IEnumerator<Octant<GridPoint>> iterator = octree.GetEnumerator();
+        while (iterator.MoveNext())
+        {
+            Octant<GridPoint> octant = iterator.Current;
+
+            // If octant is empty, ignore and continue
+            if (octant.type == OctantType.Invalid) continue;
+
+            // Check if this octant is even worth investigating, or if the entire thing can be written off.
+            if (ignoreOctant != null && ignoreOctant.Invoke(octant.transformedBounds)) continue;
+
+            // Check that a valid grid point exists
+            GridPoint gridPoint = octant.leafData;
+            if (!gridPoint.valid) continue;
+
+            // Ensure grid point meets criteria
+            bool valid = criteria.Invoke(gridPoint);
             if (!valid) continue;
 
             // Add point
-            collection[validPoints] = gridPoints[i];
+            collection[validPoints] = gridPoint;
             validPoints++;
 
             // Cancel once we can't take any more
             if (validPoints >= collection.Length) break;
             if (maxNumberOfChecks >= 0 && validPoints >= maxNumberOfChecks) break;
         }
+        iterator.Dispose();
 
         return validPoints;
     }
@@ -260,4 +318,29 @@ public class AIGridPoints : MonoBehaviour
         // Point is valid
         return true;
     }
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+
+    /*
+    public static bool MeshCheckBox(Mesh mesh, Vector3 centre, Vector3 halfExtents)
+    {
+        for (int i = 0; i < mesh.triangles.Length; i += 3)
+        {
+            // Check if any of the triangles' vertices is inside the zone
+            // Check if a line drawn between any of the two vertices intersects the zone
+        }
+    }
+    */
 }

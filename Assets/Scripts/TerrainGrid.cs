@@ -78,9 +78,10 @@ public class TerrainGrid : MonoBehaviour
         Gizmos.DrawWireCube(worldBounds.center, worldBounds.size);
     }
 
-    void GenerateMap()
+    [ContextMenu("Force regeneration")]
+    public bool GenerateMap()
     {
-        if (generated) return;
+        if (generated) return false;
 
         _doorsInScene = null;
 
@@ -218,6 +219,7 @@ public class TerrainGrid : MonoBehaviour
         */
 
         generated = true;
+        return true;
     }
     public Vector3Int WorldToGridPosition(Vector3 position)
     {
