@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using CptnFabulous.MiscUtility;
 
@@ -12,8 +11,9 @@ public enum OctantType
     FullyValid, // All children count for criteria
 }
 
-public class Octant<T>
+public class Octant<T> : IEnumerable<Octant<T>>
 {
+    #region Constructors
     public Octant(Octree<T> origin, Octant<T> parent, int subdivisions, Vector3Int boundsMin, string key)
     {
         this.origin = origin;
@@ -30,7 +30,6 @@ public class Octant<T>
         newBounds.max = boundsMin + dimensions;
         bounds = newBounds;
     }
-    
     public static Octant<T> FromParent(Octant<T> parent, int orderIndex)
     {
         int childSize = parent.size / 2; // Calculate size that each child octant needs to be
@@ -42,6 +41,7 @@ public class Octant<T>
         Vector3Int childMin = parent.bounds.min + offset;
         return new Octant<T>(parent.origin, parent, parent.subdivisions - 1, childMin, parent.key + orderIndex.ToString());
     }
+    #endregion
 
     public Octree<T> origin { get; private set; }
     public Octant<T> parent { get; private set; }
@@ -65,13 +65,35 @@ public class Octant<T>
     public Octree<T>.LeafDataAssignment refreshOctant => origin.refreshOctant;
     public Octree<T>.LeafDataAssignment clearOctant => origin.clearOctant;
 
-
     /// <summary>
     /// Check if octant meeting the criteria actually matters. If not, we can treat it as occupied even if it isn't.
     ///<para>If check is not present, treat as true by default.</para>
     /// </summary>
     /// <returns></returns>
     public bool DoesCriteriaMatterWithThisOctant() => (origin.doesCheckMatter == null) || origin.doesCheckMatter.Invoke(this);
+
+    #region IEnumerators
+
+    #region IEnumerable
+
+    public IEnumerator<Octant<T>> GetEnumerator()
+    {
+        yield return this;
+
+        // If non-empty children are present, continue iterating through them.
+        for (int i = 0; i < 8; i++)
+        {
+            // Ignore if null
+            if (children[i] == null) continue;
+            // Iterate through each child octant
+            IEnumerator<Octant<T>> childEnumerator = children[i].GetEnumerator();
+            while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
+            childEnumerator.Dispose();
+        }
+    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    #endregion
 
     public IEnumerator<Octant<T>> ScanIterator()
     {
@@ -322,9 +344,12 @@ public class Octant<T>
             childEnumerator.Dispose();
         }
     }
+
+    #endregion
+
 }
 
-public class Octree<T>
+public class Octree<T> : IEnumerable<Octant<T>>
 {
     public delegate bool CheckOctant(Bounds bounds);
     public delegate T LeafDataAssignment(Octant<T> octant);
@@ -373,7 +398,14 @@ public class Octree<T>
             return final;
         }
     }
-    
+
+    #region IEnumerable
+
+    public IEnumerator<Octant<T>> GetEnumerator() => baseContainer.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => baseContainer.GetEnumerator();
+
+    #endregion
+
     public void Refresh()
     {
         Scan();
@@ -422,8 +454,4 @@ public class Octree<T>
     }
     public Octant<T> FindMatchingOctant<T1>(Octant<T1> otherOctant) => GetOctantByKey(otherOctant.key);
 
-
-
-
-    
 }
