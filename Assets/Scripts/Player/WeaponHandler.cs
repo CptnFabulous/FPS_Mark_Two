@@ -28,13 +28,16 @@ public class WeaponHandler : WeaponHandlerBase
     public bool toggleADS;
     public bool quickSwitchModes = true;
 
-    [Header("Events")]
+    [Header("Switching")]
+    public float switchTimeMultiplier = 1;
     public UnityEvent<Weapon> onDraw;
     public UnityEvent<Weapon> onHolster;
     public UnityEvent<Weapon> onSwitchWeapon;
 
     public bool disableADS { get; set; }
     public bool isSwitching { get; private set; }
+
+    public MultiplierStack switchTimeModifiers = new MultiplierStack();
 
     public bool weaponDrawn
     {

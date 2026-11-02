@@ -55,6 +55,7 @@ public class Weapon : MonoBehaviour
             return false;
         }
     }
+    public float switchTimeMultiplier => user.weaponHandler.switchTimeMultiplier * user.weaponHandler.switchTimeModifiers.calculatedValue;
 
     public IEnumerator Draw()
     {
@@ -68,7 +69,7 @@ public class Weapon : MonoBehaviour
         onDraw.Invoke();
 
         // Wait to switch
-        yield return new WaitForSeconds(switchSpeed);
+        yield return new WaitForSeconds(switchSpeed * switchTimeMultiplier);
 
         // Enable current mode so it does all the necessary stuff it needs to do when first activated
         CurrentMode.enabled = true;
@@ -87,7 +88,7 @@ public class Weapon : MonoBehaviour
         CurrentMode.enabled = false;
 
         onHolster.Invoke();
-        yield return new WaitForSeconds(switchSpeed);
+        yield return new WaitForSeconds(switchSpeed * switchTimeMultiplier);
 
         gameObject.SetActive(false);
         isSwitching = false;

@@ -1,7 +1,6 @@
 using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +13,9 @@ public class OffhandAttackHandler : WeaponHandlerBase
     public WeaponHandler weaponHandler;
     public InteractionHandler interactionHandler;
     public OffhandSelectorHUD selectorInfo;
+
+    [Header("Stats")]
+    [Range(float.Epsilon, 1)] public float weaponSwitchTimeMultiplier = 1;
 
     bool buttonHeld;
     int frameChanged = int.MinValue;
@@ -58,7 +60,11 @@ public class OffhandAttackHandler : WeaponHandlerBase
     {
         // Put away current weapon (if two-handed)
         Weapon currentWeapon = weaponHandler.CurrentWeapon;
-        if (currentWeapon != null && currentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
+        if (currentWeapon != null && currentWeapon.oneHanded == false)
+        {
+            weaponHandler.switchTimeModifiers["Performing offhand attack"] = weaponSwitchTimeMultiplier;
+            yield return weaponHandler.SetCurrentWeaponDrawn(false);
+        }
 
         // TO DO: check if the offhand ability is standalone or attached to a weapon
         Weapon w = offhandAbility.attachedTo;
@@ -101,8 +107,9 @@ public class OffhandAttackHandler : WeaponHandlerBase
         }
 
         // Ensure current weapon is deployed
-        currentAction = null;
-        weaponHandler.SetCurrentWeaponActive(true);
+        //currentAction = null;
+        //weaponHandler.SetCurrentWeaponActive(true);
+        CancelCurrentAction();
     }
 
     void CancelCurrentAction(bool isSwitchingWeapons = false)
@@ -116,6 +123,8 @@ public class OffhandAttackHandler : WeaponHandlerBase
         }
 
         if (currentMode != null) currentMode.enabled = false;
+
+        weaponHandler.switchTimeModifiers["Performing offhand attack"] = 1;
 
         // Auto-deploy the last weapon, but not if this action was triggered by switching to a new one
         if (!isSwitchingWeapons) weaponHandler.SetCurrentWeaponActive(true);

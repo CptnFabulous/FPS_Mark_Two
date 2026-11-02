@@ -13,6 +13,7 @@ public class WeaponAnimator : MonoBehaviour
     [Header("General Animator variables")]
     public string active = "Weapon Active";
     public string mode = "Firing Mode Index";
+    public string switchSpeedMultiplier = "Switch Speed Multiplier";
     public string modeSwitchTrigger = "Mode Switch Triggered";
 
     [Header("RangedAttack variables")]
@@ -63,9 +64,13 @@ public class WeaponAnimator : MonoBehaviour
             gm.onIncrementStart.AddListener(() => controller.SetTrigger(reloadIncrementTrigger));
         }
 
+
+
+
     }
     private void Update()
     {
+        AnimationUtility.TrySetAnimatorFloat(controller, switchSpeedMultiplier, 1 / weaponToAnimate.switchTimeMultiplier);
         //controller.SetBool(active, weaponToAnimate.isActiveAndEnabled);
         AnimationUtility.TrySetAnimatorInteger(controller, mode, weaponToAnimate.currentModeIndex);
 
