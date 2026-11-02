@@ -189,13 +189,13 @@ public class Octant<T> : IEnumerable<Octant<T>>
             case OctantType.Leaf:
                 // Colour the cell differently and draw it full rather than wireframe, to show it's the end of the subdivision
                 Gizmos.color = leaf;
-                Gizmos.DrawCube(centre, size);
+                Gizmos.DrawWireCube(centre, size);
                 break;
 
             case OctantType.FullyValid:
                 // Colour the cell differently and draw it full rather than wireframe, to show it's the end of the subdivision
                 Gizmos.color = full;
-                Gizmos.DrawCube(centre, size);
+                Gizmos.DrawWireCube(centre, size);
                 break;
 
             case OctantType.Branch:
