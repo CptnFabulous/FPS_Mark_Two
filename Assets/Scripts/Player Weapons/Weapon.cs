@@ -60,7 +60,6 @@ public class Weapon : MonoBehaviour
     public IEnumerator Draw()
     {
         // Do necessary stuff to disable mode (but don't switch away from it)
-        //yield return new WaitUntil(() => isSwitching == false);
         CurrentMode.enabled = false;
 
         isSwitching = true;
@@ -78,14 +77,10 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator Holster()
     {
-        //yield return new WaitUntil(() => InAction == false);
-        //if (InAction) yield break;
-        
         isSwitching = true;
 
-        // Do necessary stuff to disable mode (but don't switch away from it yet)
-        yield return CurrentMode.CancelAsync();
-        CurrentMode.enabled = false;
+        // Disable current mode without switching away from it
+        yield return CurrentMode.EndAsync();
 
         onHolster.Invoke();
         yield return new WaitForSeconds(switchSpeed * switchTimeMultiplier);
@@ -95,14 +90,13 @@ public class Weapon : MonoBehaviour
     }
     public IEnumerator SwitchMode(int newModeIndex)
     {
-        //if (InAction == true) yield break;
+        // Ignore if same mode
         if (newModeIndex == currentModeIndex) yield break;
 
         isSwitching = true;
 
         // End current mode
-        yield return CurrentMode.CancelAsync();
-        CurrentMode.enabled = false;
+        yield return CurrentMode.EndAsync();
 
         // Officially switch modes
         currentModeIndex = newModeIndex;

@@ -77,6 +77,7 @@ public class RangedAttack : WeaponMode
     protected override void OnDisable()
     {
         base.OnDisable();
+        SetContinuousElementsActive(false);
         if (magazine != null) magazine.enabled = false;
 
         if (adsHandler != null && adsHandler.currentAttack == this) adsHandler.currentAttack = null;
@@ -243,8 +244,11 @@ public class RangedAttack : WeaponMode
 
     
 
-    public override IEnumerator CancelAsync()
+    protected override IEnumerator CancelAsync()
     {
+        // Forcibly 'release' player input and wait for attack to end
+        yield return StopAttackAsync();
+
         Debug.Log("Switching away from " + this);
         // Cancel reload
         if (magazine != null)

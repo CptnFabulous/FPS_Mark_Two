@@ -42,7 +42,7 @@ public abstract class WeaponMode : MonoBehaviour
     {
         yield return new WaitForSeconds(switchSpeed);
     }
-    public virtual IEnumerator CancelAsync() => null;
+    protected virtual IEnumerator CancelAsync() => null;
 
     public abstract bool CanAttack();
     protected abstract IEnumerator AttackSequence();
@@ -72,6 +72,17 @@ public abstract class WeaponMode : MonoBehaviour
     {
         yield return AttackSequence();
         currentAttack = null;
+    }
+    public IEnumerator StopAttackAsync()
+    {
+        SetPrimaryInput(false);
+        yield return new WaitUntil(() => !inAttack);
+    }
+    public IEnumerator EndAsync()
+    {
+        //if (waitForEndOfAttack) offhandAbility.StopAttackAsync();
+        yield return CancelAsync();
+        enabled = false;
     }
 
     protected virtual void OnDisable()
