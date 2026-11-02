@@ -26,105 +26,31 @@ public class MultiRadialMenu : MonoBehaviour
 
     private void Awake()
     {
-        SetMenuSystemActive(false);
+        TrySetNewMenu(GetCurrentBestMenu(), false, false);
         currentMenu = null;
     }
     private void Start()
     {
-        if (openMenuInput != null) openMenuInput.onActionPerformed.AddListener((ctx) => SetMenuSystemActive(ctx.ReadValueAsButton()));
+        if (openMenuInput != null) openMenuInput.onActionPerformed.AddListener(ProcessGenericMenuInput);
         if (menuSwitchInput != null) menuSwitchInput.onActionPerformed.AddListener(CycleMenus);
         directionalInput.onActionPerformed.AddListener(InputDirection);
     }
-    
-    /// <summary>
-    /// Activates the whole menu system to the last-selected menu, and allows switching between different menus in a single activation
-    /// </summary>
-    /// <param name="active"></param>
-    public void SetMenuSystemActive(bool active)
-    {
-        switchPrompt.SetActive(true);
 
-        // If the current menu is null or can't be accessed, check for a menu with options present
-        RadialMenu menu = currentMenu;
-        if (menu == null || !menu.optionsPresent)
-        {
-            menu = menus.Find((m) => m.optionsPresent);
-        }
-
-        // Attempt to switch. If successful, alter functionality and GUI visibility to match
-        if (SetMenuActiveState(menu, active))
-        {
-            switchPrompt.SetActive(true);
-            onOneSingleMenu = false;
-        }
-    }
-    /// <summary>
-    /// Opens one specific menu and doesn't allow it to be switched from until it shuts
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="active"></param>
-    public void SetSingleMenuActive(int index, bool active) => SetSingleMenuActive(menus[index], active);
-    public void SetSingleMenuActive(RadialMenu menu, bool active)
-    {
-        // Attempt to switch. If successful, alter functionality and GUI visibility to match
-        if (SetMenuActiveState(menu, active))
-        {
-            switchPrompt.SetActive(false);
-            onOneSingleMenu = true;
-        }
-    }
-    public void ProcessSingleMenuInput(int index, InputAction.CallbackContext context)
+    #region Inputs
+    public void ProcessGenericMenuInput(InputAction.CallbackContext context) => ProcessMenuInput(GetCurrentBestMenu(), context, false);
+    public void ProcessSingleMenuInput(int index, InputAction.CallbackContext context) => ProcessMenuInput(menus[index], context, true);
+    public void ProcessMenuInput(RadialMenu menu, InputAction.CallbackContext context, bool asSingleMenu)
     {
         // If input was a tap, quickly swap to the previous value
-        if (context.duration < InputSystem.settings.defaultTapTime)
+        if (menu != null && context.duration < InputSystem.settings.defaultTapTime)
         {
-            // TO DO: swap to last value
-            menus[index].SwapToPreviousValue();
+            menu.SwapToPreviousValue();
             return;
         }
-        SetSingleMenuActive(index, context.ReadValueAsButton());
+
+        TrySetNewMenu(menu, context.ReadValueAsButton(), asSingleMenu);
     }
 
-    bool SetMenuActiveState(RadialMenu menu, bool active)
-    {
-        // Do nothing if the specified menu is not part of this system
-        if (!menus.Contains(menu)) return false;
-
-        // If a different menu is already open, do nothing with this input and wait for it to close.
-        if (menuIsOpen && currentMenu != menu) return false;
-
-        // Assign menu
-        currentMenu = menu;
-
-        // if the desired menu shouldn't be opened, ensure it's shut.
-        if (currentMenu == null || !currentMenu.optionsPresent) active = false;
-
-        menuIsOpen = active;
-
-        // Enable/disable window
-        canvasGroup.alpha = menuIsOpen ? 1 : 0;
-        canvasGroup.interactable = menuIsOpen;
-        canvasGroup.blocksRaycasts = menuIsOpen;
-
-        // Disable actions we don't want the player performing while the menu is open
-        foreach (SingleInput input in inputsToDisable) input.enabled = !menuIsOpen;
-        // Activate inputs for directions and switching between menus
-        directionalInput.enabled = menuIsOpen;
-        menuSwitchInput.enabled = menuIsOpen;
-
-        // Open or close the menu
-        if (menuIsOpen)
-        {
-            SwitchToDifferentMenu(currentMenu);
-            //currentMenu.EnterMenu();
-        }
-        else
-        {
-            currentMenu.SetMenuActive(false);//.ExitMenu();
-        }
-
-        return true;
-    }
     void InputDirection(InputAction.CallbackContext context)
     {
         if (currentMenu == null) return;
@@ -158,6 +84,81 @@ public class MultiRadialMenu : MonoBehaviour
 
         SwitchToDifferentMenu(menus[index]);
     }
+    #endregion
+
+    /// <summary>
+    /// Attempts to switch to a new menu. If successful, alter GUI states to match based on the new menu and the state
+    /// </summary>
+    /// <param name="menu"></param>
+    /// <param name="active">Do we want the window to be open or not? Automatically disables if conditions are not met.</param>
+    /// <param name="asSingleMenu">If true, will not be able to switch to a new menu until the current one closes.</param>
+    /// <returns>If false, means another menu is active and blocked the new one.</returns>
+    bool TrySetNewMenu(RadialMenu menu, bool active, bool asSingleMenu)
+    {
+        #region Attempt to assign new states
+
+        // Do nothing if the specified menu is not part of this system (unless it's null, 
+        if (menu != null && !menus.Contains(menu)) return false;
+        // Don't allow this menu to be overridden, if another one is already open
+        if (menuIsOpen && currentMenu != menu) return false;
+        // Assign menu
+        currentMenu = menu;
+
+        // If the call was to open the menu, but said menu shouldn't be opened, ensure it's shut.
+        if (currentMenu == null || !currentMenu.optionsPresent) active = false;
+        // Set new active state
+        menuIsOpen = active;
+
+        #endregion
+
+        #region Update GUI and inputs to match new menu and state
+
+        // Enable/disable window
+        canvasGroup.alpha = menuIsOpen ? 1 : 0;
+        canvasGroup.interactable = menuIsOpen;
+        canvasGroup.blocksRaycasts = menuIsOpen;
+
+        // Disable actions we don't want the player performing while the menu is open
+        foreach (SingleInput input in inputsToDisable) input.enabled = !menuIsOpen;
+        // Activate inputs for directions and switching between menus
+        directionalInput.enabled = menuIsOpen;
+        menuSwitchInput.enabled = menuIsOpen;
+
+        // Set up stuff for if it's one single menu or not
+        switchPrompt.SetActive(!asSingleMenu);
+        onOneSingleMenu = asSingleMenu;
+
+        if (currentMenu != null)
+        {
+            // Open or close the menu
+            if (menuIsOpen)
+            {
+                SwitchToDifferentMenu(currentMenu);
+            }
+            else
+            {
+                currentMenu.SetMenuActive(false);
+            }
+        }
+        
+        #endregion
+
+        return true;
+    }
+
+    /// <summary>
+    /// If the current menu is null or can't be accessed, check for a menu with options present.
+    /// </summary>
+    /// <returns></returns>
+    RadialMenu GetCurrentBestMenu()
+    {
+        RadialMenu menu = currentMenu;
+        if (menu == null || !menu.optionsPresent)
+        {
+            menu = menus.Find((m) => m.optionsPresent);
+        }
+        return menu;
+    }
 
     void SwitchToDifferentMenu(RadialMenu newMenu)
     {
@@ -169,4 +170,5 @@ public class MultiRadialMenu : MonoBehaviour
         int index = menus.IndexOf(currentMenu);
         animator.SetInteger(menuIndexName, index);
     }
+
 }
