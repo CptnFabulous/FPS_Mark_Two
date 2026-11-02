@@ -102,7 +102,7 @@ public class Entity : MonoBehaviour
     /// </summary>
     /// <param name="hit"></param>
     /// <returns></returns>
-    public bool HitOwnCollider(RaycastHit hit) => CollectionUtility.ArrayContains(colliders, hit.collider);
+    public bool HitOwnCollider(RaycastHit hit) => colliders.Contains(hit.collider);
 
     public bool isBeingRendered => renderers.DoAnyMeetCriteria((r) => r.isVisible);
 

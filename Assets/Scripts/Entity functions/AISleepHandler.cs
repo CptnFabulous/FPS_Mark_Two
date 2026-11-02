@@ -46,22 +46,36 @@ public class AISleepHandler : MonoBehaviour
     bool IsAINotRelevantToPlayer()
     {
         // If the entity is not performing a complex action
-        bool isIdle = MiscFunctions.DoAnyMeetCriteria(idleStates, (s) => rootAI.stateController.currentStateInHierarchy == s);
-        if (!isIdle) return false;
+        if (NotIdle()) return false;
 
         // If it's not in the same area as any player
-        LevelArea currentArea = LevelArea.FindCurrentArea(rootAI);
-        bool outsideArea = !MiscFunctions.DoAnyMeetCriteria(Player.activePlayers, (p) => LevelArea.FindCurrentArea(p) == currentArea);
-        if (!outsideArea) return false;
+        if (SharesAreaWithAnyPlayer()) return false;
 
         // If the enemy is not being seen by any camera
-        //bool notBeingRendered = !MiscFunctions.DoAnyMeetCriteria(rootAI.renderers, (r) => r.isVisible);
-        bool notBeingRendered = !MiscFunctions.DoAnyMeetCriteria(rootAI.renderers, (r) =>
+        if (VisibleToAnyCamera()) return false;
+
+
+        //rootAI.DebugLog($"{isIdle} + {outsideArea} + {notBeingRendered} = {irrelevantToPlayer}");
+
+        return true;
+    }
+
+    bool NotIdle() => !idleStates.DoAnyMeetCriteria((s) => rootAI.stateController.currentStateInHierarchy == s);
+    bool SharesAreaWithAnyPlayer()
+    {
+        LevelArea currentArea = LevelArea.FindCurrentArea(rootAI);
+        return Player.activePlayers.DoAnyMeetCriteria((p) => LevelArea.FindCurrentArea(p) == currentArea);
+    }
+    bool VisibleToAnyCamera()
+    {
+        // If the enemy is being seen by any camera
+        return rootAI.renderers.DoAnyMeetCriteria((r) =>
         {
+            // If this value is false, then it's not even being rendered
             if (!r.isVisible) return false;
 
-            // Check if line of sight is established to any camera (that can render it)
-            return MiscFunctions.DoAnyMeetCriteria(Camera.allCameras, (c) =>
+            // Sometimes an enemy is being rendered for some reason, but can't be seen.
+            return Camera.allCameras.DoAnyMeetCriteria((c) =>
             {
                 // Check if this camera can render this renderer
                 if (PhysicsUtility.IsLayerInLayerMask(c.cullingMask, r.gameObject.layer) == false) return false;
@@ -70,11 +84,5 @@ public class AISleepHandler : MonoBehaviour
                 return true;
             });
         });
-        if (!notBeingRendered) return false;
-
-
-        //rootAI.DebugLog($"{isIdle} + {outsideArea} + {notBeingRendered} = {irrelevantToPlayer}");
-
-        return true;
     }
 }
