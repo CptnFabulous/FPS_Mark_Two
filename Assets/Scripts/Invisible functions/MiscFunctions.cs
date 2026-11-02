@@ -5,27 +5,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public readonly struct MiscFunctions
+public static class MiscFunctions
 {
-    public static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix) => TransformBounds(bounds.center, bounds.size, matrix);
-    public static Bounds TransformBounds(Vector3 centre, Vector3 size, Matrix4x4 matrix)
-    {
-        // Convert position and size values from local to world space
-        centre = matrix.MultiplyPoint3x4(centre);
-        size = matrix.MultiplyVector(size);
-        // Return final bounds
-        return new Bounds(centre, size);
-    }
-
-
-    public static Vector3 FurthestPointOnBounds(Bounds bounds, Vector3 position)
-    {
-        // Get direction from position to bounds, then add onto bounds so we get 2x that distance (i.e. exactly opposite relative to bounds centre)
-        Vector3 difference = bounds.center - position;
-        Vector3 oppositeOfPosition = bounds.center + difference;
-        return bounds.ClosestPoint(oppositeOfPosition);
-    }
-
     #region Finding components
 
     /// <summary>
@@ -44,7 +25,12 @@ public readonly struct MiscFunctions
     #endregion
 
     public static bool CurrentCameraNotMain() => Camera.current.GetUniversalAdditionalCameraData().renderType == CameraRenderType.Overlay;
-    
+
+    public static void GetToggleableInput(ref bool currentState, bool buttonPressed, bool isToggled)
+    {
+        if (isToggled == false) currentState = buttonPressed;
+        else if (buttonPressed) currentState = !currentState;
+    }
     public static bool GetToggleableInput(bool currentState, bool buttonPressed, bool isToggled)
     {
         if (isToggled == false) currentState = buttonPressed;
@@ -52,50 +38,6 @@ public readonly struct MiscFunctions
 
         return currentState;
     }
-
-    public static void SetMaterialBool(Material material, string propertyName, bool value)
-    {
-        material.SetInt(propertyName, value ? 1 : 0);
-    }
-
-
-    public static bool DoAnyMeetCriteria<T>(IEnumerable<T> collection, System.Func<T, bool> criteria)
-    {
-        foreach (T t in collection)
-        {
-            if (criteria.Invoke(t)) return true;
-        }
-        return false;
-    }
-
-
-
-
-
-
-
-
-
-    public static int IndexOfInCollection<T>(IEnumerable<T> array, T data)
-    {
-        return IndexOfInCollection(array, data, 0, array.Count());
-    }
-    public static int IndexOfInCollection<T>(IEnumerable<T> array, T data, int start, int length)
-    {
-        for (int i = start; i < start + length; i++)
-        {
-            if (array.ElementAt(i).Equals(data)) return i;
-        }
-        return -1;
-    }
-
-    public static bool TryParseCharToInt(char c, out int value)
-    {
-        value = (int)char.GetNumericValue(c);
-        //int.TryParse(c, out index);
-        return value >= 0;
-    }
-
 
     // So from how I understand it:
     // When you create an IEnumerator it's basically an instance of 'iterate through a collection', with some kind of loop deciding how to advance.
@@ -191,28 +133,6 @@ public readonly struct MiscFunctions
         // Square root of squared distance
         float squaredDistance = startingValue / threshold;
         return Mathf.Sqrt(squaredDistance);
-    }
-
-
-
-
-
-
-
-
-
-
-
-    public static void Shuffle<T>(IList<T> list, int start, int length)
-    {
-        for (int i = start; i < length; i++)
-        {
-            int r = UnityEngine.Random.Range(start, length);
-            if (r == i) continue;
-            T swapping = list[i];
-            list[i] = list[r];
-            list[r] = swapping;
-        }
     }
 }
 
