@@ -76,8 +76,12 @@ public class Octant<T> : IEnumerable<Octant<T>>
 
     #region IEnumerable
 
-    public IEnumerator<Octant<T>> GetEnumerator()
+    public IEnumerator<Octant<T>> GetEnumerator() => GetEnumerator(null);
+    public IEnumerator<Octant<T>> GetEnumerator(System.Func<Octant<T>, bool> criteria)
     {
+        // Ensure criteria is met
+        if (criteria != null && criteria.Invoke(this) == false) yield break;
+
         yield return this;
 
         // If non-empty children are present, continue iterating through them.
@@ -86,7 +90,7 @@ public class Octant<T> : IEnumerable<Octant<T>>
             // Ignore if null
             if (children[i] == null) continue;
             // Iterate through each child octant
-            IEnumerator<Octant<T>> childEnumerator = children[i].GetEnumerator();
+            IEnumerator<Octant<T>> childEnumerator = children[i].GetEnumerator(criteria);
             while (childEnumerator.MoveNext()) yield return childEnumerator.Current;
             childEnumerator.Dispose();
         }
@@ -133,17 +137,16 @@ public class Octant<T> : IEnumerable<Octant<T>>
             while (childScanEnumerator.MoveNext()) yield return childScanEnumerator.Current;
             childScanEnumerator.Dispose();
 
-            // Check if this octant can be counted as part of a 'full' parent octant
-            // (assuming we haven't already found a not-full sibling)
-            if (noEmptiesDetected)
-            {
-                bool childIsFull = false;
-                childIsFull = childIsFull || children[i].type == OctantType.Leaf;
-                childIsFull = childIsFull || children[i].type == OctantType.FullyValid;
-                childIsFull = childIsFull || children[i].DoesCriteriaMatterWithThisOctant() == false;
-                // If a single child is not full, then that means this octant is not full.
-                noEmptiesDetected &= childIsFull;
-            }
+            // Once we're done scanning, check if the child octant can be counted as part of a 'full' parent octant
+            // (assuming we care and haven't already found a not-full sibling)
+            if (!noEmptiesDetected) continue;
+
+            bool childIsFull = false;
+            childIsFull = childIsFull || children[i].type == OctantType.Leaf;
+            childIsFull = childIsFull || children[i].type == OctantType.FullyValid;
+            childIsFull = childIsFull || children[i].DoesCriteriaMatterWithThisOctant() == false;
+            // If a single child is not full, then that means this octant is not full.
+            noEmptiesDetected &= childIsFull;
         }
 
         if (noEmptiesDetected)
@@ -240,19 +243,6 @@ public class Octant<T> : IEnumerable<Octant<T>>
 
     public IEnumerator<Octant<T>> CellIterator(bool processCells)
     {
-        /*
-        IEnumerator<Octant<T>> emptyIterator = type switch
-        {
-            //OctantType.Invalid => 
-            OctantType.Leaf => EmptyIterator(processCells, false, true, true), // Retain self but have no children
-            OctantType.FullyValid => EmptyIterator(processCells, false, true, false), // Retain self, empty children but don't delete them
-            OctantType.Branch => EmptyIterator(processCells, true, false, false), // Empty self but keep children as-is
-            _ => EmptyIterator(processCells, true, true, true), // If invalid (or anything else), completely empty
-        };
-        while (emptyIterator.MoveNext()) yield return emptyIterator.Current;
-        emptyIterator.Dispose();
-        */
-        
         bool selfMustBeEmpty = type == OctantType.Invalid || type == OctantType.Branch;
         bool childrenMustBeEmpty = type != OctantType.Branch;
         bool deleteChildren = type == OctantType.Invalid || type == OctantType.Leaf;
@@ -278,11 +268,6 @@ public class Octant<T> : IEnumerable<Octant<T>>
         }
     }
     
-
-
-
-
-
     /// <summary>
     /// Scans and refreshes octants at the same time before moving onto the next. Almost like turning it into multiple octrees for different sections.
     /// <para>Ensures less delay between scanning and processing even with asynchronous operation, but means a minimum of (8^<paramref name="startDepth"/>) cells to update.</para>
@@ -394,7 +379,8 @@ public class Octree<T> : IEnumerable<Octant<T>>
 
     #region IEnumerable
 
-    public IEnumerator<Octant<T>> GetEnumerator() => baseContainer.GetEnumerator();
+    public IEnumerator<Octant<T>> GetEnumerator(System.Func<Octant<T>, bool> criteria) => baseContainer.GetEnumerator(criteria);
+    public IEnumerator<Octant<T>> GetEnumerator() => GetEnumerator(null);
     IEnumerator IEnumerable.GetEnumerator() => baseContainer.GetEnumerator();
 
     #endregion
