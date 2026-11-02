@@ -143,7 +143,8 @@ public class EngageTarget : AIStateFunction
     }
     bool TryAcquirePath(ref NavMeshPath path, out Vector3 destination)
     {
-
+        destination = rootAI.transform.position;
+        if (navMeshAgent == null) return false;
         destination = navMeshAgent.transform.position;
         if (target == null) return false;
 
