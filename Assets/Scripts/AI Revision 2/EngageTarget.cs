@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,7 +12,6 @@ public class EngageTarget : AIStateFunction
     [Header("Seeking target")]
     [SerializeField] float maxMoveDistance = 100;
     int maxNumberOfChecks = 100;
-    //bool findNewPositionIfCompromised = true;
     [SerializeField] float minTargetDistance = 5;
     [SerializeField] float idealTargetDistance = 10;
     [SerializeField] float maxTargetDistance = 15;
@@ -34,6 +34,9 @@ public class EngageTarget : AIStateFunction
 
     public Character target => targetManager.target;
     public Vector3 lastSightedPoint => targetManager.lastValidHit.point;
+
+
+    static readonly ProfilerMarker acquirePathProfilerMarker = new ProfilerMarker("Try acquire path");
 
     private void OnDisable()
     {
@@ -62,8 +65,9 @@ public class EngageTarget : AIStateFunction
         float timeSinceTargetLost = Time.time - targetManager.lastTimeSeenTarget;
         if (timeSinceTargetLost >= timeAfterSightLossUntilSearch)
         {
-            // If AI can't or won't search, proceed straight to 'on target lost'
+            // If 'try search' operation is a success, it'll automatically switch to the search state.
             bool willSearch = searchForMissingTarget != null && searchForMissingTarget.TrySearchForNewPosition(lastSightedPoint, 0, onTargetLost, 1, true, true);
+            // If AI can't or won't search, proceed straight to 'on target lost'
             if (!willSearch)
             {
                 controller.SwitchToState(onTargetLost);
@@ -73,11 +77,6 @@ public class EngageTarget : AIStateFunction
 
         #endregion
 
-
-
-
-
-
         if (navMeshAgent != null)
         {
             // Keep track of last time destination was valid.
@@ -85,52 +84,42 @@ public class EngageTarget : AIStateFunction
 
             // If AI goes for too long without being able to find a new path, proceed to an alternate state?
 
-
-
-
+            //rootAI.StartDebug();
             Vector3 destination = navMeshAgent.destination;
-
-            rootAI.StartDebug();
-
             if (VantagePointIsValid(destination))
             {
                 // Existing destination is fine
                 lastTimePathWasValid = Time.time;
                 rootAI.DebugLog($"{destination} still valid");
             }
-            else if (TryAcquirePath(ref calculatedPath, out Vector3 newDestination))
-            {
-                // Old destination is bad, but we found a new one
-                rootAI.DebugLog($"{destination} invalid, {newDestination} found");
-            }
-            /*
-            else if (Time.time - lastTimePathWasValid > )
-            {
-                // Take action for if AI is unable to damage target
-            }
-            */
             else
             {
-                // Cannot find a valid path. If this 
-                rootAI.DebugLog($"{destination} invalid, no new position found");
+                // Check for new path
+                acquirePathProfilerMarker.Begin();
+                bool newPathAcquired = TryAcquirePath(ref calculatedPath, out Vector3 newDestination);
+                acquirePathProfilerMarker.End();
+
+
+                // If we found a new path, update timer
+                if (newPathAcquired)
+                {
+                    // Old destination is bad, but we found a new one
+                    lastTimePathWasValid = Time.time;
+                    rootAI.DebugLog($"{destination} invalid, {newDestination} found");
+                }
+                /*
+                else if (Time.time - lastTimePathWasValid > )
+                {
+                    // Take action for if AI is unable to damage target
+                }
+                */
+                else
+                {
+                    // Cannot find a valid path. If this 
+                    rootAI.DebugLog($"{destination} invalid, no new position found");
+                }
             }
-
-            rootAI.StopDebug();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            //rootAI.StopDebug();
         }
 
         #region Run attack routines
@@ -144,40 +133,74 @@ public class EngageTarget : AIStateFunction
 
         #endregion
     }
-
     bool TryAcquirePath(ref NavMeshPath path, out Vector3 destination)
     {
+
         destination = navMeshAgent.transform.position;
         if (target == null) return false;
-        
+
         #region Get initial spread of points, using simple checks to weed out the obviously bad positions
 
         Vector3 targetPosition = target.bounds.center;
+
+        float minDistanceSquared = minTargetDistance * minTargetDistance;
+        float maxDistanceSquared = maxTargetDistance * maxTargetDistance;
+
+        bool IsBoundsWithinAcceptableRange(Bounds bounds)
+        {
+            // If closest point is too far, don't bother
+            Vector3 closest = bounds.ClosestPoint(targetPosition);
+            if ((targetPosition - closest).sqrMagnitude > maxDistanceSquared) return false;
+
+            // If furthest point is too close, don't bother
+            Vector3 furthest = MiscFunctions.FurthestPointOnBounds(bounds, targetPosition);
+            if ((targetPosition - furthest).sqrMagnitude < minDistanceSquared) return false;
+
+            return true;
+        }
 
         // Get initial sample of grid points, using simple checks to remove the vast majority before sorting
         int sampledPointCount = AIGridPoints.Current.GetPointsNonAlloc(ref AIGridPoints.sampleArray, (point) =>
         {
             // Use hypothetical look origin, to make sure distance is valid
             Vector3 lookOrigin = AIAction.HypotheticalLookOrigin(rootAI, point.position);
-            bool withinRadius = AIGridPoints.IsWithinRadius(lookOrigin, targetPosition, minTargetDistance, maxTargetDistance);
-            if (!withinRadius) return false;
+
+            // Check that the distance is correct (use squared magnitudes for faster processing)
+            float sqrDistance = (targetPosition - lookOrigin).sqrMagnitude;
+            if (sqrDistance < minDistanceSquared) return false;
+            if (sqrDistance > maxDistanceSquared) return false;
 
             // Do a simple raycast check for stuff that will obviously block the attack, but isn't as accurate (and expensive) as our proper line of sight check
-            if (Physics.Linecast(lookOrigin, targetPosition, out RaycastHit rh, terrainDetection.mask)) return false;
+            if (Physics.Linecast(lookOrigin, targetPosition, out _, terrainDetection.mask)) return false;
 
             return true;
-        });
+        }, -1, IsBoundsWithinAcceptableRange);
 
-        rootAI.DebugLog($"Number of sampled points = {sampledPointCount}");
+
+        //rootAI.DebugLog($"Number of sampled points = {sampledPointCount}/{AIGridPoints.Current.gridPoints.Count}");
+
+
         /*
-        for (int i = 0; i < sampledPointCount; i++)
+        rootAI.StartDebug();
+        
+        if (rootAI.ShouldDebug())
         {
-            Debug.DrawRay(AIGridPoints.sampleArray[i].position, Vector3.up, Color.magenta, 5);
+            float debugDuration = 1;
+            Debug.DrawLine(rootAI.attackOrigin, targetPosition, Color.cyan, debugDuration);
+            for (int i = 0; i < sampledPointCount; i++)
+            {
+                Debug.DrawRay(AIGridPoints.sampleArray[i].position, Vector3.up, Color.magenta, debugDuration);
+                //Debug.DrawLine(AIGridPoints.sampleArray[i].position + Vector3.up, i * Vector3.forward, Color.yellow, debugDuration);
+            }
+
+            Debug.Log("Pausing game to view grid points");
+            EditorApplication.isPaused = true;
+            //throw new System.NotImplementedException();
         }
 
-        EditorApplication.isPaused = true;
-        throw new System.NotImplementedException();
+        rootAI.StopDebug();
         */
+
 
 
 
@@ -222,8 +245,10 @@ public class EngageTarget : AIStateFunction
             return true;
         }
 
+
         // No valid points were found
         return false;
+
     }
 
     public bool VantagePointIsValid(Vector3 position, bool checkDistance = true)
@@ -235,12 +260,12 @@ public class EngageTarget : AIStateFunction
             float distanceToTarget = Vector3.Distance(position, targetPosition);
             if (distanceToTarget < minTargetDistance)
             {
-                rootAI.DebugLog($"{distanceToTarget} < {minTargetDistance}");
+                //rootAI.DebugLog($"{distanceToTarget} < {minTargetDistance}");
                 return false;
             }
             if (distanceToTarget > maxTargetDistance)
             {
-                rootAI.DebugLog($"{distanceToTarget} > {maxTargetDistance}");
+                //rootAI.DebugLog($"{distanceToTarget} > {maxTargetDistance}");
                 return false;
             }
         }
@@ -250,28 +275,32 @@ public class EngageTarget : AIStateFunction
         bool lineOfSight = currentAttack.AttackNotBlocked(lookOriginFromVantagePoint, out RaycastHit rh);
         if (lineOfSight == false)
         {
-            rootAI.DebugLog($"Line of sight blocked by {rh.collider}");
+            //rootAI.DebugLog($"Line of sight blocked by {rh.collider}");
             return false;
         }
 
         // Check that the path isn't too close to any points that allies are moving to
         if (memory.AreEnoughAlliesInvestigating(position, distanceFromAllies, 1, out _))
         {
-            rootAI.DebugLog("Too many enemies investigating same spot");
+            //rootAI.DebugLog("Too many enemies investigating same spot");
             return false;
         }
 
+        
         // Check if the position is close to cover
         if (distanceToCover > 0)
         {
             bool foundCover = AIPathing.FindCover(rootAI, position, target.attackOrigin, distanceToCover, out _);
             if (!foundCover)
             {
-                rootAI.DebugLog("Too far from any cover");
+                //rootAI.DebugLog("Too far from any cover");
                 return false;
             }
         }
+        
 
         return true;
     }
+
+
 }

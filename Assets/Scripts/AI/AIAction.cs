@@ -31,7 +31,7 @@ public static class AIAction
     }
 
     static RaycastHit[] resultArray = new RaycastHit[8];
-    static GenericComparer<RaycastHit> distanceComparer = new GenericComparer<RaycastHit>((rh) => rh.distance, false);
+    static readonly GenericComparer<RaycastHit> distanceComparer = new GenericComparer<RaycastHit>((rh) => rh.distance, false);
 
     public static bool RaycastWithExceptions(Vector3 origin, Vector3 direction, out RaycastHit hit, float distance, LayerMask layerMask, System.Func<RaycastHit, bool> isException, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, bool printDebugMessages = false)
     {

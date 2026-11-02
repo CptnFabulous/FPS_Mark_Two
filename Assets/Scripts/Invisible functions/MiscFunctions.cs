@@ -16,6 +16,14 @@ public readonly struct MiscFunctions
         // Return final bounds
         return new Bounds(centre, size);
     }
+
+
+    public static Vector3 FurthestPointOnBounds(Bounds bounds, Vector3 position)
+    {
+        // Get direction from position to bounds, then add onto bounds so we get 2x that distance (i.e. exactly opposite relative to bounds centre)
+        Vector3 difference = bounds.center - position;
+        Vector3 oppositeOfPosition = bounds.center + difference;
+        return bounds.ClosestPoint(oppositeOfPosition);
     }
 
     #region Finding components
@@ -158,7 +166,6 @@ public readonly struct MiscFunctions
             action.Invoke(item);
         }
     }
-
 
 
 
