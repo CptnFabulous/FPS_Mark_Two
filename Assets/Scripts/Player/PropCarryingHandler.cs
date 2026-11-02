@@ -7,7 +7,6 @@ using UnityEngine.Events;
 public class PropCarryingHandler : WeaponMode
 {
     public float maxWeight = 5;
-    public float pickupTime = 0.15f;
     public float cooldown = 0.5f;
     public InteractionHandler interactionHandler;
     public ThrowHandler throwHandler;
@@ -89,7 +88,7 @@ public class PropCarryingHandler : WeaponMode
     public override IEnumerator SwitchTo()
     {
         // Trigger pickup
-        yield return throwHandler.PickupSequence(toPickUp, pickupTime);
+        yield return throwHandler.PickupSequence(toPickUp, switchSpeed);
         toPickUp = null;
         onPickup.Invoke(heldItem);
         // Enable cancel input even before attack starts, so player can easily switch away by dropping their current item
