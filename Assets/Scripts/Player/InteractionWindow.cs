@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using System;
+using CptnFabulous.MiscUtility;
 
 public class InteractionWindow : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class InteractionWindow : MonoBehaviour
 
     [Header("Physics interaction")]
     public string pickupText = "Pick up";
+    public string handsOccupied = "Hands occupied";
     public string deadTextFormat = " ({0})";
 
     public PropCarryingHandler objectCarrier => following.objectCarrier;
@@ -74,9 +76,6 @@ public class InteractionWindow : MonoBehaviour
     }
     void DisplayInteractable(Interactable target)
     {
-        bool canInteract = following.canInteractWithTarget;
-        SetInteractability(canInteract);
-
         string displayName = target.displayName;
         if (string.IsNullOrWhiteSpace(displayName))
         {
@@ -85,34 +84,41 @@ public class InteractionWindow : MonoBehaviour
         }
         interactableName.text = displayName;
 
+        // Set description and prompt
+        SetInteractability(following.canInteractWithTarget, following.message);
         // Set values
         progressBar.fillAmount = target.Progress;
-        action.text = following.message;
     }
     void DisplayPhysicsProp(Rigidbody target)
     {
-        // Interactability should always be true - if it wasn't interactable, it shouldn't have been assigned in the first place
-        SetInteractability(true);
         // Determine display name (add suffix for additional info e.g. if a character is dead)
         string name = target.name;
-
         Entity e = EntityCache<Entity>.GetEntity(target.gameObject);
         if (e != null)
         {
             name = e.properName;
-
             Health h = e.health;
             if (h != null && h.IsAlive == false) name += string.Format(deadTextFormat, h.deadDescription);
         }
-
         interactableName.text = name;
 
+        // Interactability should always be true - if it wasn't interactable, it shouldn't have been assigned in the first place
+        SetInteractability(true, pickupText);
         progressBar.fillAmount = 0;
-        action.text = pickupText;
     }
 
-
-    void SetInteractability(bool canInteract) => prompt.inputDisabled = !canInteract; // Set active states of button prompt and status icon
+    void SetInteractability(bool canInteract, string message)
+    {
+        // If player could interact, but their input for doing so is disabled, display alternate message
+        if (canInteract && following.input.overridden)
+        {
+            canInteract = false;
+            message = handsOccupied;
+        }
+        
+        prompt.inputDisabled = !canInteract; // Set active states of button prompt and status icon
+        action.text = message;
+    }
 
     /*
     private void OnDrawGizmos()

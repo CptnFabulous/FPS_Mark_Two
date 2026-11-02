@@ -95,6 +95,8 @@ public class InputPriorityHandler : MonoBehaviour
 
     Dictionary<InputAction, InputStack> activeInputs = new Dictionary<InputAction, InputStack>();
 
+    public IReadOnlyDictionary<InputAction, InputStack> inputStacks => activeInputs;
+
     public void SetInputActive(SingleInput target, bool active)
     {
         //Debug.Log($"Setting {target.name} active state to {active}");

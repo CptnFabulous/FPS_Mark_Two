@@ -26,6 +26,7 @@ public class SingleInput : MonoBehaviour
     InputPriorityHandler parentHandler => ComponentUtility.AutoCache(ref _ph, gameObject, ComponentGetType.InParent);
 
     public bool usingGamepad => player.currentControlScheme.Contains("Gamepad");
+    public bool overridden => parentHandler.inputStacks[action].currentPriority != this;
 
     private void Awake()
     {
