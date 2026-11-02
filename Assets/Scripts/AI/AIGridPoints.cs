@@ -252,6 +252,8 @@ public class AIGridPoints : MonoBehaviour
         {
             // Ignore empty octants
             if (o.type == OctantType.Invalid) return false;
+            // If octant is leaf, always allow
+            if (o.type == OctantType.Leaf) return true;
             // If no criteria is needed, allow all
             if (childrenWorthChecking == null) return true;
             // Otherwise check if criteria is met
