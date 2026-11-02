@@ -219,12 +219,13 @@ public class AIGridPoints : MonoBehaviour
             collection.Add(gridPoints[i]);
         }
     }
-    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1, System.Func<Bounds, bool> octantWorthChecking = null)
+    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1, System.Func<Bounds, bool> childrenWorthChecking = null)
     {
         int validPoints = 0;
 
+        
         // If we don't care about the octants, just iterate through everything linearly.
-        if (ignoreOctant == null)
+        if (childrenWorthChecking == null)
         {
             // Iterate through list linearly
             for (int i = 0; i < gridPoints.Count; i++)
@@ -245,21 +246,20 @@ public class AIGridPoints : MonoBehaviour
             return validPoints;
         }
 
-        // TO DO: is creating an enumerator and iterating through it what creates all the garbage?
-        // Or am I creating GridPoints by referencing them?
-        // If I have a struct (value type) with a list inside (reference type), and I make a copy by referencing it, does it reference the original list or make a copy?
 
-        // Iterate through octree
-        IEnumerator<Octant<GridPoint>> iterator = octree.GetEnumerator();
+        // Iterate through octree. Ignore if empty or criteria is not met, always allow leaf octants
+        IEnumerator<Octant<GridPoint>> iterator = octree.GetEnumerator((o) =>
+        {
+            // Ignore empty octants
+            if (o.type == OctantType.Invalid) return false;
+            // If no criteria is needed, allow all
+            if (childrenWorthChecking == null) return true;
+            // Otherwise check if criteria is met
+            return childrenWorthChecking.Invoke(o.transformedBounds);
+        });
         while (iterator.MoveNext())
         {
             Octant<GridPoint> octant = iterator.Current;
-
-            // If octant is empty, ignore and continue
-            if (octant.type == OctantType.Invalid) continue;
-
-            // Check if this octant is even worth investigating, or if the entire thing can be written off.
-            if (octantWorthChecking != null && octantWorthChecking.Invoke(octant.transformedBounds) == false) continue;
 
             // Check that a valid grid point exists
             GridPoint gridPoint = octant.leafData;
