@@ -48,7 +48,7 @@ public class Octant<T> : IEnumerable<Octant<T>>
     public int subdivisions { get; private set; }
     public string key { get; private set; }
     public BoundsInt bounds { get; private set; }
-    public Bounds transformedBounds => MiscFunctions.TransformBounds(bounds.center, bounds.size, origin.matrix);
+    public Bounds transformedBounds => TransformUtility.TransformBounds(bounds.center, bounds.size, origin.matrix);
 
 
     public int depth => key.Length;
@@ -419,7 +419,7 @@ public class Octree<T> : IEnumerable<Octant<T>>
         // If the string is empty, it returns the base container.
         for (int i = 0; i < key.Length; i++)
         {
-            if (MiscFunctions.TryParseCharToInt(key[i], out int index) == false) return latest;
+            if (key[i].TryParseCharToInt(out int index) == false) return latest;
 
             // Get the child. If no more children are found, return latest valid result.
             Octant<T> child = latest.children[index];
