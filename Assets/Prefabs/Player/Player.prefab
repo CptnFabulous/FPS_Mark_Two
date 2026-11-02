@@ -128,6 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Select Vision Mode
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -184,6 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Sprint
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -436,6 +438,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Move
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -744,6 +747,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Fire
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -1166,6 +1170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Look
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -1256,6 +1261,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Reload
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -1300,6 +1306,7 @@ Transform:
   - {fileID: 8091715433038708916}
   - {fileID: 2751888350189245343}
   - {fileID: 1768882296218327273}
+  - {fileID: 4898608638123846049}
   - {fileID: 8255882791007687571}
   - {fileID: 2145719277471359968}
   - {fileID: 5010018993093397790}
@@ -1556,6 +1563,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Select Gadget
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -1612,6 +1620,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Jump
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -1891,6 +1900,7 @@ GameObject:
   - component: {fileID: 5952785220977946992}
   - component: {fileID: 5952785220977947006}
   - component: {fileID: 3129558233819840828}
+  - component: {fileID: 1871116709340887660}
   - component: {fileID: 6371362160421678634}
   m_Layer: 6
   m_Name: Player
@@ -2202,6 +2212,18 @@ MonoBehaviour:
   m_DefaultActionMap: On foot
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 5952785222629829733}
+--- !u!114 &1871116709340887660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5952785220977946995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57092b623586d304997e4957452db3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6371362160421678634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2874,6 +2896,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: ADS
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -3066,7 +3089,7 @@ MonoBehaviour:
     and thrown as a makeshift projectile. It won't be as damaging as a bullet, but
     it's quieter and easily stuns enemies.
   icon: {fileID: -1889689052, guid: 8b103585e17c3594199f539238a42240, type: 3}
-  switchSpeed: 0
+  switchSpeed: 0.15
   onSwitch:
     m_PersistentCalls:
       m_Calls: []
@@ -3436,6 +3459,7 @@ MonoBehaviour:
   selectorMenuIndex: 1
   holdingSocket: {fileID: 3590176935287167125}
   input: {fileID: 2378863966156182184}
+  cancelInput: {fileID: 4130906020345563821}
   weaponHandler: {fileID: 5388673875251020109}
   interactionHandler: {fileID: 6329320551191257722}
   selectorInfo: {fileID: 468076025470544527}
@@ -3691,6 +3715,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Melee Attack
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -4046,6 +4071,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Offhand Attack
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -4102,6 +4128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Select Weapon
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -4145,6 +4172,63 @@ Transform:
   - {fileID: 7181596819831088091}
   m_Father: {fileID: 1487113245628091050}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8565495452134243665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4898608638123846049}
+  - component: {fileID: 4130906020345563821}
+  m_Layer: 6
+  m_Name: Cancel offhand attack input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4898608638123846049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8565495452134243665}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7085395775633583162}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4130906020345563821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8565495452134243665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 728cebbb5f5ccbb4488cddda0d7d291c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapName: On foot
+  actionName: Interact
+  priority: 1
+  inputPrompt: {fileID: 0}
+  onActionStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onActionPerformed:
+    m_PersistentCalls:
+      m_Calls: []
+  onActionCancelled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8682674485731526002
 GameObject:
   m_ObjectHideFlags: 0
@@ -4217,6 +4301,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapName: On foot
   actionName: Interact
+  priority: 0
   inputPrompt: {fileID: 0}
   onActionStarted:
     m_PersistentCalls:
@@ -5148,7 +5233,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2805334893130975326, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: inputsToDisable.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2805334893130975326, guid: ab3508b90367fc844b8840fb09fe7558, type: 3}
       propertyPath: inputsToDisable.Array.data[0]

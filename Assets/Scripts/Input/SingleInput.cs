@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using CptnFabulous.MiscUtility;
 
 public class SingleInput : MonoBehaviour
 {
     [SerializeField] string mapName;
     [SerializeField] string actionName;
+    public int priority;
     [SerializeField, Tooltip("Optional, to directly assign a visual prompt")] InputPrompt inputPrompt;
 
     public UnityEvent<InputAction.CallbackContext> onActionStarted;
@@ -18,18 +20,21 @@ public class SingleInput : MonoBehaviour
     public InputAction action { get; private set; }
     public InputActionMap map { get; private set; }
 
+
+
+    InputPriorityHandler _ph;
+    InputPriorityHandler parentHandler => ComponentUtility.AutoCache(ref _ph, gameObject, ComponentGetType.InParent);
+
     public bool usingGamepad => player.currentControlScheme.Contains("Gamepad");
 
     private void Awake()
     {
         if (string.IsNullOrEmpty(mapName)) return;
         if (string.IsNullOrEmpty(actionName)) return;
-
+        
         player = GetComponentInParent<PlayerInput>();
         map = player.actions.FindActionMap(mapName);
         action = map.FindAction(actionName);
-
-        //action.performed += onActionPerformed.Invoke;
 
         if (inputPrompt != null)
         {
@@ -38,16 +43,24 @@ public class SingleInput : MonoBehaviour
     }
     private void OnEnable()
     {
+        //Debug.Log($"Enabling {name}");
+        parentHandler.SetInputActive(this, true);
+        /*
         action.Enable();
         action.started += onActionStarted.Invoke;
         action.performed += onActionPerformed.Invoke;
         action.canceled += onActionCancelled.Invoke;
+        */
     }
     private void OnDisable()
     {
+        //Debug.Log($"Disabling {name}");
+        parentHandler.SetInputActive(this, false);
+        /*
         action.Reset();
         action.started -= onActionStarted.Invoke;
         action.performed -= onActionPerformed.Invoke;
         action.canceled -= onActionCancelled.Invoke;
+        */
     }
 }

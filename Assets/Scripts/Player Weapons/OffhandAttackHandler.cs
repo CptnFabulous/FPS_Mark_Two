@@ -8,6 +8,7 @@ public class OffhandAttackHandler : WeaponHandlerBase
 {
     [Header("Inputs")]
     public SingleInput input;
+    public SingleInput cancelInput;
 
     [Header("References")]
     public WeaponHandler weaponHandler;
@@ -18,17 +19,36 @@ public class OffhandAttackHandler : WeaponHandlerBase
     [Range(float.Epsilon, 1)] public float weaponSwitchTimeMultiplier = 1;
 
     bool buttonHeld;
+    bool deployed;
     bool cancelledExternally = false;
     int frameChanged = int.MinValue;
 
     Coroutine currentAction;
 
     bool currentlyUsingOffhandAbility => currentAction != null;
+    Weapon currentWeapon => weaponHandler.CurrentWeapon;
+    bool putAwayWeaponForOperation => currentWeapon != null && currentWeapon.oneHanded == false;
 
     protected override void Awake()
     {
         // Set up inputs
         input.onActionPerformed.AddListener(OnAttack);
+        // If the user presses the interact button, that acts as the 'cancel' button.
+        cancelInput.onActionPerformed.AddListener((_) =>
+        {
+            // TO DO: put this code right into CancelCurrentAction()?
+            if (currentlyUsingOffhandAbility)
+            {
+                cancelledExternally = true;
+            }
+            else
+            {
+                CancelCurrentAction();
+            }
+        });
+
+        // Pre-emptively disable 'cancel' input
+        cancelInput.enabled = false;
 
         // Set up inputs to cancel other actions
         weaponHandler.onSwitchWeapon.AddListener((_) =>
@@ -36,14 +56,6 @@ public class OffhandAttackHandler : WeaponHandlerBase
             // TO DO: check if the user is switching to a one-handed or two-handed weapon. If the former, don't cancel?
             CancelCurrentAction(true);
         });
-
-        // If the user presses the interact button, that acts as the 'cancel' button.
-        interactionHandler.input.onActionPerformed.AddListener((_) =>
-        {
-            if (currentlyUsingOffhandAbility) cancelledExternally = true;
-        });
-        //selectorMenuInput.onActionPerformed.AddListener((_) => menu.);
-
 
         base.Awake();
     }
@@ -60,18 +72,22 @@ public class OffhandAttackHandler : WeaponHandlerBase
         currentAction = StartCoroutine(PerformOffhandAbility(currentMode));
     }
 
-    IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
+
+
+
+    public IEnumerator DeployOffhandAttack(WeaponMode offhandAbility)
     {
-        cancelledExternally = false;
+        if (deployed) yield break;
+
+        lastSetMode = offhandAbility;
 
         // Put away current weapon (if two-handed)
-        Weapon currentWeapon = weaponHandler.CurrentWeapon;
-        bool putAwayWeaponForOperation = currentWeapon != null && currentWeapon.oneHanded == false;
         if (putAwayWeaponForOperation)
         {
             // Increase switch speed to make things faster
             weaponHandler.switchTimeModifiers["Performing offhand attack"] = weaponSwitchTimeMultiplier;
             yield return weaponHandler.SetCurrentWeaponDrawn(false);
+            weaponHandler.switchTimeModifiers["Performing offhand attack"] = 1;
         }
 
         // Check if the offhand ability is standalone or attached to a weapon
@@ -91,8 +107,19 @@ public class OffhandAttackHandler : WeaponHandlerBase
             yield return offhandAbility.SwitchTo();
         }
 
-        // Set input, and wait until input and action are finished
+        deployed = true;
+    }
+
+    IEnumerator PerformOffhandAbility(WeaponMode offhandAbility)
+    {
+        // Put away current weapon (if necessary) and deploy equipped attack
+        yield return DeployOffhandAttack(offhandAbility);
+
+        // Reset and activate inputs
         offhandAbility.SetPrimaryInput(true);
+        cancelledExternally = false;
+        cancelInput.enabled = true;
+        // Wait until either input is released/cancelled or action is finished
         yield return new WaitUntil(() =>
         {
             // If attack has finished, stop waiting
@@ -105,10 +132,12 @@ public class OffhandAttackHandler : WeaponHandlerBase
             return false;
         });
 
-        // If not cancelled externally, signal that attack input is released and let attack end
+        // If not cancelled externally, signal that attack input is released and let attack proceed to its conclusion
         if (!cancelledExternally) yield return offhandAbility.StopAttackAsync();
 
         // Put away offhand ability (change based on if part of a weapon or not)
+        Weapon w = offhandAbility.attachedTo;
+        bool isPartOfWeapon = w != null;
         if (isPartOfWeapon)
         {
             yield return w.Holster();
@@ -120,7 +149,11 @@ public class OffhandAttackHandler : WeaponHandlerBase
         }
 
         // If we put away our weapon for this, bring it out again now that the action is over.
-        if (putAwayWeaponForOperation) yield return weaponHandler.SetCurrentWeaponDrawn(true);
+        if (putAwayWeaponForOperation)
+        {
+            weaponHandler.switchTimeModifiers["Performing offhand attack"] = weaponSwitchTimeMultiplier;
+            yield return weaponHandler.SetCurrentWeaponDrawn(true);
+        }
         
         // Ensure current action is totally cancelled
         CancelCurrentAction();
@@ -140,6 +173,8 @@ public class OffhandAttackHandler : WeaponHandlerBase
 
         // Ensure weapon switch speed is reset (in case it was modified for switching from two-handed weapons)
         weaponHandler.switchTimeModifiers["Performing offhand attack"] = 1;
+        cancelInput.enabled = false;
+        deployed = false;
 
         // Auto-deploy the last weapon, but not if this action was triggered by switching to a new one
         if (!isSwitchingWeapons) weaponHandler.SetCurrentWeaponActive(true);

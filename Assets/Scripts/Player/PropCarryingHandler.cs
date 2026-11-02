@@ -66,8 +66,16 @@ public class PropCarryingHandler : WeaponMode
     }
     public void Pickup(Rigidbody target)
     {
+        // Disallow if player is already holding an object
+        if (heldItem != null)
+        {
+            //Debug.Log("Cannot pick up, player is already holding an object");
+            return;
+        }
+
         // TO DO: Check the size of the object: if it's small enough, add to inventory of quick throwables instead
 
+        //Debug.Log($"Picking up {target}");
         toPickUp = target;
 
         // Reference offhand attack list, set active one to this
@@ -76,25 +84,16 @@ public class PropCarryingHandler : WeaponMode
         {
             previousOffhandAbility = currentlySelectedAbility;
         }
-        //previousOffhandAbility = offhandAttackHandler.currentAbility;
-        offhandAttackHandler.currentMode = this;
-        enabled = true;
-
-        StartCoroutine(SwitchTo());
+        StartCoroutine(offhandAttackHandler.DeployOffhandAttack(this));
     }
     public override IEnumerator SwitchTo()
     {
-        if (heldItem != null) yield break;
-
-        // Put away weapon (if it's two-handed)
-        // This code is done in OffhandAttackHandler, but only when actually throwing. I added it here as well just in case
-        Weapon currentWeapon = weaponHandler.CurrentWeapon;
-        if (currentWeapon != null && currentWeapon.oneHanded == false) yield return weaponHandler.SetCurrentWeaponDrawn(false);
-
         // Trigger pickup
         yield return throwHandler.PickupSequence(toPickUp, pickupTime);
         toPickUp = null;
         onPickup.Invoke(heldItem);
+        // Enable cancel input even before attack starts, so player can easily switch away by dropping their current item
+        offhandAttackHandler.cancelInput.enabled = true;
     }
     
     // Throwing/dropping object
