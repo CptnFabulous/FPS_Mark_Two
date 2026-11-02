@@ -201,6 +201,21 @@ MonoBehaviour:
   animationTrigger: 
   aimStats: {fileID: 5219418924946691133}
   currentAttack: {fileID: 8150632176267547760}
+  onAbleToAttack:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: e650cf892c0314940b5086198d6cf5db, type: 2}
+        m_TargetAssemblyTypeName: DiegeticSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8843182083390575484}
+          m_ObjectArgumentAssemblyTypeName: Entity, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   maxMoveDistance: 100
   minTargetDistance: 1
   idealTargetDistance: 20
@@ -239,18 +254,6 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 11400000, guid: e650cf892c0314940b5086198d6cf5db, type: 2}
-        m_TargetAssemblyTypeName: DiegeticSound, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 792443017795158607}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1032,11 +1035,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4868377926111343238}
   m_SourcePrefab: {fileID: 100100000, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
---- !u!82 &792443017795158607 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 8446451415370582923, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
-  m_PrefabInstance: {fileID: 9207750683622181316}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &792443017946477142 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8446451415489526674, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}

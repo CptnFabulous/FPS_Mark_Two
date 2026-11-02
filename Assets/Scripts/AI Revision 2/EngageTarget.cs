@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class EngageTarget : AIStateFunction
 {
     [Header("Attack")]
     [SerializeField] AIGunAttack currentAttack;
+    public UnityEvent onAbleToAttack;
 
     [Header("Seeking target")]
     [SerializeField] float maxMoveDistance = 100;
@@ -30,6 +32,7 @@ public class EngageTarget : AIStateFunction
 
     NavMeshPath calculatedPath;
     float lastTimePathWasValid = Mathf.NegativeInfinity;
+    bool performingAttackThisFrame = false;
     static readonly SortWithOnePredicate<AIGridPoints.GridPoint> predicate = new SortWithOnePredicate<AIGridPoints.GridPoint>();
 
     public Character target => targetManager.target;
@@ -124,8 +127,13 @@ public class EngageTarget : AIStateFunction
 
         #region Run attack routines
 
-        bool canPerformAttackRoutine = currentAttack.RunAttackRoutine();
-        if (!canPerformAttackRoutine)
+        bool attackingOnPreviousFrame = performingAttackThisFrame;
+        performingAttackThisFrame = currentAttack.RunAttackRoutine();
+        if (performingAttackThisFrame)
+        {
+            if (!attackingOnPreviousFrame) onAbleToAttack.Invoke();
+        }
+        else
         {
             // If AI can't see the target, keep its sight trained on the last position.
             aim.RotateFreeLookTowards(lastSightedPoint);
