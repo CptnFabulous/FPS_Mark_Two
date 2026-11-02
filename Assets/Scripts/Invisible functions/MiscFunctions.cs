@@ -1,4 +1,3 @@
-using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,21 +7,15 @@ using UnityEngine.Rendering.Universal;
 
 public readonly struct MiscFunctions
 {
-    public static Bounds TransformBounds(Vector3 min, Vector3 max, Matrix4x4 matrix)
-    {
-        // Create local bounds
-        Bounds localBounds = new Bounds();
-        localBounds.min = min;
-        localBounds.max = max;
-        return TransformBounds(localBounds, matrix);
-    }
-    public static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix)
+    public static Bounds TransformBounds(Bounds bounds, Matrix4x4 matrix) => TransformBounds(bounds.center, bounds.size, matrix);
+    public static Bounds TransformBounds(Vector3 centre, Vector3 size, Matrix4x4 matrix)
     {
         // Convert position and size values from local to world space
-        Vector3 centre = matrix.MultiplyPoint3x4(bounds.center);
-        Vector3 halfExtents = matrix.MultiplyVector(bounds.extents);
+        centre = matrix.MultiplyPoint3x4(centre);
+        size = matrix.MultiplyVector(size);
         // Return final bounds
-        return new Bounds(centre, 2 * halfExtents);
+        return new Bounds(centre, size);
+    }
     }
 
     #region Finding components

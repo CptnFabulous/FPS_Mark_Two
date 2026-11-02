@@ -48,7 +48,7 @@ public class Octant<T> : IEnumerable<Octant<T>>
     public int subdivisions { get; private set; }
     public string key { get; private set; }
     public BoundsInt bounds { get; private set; }
-    public Bounds transformedBounds => MiscFunctions.TransformBounds(bounds.min, bounds.max, origin.matrix);
+    public Bounds transformedBounds => MiscFunctions.TransformBounds(bounds.center, bounds.size, origin.matrix);
 
 
     public int depth => key.Length;
