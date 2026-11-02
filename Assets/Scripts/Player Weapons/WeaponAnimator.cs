@@ -46,7 +46,7 @@ public class WeaponAnimator : MonoBehaviour
             if (m is RangedAttack rm)
             {
                 rm.onWindup.AddListener(() => controller.SetTrigger(windupTrigger));
-                rm.onStartStopFiring.AddListener((b) => AnimationUtility.TrySetAnimatorBool(controller, isShooting, b));
+                rm.onStartStopFiring.AddListener((b) => controller.TrySetBool(isShooting, b));
             }
         }
 
@@ -70,15 +70,15 @@ public class WeaponAnimator : MonoBehaviour
     }
     private void Update()
     {
-        AnimationUtility.TrySetAnimatorFloat(controller, switchSpeedMultiplier, 1 / weaponToAnimate.switchTimeMultiplier);
+        controller.TrySetFloat(switchSpeedMultiplier, 1 / weaponToAnimate.switchTimeMultiplier);
         //controller.SetBool(active, weaponToAnimate.isActiveAndEnabled);
-        AnimationUtility.TrySetAnimatorInteger(controller, mode, weaponToAnimate.currentModeIndex);
+        controller.TrySetInteger(mode, weaponToAnimate.currentModeIndex);
 
         RangedAttack rm = weaponToAnimate.CurrentMode as RangedAttack;
         if (rm != null)
         {
             bool isReloading = rm.currentlyReloading;
-            AnimationUtility.TrySetAnimatorBool(controller, reloadActiveString, isReloading);
+            controller.TrySetBool(reloadActiveString, isReloading);
         }
     }
 

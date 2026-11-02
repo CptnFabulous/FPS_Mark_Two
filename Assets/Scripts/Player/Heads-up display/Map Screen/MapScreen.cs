@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -103,7 +104,7 @@ public class MapScreen : MonoBehaviour
     }
     private void LateUpdate()
     {
-        MiscFunctions.SetMaterialBool(mapRenderer.material, "_Automapped", terrainMap.autoMapped);
+        mapRenderer.material.SetBool("_Automapped", terrainMap.autoMapped);
 
 
         // Update output render texture

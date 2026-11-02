@@ -38,10 +38,10 @@ public abstract class ResourceDisplay : MonoBehaviour
 
         if (animationController != null)
         {
-            AnimationUtility.TrySetAnimatorFloat(animationController, current, values.current);
-            AnimationUtility.TrySetAnimatorBool(animationController, critical, values.isCritical);
-            AnimationUtility.TrySetAnimatorBool(animationController, full, values.isFull);
-            AnimationUtility.TrySetAnimatorBool(animationController, depleted, values.isDepleted);
+            animationController.TrySetFloat(current, values.current);
+            animationController.TrySetBool(current, values.isCritical);
+            animationController.TrySetBool(current, values.isFull);
+            animationController.TrySetBool(current, values.isDepleted);
         }
     }
 }

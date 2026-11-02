@@ -104,7 +104,7 @@ public class Entity : MonoBehaviour
     /// <returns></returns>
     public bool HitOwnCollider(RaycastHit hit) => CollectionUtility.ArrayContains(colliders, hit.collider);
 
-    public bool isBeingRendered => MiscFunctions.DoAnyMeetCriteria(renderers, (r) => r.isVisible);
+    public bool isBeingRendered => renderers.DoAnyMeetCriteria((r) => r.isVisible);
 
     public virtual bool ShouldPlayPhysicsEffects(Collision collision) => true;
 

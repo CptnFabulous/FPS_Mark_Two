@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using CptnFabulous.MiscUtility;
 
 public class WeaponSelectorHUD : MonoBehaviour
 {
@@ -95,7 +96,7 @@ public class WeaponSelectorHUD : MonoBehaviour
         #endregion
     }
 
-    int CalculateIndex() => MiscFunctions.IndexOfInCollection(handler.allModes, handler.currentMode);// handler.SelectorIndexFromWeaponAndMode(handler.equippedWeaponIndex, handler.CurrentWeapon.currentModeIndex);
+    int CalculateIndex() => handler.allModes.IndexOf(handler.currentMode);
     void DisplayInfoOnSelectedMode(int index)
     {
         //handler.GetWeaponAndModeFromSelector(index, out int weaponIndex, out int firingModeIndex);

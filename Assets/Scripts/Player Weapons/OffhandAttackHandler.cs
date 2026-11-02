@@ -83,7 +83,7 @@ public class OffhandAttackHandler : WeaponHandlerBase
         {
             w.gameObject.SetActive(true);
             yield return w.Draw();
-            yield return w.SwitchMode(CollectionUtility.IndexOfInArray(w.modes, offhandAbility));
+            yield return w.SwitchMode(w.modes.IndexOf(offhandAbility));
         }
         else
         {

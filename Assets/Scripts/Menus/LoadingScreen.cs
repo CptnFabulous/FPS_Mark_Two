@@ -171,7 +171,7 @@ public class LoadingScreen : MonoBehaviour
     IEnumerator YieldOnAnimation(string triggerName)
     {
         if (animator == null) yield break;
-        bool valueRecognised = AnimationUtility.TrySetAnimatorTrigger(animator, triggerName);
+        bool valueRecognised = animator.TrySetTrigger(triggerName);
         if (!valueRecognised) yield break;
         yield return new WaitWhile(AnimationInProgress);
     }

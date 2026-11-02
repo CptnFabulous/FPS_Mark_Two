@@ -194,7 +194,7 @@ public class WeaponHandler : WeaponHandlerBase
     {
         yield return SwitchWeapon(mode.attachedTo);
         if (CurrentWeapon == null) yield break;
-        yield return CurrentWeapon.SwitchMode(MiscFunctions.IndexOfInCollection(CurrentWeapon.modes, mode));
+        yield return CurrentWeapon.SwitchMode(CurrentWeapon.modes.IndexOf(mode));
     }
 
     #endregion

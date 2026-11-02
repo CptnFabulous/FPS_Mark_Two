@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ public abstract class WeaponHandlerBase : MonoBehaviour
     }
     public int equippedWeaponIndex
     {
-        get => MiscFunctions.IndexOfInCollection(allWeapons, CurrentWeapon);
+        get => allWeapons.IndexOf(CurrentWeapon);
         set
         {
             value = Mathf.Clamp(value, 0, allWeapons.Count - 1);

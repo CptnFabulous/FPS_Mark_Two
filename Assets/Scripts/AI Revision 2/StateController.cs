@@ -17,7 +17,7 @@ public class StateController : StateFunction
     public StateFunction currentState => current;
     public int stateIndex
     {
-        get => CollectionUtility.IndexOfInArray(states, currentState);
+        get => states.IndexOf(currentState);
         set
         {
             value = Mathf.Clamp(value, 0, states.Length - 1);

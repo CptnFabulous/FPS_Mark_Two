@@ -42,7 +42,7 @@ public class IndexStateSwitcher : MonoBehaviour
             {
                 sprites[i] = states[i].sprite;
             }
-            radialMenu.Refresh(sprites, () => CollectionUtility.IndexOfInArray(controller.states, controller.currentState));
+            radialMenu.Refresh(sprites, () => controller.states.IndexOf(controller.currentState));
             radialMenuInput.onActionPerformed.AddListener((ctx) => radialMenuGroup.ProcessSingleMenuInput(radialMenuIndex, ctx));
             radialMenu.onValueChanged.AddListener((i) => modeNameText.text = controller.states[i].name);
             radialMenu.onValueConfirmed.AddListener(SwitchMode);
