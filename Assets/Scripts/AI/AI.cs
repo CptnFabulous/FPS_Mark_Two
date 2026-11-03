@@ -19,7 +19,6 @@ public class AI : Character
     [Header("Movement and pathing")]
     public NavMeshAgent agent;
     public AIMovement movement;
-    public PhysicsAffectedAI physicsHandler;
     public PuppetmasterRagdollHandler physicsStateHandler;
 
     [Header("Aiming and targeting")]

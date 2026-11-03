@@ -24,9 +24,7 @@ public class HumanoidAnimator : MonoBehaviour
     [Header("Ragdoll")]
     [SerializeField] string standUpState = "Movement.Stand up from fall";
     [SerializeField] string ragdollOrientationDotProduct = "Ragdoll orientation dot product";
-
-    PhysicsAffectedAI physicsHandler => (character as AI).physicsHandler;
-    //public Ragdoll ragdoll => character.ragdoll;
+    
     public int defaultAnimationLayer => animator.GetLayerIndex(standardMovementLayer);
 
     private void Awake()
@@ -91,21 +89,6 @@ public class HumanoidAnimator : MonoBehaviour
         animator.SetFloat(damageDirectionZ, localDamageDirection.z);
     }
 
-    /// <summary>
-    /// Run this animation when standing up from being ragdollised. Overrides existing states and ensure the animator goes right to the correct animation
-    /// </summary>
-    [Obsolete]
-    public void RecoverFromRagdoll()
-    {
-        /*
-        animator.SetTrigger(standUpTrigger);
-        animator.Update(0);
-        return;
-        */
-        float dotProductSign = Mathf.Sign(physicsHandler.ragdollUprightDotProduct);
-        animator.SetFloat(ragdollOrientationDotProduct, dotProductSign);
-        animator.Play(standUpState, defaultAnimationLayer, 0);
-    }
     public void PlayFootstep()
     {
         // Currently it just plays a noise despite using an ImpactEffect as a parameter.
