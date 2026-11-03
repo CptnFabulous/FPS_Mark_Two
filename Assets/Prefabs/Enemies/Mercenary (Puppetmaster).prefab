@@ -219,11 +219,19 @@ PrefabInstance:
       propertyPath: affiliation
       value: 
       objectReference: {fileID: 11400000, guid: 9d6e1fc3ca7ca154c9ff99d61fa0589d, type: 2}
+    - target: {fileID: 4395352534832574669, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
+      propertyPath: itemToSpawn
+      value: 
+      objectReference: {fileID: 1865420290, guid: 1c12bcc9805196e49b797ee8519a98a7, type: 3}
+    - target: {fileID: 4395352534832574669, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
+      propertyPath: originalToHide
+      value: 
+      objectReference: {fileID: 792443017946477142}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 9058628101594886162, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
-      insertIndex: -1
+      insertIndex: 0
       addedObject: {fileID: 792443017946477143}
     - targetCorrespondingSourceObject: {fileID: 8815427784886255355, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       insertIndex: -1
@@ -748,30 +756,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8446451415489526674, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4868377926111343238}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
 --- !u!1 &792443017946477142 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8446451415489526674, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
   m_PrefabInstance: {fileID: 9207750683622181316}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4868377926111343238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792443017946477142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fd9544f76835984f9022b27f8230a10, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  originalToHide: {fileID: 792443017946477142}
-  itemToSpawn: {fileID: 1865420290, guid: 1c12bcc9805196e49b797ee8519a98a7, type: 3}
 --- !u!4 &792443017946477143 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8446451415489526675, guid: aa8c8194d4fae794e89ff5b9ca94e6ca, type: 3}
