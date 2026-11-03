@@ -13,6 +13,7 @@ public class RangedAttack : WeaponMode
 
     public UnityEvent onWindup;
     public UnityEvent<bool> onStartStopFiring;
+    public UnityEvent onAttack;
 
     public ADSHandler adsHandler => (User != null && User.weaponHandler != null) ? User.weaponHandler.adsHandler : null;
     public bool adsPresent => optics != null && adsHandler != null;
@@ -115,8 +116,10 @@ public class RangedAttack : WeaponMode
     /// </summary>
     protected override IEnumerator AttackSequence()
     {
+        //User.DebugLog($"Attack sequence");
         if (magazine != null && magazine.currentlyReloading)
         {
+            //User.DebugLog($"Gun is reloading, cancelling reload");
             magazine.CancelReload();
             yield break;
         }
@@ -130,6 +133,7 @@ public class RangedAttack : WeaponMode
         float windupTime = controls.windupTime;
         if (windupTime > 0)
         {
+            //User.DebugLog($"Windup");
             stats.TrySendMessage(this, ref timeOfLastMessage);
             onWindup.Invoke();
 
@@ -141,6 +145,7 @@ public class RangedAttack : WeaponMode
         // If player is still committing to the attack after the windup
         if (PrimaryHeld)
         {
+            //User.DebugLog($"Input still held, starting firing sequence");
             // Activate anything that should happen continuously while gun is firing
             // TO DO: set up enemy attack code so it also activates these continuous elements
             SetContinuousElementsActive(true);
@@ -149,6 +154,7 @@ public class RangedAttack : WeaponMode
             float shotTimer = 0;
             while (true) // Dangerous to use a fixed true value in a while loop, but the checks to break the loop should be solid.
             {
+                //User.DebugLog($"Attack loop");
                 // shotTimer represents how much time has been spent shooting, in terms of how many shots would have fired with the given shot delay.
                 // If shotTimer hasn't yet reached shotsFired, ignore shot functions and keep yielding (and incrementing shotTimer based on this passage of time) until ready to proceed
                 // If shotTimer has caught up with or passed shotsFired, this means the previous shot has ended, and the next action needs to be triggered immediately.
@@ -156,6 +162,7 @@ public class RangedAttack : WeaponMode
                 // This should ensure the appropriate number of shots are fired even during lag spikes.
                 if (shotTimer < shotsFired)
                 {
+                    //User.DebugLog($"Yielding, {shotTimer}");
                     yield return null;
                     shotTimer += Time.deltaTime * controls.shotsPerSecond;
                     continue;
@@ -167,22 +174,19 @@ public class RangedAttack : WeaponMode
                 // If we're here it means any waiting after the previous shot is complete, and it's time to either fire the next shot or stop the loop.
                 // Check if the criteria is necessary to shoot the next shot (e.g. player input, burst count, ammo present).
                 // If so, fire another shot. If not, break the loop.
-                bool shootLoopShouldContinue = shootingIntended && CanAttack();
-                if (!shootLoopShouldContinue) break;
+                if (!shootingIntended) break;
+                //User.DebugLog($"Still wants to shoot");
+                if (!CanAttack()) break;
+                //User.DebugLog($"Still can shoot");
 
+                //User.DebugLog($"Shooting");
                 // Fire the next shot, hooray! Then increment the burst counter so more logic can be calculated.
                 stats.TrySendMessage(this, ref timeOfLastMessage);
                 OnAttack();
                 shotsFired++;
             }
 
-            /*
-            while (shootingIntended && CanAttack()) // Check stuff like fire button held, ammo remaining
-            {
-                stats.TrySendMessage(this, ref timeOfLastMessage);
-                yield return SingleShot(); // Fire shot and increment burst timer
-            }
-            */
+            //User.DebugLog($"Shooting ended");
 
             // Turn off continuous actions
             SetContinuousElementsActive(false);
@@ -190,34 +194,26 @@ public class RangedAttack : WeaponMode
             // Wait for the cooldown, if applicable
             float cooldown = controls.burstCooldown;
             if (cooldown > 0) yield return new WaitForSeconds(cooldown);
+            //User.DebugLog($"Cooldown finished");
         }
-
-        
-
-        // Wait until the fire button is released
-        yield return new WaitUntil(() => PrimaryHeld == false);
 
         // Reset shot timer
         shotsFired = 0;
     }
-    
-    /// <summary>
-    /// Fires a single shot and increments the burst counter.
-    /// </summary>
-    public IEnumerator SingleShotAsync()
-    {
-        OnAttack();
-        yield return new WaitForSeconds(controls.shotDelay);
-    }
     public override bool CanAttack()
     {
+        User.DebugLog($"Checking if can attack");
+
         if (controls.CanFire(shotsFired) == false) return false;
+        User.DebugLog($"Can fire");
 
         // Don't shoot if there's not enough ammo in the magazine
         if (magazine != null && magazine.ammo.current < stats.ammoPerShot) return false;
+        User.DebugLog($"Enough ammo in magazine");
 
         // If the weapon consumes ammunition, but there isn't enough to fire
         if (consumesAmmo && ammo.GetStock(stats.ammoType) < stats.ammoPerShot) return false;
+        User.DebugLog($"Enough ammo generally");
 
         return true;
     }
@@ -233,6 +229,8 @@ public class RangedAttack : WeaponMode
         {
             ammo.Spend(stats.ammoType, stats.ammoPerShot);
         }
+
+        onAttack.Invoke();
     }
 
 
@@ -249,18 +247,18 @@ public class RangedAttack : WeaponMode
         // Forcibly 'release' player input and wait for attack to end
         yield return StopAttackAsync();
 
-        Debug.Log("Switching away from " + this);
+        //Debug.Log("Switching away from " + this);
         // Cancel reload
         if (magazine != null)
         {
-            Debug.Log("Cancelling reload");
+            //Debug.Log("Cancelling reload");
             magazine.CancelReload();
             yield return new WaitWhile(() => magazine.inSequence);
         }
         
         if (optics != null)
         {
-            Debug.Log("Cancelling ADS");
+            //Debug.Log("Cancelling ADS");
             yield return adsHandler.ChangeADSAsync(false);
         }
 

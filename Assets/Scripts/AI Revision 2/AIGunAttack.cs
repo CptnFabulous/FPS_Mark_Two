@@ -40,6 +40,7 @@ public class AIGunAttack : MonoBehaviour
 
     AttackState attackState;
     IEnumerator currentAttackSequence;
+    int attacksPerformed = 0;
 
     AIAim aim => rootAI.aiming;
     Character target => rootAI.target;
@@ -55,6 +56,23 @@ public class AIGunAttack : MonoBehaviour
         }
     }
     bool onTarget => aim.IsLookingAt(targetPosition);
+
+
+    private void OnEnable()
+    {
+        weapon.onAttack.AddListener(IncrementAttack);
+    }
+    private void OnDisable()
+    {
+        weapon.onAttack.RemoveListener(IncrementAttack);
+    }
+
+    void IncrementAttack()
+    {
+        attacksPerformed++;
+        rootAI.DebugLog($"Incrementing attack count");
+    }
+
 
     /// <summary>
     /// Needs to be run every frame to execute attack behaviours.
@@ -113,7 +131,7 @@ public class AIGunAttack : MonoBehaviour
 
     IEnumerator AttackSequence()
     {
-        rootAI.DebugLog($"Telegraphing {weapon}");
+        //rootAI.DebugLog($"Telegraphing {weapon}");
         attackState = AttackState.Telegraph;
         // TO DO: set a fire-and-forget routine for shifting aim towards target
         SetSpeedMultiplier(telegraphMoveSpeedMultiplier);
@@ -121,23 +139,32 @@ public class AIGunAttack : MonoBehaviour
         yield return new WaitForSeconds(telegraphDelay);
         //yield return CancellableYield(CancellableYieldForSeconds(telegraphDelay), () => canTarget == false, CancelAttack);
 
-        rootAI.DebugLog($"Executing attack with {weapon}");
+        //rootAI.DebugLog($"Executing attack with {weapon}");
         attackState = AttackState.Attack;
         SetSpeedMultiplier(attackMoveSpeedMultiplier);
         onTelegraphEnd.Invoke();
 
-        int max = weapon.controls.maxBurst;
-        max = max > 0 ? max : int.MaxValue - 1;
-        max = Mathf.Min(attackNumberMax, max) + 1;
-        int numberOfAttacks = Random.Range(attackNumberMin, max);
-        for (int i = 0; i < numberOfAttacks; i++)
+        attacksPerformed = 0;
+        weapon.SetPrimaryInput(true);
+        int burstCount = Random.Range(attackNumberMin, attackNumberMax + 1);
+        while (attacksPerformed < burstCount)
         {
-            yield return weapon.SingleShotAsync();
-            onAttack.Invoke();
-            if (delayBetweenAttacks > 0) yield return new WaitForSeconds(delayBetweenAttacks);
-        }
+            //rootAI.DebugLog($"In attack loop");
 
-        rootAI.DebugLog($"Cooling down from attack with {weapon}");
+            // If attack expires, start again
+            if (!weapon.inAttack)
+            {
+                //rootAI.DebugLog($"Attack expired before number of shots reached, restarting");
+                weapon.SetPrimaryInput(false);
+                yield return new WaitForSeconds(delayBetweenAttacks);
+                weapon.SetPrimaryInput(true);
+            }
+
+            yield return null;
+        }
+        yield return weapon.StopAttackAsync();
+
+        //rootAI.DebugLog($"Cooling down from attack with {weapon}");
         attackState = AttackState.Cooldown;
         SetSpeedMultiplier(1); // Revert to default speed
         float cooldown = Random.Range(cooldownMin, cooldownMax);
@@ -151,15 +178,11 @@ public class AIGunAttack : MonoBehaviour
     void SetSpeedMultiplier(float multiplier)
     {
         if (rootAI.movement == null) return;
-
         rootAI.movement.speedMultiplierStack["Attack telegraph"] = multiplier;
-        
-        //NavMeshAgent agent = rootAI.agent;
-        //if (agent != null) agent.move.speed = rootAI.baseMovementSpeed * multiplier;
-
     }
     public bool AttackNotBlocked(Vector3 aimOrigin, out RaycastHit hit) => AIAction.LineOfSight(aimOrigin, targetPosition, out hit, rootAI, target, weapon.attackMask);
 
+    /*
     public static IEnumerator CancellableYieldForSeconds(float seconds)
     {
         yield return new WaitForSeconds(seconds);
@@ -177,4 +200,5 @@ public class AIGunAttack : MonoBehaviour
             yield return ienumerator.Current;
         }
     }
+    */
 }

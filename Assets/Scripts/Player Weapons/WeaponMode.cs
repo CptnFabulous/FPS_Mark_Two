@@ -49,7 +49,7 @@ public abstract class WeaponMode : MonoBehaviour
     public abstract void OnAttack();
     public void SetPrimaryInput(bool held)
     {
-        //Debug.Log($"{this}: Setting primary input to {held}, frame {Time.frameCount}");
+        User.DebugLog($"{this}: Setting primary input to {held}, frame {Time.frameCount}");
         PrimaryHeld = held;
 
         if (enabled == false) return;
