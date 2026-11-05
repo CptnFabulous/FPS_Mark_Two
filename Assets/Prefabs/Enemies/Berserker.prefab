@@ -315,11 +315,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3275955952515887824, guid: 9a9200cc3aeba9648b15e2e54a2ebb54, type: 3}
   m_PrefabInstance: {fileID: 3043813021727132247}
   m_PrefabAsset: {fileID: 0}
---- !u!82 &525587741028862110 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 3275955952633922249, guid: 9a9200cc3aeba9648b15e2e54a2ebb54, type: 3}
-  m_PrefabInstance: {fileID: 3043813021727132247}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3253255007804229008 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 511204601587797959, guid: 9a9200cc3aeba9648b15e2e54a2ebb54, type: 3}
@@ -331,6 +326,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88cc107c241dcaa41b708fa8a4674f32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3654038406736225370 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1767675236937149965, guid: 9a9200cc3aeba9648b15e2e54a2ebb54, type: 3}
+  m_PrefabInstance: {fileID: 3043813021727132247}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525587740910696583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bf55ec8b4e7adf44b7f34b945741c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6460671496100814916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -339,6 +345,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1040802730675470822, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
+      propertyPath: idealTargetDistance
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2707361439851497658, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: m_Name
       value: Berserker
@@ -392,6 +402,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
+      propertyPath: attackMoveSpeedMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -402,26 +416,26 @@ PrefabInstance:
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 525587741028862110}
+      objectReference: {fileID: 11400000, guid: 6ea0bf0fe51dae6468d4554fcca793f6, type: 2}
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: PlayOneShot
+      value: Play
       objectReference: {fileID: 0}
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: UnityEngine.AudioSource, UnityEngine
+      value: DiegeticSound, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 8300000, guid: 1f5697ce6403ec747a1d4fa117b4c8db, type: 3}
+      objectReference: {fileID: 3654038406736225370}
     - target: {fileID: 3659602793414044022, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: onTelegraph.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.AudioClip, UnityEngine
+      value: Entity, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4137702903641763450, guid: 88e2f62e7560d00429332eea3d056d9d, type: 3}
       propertyPath: properName

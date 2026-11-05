@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ public class HumanoidAnimator : MonoBehaviour
     [SerializeField] string walkZValue = "Movement Z";
     [SerializeField] ImpactEffect footsteps;
 
-    [Header("Stuns")]
+    [Header("Attacking")]
+    [SerializeField] string weaponTypeValueName = "Weapon Type Index";
+    [SerializeField] int weaponTypeIndex = 0;
+
+    [Header("Stuns and ragdolls")]
     [SerializeField] string damageDirectionX = "Damage Direction X";
     [SerializeField] string damageDirectionZ = "Damage Direction Z";
-
-    [Header("Ragdoll")]
     [SerializeField] string standUpState = "Movement.Stand up from fall";
     [SerializeField] string ragdollOrientationDotProduct = "Ragdoll orientation dot product";
     
@@ -29,57 +32,17 @@ public class HumanoidAnimator : MonoBehaviour
 
     private void Awake()
     {
-        if (character != null)
-        {
-            if (character != null && character.health != null) character.health.onDamage.AddListener(UpdateDamageData);
-            //Debug.Log($"{this}, {character}");
-            //Debug.Log($"{ragdoll}");
-            //ragdoll.onActiveStateSet.AddListener((active) => animator.enabled = !active);
-        }
-        else
-        {
-            enabled = false;
-        }
-        
+        character.health.onDamage.AddListener(UpdateDamageData);
     }
     private void Update()
     {
-        //if (ragdoll.enabled) return;
-
         // Update walk direction values
         Vector3 walkValues = character.LocalMovementDirection;
         animator.SetFloat(walkXValue, walkValues.x);
         animator.SetFloat(walkZValue, walkValues.z);
+        // Assign index based on weapon
+        animator.TrySetInteger(weaponTypeValueName, weaponTypeIndex);
     }
-    /*
-    void LateUpdate()
-    {
-        if (character == null)
-        {
-            enabled = false;
-            return;
-        }
-
-        if (ragdoll.enabled) return;
-
-
-        if (character.lookController.active)
-        {
-            // Set up appropriate aiming rotation of upper body
-            // I used this tutorial for reference https://www.youtube.com/watch?v=Q56quIB2sOg
-
-            // Generates an offset rotation so that the upper body transform rotates in the appropriate direction of the head
-            Quaternion rotationOffsetBetweenAIAndBody = Quaternion.FromToRotation(character.transform.forward, character.LookTransform.forward);
-            for (int i = 0; i < spineBones.Length; i++)
-            {
-                float value = (i + 1) / spineBones.Length;
-                // Creates weighted rotation that increases towards the end of the array (last bone is fully weighted)
-                Quaternion rotation = Quaternion.Slerp(Quaternion.identity, rotationOffsetBetweenAIAndBody, value);
-                spineBones[i].rotation = rotation * spineBones[i].rotation;
-            }
-        }
-    }
-    */
 
     void UpdateDamageData(DamageMessage damageMessage)
     {
@@ -93,6 +56,9 @@ public class HumanoidAnimator : MonoBehaviour
     {
         // Currently it just plays a noise despite using an ImpactEffect as a parameter.
         // Later on, I want to add code for things like displaying footstep decals
+
+        // I think I need to modify this so it selects the correct foot, raycasts down and runs the ImpactEffect at that point and direction.
+
         footsteps.defaultSound.Play(transform.position, character, 1);
         //footsteps.Play()
     }
@@ -125,7 +91,6 @@ public class HumanoidAnimator : MonoBehaviour
         Vector3 bottom = ragdollBounds.center;
         bottom.y = ragdollBounds.min.y;
         position = bottom;
-
 
         // Adjust direction to face roughly in the same 'forward' direction as the ragdoll
         rotation = Quaternion.LookRotation(aiForward, up);
