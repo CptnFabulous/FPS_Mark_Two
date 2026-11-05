@@ -157,13 +157,13 @@ MonoBehaviour:
   onReloadEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3275955952633922249}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: PlayOneShot
+      - m_Target: {fileID: 11400000, guid: 6ea0bf0fe51dae6468d4554fcca793f6, type: 2}
+        m_TargetAssemblyTypeName: DiegeticSound, Assembly-CSharp
+        m_MethodName: Play
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 1f5697ce6403ec747a1d4fa117b4c8db, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 1767675236937149965}
+          m_ObjectArgumentAssemblyTypeName: Entity, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -307,6 +307,7 @@ MonoBehaviour:
   soundPlayer: {fileID: 3275955952633922249}
   weaponClips:
   - {fileID: 8300000, guid: 1f5697ce6403ec747a1d4fa117b4c8db, type: 3}
+  sounds: []
   onEjection:
     m_PersistentCalls:
       m_Calls:
@@ -385,6 +386,9 @@ MonoBehaviour:
   onStartStopFiring:
     m_PersistentCalls:
       m_Calls: []
+  onAttack:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &3275955952836653049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,8 +444,8 @@ MonoBehaviour:
         m_MethodName: Play
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 3275955952633922249}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+          m_ObjectArgument: {fileID: 1767675236937149965}
+          m_ObjectArgumentAssemblyTypeName: Entity, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -530,6 +534,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttack:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &5302939852179752584

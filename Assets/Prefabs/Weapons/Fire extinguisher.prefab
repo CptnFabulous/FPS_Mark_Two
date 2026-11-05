@@ -76,6 +76,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onAttack:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &9007515312563337693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +205,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -6177962412251847463, guid: 8bb1ee28d3725d941a4ba2e624e4686d, type: 2}
   m_audioClip: {fileID: 8300000, guid: 7bb2fa590fea31245bb80acd9d3538c6, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 0.5
   Loop: 1
@@ -299,7 +302,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3975c6fecfc8494448c4e4ead7d62c10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 4734100015213950236}
+  sourceEntity: {fileID: 973961155458689339}
+  volume: 1
+  pitch: 0.5
 --- !u!1 &5395543551877665680
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,6 +405,7 @@ MonoBehaviour:
   controller: {fileID: 4289136446122567009}
   active: Active
   mode: Firing Mode Index
+  switchSpeedMultiplier: Switch Speed Multiplier
   modeSwitchTrigger: Mode Switch Triggered
   windupTrigger: Windup
   attackTrigger: Firing
@@ -408,6 +414,7 @@ MonoBehaviour:
   reloadIncrementTrigger: Next reload stage triggered
   soundPlayer: {fileID: 4734100015213950236}
   weaponClips: []
+  sounds: []
   onEjection:
     m_PersistentCalls:
       m_Calls: []

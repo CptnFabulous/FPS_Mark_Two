@@ -50,7 +50,10 @@ public class ImpactEffect : ScriptableObject
         }
 
         // Play sound effect at point
-        if (sound != null) sound.Play(point, sourceEntity, intensity, minimumVolume);
+        if (sound != null)
+        {
+            sound.Play(() => point, sourceEntity, intensity, minimumVolume);
+        }
 
         // Stick decal
         bool isNotPlayer = EntityCache<Player>.GetEntity(surfaceCollider) == null;

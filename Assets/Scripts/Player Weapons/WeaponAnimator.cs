@@ -91,5 +91,9 @@ public class WeaponAnimator : MonoBehaviour
         index = Mathf.Clamp(index, 0, weaponClips.Length - 1);
         soundPlayer.PlayOneShot(weaponClips[index]);
     }
+    public void PlaySound(DiegeticSound sound)
+    {
+        sound.Play(weaponToAnimate.parentEntity);
+    }
     public void ShellEjection() => onEjection.Invoke();
 }

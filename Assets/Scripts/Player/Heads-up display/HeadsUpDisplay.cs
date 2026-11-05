@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System;
 
 public class HeadsUpDisplay : MonoBehaviour
 {
@@ -10,12 +11,16 @@ public class HeadsUpDisplay : MonoBehaviour
     public Player controller;
     public new Camera camera;
     public AudioSource soundPlayer;
+
     public void PlayAudioClip(AudioClip clip)
     {
+        //Debug.LogWarning($"Playing {clip} from {this} is obsolete, replace with another method.");
         soundPlayer.PlayOneShot(clip);
     }
+    [Obsolete]
     public void PlayAudioClip(DiegeticSound soundEffect)
     {
+        Debug.LogWarning($"Playing {soundEffect} from {this} is obsolete, replace with another method.");
         soundEffect.Play(soundPlayer);
     }
 

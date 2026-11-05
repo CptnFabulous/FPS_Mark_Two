@@ -25,7 +25,7 @@ public abstract class AIStateFunction : StateFunction
     {
         // Play effects to indicate the AI has switched to a new action
         if (icon != null && rootAI.statusIcon != null) rootAI.statusIcon.TriggerAnimation(icon);
-        if (soundCue != null) soundCue.Play(rootAI.transform.position, rootAI);
+        if (soundCue != null) soundCue.Play(rootAI);
         if (string.IsNullOrEmpty(animationTrigger) == false) rootAI.animator.SetTrigger(animationTrigger);
         aim.currentAimStats = aimStats ?? aim.defaultAimStats;
     }
