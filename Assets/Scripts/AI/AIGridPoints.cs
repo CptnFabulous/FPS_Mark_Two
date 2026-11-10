@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -208,44 +209,14 @@ public class AIGridPoints : MonoBehaviour
     }
     #endregion
 
-    public void GetPoints(System.Func<GridPoint, bool> criteria, ref List<GridPoint> collection)
+    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, System.Func<Bounds, bool> regionWorthChecking = null, int maxNumberOfChecks = int.MaxValue)
     {
-        for (int i = 0; i < gridPoints.Count; i++)
-        {
-            // Ignore if criteria not met
-            bool valid = criteria.Invoke(gridPoints[i]);
-            if (!valid) continue;
-            // Add point to list
-            collection.Add(gridPoints[i]);
-        }
-    }
-    public int GetPointsNonAlloc(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = -1, System.Func<Bounds, bool> childrenWorthChecking = null)
-    {
-        int validPoints = 0;
-
-        
         // If we don't care about the octants, just iterate through everything linearly.
-        if (childrenWorthChecking == null)
-        {
-            // Iterate through list linearly
-            for (int i = 0; i < gridPoints.Count; i++)
-            {
-                // Ignore if criteria not met
-                bool valid = criteria.Invoke(gridPoints[i]);
-                if (!valid) continue;
+        if (regionWorthChecking == null) return GetPointsLinearly(ref collection, criteria, maxNumberOfChecks);
 
-                // Add point
-                collection[validPoints] = gridPoints[i];
-                validPoints++;
+        maxNumberOfChecks = Mathf.Min(maxNumberOfChecks, collection.Length);
 
-                // Cancel once we can't take any more
-                if (validPoints >= collection.Length) break;
-                if (maxNumberOfChecks >= 0 && validPoints >= maxNumberOfChecks) break;
-            }
-
-            return validPoints;
-        }
-
+        int validPoints = 0;
 
         // Iterate through octree. Ignore if empty or criteria is not met, always allow leaf octants
         IEnumerator<Octant<GridPoint>> iterator = octree.GetEnumerator((o) =>
@@ -255,10 +226,12 @@ public class AIGridPoints : MonoBehaviour
             // If octant is leaf, always allow
             if (o.type == OctantType.Leaf) return true;
             // If no criteria is needed, allow all
-            if (childrenWorthChecking == null) return true;
+            if (regionWorthChecking == null) return true;
             // Otherwise check if criteria is met
-            return childrenWorthChecking.Invoke(o.transformedBounds);
+            return regionWorthChecking.Invoke(o.transformedBounds);
         });
+
+        // Iterate through all options
         while (iterator.MoveNext())
         {
             Octant<GridPoint> octant = iterator.Current;
@@ -280,10 +253,32 @@ public class AIGridPoints : MonoBehaviour
             validPoints++;
 
             // Cancel once we can't take any more
-            if (validPoints >= collection.Length) break;
-            if (maxNumberOfChecks >= 0 && validPoints >= maxNumberOfChecks) break;
+            if (validPoints >= maxNumberOfChecks) break;
         }
         iterator.Dispose();
+
+        return validPoints;
+    }
+    int GetPointsLinearly(ref GridPoint[] collection, System.Func<GridPoint, bool> criteria, int maxNumberOfChecks = int.MaxValue)
+    {
+        maxNumberOfChecks = Mathf.Min(maxNumberOfChecks, collection.Length);
+
+        int validPoints = 0;
+
+        // Iterate through list linearly
+        for (int i = 0; i < gridPoints.Count; i++)
+        {
+            // Ignore if criteria not met
+            bool valid = criteria.Invoke(gridPoints[i]);
+            if (!valid) continue;
+
+            // Add point
+            collection[validPoints] = gridPoints[i];
+            validPoints++;
+
+            // Cancel once we can't take any more
+            if (validPoints >= maxNumberOfChecks) break;
+        }
 
         return validPoints;
     }
@@ -295,59 +290,47 @@ public class AIGridPoints : MonoBehaviour
     /// <param name="minRadius"></param>
     /// <param name="maxRadius"></param>
     /// <returns></returns>
-    public int GetPointsInRadius(ref GridPoint[] collection, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
+    public int GetPointsInRadius(ref GridPoint[] collection, Vector3 centre, float minRadiusSquared, float maxRadiusSquared, System.Func<GridPoint, Vector3> getPrecisePosition, System.Func<GridPoint, bool> additionalCriteria)
     {
-        return GetPointsNonAlloc(ref collection, (p) => IsWithinRadius(p, centre, minRadius, maxRadius, onlyIncludeCover));
-    }
-    public int GetGridPointsInArea(ref GridPoint[] collection, LevelArea rootArea)
-    {
-        if (rootArea == null) return -1;
-        return GetPointsNonAlloc(ref collection, (p) => rootArea.Contains(p.position));
-    }
-
-
-
-
-
-
-
-
-    public static bool IsWithinRadius(GridPoint p, Vector3 centre, float minRadius, float maxRadius, bool onlyIncludeCover = false)
-    {
-        // If checking for cover, exclude points that aren't cover
-        if (onlyIncludeCover && p.isCover == false)
+        // Get initial sample of grid points, using simple checks to remove the vast majority before sorting
+        return GetPointsNonAlloc(ref collection, (point) =>
         {
-            //Debug.Log($"Distance check disqualified, point is not cover. {p.coverDirections}");
-            return false;
-        }
+            // Use hypothetical look origin, to make sure distance is valid
+            Vector3 precisePosition = point.position;
+            if (getPrecisePosition != null) precisePosition = getPrecisePosition.Invoke(point);
 
-        return IsWithinRadius(p.position, centre, minRadius, maxRadius);
+            // Check that the distance is correct (use squared magnitudes for faster processing)
+            float sqrDistance = (centre - precisePosition).sqrMagnitude;
+            if (sqrDistance < minRadiusSquared) return false;
+            if (sqrDistance > maxRadiusSquared) return false;
+
+            // Do a simple raycast check for stuff that will obviously block the attack, but isn't as accurate (and expensive) as our proper line of sight check
+            if (additionalCriteria != null && additionalCriteria.Invoke(point) == false) return false;
+
+            return true;
+        }, (bounds) => IsBoundsWithinAcceptableRange(bounds, centre, minRadiusSquared, maxRadiusSquared));
     }
-    public static bool IsWithinRadius(Vector3 point, Vector3 centre, float minRadius, float maxRadius)
+    public int GetPointsInArea(ref GridPoint[] collection, LevelArea rootArea)
     {
-        // Check that the distance is correct
-        float distance = Vector3.Distance(point, centre);
-        //Debug.Log($"Distance check: {distance}, {minRadius}, {maxRadius}");
-        if (distance < minRadius) return false;
-        if (distance > maxRadius) return false;
+        if (rootArea == null) return 0;
 
-        // Point is valid
+        Bounds bounds = rootArea.bounds;
+        return GetPointsNonAlloc(ref collection, (p) => rootArea.Contains(p.position), (b) => b.Intersects(bounds));
+    }
+
+
+    bool IsBoundsWithinAcceptableRange(Bounds bounds, Vector3 position, float minSquared, float maxSquared)
+    {
+        // If closest point is too far, don't bother
+        Vector3 closest = bounds.ClosestPoint(position);
+        if ((position - closest).sqrMagnitude > maxSquared) return false;
+
+        // If furthest point is too close, don't bother
+        Vector3 furthest = bounds.FurthestPointOnBounds(position);
+        if ((position - furthest).sqrMagnitude < minSquared) return false;
+
         return true;
     }
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
 
     /*
     public static bool MeshCheckBox(Mesh mesh, Vector3 centre, Vector3 halfExtents)

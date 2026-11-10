@@ -154,36 +154,14 @@ public class EngageTarget : AIStateFunction
 
         float minDistanceSquared = minTargetDistance * minTargetDistance;
         float maxDistanceSquared = maxTargetDistance * maxTargetDistance;
-
-        bool IsBoundsWithinAcceptableRange(Bounds bounds)
+        int sampledPointCount = AIGridPoints.Current.GetPointsInRadius(ref AIGridPoints.sampleArray, targetPosition, minDistanceSquared, maxDistanceSquared, (p) =>
         {
-            // If closest point is too far, don't bother
-            Vector3 closest = bounds.ClosestPoint(targetPosition);
-            if ((targetPosition - closest).sqrMagnitude > maxDistanceSquared) return false;
-
-            // If furthest point is too close, don't bother
-            Vector3 furthest = MiscFunctions.FurthestPointOnBounds(bounds, targetPosition);
-            if ((targetPosition - furthest).sqrMagnitude < minDistanceSquared) return false;
-
-            return true;
-        }
-
-        // Get initial sample of grid points, using simple checks to remove the vast majority before sorting
-        int sampledPointCount = AIGridPoints.Current.GetPointsNonAlloc(ref AIGridPoints.sampleArray, (point) =>
+            return AIAction.HypotheticalLookOrigin(rootAI, p.position);
+        }, (p) =>
         {
-            // Use hypothetical look origin, to make sure distance is valid
-            Vector3 lookOrigin = AIAction.HypotheticalLookOrigin(rootAI, point.position);
-
-            // Check that the distance is correct (use squared magnitudes for faster processing)
-            float sqrDistance = (targetPosition - lookOrigin).sqrMagnitude;
-            if (sqrDistance < minDistanceSquared) return false;
-            if (sqrDistance > maxDistanceSquared) return false;
-
-            // Do a simple raycast check for stuff that will obviously block the attack, but isn't as accurate (and expensive) as our proper line of sight check
-            if (Physics.Linecast(lookOrigin, targetPosition, out _, terrainDetection.mask)) return false;
-
-            return true;
-        }, -1, IsBoundsWithinAcceptableRange);
+            Vector3 castOrigin = AIAction.HypotheticalLookOrigin(rootAI, p.position);
+            return !Physics.Linecast(castOrigin, targetPosition, out _, terrainDetection.mask);
+        });
 
 
         //rootAI.DebugLog($"Number of sampled points = {sampledPointCount}/{AIGridPoints.Current.gridPoints.Count}");

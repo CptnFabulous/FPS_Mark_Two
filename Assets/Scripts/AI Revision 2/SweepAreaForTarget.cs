@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -85,22 +86,27 @@ public class SweepAreaForTarget : AIStateFunction
 
         AIGridPoints points = AIGridPoints.Current;
 
-        // Wipe old points
-        pointsToCheck.Clear();
+
+        int pointCount = 0;
+        AIGridPoints.GridPoint[] array = AIGridPoints.sampleArray;
 
         // Sample points based on whether or not the AI is in a valid level area.
         LevelArea areaToSearch = LevelArea.FindAreaOfPosition(targetManager.lastKnownPosition);
         if (areaToSearch != null)
         {
             // Sample grid points in area
-            points.GetPoints((p) => areaToSearch.Contains(p.position), ref pointsToCheck);
+            pointCount = points.GetPointsInArea(ref array, areaToSearch);
         }
         else
         {
             // Get points across the entire level, but only within the search range
-            points.GetPoints((p) => AIGridPoints.IsWithinRadius(p, standingPosition, 0, maxSearchDistance), ref pointsToCheck);
+            pointCount = points.GetPointsInRadius(ref array, standingPosition, 0, maxSearchDistance * maxSearchDistance, null, null);
         }
-        
+
+        // Wipe old points and add new ones, so we have the points in a list that can be pruned down over time
+        pointsToCheck.Clear();
+        for (int i = 0; i < pointCount; i++) pointsToCheck.Add(array[i]);
+
         // Assign a new destination
         GetNextDestination();
 
