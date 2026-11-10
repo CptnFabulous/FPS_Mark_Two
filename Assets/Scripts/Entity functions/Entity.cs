@@ -106,6 +106,11 @@ public class Entity : MonoBehaviour
 
     public bool isBeingRendered => renderers.DoAnyMeetCriteria((r) => r.isVisible);
 
+    /// <summary>
+    /// Determines if on-hit physics effects should occur for a particular collision. Sometimes Unity's physics engine produces collisions that don't matter in terms of things like physics damage or sound effects.
+    /// </summary>
+    /// <param name="collision"></param>
+    /// <returns></returns>
     public virtual bool ShouldPlayPhysicsEffects(Collision collision) => true;
 
     /*

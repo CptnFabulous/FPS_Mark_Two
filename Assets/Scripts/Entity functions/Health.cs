@@ -148,8 +148,9 @@ public class Health : MonoBehaviour
         // Ensure the entity can't be damaged by its own colliders
         if (attachedTo.colliders.Contains(collision.collider)) return;
 
-
-
+        // TO DO: don't allow if some of the entity's colliders aren't supposed to register collisions under the current conditions
+        // E.g. a ragdoll collider hitting a surface, while it's meant to be animated.
+        if (attachedTo.ShouldPlayPhysicsEffects(collision) == false) return;
 
         #region Figure out what damaged this entity
 
