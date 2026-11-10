@@ -379,7 +379,22 @@ public class Octree<T> : IEnumerable<Octant<T>>
 
     #region IEnumerable
 
-    public IEnumerator<Octant<T>> GetEnumerator(System.Func<Octant<T>, bool> criteria) => baseContainer.GetEnumerator(criteria);
+    Octant<T>[] stackArray;
+
+    public IEnumerator<Octant<T>> GetEnumerator(System.Func<Octant<T>, bool> criteria)
+    {
+        //return NonRecursiveSearch<Octant<T>>.DepthFirst(baseContainer, null, (t) => t.children);
+
+        // Ensure the array is large enough to account for all the values being processed
+        // (Actual max value seems to be less, but I think there's nothing wrong with having it be a bit bigger to be on the safe side
+        int theoreticalMaxCollectionLength = 1 + (8 * subdivisions);
+        //Debug.Log($"Theorised max collection size needed ({subdivisions}): {theoreticalMaxCollectionLength}");
+        if (stackArray == null || stackArray.Length < theoreticalMaxCollectionLength)
+        {
+            stackArray = new Octant<T>[theoreticalMaxCollectionLength];
+        }
+        return NonRecursiveSearch<Octant<T>>.DepthFirst(baseContainer, stackArray, criteria, (t) => t.children);
+    }
     public IEnumerator<Octant<T>> GetEnumerator() => GetEnumerator(null);
     IEnumerator IEnumerable.GetEnumerator() => baseContainer.GetEnumerator();
 
