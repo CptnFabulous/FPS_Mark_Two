@@ -66,13 +66,16 @@ public class Player : Character
 
         }
         */
-        
-        // Sometimes crouching or standing up retriggers a collision.
+        float barelyMovingThreshold = 1f;
+
+        // Sometimes crouching or standing up retriggers a collision, even if your position relative to the ground doesn't change.
         // This can alert enemies, which is exactly what you're trying not to do when crouching.
+        // So it needs to be suppressed if the player is barely moving.
         CrouchController crouchHandler = movement.crouchController;
         if (crouchHandler != null)
         {
-            if (crouchHandler.transitioning) return false;
+            //if (crouchHandler.transitioning) return false;
+            if (crouchHandler.transitioning && collision.relativeVelocity.magnitude < barelyMovingThreshold) return false;
         }
 
         return true;
