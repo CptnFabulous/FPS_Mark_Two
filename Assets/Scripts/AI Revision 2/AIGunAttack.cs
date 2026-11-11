@@ -18,7 +18,12 @@ public class AIGunAttack : MonoBehaviour
     public AI rootAI;
     
     public RangedAttack weapon;
-    
+
+    [Header("Criteria")]
+    public float minRange = 1;
+    public float maxRange = 40;
+    public float idealRange = 20;
+
     [Header("Telegraph")]
     public float telegraphDelay = 0.25f;
     public float telegraphMoveSpeedMultiplier = 0.5f;
@@ -195,6 +200,11 @@ public class AIGunAttack : MonoBehaviour
     {
         if (canTarget == false) return false;
 
+        // Check if position is within desired ranges (use square magnitude for faster processing)
+        Vector3 fromOriginToTarget = targetPosition - rootAI.attackOrigin;
+        if (fromOriginToTarget.sqrMagnitude < (minRange * minRange)) return false;
+        if (fromOriginToTarget.sqrMagnitude > (maxRange * maxRange)) return false;
+        
         // Check sightline isn't blocked
         bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin, out _);
         if (attackNotBlocked == false) return false;

@@ -12,11 +12,9 @@ public class EngageTarget : AIStateFunction
     public UnityEvent onAbleToAttack;
 
     [Header("Seeking target")]
-    [SerializeField] float maxMoveDistance = 100;
+    [SerializeField, Tooltip("Lower this value for slower or less-motivated enemy types")] float maxMoveDistance = 100;
     int maxNumberOfChecks = 100;
-    [SerializeField] float minTargetDistance = 5;
-    [SerializeField] float idealTargetDistance = 10;
-    [SerializeField] float maxTargetDistance = 15;
+    //[SerializeField] float idealTargetDistance = 10;
     [SerializeField, Min(0), Tooltip("How close does the AI want to stay to cover? If set to zero, they won't bother seeking cover.")]
     float distanceToCover = 3;
     [SerializeField] float distanceFromAllies = 5;
@@ -35,6 +33,8 @@ public class EngageTarget : AIStateFunction
     bool performingAttackThisFrame = false;
     static readonly SortWithOnePredicate<AIGridPoints.GridPoint> predicate = new SortWithOnePredicate<AIGridPoints.GridPoint>();
 
+    float minTargetDistance => currentAttack.minRange;
+    float maxTargetDistance => currentAttack.maxRange;
     public Character target => targetManager.target;
     public Vector3 lastSightedPoint => targetManager.lastValidHit.point;
 
@@ -93,7 +93,7 @@ public class EngageTarget : AIStateFunction
             {
                 // Existing destination is fine
                 lastTimePathWasValid = Time.time;
-                rootAI.DebugLog($"{destination} still valid");
+                //rootAI.DebugLog($"{destination} still valid");
             }
             else
             {
@@ -108,7 +108,7 @@ public class EngageTarget : AIStateFunction
                 {
                     // Old destination is bad, but we found a new one
                     lastTimePathWasValid = Time.time;
-                    rootAI.DebugLog($"{destination} invalid, {newDestination} found");
+                    //rootAI.DebugLog($"{destination} invalid, {newDestination} found");
                 }
                 /*
                 else if (Time.time - lastTimePathWasValid > )
@@ -119,7 +119,7 @@ public class EngageTarget : AIStateFunction
                 else
                 {
                     // Cannot find a valid path. If this 
-                    rootAI.DebugLog($"{destination} invalid, no new position found");
+                    //rootAI.DebugLog($"{destination} invalid, no new position found");
                 }
             }
             //rootAI.StopDebug();
@@ -195,7 +195,7 @@ public class EngageTarget : AIStateFunction
 
         #region Sort array using necessary criteria
 
-        float idealDistanceSquared = idealTargetDistance * idealTargetDistance;
+        float idealDistanceSquared = currentAttack.idealRange * currentAttack.idealRange;
 
         predicate.reverse = false;
         predicate.obtainValue = (p) =>

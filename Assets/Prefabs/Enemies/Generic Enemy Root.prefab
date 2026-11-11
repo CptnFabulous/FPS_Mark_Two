@@ -815,9 +815,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   maxMoveDistance: 100
-  minTargetDistance: 1
-  idealTargetDistance: 20
-  maxTargetDistance: 40
   distanceToCover: 3
   distanceFromAllies: 5
   terrainDetection: {fileID: 11400000, guid: da84d791f02dc6f4c80322bb3f5d6b96, type: 2}
@@ -839,6 +836,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rootAI: {fileID: 4137702903641763450}
   weapon: {fileID: 0}
+  minRange: 1
+  maxRange: 40
+  idealRange: 20
   telegraphDelay: 1
   telegraphMoveSpeedMultiplier: 0.4
   aimSpeedWhileTelegraphing: 4
