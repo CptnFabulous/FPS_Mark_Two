@@ -56,6 +56,9 @@ public class ObjectiveHandler : MonoBehaviour
     }
     private void Update()
     {
+
+        if (targetPlayer.health.IsAlive == false) return;
+
         if (levelCompleted == false)
         {
             bool readyToComplete = RequiredObjectivesCompleted();

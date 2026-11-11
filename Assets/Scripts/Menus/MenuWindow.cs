@@ -17,6 +17,7 @@ public class MenuWindow : MonoBehaviour
     public Button back;
     public Image selectedGraphic;
     public Text selectionDescription;
+    //public UnityEvent<bool> onActiveStateSet; 
 
     Canvas canvas;
     CanvasGroup visualElements;
@@ -28,7 +29,16 @@ public class MenuWindow : MonoBehaviour
     public MenuWindow root { get; private set; }
 
 
-    Player attachedTo;
+    //Player attachedTo;
+
+    public Player usedBy
+    {
+        get
+        {
+            // TO DO: later on, account for possible changes to menu hierarchy (e.g. separating menus from player character)
+            return GetComponentInParent<Player>();
+        }
+    }
 
     /// <summary>
     /// Enables or disables a menu window in a way that doesn't interfere with the functioning of any child menus.
@@ -73,7 +83,7 @@ public class MenuWindow : MonoBehaviour
     }
     private void Awake()
     {
-        attachedTo = GetComponentInParent<Player>();
+        //attachedTo = GetComponentInParent<Player>();
 
         /*
         attachedTo.controls.actions.FindActionMap("UI").FindAction("Cancel").performed += (ctx) =>
@@ -181,6 +191,14 @@ public class MenuWindow : MonoBehaviour
     }
 
 
+    public void RestartFromCheckpoint()
+    {
+        CheckpointManager checkpoints = CheckpointManager.FindByPlayer(usedBy);
+        if (checkpoints == null || checkpoints.TryRespawnAtLastCheckpoint() == false)
+        {
+            ReloadCurrentScene();
+        }
+    }
     public void ReloadCurrentScene()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;

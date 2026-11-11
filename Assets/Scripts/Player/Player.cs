@@ -50,10 +50,25 @@ public class Player : Character
     {
         base.Die();
 
-        movement.enabled = false;
-        weapons.enabled = false;
-        rigidbody.constraints = RigidbodyConstraints.None;
+        SetAliveState(false);
         stateHandler.CurrentState = PlayerStateHandler.PlayerState.Dead;
+    }
+    public void SetAliveState(bool alive)
+    {
+        movement.enabled = alive;
+        weapons.enabled = alive;
+        rigidbody.constraints = alive ? RigidbodyConstraints.FreezeRotation : RigidbodyConstraints.None;
+        if (alive)
+        {
+            transform.rotation = Quaternion.identity;
+            //transform.rotation = Quaternion.LookRotation(LookTransform.forward, -Physics.gravity);
+        }
+        else
+        {
+            Vector3 randomEulers = new Vector3(Random.value, Random.value, Random.value);
+            randomEulers = (2 * randomEulers) - Vector3.one;
+            rigidbody.AddTorque(5f * randomEulers);
+        }
     }
 
     public override bool ShouldPlayPhysicsEffects(Collision collision)

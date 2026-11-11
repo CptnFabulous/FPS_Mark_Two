@@ -122,6 +122,7 @@ public class Health : MonoBehaviour
         // If this attack is the one that killed the entity, run death events
         if (IsAlive || !wasAlive) return;
 
+        /*
         // If the player, check that they can respawn at a checkpoint
         if (attachedTo is Player player)
         {
@@ -132,6 +133,7 @@ public class Health : MonoBehaviour
                 return;
             }
         }
+        */
         
         // Send kill message
         attachedTo.DebugLog($"Dying of {type}");

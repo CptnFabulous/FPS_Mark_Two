@@ -5,6 +5,9 @@ using UnityEngine.Events;
 
 public class CheckpointManager : MonoBehaviour
 {
+    //static CheckpointManager _instance;
+
+    //public static CheckpointManager current => MiscFunctions.FindComponentSingleton(ref _instance);
 
     [Header("Checkpoints")]
     public Transform[] checkpoints;
@@ -48,16 +51,37 @@ public class CheckpointManager : MonoBehaviour
         }
     }
 
+    public static CheckpointManager FindByPlayer(Player player)
+    {
+        CheckpointManager checkpointManager = FindObjectOfType<CheckpointManager>();
+        /*
+        if (checkpointManager == null) return null;
+        if (ch)
+
+
+        if (checkpointManager != null && checkpointManager.targetPlayer == player)
+        {
+            checkpointManager.TryRespawnAtLastCheckpoint();
+            return;
+        }
+        */
+        return checkpointManager;
+    }
+
     public bool TryRespawnAtLastCheckpoint()
     {
         if (checkpoints.Length == 0) return false;
 
+        targetPlayer.stateHandler.CurrentState = PlayerStateHandler.PlayerState.Active;
         RespawnAtCheckpoint(targetPlayer, checkpoints[currentCheckpointIndex]);
         return true;
     }
 
     public void RespawnAtCheckpoint(Player player, Transform checkpoint)
     {
+        player.SetAliveState(true);
+
+
         player.transform.position = checkpoint.position;
         player.lookController.lookRotation = checkpoint.rotation;
         player.rigidbody.velocity = Vector3.zero;
@@ -71,6 +95,7 @@ public class CheckpointManager : MonoBehaviour
         {
             effect.transform.position = checkpoint.position;
             effect.transform.rotation = checkpoint.rotation;
+            effect.gameObject.SetActive(true);
             effect.Play();
         }
         onRespawn.Invoke(player);
