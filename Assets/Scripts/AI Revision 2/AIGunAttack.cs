@@ -39,7 +39,7 @@ public class AIGunAttack : MonoBehaviour
     public UnityEvent onCooldown;
 
     AttackState attackState;
-    IEnumerator currentAttackSequence;
+    Coroutine currentAttackSequence;
     int attacksPerformed = 0;
 
     AIAim aim => rootAI.aiming;
@@ -60,17 +60,20 @@ public class AIGunAttack : MonoBehaviour
 
     private void OnEnable()
     {
+        //rootAI.DebugLog($"Adding listeners");
         weapon.onAttack.AddListener(IncrementAttack);
     }
     private void OnDisable()
     {
+        //rootAI.DebugLog($"Removing listeners");
         weapon.onAttack.RemoveListener(IncrementAttack);
+        CancelAttack();
     }
 
     void IncrementAttack()
     {
         attacksPerformed++;
-        rootAI.DebugLog($"Incrementing attack count");
+        //rootAI.DebugLog($"Incrementing attack count");
     }
 
 
@@ -84,7 +87,7 @@ public class AIGunAttack : MonoBehaviour
         if (target.health.IsAlive == false) return false;
 
         // Check that the AI can get line of sight to its target, and that the current attack won't be blocked.
-        bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin, out _);
+        //bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin, out _);
 
         // If attack has already started, shift aim linearly towards target
         if (attackState != AttackState.None)
@@ -99,15 +102,18 @@ public class AIGunAttack : MonoBehaviour
             aim.ShiftFreeLookTowards(targetPosition, aimSpeedWhileTelegraphing);
             return true;
         }
-        else if (canTarget && attackNotBlocked)
+        else if (CanAttack())
         {
             // if the AI can see the target and its attack isn't blocked, rotate look to fix aim on target.
             aim.RotateFreeLookTowards(targetPosition);
             if (onTarget)
             {
                 currentAttackSequence = null;
+                currentAttackSequence = StartCoroutine(AttackSequence());
+                /*
                 currentAttackSequence = AttackSequence();
                 StartCoroutine(currentAttackSequence);
+                */
             }
             return true;
         }
@@ -137,19 +143,21 @@ public class AIGunAttack : MonoBehaviour
         SetSpeedMultiplier(telegraphMoveSpeedMultiplier);
         onTelegraph.Invoke();
         yield return new WaitForSeconds(telegraphDelay);
-        //yield return CancellableYield(CancellableYieldForSeconds(telegraphDelay), () => canTarget == false, CancelAttack);
 
         //rootAI.DebugLog($"Executing attack with {weapon}");
         attackState = AttackState.Attack;
         SetSpeedMultiplier(attackMoveSpeedMultiplier);
         onTelegraphEnd.Invoke();
 
+        // Reset attacksPerformed, start attack loop, and wait until number of attacks has been reached
         attacksPerformed = 0;
         weapon.SetPrimaryInput(true);
-        int burstCount = Random.Range(attackNumberMin, attackNumberMax + 1);
-        while (attacksPerformed < burstCount)
+        while (attacksPerformed < attackNumberMax)
         {
-            //rootAI.DebugLog($"In attack loop");
+
+            // If min attack count is reached and AI realises it can't attack, end early
+            //rootAI.DebugLog($"In attack loop, attack count = {attacksPerformed}/{attackNumberMin}-{attackNumberMax}");
+            if (attacksPerformed >= attackNumberMin && CanAttack() == false) break;
 
             // If attack expires, start again
             if (!weapon.inAttack)
@@ -181,6 +189,18 @@ public class AIGunAttack : MonoBehaviour
         rootAI.movement.speedMultiplierStack["Attack telegraph"] = multiplier;
     }
     public bool AttackNotBlocked(Vector3 aimOrigin, out RaycastHit hit) => AIAction.LineOfSight(aimOrigin, targetPosition, out hit, rootAI, target, weapon.attackMask);
+
+
+    public bool CanAttack()
+    {
+        if (canTarget == false) return false;
+
+        // Check sightline isn't blocked
+        bool attackNotBlocked = AttackNotBlocked(aim.LookOrigin, out _);
+        if (attackNotBlocked == false) return false;
+
+        return true;
+    }
 
     /*
     public static IEnumerator CancellableYieldForSeconds(float seconds)
