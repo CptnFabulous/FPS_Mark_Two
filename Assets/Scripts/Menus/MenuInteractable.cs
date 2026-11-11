@@ -7,7 +7,6 @@ using TMPro;
 
 public class MenuInteractable : MonoBehaviour, ISelectHandler, IPointerEnterHandler
 {
-    public Text title;
     public TextMeshProUGUI nameText;
     public Sprite graphic;
     [Multiline] public string description = "This is a selectable option.";
