@@ -194,14 +194,6 @@ public class Health : MonoBehaviour
         Rigidbody rb = collision.rigidbody;
         bool isStaticCollision = rb == null;
 
-         
-        // If the target entity is an AI, that's currently in its 'no physics' state, don't allow it to take damage from static collisions
-        // TO DO: what if I have a non-physics object that's still moving very fast, e.g. a moving train? Maybe if I add that it should be a kinematic rigidbody?
-        if (isStaticCollision && attachedTo is AI ai)
-        {
-            PuppetmasterRagdollHandler physicsHandler = ai.physicsStateHandler;
-            if (physicsHandler != null && physicsHandler.currentState == AIPhysicsState.NoPhysics) return;
-        }
 
 
         #region Calculate collision force, cancel if too low
