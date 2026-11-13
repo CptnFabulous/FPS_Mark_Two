@@ -114,9 +114,9 @@ public class AI : Character
         if (physicsStateHandler == null) return true;
 
         // If enemy is ragdollised, always allow
-        if (physicsStateHandler.currentState == AIPhysicsState.Ragdoll) return true;
+        if (physicsStateHandler.currentState != AIPhysicsState.NoPhysics) return true;
 
-        // Don't allow physics impact effects if puppetmaster colliders happen to clip into something static as a result of their animations
+        // If puppetmaster colliders happen to collide with something static as a result of their animations, don't allow physics impact effects
         if (collision.rigidbody == null) return false;
         if (collision.rigidbody.isKinematic) return false;
 
