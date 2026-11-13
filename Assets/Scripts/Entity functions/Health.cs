@@ -12,6 +12,7 @@ public enum DamageType
     //Severing, // e.g. body part removal
     Bludgeoning, // e.g. blunt force attacks
     PhysicsImpact,
+    Crushing,
     Explosive,
     Burning,
     //Freezing,
@@ -122,19 +123,6 @@ public class Health : MonoBehaviour
         // If this attack is the one that killed the entity, run death events
         if (IsAlive || !wasAlive) return;
 
-        /*
-        // If the player, check that they can respawn at a checkpoint
-        if (attachedTo is Player player)
-        {
-            CheckpointManager checkpointManager = FindObjectOfType<CheckpointManager>();
-            if (checkpointManager != null && checkpointManager.targetPlayer == player)
-            {
-                checkpointManager.TryRespawnAtLastCheckpoint();
-                return;
-            }
-        }
-        */
-        
         // Send kill message
         attachedTo.DebugLog($"Dying of {type}");
         KillMessage killMessage = new KillMessage(attacker, this, type);
@@ -160,6 +148,11 @@ public class Health : MonoBehaviour
         // TO DO: figure out if the object was launched by another entity
         Entity attacker = null;
         Entity incomingEntity = collision.gameObject.GetComponentInParent<Entity>();
+
+
+
+
+        
 
         /*
         
@@ -191,13 +184,70 @@ public class Health : MonoBehaviour
 
         #endregion
 
-        Rigidbody rb = collision.rigidbody;
-        bool isStaticCollision = rb == null;
-
-
+        Rigidbody incomingRigidbody = collision.rigidbody;
+        bool isStaticCollision = incomingRigidbody == null;
 
         #region Calculate collision force, cancel if too low
 
+        DamageResistanceProfile resistances = hitbox.resistances;
+        float threshold = resistances.minimumCollisionForceToDamage;//isStaticCollision ? resistances.staticCollisionForceThreshold : resistances.forceThreshold;
+
+
+
+        // What if I just use the relative velocity magnitude?
+        // Because then a heavy object would deal the same damage as a light one, even though a heavy object moving at the same speed would put way more hurt on the target.
+        // Do I need to separate size and weight?
+        // I know I need to separate mass and weight. Weight is dependent on gravity.
+
+        Vector3 relativeVelocity = collision.relativeVelocity;
+        float force = relativeVelocity.magnitude;
+
+        // Multiply the force based on the angle of the normal and relative velocity.
+        // This ensures that entities don't take ridiculous amounts of damage just from scrapes.
+        // It also ensures that collisions are ignored if the colliders are actually meant to be moving away from each other.
+        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision).normalized;
+        float dotProduct = Vector3.Dot(relativeVelocity.normalized, normal);
+        dotProduct = Mathf.Clamp01(dotProduct);
+        force *= dotProduct;
+
+        /*
+        Rigidbody ownRigidbody = hitbox.rigidbody;
+
+        // Get the two mass values to compare against.
+        // Because a static collision will be connected to the environment around it, its effective mass will be so large that it cannot be moved.
+        // So just use the largest max value possible (but not infinity because that screws up the mass).
+        float ownMass = PhysicsCache.TotalMassOfConnectedRigidbodies(ownRigidbody);
+        float incomingMass = isStaticCollision ? float.MaxValue : PhysicsCache.TotalMassOfConnectedRigidbodies(incomingRigidbody);
+        
+        // Figure out the mass ratio
+        float total = ownMass + incomingMass;
+        float damageRatio = Mathf.Clamp01(incomingMass / total);
+
+        float magnitude = collision.relativeVelocity.magnitude;
+        float force = damageRatio * magnitude;
+        attachedTo.DebugLog($"Hit by {incomingEntity}, Force: clamped({incomingMass}/{total}) = {damageRatio}, * {magnitude} = {force}, threshold = {threshold}");
+        //attachedTo.DebugLog($"Hit by {incomingEntity}, Force: clamped({incomingMass}/{ownMass} = {damageRatio}) * {magnitude} = {force}, threshold = {threshold}");
+        */
+
+        // Impulse based: too inconsistent
+        /*
+        // TO DO: figure out how to effectively calculate force transferred to rigidbody in collision
+
+        float impulseStrength = collision.ImpulseForceStrength();
+        float ourMass = PhysicsCache.TotalMassOfConnectedRigidbodies(ownRigidbody);
+
+
+        float force = impulseStrength / ownMass;
+
+        // TEMPORARY: since player mass is now 100x what it was, divide impact force by same amount and see what happens
+        force *= 0.01f;
+
+        //attachedTo.DebugLog($"Hit by {incomingEntity.name}, accumulated = {ownRigidbody.GetAccumulatedForce()}");
+        //attachedTo.DebugLog($"Hit by {incomingEntity.name}, Force: {impulseStrength} / {ourMass} * 0.01f = {force}, threshold = {threshold}");
+        //attachedTo.DebugLog($"Checking collision damage: {force}/{threshold}");
+        */
+
+        /*
         Vector3 relativeVelocity = GetRelativeVelocityOfPhysicsImpact(collision, hitbox);
         float force = relativeVelocity.magnitude;
 
@@ -210,8 +260,6 @@ public class Health : MonoBehaviour
         force *= dotProduct;
 
 
-        DamageResistanceProfile resistances = hitbox.resistances;
-        float threshold = resistances.minimumCollisionForceToDamage;//isStaticCollision ? resistances.staticCollisionForceThreshold : resistances.forceThreshold;
 
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
@@ -219,20 +267,21 @@ public class Health : MonoBehaviour
         if (force <= threshold) return;
 
         // Multiply physics damage based on the incoming mass
-        float massMultiplier = (!isStaticCollision) ? PhysicsCache.TotalMassOfConnectedRigidbodies(rb) : multiplierForStaticCollisions;
+        float massMultiplier = (!isStaticCollision) ? PhysicsCache.TotalMassOfConnectedRigidbodies(incomingRigidbody) : multiplierForStaticCollisions;
         force *= massMultiplier;
+        */
 
-        
         // If the force isn't enough to register, cancel.
         // We don't want things constantly taking chip damage from the most miniscule impacts
         if (force <= threshold) return;
+        
         
         #endregion
 
         #region Check if the entity can take damage from the colliding object at this time
 
         // Check the root rigidbody this entity is attached to.
-        GameObject damagedBy = rb != null ? PhysicsCache.GetRootRigidbody(rb).gameObject : collision.gameObject;
+        GameObject damagedBy = incomingRigidbody != null ? PhysicsCache.GetRootRigidbody(incomingRigidbody).gameObject : collision.gameObject;
 
         // Don't deal damage if the attached entity is deliberately holding it
         if (throwHandler != null && throwHandler.holding != null && throwHandler.holding.gameObject == damagedBy) return;
@@ -246,11 +295,10 @@ public class Health : MonoBehaviour
         // If the root object just dealt physics damage previously, don't count
         // (So that damage doesn't happen multiple times due to a single object hitting multiple hitboxes at once)
         if (recentPhysicsCollisions.TryGetValue(damagedBy, out float hitTime) && (Time.time - hitTime) < minTimeBetweenCollisions) return;
-        recentPhysicsCollisions[damagedBy] = Time.time; // Update the last time hit for the next check
 
         #endregion
 
-        attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}. Force = {relativeVelocity.magnitude} * {dotProduct} * {massMultiplier} = {force}/{threshold}, on frame {Time.frameCount}");
+        //attachedTo.DebugLog($"{damagedBy} will damage {attachedTo} in {hitbox}. Force = {relativeVelocity.magnitude} * {dotProduct} * {massMultiplier} = {force}/{threshold}, on frame {Time.frameCount}");
 
         #region Calculate damage and stun values
 
@@ -269,56 +317,9 @@ public class Health : MonoBehaviour
 
         // Deal damage (use the hitbox's main damage function to calculate things like resistances)
         hitbox.Damage(Mathf.RoundToInt(damage), Mathf.RoundToInt(stun), DamageType.PhysicsImpact, attacker, incomingEntity, collision.relativeVelocity.normalized, hitbox.isCritical);
-        
+        recentPhysicsCollisions[damagedBy] = Time.time; // Update the last time hit for the next check
+
         #endregion
-    }
-
-    /// <summary>
-    /// Obtains the relative velocity of a collision, but accounting for kinematic child bodies (in case they register the hit but are attached to a non-kinematic parent rigidbody).
-    /// </summary>
-    /// <param name="collision"></param>
-    /// <param name="hitbox"></param>
-    /// <returns></returns>
-    static Vector3 GetRelativeVelocityOfPhysicsImpact(Collision collision, Hitbox hitbox)
-    {
-        // First, get it the normal way.
-        Vector3 relativeVelocity = collision.relativeVelocity;
-        if (relativeVelocity.magnitude > 0.01f) return relativeVelocity;
-
-        // If force is zero or basically zero, that might be because the hitbox is part of a kinematic child collider compared to an actually active rigidbody.
-        // Check if at least one rigidbody exists and is kinematic
-        Rigidbody incomingRigidbody = collision.rigidbody;
-        Rigidbody hitRigidbody = hitbox.rigidbody;
-        if (hitRigidbody != null && hitRigidbody.isKinematic == false) return relativeVelocity;
-        if (hitRigidbody != null && hitRigidbody.isKinematic == false) return relativeVelocity;
-
-        // If not, check in the parent values
-        //attachedTo.DebugLog($"Miniscule collision detected, check for non-kinematic parents. {hitRigidbody}, {incomingRigidbody}, {force}");
-        Rigidbody hit = ComponentUtility.GetComponentInParentWhere<Rigidbody>(hitbox.transform, (rb) => rb.isKinematic == false);
-        Rigidbody incoming = ComponentUtility.GetComponentInParentWhere<Rigidbody>(collision.collider.transform, (rb) => rb.isKinematic == false);
-        bool hitExists = hit != null;
-        bool incomingExists = incoming != null;
-
-        // If both values exist, just subtract incoming from hit to get the relative velocity!
-        if (hitExists && incomingExists) return hit.velocity - incoming.velocity;
-
-        // If neither exists (somehow), there's no physics occurring in the first place.
-        if (!hitExists && !incomingExists) return Vector3.zero;
-
-        // If hit is stationary, relative velocity is just incoming velocity (incoming - zero)
-        // If incoming is stationary, relative velocity is just opposite of hit velocity (zero - hit)
-        Vector3 velocity = Vector3.zero;
-        if (incomingExists) velocity += incoming.velocity;
-        else if (hitExists) velocity -= hit.velocity;
-
-        // Check the directions of the relative velocity and collision normal.
-        // If the angle is obtuse (dot product is less than zero), the two objects are moving away from each other and therefore not colliding.
-        Vector3 normal = PhysicsUtility.GetAverageCollisionNormal(collision);
-        float dotProduct = Vector3.Dot(velocity, normal);
-        if (dotProduct < 0) return Vector3.zero;
-
-        // Return the functional relative velocity
-        return velocity;
     }
 
     #region Miscellaneous functions
