@@ -1,12 +1,35 @@
+using CptnFabulous.MiscUtility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 public static class MiscFunctions
 {
+    public static float GetVolumeOfRigidbodyChain(this Rigidbody rigidbody)
+    {
+        // TO DO: check if rigidbody is part of a deforming chain.
+        // If so, add the volume of each bounds object separately, so it's consistent regardless of pose.
+        // If not, get the combined bounds of all colliders and return that volume, so we know how big and bulky the object is to handle.
+
+        return rigidbody.CalculateBoundsOfRigidbodyChain().size.Volume();
+
+        rigidbody = PhysicsCache.GetRootRigidbody(rigidbody);
+
+        Collider[] colliders = PhysicsCache.GetChildColliders(rigidbody);
+        float totalVolume = 0;
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            totalVolume += colliders[i].bounds.size.Volume();
+        }
+        return totalVolume;
+    }
+    public static Bounds CalculateBoundsOfRigidbodyChain(this Rigidbody rigidbody)
+    {
+        rigidbody = PhysicsCache.GetRootRigidbody(rigidbody);
+        return TransformUtility.CombinedBounds(PhysicsCache.GetChildColliders(rigidbody));
+    }
     #region Finding components
 
     /// <summary>
@@ -116,7 +139,7 @@ public static class MiscFunctions
 
 
 
-
+    public static float Volume(this Vector3 size) => size.x * size.y * size.z;
     public static float InverseSquareByDistance(float startingValue, float distance)
     {
         // Square distance

@@ -64,7 +64,7 @@ public class InteractionHandler : MonoBehaviour
         else if (targetedPhysicsProp != null)
         {
             canInteractWithTarget = true;
-            targetBounds = TransformUtility.CombinedBounds(PhysicsCache.GetChildColliders(targetedPhysicsProp));
+            targetBounds = targetedPhysicsProp.CalculateBoundsOfRigidbodyChain();
         }
     }
 

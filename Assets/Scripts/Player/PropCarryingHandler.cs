@@ -7,6 +7,7 @@ using UnityEngine.Events;
 public class PropCarryingHandler : WeaponMode
 {
     public float maxWeight = 5;
+    public float maxVolume = 2;
     public float cooldown = 0.5f;
     public InteractionHandler interactionHandler;
     public ThrowHandler throwHandler;
@@ -56,6 +57,14 @@ public class PropCarryingHandler : WeaponMode
         // The object can be picked up in the first place
         if (target.isKinematic) return false;
         if (target.mass > maxWeight) return false;
+
+
+        // TO DO: if bounds size is too large, force player to drag it instead
+
+        // Don't pick up if it's too large
+        //float volume = target.CalculateBoundsOfRigidbodyChain().size.Volume();
+        float volume = target.GetVolumeOfRigidbodyChain();
+        if (volume > maxVolume) return false;
 
         // If the target rigidbody belongs to an alive Character (whether player or AI controlled), the player shouldn't be able to pick it up
         Character c = EntityCache<Character>.GetEntity(target.gameObject);
