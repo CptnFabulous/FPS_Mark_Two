@@ -10,6 +10,7 @@ public class DamageDealer
     public int damage;
     public int stun;
     public float knockback;
+    public float maxKnockbackSpeed = 5;
     public DamageType type;
     public float criticalMultiplier = 1;
 
@@ -56,9 +57,13 @@ public class DamageDealer
         Rigidbody rb = ComponentUtility.GetComponentInParentWhere<Rigidbody>(target.transform, (rb) => rb.isKinematic == false);
         if (rb != null)
         {
-            Vector3 knockbackVector = knockback * multiplier * direction.normalized;
+            ForceMode forceMode = ForceMode.Impulse;
+            float mass = PhysicsCache.TotalMassOfConnectedRigidbodies(rb);
+            ThrowHandler.CalculateLimitedSpeed(mass, knockback, maxKnockbackSpeed, out float knockbackMagnitude, out _, out _);
+
+            Vector3 knockbackVector = knockbackMagnitude * multiplier * direction.normalized;
             if (attackingWith != null) attackingWith.DebugLog($"Adding {knockbackVector} (magnitude = {knockbackVector.magnitude}) to {rb}");
-            rb.AddForceAtPosition(knockbackVector, point, ForceMode.Impulse);
+            rb.AddForceAtPosition(knockbackVector, point, forceMode);
 
             // Tell the attacker's health script that it just applied velocity to a physics object, to prevent self damage from physics glitches
             if (attacker != null && attacker.health != null)

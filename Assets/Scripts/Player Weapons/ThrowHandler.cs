@@ -11,14 +11,17 @@ public class ThrowHandler : MonoBehaviour
     public TrajectoryRenderer arcRenderer;
 
     [Header("Throwing stats")]
-    public float startingVelocity = 50;
+    public float startForce = 300;
+    public float startTravelSpeed = 12;
     public float range = 50;
     public float delayBeforeLaunch = 0.25f;
     public float cooldown = 0.5f;
+    public bool accountForMass = false;
 
     public UnityEvent<Rigidbody> onPickup;
     public UnityEvent<Rigidbody> onDrop;
     public UnityEvent<Rigidbody> onThrow;
+
 
     public Rigidbody holding { get; private set; } = null;
     public bool currentlyThrowing { get; private set; } = false;
@@ -115,18 +118,21 @@ public class ThrowHandler : MonoBehaviour
 
         #region Wind-up
 
+        // Calculate desired speed (based on limits so objects don't fly stupidly far)
+        float totalMass = PhysicsCache.TotalMassOfConnectedRigidbodies(holding);
+        CalculateLimitedSpeed(totalMass, startForce, startTravelSpeed, out float force, out float speed, out float reductionRatio);
+        float magnitude = accountForMass ? force : speed;
+
         // Activate trajectory handler, and assign values so it can calculate the correct trajectory
+        // (A delegate is set up so we don't have to repeatedly input data from our end)
         arcRenderer.gameObject.SetActive(true);
         arcRenderer.mass = holding.mass;
         arcRenderer.drag = holding.drag;
         arcRenderer.hitDetection = attackMask;
-
-        // (A delegate is set up so we don't have to repeatedly input data from our end)
-        float startVelocityAccountingForWeight = startingVelocity / PhysicsCache.TotalMassOfConnectedRigidbodies(holding);
         arcRenderer.getStartPositionAndVelocity = () =>
         {
             CalculateObjectLaunch(out Vector3 origin, out Vector3 direction);
-            return (origin, direction * startVelocityAccountingForWeight);
+            return (origin, direction * speed);
         };
 
         // Wait while throw input is held
@@ -142,7 +148,9 @@ public class ThrowHandler : MonoBehaviour
         CalculateObjectLaunch(out Vector3 throwOrigin, out Vector3 throwDirection);
         // Detach object and apply velocity
         Drop(out Rigidbody toThrow);
-        AddForceToRigidbodyChain(toThrow, throwDirection * startingVelocity, throwOrigin, ForceMode.Impulse);
+
+        // Throw
+        AddForceToRigidbodyChain(toThrow, magnitude * throwDirection, throwOrigin, ForceMode.Impulse);
         // Update the last time thrown for the user's health, so the player can't be damaged by an object they just threw due to wacky physics
         user.health.timesPhysicsObjectsWereLaunchedByThisEntity[toThrow.gameObject] = Time.time;
 
@@ -178,16 +186,26 @@ public class ThrowHandler : MonoBehaviour
         return false;
     }
 
+    public static void CalculateLimitedSpeed(float mass, float startForce, float maxSpeed, out float calculatedForce, out float calculatedSpeed, out float reductionRatio)
+    {
+        calculatedSpeed = startForce / mass;
+        reductionRatio = maxSpeed / calculatedSpeed;
+        calculatedSpeed = Mathf.Min(calculatedSpeed, maxSpeed);
+        calculatedForce = calculatedSpeed * mass;
+    }
     public static void AddForceToRigidbodyChain(Rigidbody toThrow, Vector3 force, Vector3 position, ForceMode mode)
     {
+        bool accountForMass = mode == ForceMode.Impulse || mode == ForceMode.Force;
+
         // Calculate total mass
         float totalMass = PhysicsCache.TotalMassOfConnectedRigidbodies(toThrow);
         // Apply force to all child rigidbodies
         foreach (Rigidbody rb in PhysicsCache.GetChildRigidbodies(toThrow))
         {
             // Calculate the fraction of the total mass for each rigidbody, and apply force proportionally
-            float fraction = rb.mass / totalMass;
-            rb.AddForceAtPosition(force * fraction, position, mode);
+            float fraction = 1;
+            if (accountForMass) fraction = rb.mass / totalMass;
+            rb.AddForceAtPosition(fraction * force, position, mode);
         }
     }
     public static void SetPhysicsInteractions(Rigidbody target, bool active)
