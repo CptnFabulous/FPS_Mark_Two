@@ -52,15 +52,7 @@ public class AI : Character
         }
     }
 
-    public override Bounds bounds
-    {
-        get
-        {
-            if (physicsStateHandler == null) return base.bounds;
-
-            return TransformUtility.CombinedBounds(physicsStateHandler.ragdollColliders);
-        }
-    }
+    public override IList<Collider> colliders => physicsStateHandler.ragdollColliders;
     public override Vector3 MovementDirection => agent.velocity;
     public Character target
     {
