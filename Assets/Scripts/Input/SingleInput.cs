@@ -20,11 +20,9 @@ public class SingleInput : MonoBehaviour
     public InputAction action { get; private set; }
     public InputActionMap map { get; private set; }
 
-
-
     InputPriorityHandler _ph;
-    InputPriorityHandler parentHandler => ComponentUtility.AutoCache(ref _ph, gameObject, ComponentGetType.InParent);
 
+    InputPriorityHandler parentHandler => gameObject.Cache(ref _ph, ComponentGetType.InParent);
     public bool usingGamepad => player.currentControlScheme.Contains("Gamepad");
     public bool overridden => parentHandler.inputStacks[action].currentPriority != this;
 

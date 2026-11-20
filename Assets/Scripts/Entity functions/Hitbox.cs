@@ -13,10 +13,10 @@ public class Hitbox : MonoBehaviour
     Collider c;
     Rigidbody _rb;
 
-    public Collider collider => ComponentUtility.AutoCache(ref c, gameObject);
-    public Entity attachedTo => ComponentUtility.AutoCache(ref _attachedTo, gameObject, ComponentGetType.InParent);
+    public Collider collider => gameObject.Cache(ref c);
+    public Entity attachedTo => gameObject.Cache(ref _attachedTo, ComponentGetType.InParent);
     public Health sourceHealth => attachedTo.health;
-    public Rigidbody rigidbody => ComponentUtility.AutoCache(ref _rb, gameObject, ComponentGetType.InParent);
+    public Rigidbody rigidbody => gameObject.Cache(ref _rb, ComponentGetType.InParent);
 
     public void Damage(int damage, int stun, DamageType type, Entity attacker, Entity weaponUsed, Vector3 direction, bool critical = false)
     {

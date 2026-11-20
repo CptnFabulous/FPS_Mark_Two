@@ -13,7 +13,7 @@ public class EnemyHealthMeter : MonoBehaviour
 
     Player p;
 
-    Player player => ComponentUtility.AutoCache(ref p, gameObject, ComponentGetType.InParent);
+    Player player => gameObject.Cache(ref p, ComponentGetType.InParent);
     Camera camera => player.movement.lookControls.worldViewCamera;
 
 

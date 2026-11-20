@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,7 @@ public class PhysicsObjectEffects : MonoBehaviour
 
     float lastTimeEffectPlayed = 0;
 
-    public Entity rootEntity => _rootEntity ??= GetComponentInParent<Entity>();
+    public Entity rootEntity => gameObject.Cache(ref _rootEntity, ComponentGetType.InParent);
 
     private void OnCollisionEnter(Collision collision)
     {
