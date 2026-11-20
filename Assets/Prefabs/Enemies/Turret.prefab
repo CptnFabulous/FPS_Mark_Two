@@ -343,7 +343,6 @@ MonoBehaviour:
   memory: {fileID: 0}
   agent: {fileID: 0}
   movement: {fileID: 0}
-  physicsHandler: {fileID: 0}
   physicsStateHandler: {fileID: 0}
   aiming: {fileID: 4804942558870988031}
   targeting: {fileID: 1927864505839106716}
@@ -851,9 +850,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   maxMoveDistance: 100
-  minTargetDistance: 5
-  idealTargetDistance: 10
-  maxTargetDistance: 15
   distanceToCover: 3
   distanceFromAllies: 5
   terrainDetection: {fileID: 0}
@@ -868,13 +864,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3003591789452033687}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 471bc6bb94813434e9acc3e7508bd0ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rootAI: {fileID: 4609959751622302532}
   weapon: {fileID: 871875569795541140}
+  minRange: 1
+  maxRange: 40
+  idealRange: 20
   telegraphDelay: 1
   telegraphMoveSpeedMultiplier: 0.5
   aimSpeedWhileTelegraphing: 4
@@ -6329,6 +6328,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onStartStopFiring:
+    m_PersistentCalls:
+      m_Calls: []
+  onAttack:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &3147275674357040488

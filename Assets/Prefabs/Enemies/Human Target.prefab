@@ -63,7 +63,7 @@ Transform:
   m_GameObject: {fileID: 2426134569975506427}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.08, y: 3.12, z: -19.87}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -104,12 +104,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b63a9b2426f8f348b87938ba438c9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  godmode: 0
   data:
     name: New Resource
     max: 25
     current: 25
     criticalLevel: 5
-  godmode: 0
   deadDescription: dead
   poise: {fileID: 0}
   onDamage:
