@@ -139,7 +139,6 @@ public static class MiscFunctions
 
 
 
-    public static float Volume(this Vector3 size) => size.x * size.y * size.z;
     public static float InverseSquareByDistance(float startingValue, float distance)
     {
         // Square distance

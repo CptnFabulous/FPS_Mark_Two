@@ -274,7 +274,7 @@ public class PuppetmasterRagdollHandler : MonoBehaviour
     public void CheckConditionsToStandUp(out Vector3 newBasePosition, out Quaternion newBaseRotation, out bool navMeshPointFound, out NavMeshHit navMeshHit, out float dot)
     {
         // Check conditions for ragdoll to stand up again
-        Bounds ragdollBounds = TransformUtility.CombinedBounds(colliders);
+        Bounds ragdollBounds = BoundsUtility.CombinedBounds(colliders);
         HumanoidAnimator.CalculateBasePositionBasedOnRagdoll(baseTransform, rootBone, ragdollBounds, out newBasePosition, out newBaseRotation, out dot);
         navMeshPointFound = NavMesh.SamplePosition(newBasePosition, out navMeshHit, navMeshCheckDistance, NavMesh.AllAreas);
         if (navMeshPointFound) newBasePosition = navMeshHit.position;

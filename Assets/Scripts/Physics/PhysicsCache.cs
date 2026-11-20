@@ -1,3 +1,4 @@
+using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,7 +48,7 @@ public static class PhysicsCache
 
         return mass;
     }
-    public static Rigidbody[] GetChildRigidbodies(Rigidbody target)
+    public static IList<Rigidbody> GetChildRigidbodies(Rigidbody target)
     {
         target = GetRootRigidbody(target);
         // Check for pre-cached value
@@ -56,7 +57,7 @@ public static class PhysicsCache
         childDictionary[target] = target.GetComponentsInChildren<Rigidbody>();
         return childDictionary[target];
     }
-    public static Collider[] GetChildColliders(Rigidbody target)
+    public static IList<Collider> GetChildColliders(Rigidbody target)
     {
         target = GetRootRigidbody(target);
         // Check for pre-cached value
@@ -66,6 +67,41 @@ public static class PhysicsCache
         return colliderDictionary[target];
     }
 
+    #region Bounds
+
+    public static float GetVolumeOfRigidbodyChain(this Rigidbody rigidbody) => GetVolumeOfRigidbodyChain(rigidbody, out _);
+    public static float GetVolumeOfRigidbodyChain(this Rigidbody rigidbody, out bool isChain)
+    {
+        rigidbody = PhysicsCache.GetRootRigidbody(rigidbody);
+        IList<Collider> colliders = PhysicsCache.GetChildColliders(rigidbody);
+
+        // If chain only has one rigidbody, it's a solid object. Combine all bounds into one, then get the world space dimensions of that
+        isChain = PhysicsCache.GetChildRigidbodies(rigidbody).Count > 1;
+        if (!isChain)
+        {
+            Transform rbt = rigidbody.transform;
+            Bounds entireLocalBounds = BoundsUtility.CombineBoundsInTransformSpace(colliders, rbt);
+            Vector3 dimensions = BoundsUtility.WorldSpaceDimensions(entireLocalBounds, rbt.localToWorldMatrix);
+            return dimensions.Volume();
+        }
+
+        // If it is a chain, add the volume of each bounds object separately, so it's consistent regardless of pose.
+        float totalVolume = 0;
+        foreach (Collider c in colliders)
+        {
+            totalVolume += c.WorldSpaceDimensions().Volume();
+        }
+
+        return totalVolume;
+    }
+    public static Bounds CalculateBoundsOfRigidbodyChain(this Rigidbody rigidbody)
+    {
+        rigidbody = PhysicsCache.GetRootRigidbody(rigidbody);
+        Bounds final = BoundsUtility.CombinedBounds(PhysicsCache.GetChildColliders(rigidbody));
+        return final;
+    }
+
+    #endregion
 }
 
 public static class ComponentCache<T>

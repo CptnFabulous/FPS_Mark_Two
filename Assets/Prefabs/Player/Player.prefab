@@ -2036,7 +2036,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ede00f04806b6e24eb0f28ff34a6e276, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attachedTo: {fileID: 0}
+  _attachedTo: {fileID: 5952785220977947003}
   isCritical: 0
   resistances: {fileID: 11400000, guid: 5b87ef102978cd749bbc238b222316f1, type: 2}
 --- !u!136 &5952785220977946993
@@ -3111,7 +3111,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   maxWeight: 100
-  maxVolume: 0.9
+  maxVolume: 0.8
   cooldown: 0.5
   interactionHandler: {fileID: 6329320551191257722}
   throwHandler: {fileID: 1145182430858350181}
@@ -3698,7 +3698,6 @@ MonoBehaviour:
     onHit:
       m_PersistentCalls:
         m_Calls: []
-  maxKnockbackVelocity: 5
   directionOffsetAngles: {x: -45, y: 0, z: 0}
   staminaConsumption: 1
   animator: {fileID: 152877896174432203}
@@ -5247,7 +5246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839378336550778746, guid: 2a770430c3c14a24897e01229f5b6013, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3025919980619263828, guid: 2a770430c3c14a24897e01229f5b6013, type: 3}
       propertyPath: m_SizeDelta.y

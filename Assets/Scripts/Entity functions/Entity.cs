@@ -36,11 +36,12 @@ public class Entity : MonoBehaviour
     {
         get
         {
-            if (colliders != null && colliders.Count > 0) return TransformUtility.CombinedBounds(colliders);
+            if (colliders != null && colliders.Count > 0) return BoundsUtility.CombinedBounds(colliders);
             return new Bounds(transform.position, Vector3.zero);
         }
     }
     public Vector3 CentreOfMass => bounds.center;
+    public Bounds GetLocalBounds() => BoundsUtility.CombineBoundsInTransformSpace(colliders, transform);
     public virtual IList<Collider> colliders
     {
         get
