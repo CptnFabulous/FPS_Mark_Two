@@ -1,6 +1,7 @@
 using CptnFabulous.MiscUtility;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public enum DebugMode
@@ -65,13 +66,27 @@ public class Entity : MonoBehaviour
             return _colliders;
         }
     }
-    public Rigidbody rigidbody => ComponentUtility.AutoCache(ref _rb, gameObject, ComponentGetType.InChild);
+    public Rigidbody rigidbody => gameObject.Cache(ref _rb, ComponentGetType.InChild);
     public Renderer[] renderers => MiscFunctions.GetImmediateComponentsInChildren<Renderer, Entity>(this, ref _renderers);
 
     /// <summary>
     /// Where an AI would expect this entity to attack from, if it's capable of attacking things.
     /// </summary>
     public virtual Vector3 attackOrigin => CentreOfMass;
+
+    public virtual string debugData
+    {
+        get
+        {
+            string text = name;
+            if (rigidbody != null)
+            {
+                text += '\n';
+                text += rigidbody.GetVolumeOfRigidbodyChain();
+            }
+            return text;
+        }
+    }
 
     protected virtual void Awake()
     {
@@ -83,6 +98,62 @@ public class Entity : MonoBehaviour
     {
         _existing.Remove(this);
     }
+    private void OnDrawGizmos()
+    {
+        //if (!ShouldDebug()) return;
+        if (MiscFunctions.CurrentCameraNotMain()) return;
+
+        Gizmos.color = Color.cyan;
+        Bounds localBounds = GetLocalBounds();
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.DrawWireCube(localBounds.center, localBounds.size);
+        
+        if (colliders.Count > 1)
+        {
+            Gizmos.color = Color.grey;
+            foreach (Collider c in colliders)
+            {
+                Bounds b = c.LocalBounds();
+                Gizmos.matrix = c.transform.localToWorldMatrix;
+                Gizmos.DrawWireCube(b.center, b.size);
+            }
+        }
+    }
+#if UNITY_EDITOR
+    private void OnGUI()
+    {
+        if (!ShouldDebug()) return;
+
+        Camera camera = Camera.main;
+        //Vector3 worldPosition = LookTransform.position + 0.5f * Vector3.up;
+        Vector3 boundsTop = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z);
+        Vector3 worldPosition = boundsTop + 0.5f * Vector3.up;
+
+        if (Vector3.Dot(camera.transform.forward, worldPosition - camera.transform.position) < 0) return;
+
+        Vector2 screenPosition = camera.WorldToScreenPoint(worldPosition);
+        screenPosition.y = Screen.height - screenPosition.y;
+
+        Vector2 size = new Vector2(250, 50);
+
+        GUI.Label(new Rect(screenPosition - (size / 2), size), debugData, EditorStyles.centeredGreyMiniLabel);
+
+        /*
+        int count = colliders.Count;
+        for (int i = 0; i < count; i++)
+        {
+            //Debug.Log($"Drawing collider {i}/{count}");
+            Collider c = colliders[i];
+            Bounds consistentBounds = c.ConsistentBounds();
+            DebugLog($"{i}/{count} = {consistentBounds.Volume()}");
+            //Debug.DrawLine(consistentBounds.center, Vector3.zero, Color.magenta);
+            DebugUtility.DrawDebugWireCube(consistentBounds.center, consistentBounds.size, Color.magenta);
+            float volume = consistentBounds.Volume();
+            CameraIndepenentGizmos.DrawGUIText(volume.ToString(), consistentBounds.center, new Vector2(0.2f, 0.2f));
+        }
+        */
+    }
+#endif
 
     protected virtual void Die()
     {

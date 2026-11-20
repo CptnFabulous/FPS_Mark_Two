@@ -61,39 +61,27 @@ public class AI : Character
     }    
     public override WeaponHandler weaponHandler => null;
 
+    public override string debugData
+    {
+        get
+        {
+            string text = base.debugData;
+            text += '\n';
+            text += stateController.currentStateInHierarchy.name;
+            text += '\n';
+            text += aiming.currentLookMode;
+
+            return text;
+
+        }
+    }
+
     /// <summary>
     /// Does the enemy change their AI behaviours to account for smoke?
     /// <para>True by default, but will be modfied in future to account for things like if this NPC has thermal vision, or how reckless/stupid they are.</para>
     /// </summary>
     public bool waryOfSmoke => true;
-
-#if UNITY_EDITOR
-    private void OnGUI()
-    {
-        if (!ShouldDebug()) return;
-
-        Camera camera = Camera.main;
-        //Vector3 worldPosition = LookTransform.position + 0.5f * Vector3.up;
-        Vector3 boundsTop = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z);
-        Vector3 worldPosition = boundsTop + 0.5f * Vector3.up;
-
-        if (Vector3.Dot(camera.transform.forward, worldPosition - camera.transform.position) < 0) return;
-
-        string text = name;
-        text += '\n';
-        text += stateController.currentStateInHierarchy.name;
-        text += '\n';
-        text += aiming.currentLookMode;
-
-        Vector2 screenPosition = camera.WorldToScreenPoint(worldPosition);
-        screenPosition.y = Screen.height - screenPosition.y;
-
-        Vector2 size = new Vector2(250, 50);
-
-        GUI.Label(new Rect(screenPosition - (size / 2), size), text, EditorStyles.centeredGreyMiniLabel);
-    }
-#endif
-
+    
     protected override void Die()
     {
         base.Die();
