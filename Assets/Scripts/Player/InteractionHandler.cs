@@ -21,6 +21,10 @@ public class InteractionHandler : MonoBehaviour
     public UnityEvent<Player, Interactable> onInteractFailed;
     public PropCarryingHandler objectCarrier;
 
+
+    Collider[] colliderArray = new Collider[64];
+    AngleCheck.ResultData<(Interactable, Rigidbody)> results;
+
     public Interactable targetedInteractable { get; private set; }
     public Rigidbody targetedPhysicsProp { get; private set; }
     public RaycastHit hitData { get; private set; }
@@ -28,8 +32,7 @@ public class InteractionHandler : MonoBehaviour
     public bool canInteractWithTarget { get; private set; }
     public string message { get; private set; }
 
-    Vector3 aimOrigin => referenceCamera.transform.position;
-    Vector3 aimDirection => referenceCamera.transform.forward;
+    Ray interactionRay => new Ray(referenceCamera.transform.position, referenceCamera.transform.forward);
 
     private void OnEnable()
     {
@@ -42,16 +45,14 @@ public class InteractionHandler : MonoBehaviour
     private void Update()
     {
         // Reset values and set up values to assign
-        (Interactable, Rigidbody) returnedValues;
-        RaycastHit rh = new RaycastHit();
         string msg = null;
 
-        bool angleCheck = AngleCheck.CheckForObjectsInCone(aimOrigin, aimDirection, detectionAngle, interactionRange, detection.mask, out returnedValues, out rh, ValidInteractableFound);
+        bool angleCheck = AngleCheck.CheckForObjectsInCone(interactionRay, detectionAngle, interactionRange, detection.mask, colliderArray, out results, ValidInteractableFound);
 
         // Cache the data on whatever we hit this frame
-        targetedInteractable = returnedValues.Item1;
-        targetedPhysicsProp = returnedValues.Item2;
-        hitData = rh;
+        targetedInteractable = results.returnedValue.Item1;
+        targetedPhysicsProp = results.returnedValue.Item2;
+        hitData = results.hitData;
 
         // Obtain and cache additional data
         if (targetedInteractable != null)
